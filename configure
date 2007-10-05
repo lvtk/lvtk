@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Check that we have at least Bash 3.0 (need it for =~)
+if test $BASH_VERSINFO -lt 3; then
+    echo "You need Bash 3.0 or newer to run this script."
+    exit
+fi
+
+# First, print help message if needed
+for arg in "$@"; do
+    if test "$arg" = "--help"; then
+        echo "
+This script allows you to modify the behaviour of subsequent 'make' commands.
+
+Any argument of the form --VARIABLE=VALUE will set the Makefile variable
+VARIABLE to the value VALUE in the Makefile. Some common variables are
+
+  --prefix=<DIRECTORY>
+        Where to install the program. The default is '/usr/local'.
+  --CFLAGS=<COMPILER FLAGS>
+        Extra compiler flags that will be passed to the compiler in
+        the Makefile. The default is '-g -O2'. In you want to turn off
+        debugging and optimise more you could use '--CFLAGS=\"-DNDEBUG -O6\".
+  --LDFLAGS=<LINKER FLAGS>
+        Extra linker flags that will be passed to the linker in
+        the Makefile. The default is no extra flags.
+
+All variables can also be overridden by passing a parameter of the form
+VARIABLE=VALUE to the 'make' command, e.g. 'make CFLAGS=-DNDEBUG install'.
+"
+        true
+        exit
+    fi
+done
+
+
+# Parse parameters
+echo __path_to_configure = $0 > Makefile.config.tmp
+for arg in "$@"; do
+    if [[ $arg =~ --[0-9a-zA-Z_]+=.* ]]; then
+        echo $arg | sed 's/--\([0-9a-zA-Z_]\+\)=\(.*\)/\1\ =\ \2/' >> Makefile.config.tmp
+    else
+        echo "'$arg' is not a valid parameter to configure!"
+        exit
+    fi
+done
+rm -f Makefile.config
+mv Makefile.config.tmp Makefile.config
+echo "
+Current configuration:
+"
+cat Makefile.config | awk '{print "  " $0}'
+echo "
+Now run 'make install' to install your software!"
+
