@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.330
+PACKAGE_VERSION = 0.1.331
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2_plugin.a liblv2_gtk2gui.a libpaq.a
@@ -33,6 +33,7 @@ lv2peg_ARCHIVES = libraries/paq/libpaq.a
 lv2peg_SOURCEDIR = programs/lv2peg
 
 DOCS = COPYING AUTHORS README
+PCFILES = liblv2-plugin.pc liblv2-gtk2gui.pc
 
 
 # Do the magic

@@ -1,0 +1,6 @@
+Name: liblv2-gtk2gui
+Description: A support library for writing LV2 plugin GUIs in C++
+Version: ${PACKAGE_VERSION}
+Libs: -L${libdir} -llv2-gtk2gui
+Cflags: -I${pkgincludedir}
+Requires: gtkmm-2.4 >= 2.6.0
