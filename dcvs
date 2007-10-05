@@ -2,7 +2,7 @@
 
 # change these parameters if you are using this script for your own project
 my $project = "ll-plugins";
-my $module = "ll-plugins";
+my $module = "lv2-cpp-tools";
 my $user = "larsl";
 my $module_dir = "/sources/$project/$module";
 
