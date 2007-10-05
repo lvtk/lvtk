@@ -1,0 +1,5 @@
+Name: libpaq
+Description: A slow and inefficient RDF parsing and querying library
+Version: ${PACKAGE_VERSION}
+Libs: -L${libdir} -lpaq
+Cflags: -I${pkgincludedir}
