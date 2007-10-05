@@ -28,7 +28,9 @@
 #include <map>
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/box.h>
+#include <gtkmm/main.h>
+#include <gtkmm/widget.h>
 
 #include "lv2-gui.h"
 
