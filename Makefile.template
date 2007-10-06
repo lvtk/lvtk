@@ -108,7 +108,7 @@ $$($(2)_CXXOBJECTS): Makefile.config
 	$(CXX) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$(subst .o,.cpp,$$@)
 
 $$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
-	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).0
+	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).0
 
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
 	mkdir -p $(DESTDIR)/$(pkgincludedir)

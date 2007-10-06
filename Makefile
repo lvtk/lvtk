@@ -1,8 +1,8 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.340
+PACKAGE_VERSION = 0.1.341
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
-ARCHIVES = liblv2-plugin.a liblv2-gtk2gui.a
+ARCHIVES = liblv2-plugin.a liblv2-gtk2gui.a libpaq.a
 LIBRARIES = libpaq.so
 PROGRAMS = lv2peg
 
@@ -24,13 +24,16 @@ liblv2-gtk2gui_a_CFLAGS = `pkg-config --cflags gtkmm-2.4` -Iheaders
 liblv2-gtk2gui_a_SOURCEDIR = libraries/lv2gtk2gui
 liblv2-gtk2gui_a_INSTALLDIR = $(libdir)
 
-libpaq_so_SOURCES = turtleparser.cpp rdf.cpp query.cpp
+libpaq_a_SOURCES = turtleparser.cpp rdf.cpp query.cpp
+libpaq_a_SOURCEDIR = libraries/paq
+
+libpaq_so_ARCHIVES = libraries/paq/libpaq.a
 libpaq_so_HEADERS = turtleparser.hpp rdf.hpp query.hpp unicode.hpp namespaces.hpp
 libpaq_so_SOURCEDIR = libraries/paq
 
 lv2peg_SOURCES = lv2peg.cpp
-lv2peg_CFLAGS = `pkg-config --cflags paq` -DVERSION=\"$(PACKAGE_VERSION)\"
-lv2peg_LDFLAGS = `pkg-config --libs paq`
+lv2peg_CFLAGS = -Ilibraries/paq -DVERSION=\"$(PACKAGE_VERSION)\"
+lv2peg_LDFLAGS = libraries/paq/libpaq.a
 lv2peg_SOURCEDIR = programs/lv2peg
 
 DOCS = COPYING AUTHORS README
