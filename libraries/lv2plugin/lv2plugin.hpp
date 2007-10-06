@@ -37,32 +37,33 @@ namespace LV2 {
 
   /** This is a base class for LV2 plugins. It has default implementations for
       all functions, so you only have to implement the functions that you need
-      (for example run()). All subclasses must have a constructor that takes
-      a single <code>double</code> as parameter, otherwise it will 
+      (for example run()). All subclasses must have a constructor whose 
+      signature matches the one in the example code below, otherwise it will 
       not work with the template class LV2::Register. The host will use 
-      this parameter to pass the sample rate when it creates a new instance of
-      the plugin. 
-      
-      Here's an example of a plugin that simply copies the input to the output:
+      these parameter to pass the sample rate, the path to the bundle directory
+      and the list of features passed from the host when it creates a new 
+      instance of the plugin. 
       
       @code
-      #include "lv2plugin.hpp"
-      
+      #include <lv2plugin.hpp>
       
       class TestLV2 : public LV2::Plugin {
       public:
-      TestLV2(uint32_t, const char*, const LV2_Host_Feature**) : LV2::Plugin(2) { }
-      void run(uint32_t sample_count) {
-      memcpy(m_ports[1], m_ports[0], sample_count * sizeof(float));
-      }
+        TestLV2(double, const char*, const LV2_Host_Feature* const*) : LV2::Plugin(2) { }
+        void run(uint32_t sample_count) {
+          memcpy(p(1), p(0), sample_count * sizeof(float));
+        }
       };
       
-      static LV2::Register register("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0");
+      static struct Init {
+        Init() { LV2::Plugin::register_class<TestLV2>("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0"); }
+      } init;
       @endcode
       
       If the above code is compiled and linked with @c -llv2_plugin into a 
-      shared module, it should be a fully functional (but not very useful) LV2 
-      plugin.
+      shared module, it could form the shared object part of a fully 
+      functional (but not very useful) LV2 plugin with one audio input port
+      and one audio output port that just copies the input to the output.
   */
   class Plugin {
   public:
@@ -72,7 +73,11 @@ namespace LV2 {
     Plugin(uint32_t ports) : m_ports(ports, 0) { }
     
     /** Connects the ports. You shouldn't have to override this, just use
-	p(port) to access the port buffers. */
+	p(port) to access the port buffers. 
+    
+	If you do override this function, remember that if you want your plugin
+	to be realtime safe this function may not block, allocate memory or
+	otherwise take a long time to return. */
     void connect_port(uint32_t port, void* data_location) {
       m_ports[port] = data_location;
     }
@@ -83,28 +88,75 @@ namespace LV2 {
     void activate() { }
   
     /** This is the process callback which should fill all output port buffers. 
-	You most likely want to override it. */
+	You most likely want to override it. 
+	
+	Remember that if you want your plugin to be realtime safe, this function
+	may not block, allocate memory or take more than O(sample_count) time
+	to execute. */
     void run(uint32_t sample_count) { }
   
     /** Override this function if you need to do anything on deactivation. 
 	The host calls this when it does not plan to make any more calls to 
 	run() (unless it calls activate() again). */
     void deactivate() { }
-
+    
+    /** Use this function to register your plugin class so that the host
+	can find it. You pass the plugin class as the template parameter
+	and the URI for the plugin as the function parameter, like this:
+	
+	@code
+LV2::Plugin::register_class<MyPluginClass>("http://my.plugin.class");
+        @endcode
+	
+	You need to do this when the shared library is loaded by the host.
+	One way of doing that is to put the function call in the constructor
+	for a class or struct and create a global object of that type, 
+	like this:
+	
+	@code
+struct Init { 
+  Init() { LV2::Plugin::register_class<MyPluginClass>("http://my.plugin.class"); }
+} init;
+        @endcode
+    */
+    template <class T>
+    static void register_class(const std::string& uri) {
+      LV2_Descriptor desc;
+      std::memset(&desc, 0, sizeof(LV2_Descriptor));
+      char* c_uri = new char[uri.size() + 1];
+      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
+      desc.URI = c_uri;
+      desc.instantiate = &Plugin::create_plugin_instance<T>;
+      desc.connect_port = &Plugin::connect_port<T>;
+      desc.activate = &Plugin::activate<T>;
+      desc.run = &Plugin::run<T>;
+      desc.deactivate = &Plugin::deactivate<T>;
+      desc.cleanup = &Plugin::delete_plugin_instance<T>;
+      get_lv2_descriptors().push_back(desc);
+    }
+    
   protected:
   
-    /** Use this as a shorthand to access and cast port buffers. */
+    /** Use this function to access and cast port buffers, for example
+        like this:
+    
+        @code
+LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
+        @endcode
+	
+	If you want to access a port buffer as a pointer-to-float (i.e. an audio
+	or control port) you can use the non-template version instead. */
     template <typename T> inline T*& p(uint32_t port) {
       return reinterpret_cast<T*&>(m_ports[port]);
     }
   
-    /** This is needed because default template parameters aren't allowed for
-	template functions. */
+    /** Use this function to access data buffers for control or audio ports. */
     float*& p(uint32_t port) {
       return reinterpret_cast<float*&>(m_ports[port]);
     }
   
-    /** This vector contains pointers to all port buffers. You don't need to
+    /** @internal
+	This vector contains pointers to all port buffers. You don't need to
 	access it directly, use the p() function instead. */
     std::vector<void*> m_ports;
 
@@ -132,9 +184,10 @@ namespace LV2 {
       reinterpret_cast<T*>(instance)->deactivate();
     }
   
-    /* This template function creates an instance of a plugin. It is used as
-       the instantiate() callback in the LV2 descriptor. You should not use
-       it directly. */
+    /** @internal
+	This template function creates an instance of a plugin. It is used as
+	the instantiate() callback in the LV2 descriptor. You should not use
+	it directly. */
     template <class T>
     static LV2_Handle create_plugin_instance(const LV2_Descriptor* descriptor,
 					     double sample_rate,
@@ -145,9 +198,10 @@ namespace LV2 {
       return reinterpret_cast<LV2_Handle>(t);
     }
   
-    /* This function destroys an instance of a plugin. It is used as the
-       cleanup() callback in the LV2 descriptor. You should not use it
-       directly. */
+    /** @internal
+	This function destroys an instance of a plugin. It is used as the
+	cleanup() callback in the LV2 descriptor. You should not use it
+	directly. */
     template <class T>
     static void delete_plugin_instance(LV2_Handle instance) {
       delete reinterpret_cast<T*>(instance);
@@ -156,29 +210,20 @@ namespace LV2 {
 
     typedef std::vector<LV2_Descriptor> DescList;
   
-    /** This returns a list of all registered plugins. It is only used 
+    /** @internal
+	This returns a list of all registered plugins. It is only used 
 	internally. */
     static DescList& get_lv2_descriptors();
 
   };
 
-
+  
+  /** @deprecated Don't use this class, use Plugin::register_class() instead. */
   template <class T>
   class Register {
   public:
     Register(const std::string& uri) {
-      LV2_Descriptor desc;
-      std::memset(&desc, 0, sizeof(LV2_Descriptor));
-      char* c_uri = new char[uri.size() + 1];
-      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
-      desc.URI = c_uri;
-      desc.instantiate = &Plugin::create_plugin_instance<T>;
-      desc.connect_port = &Plugin::connect_port<T>;
-      desc.activate = &Plugin::activate<T>;
-      desc.run = &Plugin::run<T>;
-      desc.deactivate = &Plugin::deactivate<T>;
-      desc.cleanup = &Plugin::delete_plugin_instance<T>;
-      Plugin::get_lv2_descriptors().push_back(desc);
+      Plugin::register_class<T>(uri);
     }
   };
 

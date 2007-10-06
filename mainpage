@@ -1,0 +1,13 @@
+/** @mainpage LV2 C++ classes
+    These documents describes some C++ classes that may be of use if you want
+    to write LV2 plugins in C++. They implement most of the boilerplate code
+    so you only have to write the parts that matter, and hide the low-level
+    C API.
+    
+    The classes are separated into two libraries. One, called liblv2-plugin,
+    contains the class LV2::Plugin, defined in the file lv2plugin.hpp. It
+    is a base class that you can inherit in order to create new LV2 plugins.
+    The other library, called liblv2-gui, contains the classes LV2::Controller
+    and LV2::GUI, defined in the file lv2gui.hpp, which you can use in a 
+    similar way to create new LV2 plugin GUIs.
+*/
