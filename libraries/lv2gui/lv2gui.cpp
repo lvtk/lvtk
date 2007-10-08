@@ -78,7 +78,7 @@ namespace LV2 {
 			 LV2UI_Program_Change_Function pfunc,
 			 LV2UI_Program_Save_Function sfunc,
 			 LV2UI_Controller ctrl,
-			 const LV2_Host_Feature** features)
+			 const LV2_Feature* const* features)
     : m_wfunc(wfunc),
       m_cfunc(cfunc),
       m_pfunc(pfunc),
@@ -88,60 +88,53 @@ namespace LV2 {
   }
   
   
-  namespace G2GSupportFunctions {
+  GUI::DescList& GUI::get_lv2g2g_descriptors() {
+    static DescList list;
+    return list;
+  }
+  
+  
+  void GUI::delete_ui_instance(LV2UI_Handle instance) {
+    delete static_cast<GUI*>(instance)->m_controller;
+    delete static_cast<GUI*>(instance);
+  }
+  
+    
+  void GUI::port_event(LV2UI_Handle instance, uint32_t port, uint32_t buffer_size,
+		       const void* buffer) {
+    static_cast<GUI*>(instance)->port_event(port, buffer_size, buffer);
+  }
+  
+    
+  void GUI::feedback(LV2UI_Handle instance, uint32_t argc, const char* const* argv) {
+    static_cast<GUI*>(instance)->feedback(argc, argv);
+  }
     
     
-    DescList& get_lv2g2g_descriptors() {
-      static DescList list;
-      return list;
-    }
+  void GUI::program_added(LV2UI_Handle instance, unsigned char number, 
+			  const char* name) {
+    static_cast<GUI*>(instance)->program_added(number, name);
+  }
     
     
-    void delete_ui_instance(LV2UI_Handle instance) {
-      delete static_cast<GUI*>(instance);
-    }
-    
-    
-    /* Tell the GUI that a control rate float port has changed. You should
-       not use this directly. */
-    void port_event(LV2UI_Handle instance, uint32_t port, uint32_t buffer_size,
-		    const void* buffer) {
-      static_cast<GUI*>(instance)->port_event(port, buffer_size, buffer);
-    }
-    
-    
-    void feedback(LV2UI_Handle instance, uint32_t argc, const char* const* argv) {
-      static_cast<GUI*>(instance)->feedback(argc, argv);
-    }
-    
-    
-    void program_added(LV2UI_Handle instance, unsigned char number, 
-		       const char* name) {
-      static_cast<GUI*>(instance)->program_added(number, name);
-    }
-    
-    
-    void program_removed(LV2UI_Handle instance, unsigned char number) {
-      static_cast<GUI*>(instance)->program_removed(number);
-    }
-    
-    
-    void programs_cleared(LV2UI_Handle instance) {
-      static_cast<GUI*>(instance)->programs_cleared();
-    }
-    
-    
-    void current_program_changed(LV2UI_Handle instance, unsigned char number) {
-      static_cast<GUI*>(instance)->current_program_changed(number);
-    }
-    
-    
-    void* extension_data(LV2UI_Handle instance, const char* URI) {
-      return static_cast<GUI*>(instance)->extension_data(URI);
-    }
-    
-    
-  }  
+  void GUI::program_removed(LV2UI_Handle instance, unsigned char number) {
+    static_cast<GUI*>(instance)->program_removed(number);
+  }
+  
+  
+  void GUI::programs_cleared(LV2UI_Handle instance) {
+    static_cast<GUI*>(instance)->programs_cleared();
+  }
+  
+  
+  void GUI::current_program_changed(LV2UI_Handle instance, unsigned char number) {
+    static_cast<GUI*>(instance)->current_program_changed(number);
+  }
+  
+  
+  void* GUI::extension_data(LV2UI_Handle instance, const char* URI) {
+    return static_cast<GUI*>(instance)->extension_data(URI);
+  }
   
 
 }
@@ -150,8 +143,7 @@ namespace LV2 {
 extern "C" {
   
   const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index) {
-    using namespace LV2::G2GSupportFunctions;
-    DescList descs = get_lv2g2g_descriptors();
+    LV2::GUI::DescList descs = LV2::GUI::get_lv2g2g_descriptors();
     if (index >= descs.size())
       return 0;
     return descs[index];

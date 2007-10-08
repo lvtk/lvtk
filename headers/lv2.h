@@ -129,7 +129,7 @@ typedef void * LV2_Handle;
  * LV2 specification does not define any host features; hosts are not required
  * to use this facility.
  */
-typedef struct _LV2_Host_Feature {
+typedef struct _LV2_Feature {
 	/** A globally unique, case-sensitive identifier for this feature.
 	 *
 	 * This MUST be defined in the specification of any LV2 extension which
@@ -147,7 +147,7 @@ typedef struct _LV2_Host_Feature {
 	 * If no data is required, this may be set to NULL.
 	 */
 	void * data;
-} LV2_Host_Feature;
+} LV2_Feature;
 
 
 /* ************************************************************************* */
@@ -198,7 +198,7 @@ typedef struct _LV2_Descriptor {
   LV2_Handle (*instantiate)(const struct _LV2_Descriptor *  Descriptor,
                             double                          SampleRate,
                             const char *                    BundlePath,
-                            const LV2_Host_Feature * const* HostFeatures);
+                            const LV2_Feature * const*      Features);
 
   /** Function pointer that connects a port on a plugin instance to a memory
    * location where the block of data for the port will be read/written.

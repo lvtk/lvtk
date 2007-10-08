@@ -36,22 +36,6 @@
 
 namespace LV2 {
 
-  namespace G2GSupportFunctions {
-    
-    template <class T>
-    LV2UI_Handle create_ui_instance(const struct _LV2UI_Descriptor* descriptor,
-				    const char*                     plugin_uri,
-				    const char*                     bundle_path,
-				    LV2UI_Write_Function            write_func,
-				    LV2UI_Command_Function          command_func,
-				    LV2UI_Program_Change_Function   program_func,
-				    LV2UI_Program_Save_Function     save_func,
-				    LV2UI_Controller                ctrl,
-				    LV2UI_Widget*                   widget,
-				    const LV2_Host_Feature**        features);
-  }
-
-
   /** This class is an interface for controlling a plugin instance. An object
       of this class will be provided by the host when a plugin GUI is 
       instantiated. */
@@ -81,23 +65,12 @@ namespace LV2 {
     
   protected:
     
-    template <class T> friend
-    LV2UI_Handle G2GSupportFunctions::
-    create_ui_instance(const struct _LV2UI_Descriptor* descriptor,
-		       const char*                     plugin_uri,
-		       const char*                     bundle_path,
-		       LV2UI_Write_Function            write_function,
-		       LV2UI_Command_Function          command_function,
-		       LV2UI_Program_Change_Function   program_function,
-		       LV2UI_Program_Save_Function     save_function,
-		       LV2UI_Controller                ctrl,
-		       LV2UI_Widget*                   widget,
-		       const LV2_Host_Feature**        features);
+    friend class GUI;
     
     Controller(LV2UI_Write_Function wfcn, LV2UI_Command_Function cfcn,
 	       LV2UI_Program_Change_Function pfcn, 
 	       LV2UI_Program_Save_Function sfcn, LV2UI_Controller ctrl, 
-	       const LV2_Host_Feature** features);
+	       const LV2_Feature* const* features);
     
     LV2UI_Write_Function m_wfunc;
     LV2UI_Command_Function m_cfunc;
@@ -105,74 +78,8 @@ namespace LV2 {
     LV2UI_Program_Save_Function m_sfunc;
     LV2UI_Controller m_ctrl;
   };
+  
 
-
-  /* These functions are C wrappers for the C++ member functions. You should not
-     use them directly. That's why they are intentionally documented without the
-     Doxygen comment syntax. */
-  namespace G2GSupportFunctions {
-  
-  typedef std::vector<LV2UI_Descriptor*> DescList;
-  
-  /* This function returns the list of LV2 descriptors. It should only be 
-     used internally. */
-    DescList& get_lv2g2g_descriptors();
-    
-    /* This template function creates an instance of a plugin GUI. It is used 
-       as the instantiate() callback in the LV2 descriptor. You should not use
-       it directly. */
-    template <class T>
-    LV2UI_Handle create_ui_instance(const struct _LV2UI_Descriptor* descriptor,
-				    const char*                     plugin_uri,
-				    const char*                     bundle_path,
-				    LV2UI_Write_Function            write_func,
-				    LV2UI_Command_Function          command_func,
-				    LV2UI_Program_Change_Function   program_func,
-				    LV2UI_Program_Save_Function     save_func,
-				    LV2UI_Controller                ctrl,
-				    LV2UI_Widget*                   widget,
-				    const LV2_Host_Feature**        features) {
-      
-      // this is needed to initialise gtkmm stuff in case we're running in
-      // a Gtk+ or PyGtk host or some other language
-      Gtk::Main::init_gtkmm_internals();
-      
-      Controller* controller = new Controller(write_func, command_func,
-					      program_func, save_func,
-					      ctrl, features);
-      T* t = new T(*controller, plugin_uri, bundle_path);
-      t->m_controller = controller;
-      *widget = static_cast<Gtk::Widget*>(t)->gobj();
-      return reinterpret_cast<LV2UI_Handle>(t);
-    }
-    
-    /* This function destroys an instance of a GUI. It is used as the
-       cleanup() callback in the LV2UI descriptor. You should not use it
-       directly. */
-    void delete_ui_instance(LV2UI_Handle instance);
-    
-    /* Tell the GUI that a control rate float port has changed. You should
-       not use this directly. */
-    void port_event(LV2UI_Handle instance, uint32_t port, uint32_t buffer_size,
-		    const void* buffer);
-    
-    void feedback(LV2UI_Handle instance, uint32_t argc, const char* const* argv);
-    
-    void program_added(LV2UI_Handle instance, unsigned char number, 
-		       const char* name);
-    
-    void program_removed(LV2UI_Handle instance, unsigned char number);
-    
-    void programs_cleared(LV2UI_Handle instance);
-    
-    void current_program_changed(LV2UI_Handle instance, unsigned char number);
-    
-    /* Try to access extension-specific data. You should not use this directly. */
-    void* extension_data(LV2UI_Handle instance, const char* URI);
-    
-  }  
-  
-  
   /** This is the base class for a plugin GUI. You should inherit it and 
       override any functions you want to provide implementations for. 
       All subclasses must have a constructor with the signature
@@ -215,47 +122,91 @@ namespace LV2 {
     /** Return data associated with an extension URI, or 0 if that extension
 	is not supported or does not have any data for use in plugin GUIs. */
     virtual void* extension_data(const std::string& URI) { return 0; }
+
+    /** Use this template function to register a class as a LV2 GUI. */
+    template <typename T> static void register_class(const std::string& URI) {
+      LV2UI_Descriptor* desc = new LV2UI_Descriptor;
+      std::memset(desc, 0, sizeof(LV2UI_Descriptor));
+      desc->URI = strdup(URI.c_str());
+      desc->instantiate = &create_ui_instance<T>;
+      desc->cleanup = &delete_ui_instance;
+      desc->port_event = &port_event;
+      desc->feedback = &feedback;
+      desc->program_added = &program_added;
+      desc->program_removed = &program_removed;
+      desc->programs_cleared = &programs_cleared;
+      desc->current_program_changed = &current_program_changed;
+      desc->extension_data = &extension_data;
+      get_lv2g2g_descriptors().push_back(desc);
+    }
     
+    typedef std::vector<LV2UI_Descriptor*> DescList;
+    
+    /** @internal
+	This function returns the list of LV2 descriptors. It should only be 
+	used internally. */
+    static DescList& get_lv2g2g_descriptors();
+
   private:
     
-    template <class T> friend
-    LV2UI_Handle G2GSupportFunctions::
-    create_ui_instance(const struct _LV2UI_Descriptor* descriptor,
-		       const char*                     plugin_uri,
-		       const char*                     bundle_path,
-		       LV2UI_Write_Function            write_function,
-		       LV2UI_Command_Function          command_function,
-		       LV2UI_Program_Change_Function   program_function,
-		       LV2UI_Program_Save_Function     save_function,
-		       LV2UI_Controller                ctrl,
-		       LV2UI_Widget*                   widget,
-		       const LV2_Host_Feature**        features);
+    /** @internal
+	This template function creates an instance of a plugin GUI. It is used 
+	as the instantiate() callback in the LV2 descriptor. You should not use
+	it directly. */
+    template <class T>
+    static LV2UI_Handle create_ui_instance(const struct _LV2UI_Descriptor* descriptor,
+				    const char*                     plugin_uri,
+				    const char*                     bundle_path,
+				    LV2UI_Write_Function            write_func,
+				    LV2UI_Command_Function          command_func,
+				    LV2UI_Program_Change_Function   program_func,
+				    LV2UI_Program_Save_Function     save_func,
+				    LV2UI_Controller                ctrl,
+				    LV2UI_Widget*                   widget,
+				    const LV2_Feature* const*       features) {
+      
+      // this is needed to initialise gtkmm stuff in case we're running in
+      // a Gtk+ or PyGtk host or some other language
+      Gtk::Main::init_gtkmm_internals();
+      
+      Controller* controller = new Controller(write_func, command_func,
+					      program_func, save_func,
+					      ctrl, features);
+      T* t = new T(*controller, plugin_uri, bundle_path);
+      t->m_controller = controller;
+      *widget = static_cast<Gtk::Widget*>(t)->gobj();
+      return reinterpret_cast<LV2UI_Handle>(t);
+    }
     
-    friend void* G2GSupportFunctions::extension_data(LV2UI_Handle instance, 
-						     const char* URI);
+
+    /** @internal
+	This function destroys an instance of a GUI. It is used as the
+	cleanup() callback in the LV2UI descriptor. You should not use it directly. */
+    static void delete_ui_instance(LV2UI_Handle instance);
+    
+    static void port_event(LV2UI_Handle instance, uint32_t port, uint32_t buffer_size,
+			   const void* buffer);
+    
+    static void feedback(LV2UI_Handle instance, uint32_t argc, 
+			 const char* const* argv);
+    
+    static void program_added(LV2UI_Handle instance, unsigned char number, 
+			      const char* name);
+    
+    static void program_removed(LV2UI_Handle instance, unsigned char number);
+    
+    static void programs_cleared(LV2UI_Handle instance);
+    
+    static void current_program_changed(LV2UI_Handle instance, unsigned char number);
+    
+    static void* extension_data(LV2UI_Handle instance, const char* URI);
+    
     
     Controller* m_controller;
     
   };
   
   
-  template <typename T> void register_lv2gtk2gui(const std::string& URI) {
-    using namespace G2GSupportFunctions;
-    LV2UI_Descriptor* desc = new LV2UI_Descriptor;
-    std::memset(desc, 0, sizeof(LV2UI_Descriptor));
-    desc->URI = strdup(URI.c_str());
-    desc->instantiate = &create_ui_instance<T>;
-    desc->cleanup = &delete_ui_instance;
-    desc->port_event = &port_event;
-    desc->feedback = &feedback;
-    desc->program_added = &program_added;
-    desc->program_removed = &program_removed;
-    desc->programs_cleared = &programs_cleared;
-    desc->current_program_changed = &current_program_changed;
-    desc->extension_data = &extension_data;
-    get_lv2g2g_descriptors().push_back(desc);
-  }
-
 }
 
 

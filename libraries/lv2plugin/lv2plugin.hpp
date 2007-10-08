@@ -49,7 +49,7 @@ namespace LV2 {
       
       class TestLV2 : public LV2::Plugin {
       public:
-        TestLV2(double, const char*, const LV2_Host_Feature* const*) : LV2::Plugin(2) { }
+        TestLV2(double, const char*, const LV2_Feature* const*) : LV2::Plugin(2) { }
         void run(uint32_t sample_count) {
           memcpy(p(1), p(0), sample_count * sizeof(float));
         }
@@ -192,9 +192,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     static LV2_Handle create_plugin_instance(const LV2_Descriptor* descriptor,
 					     double sample_rate,
 					     const char* bundle_path,
-					     const LV2_Host_Feature* const* 
-					     host_features) {
-      T* t = new T(sample_rate, bundle_path, host_features);
+					     const LV2_Feature* const* 
+					     features) {
+      T* t = new T(sample_rate, bundle_path, features);
       return reinterpret_cast<LV2_Handle>(t);
     }
   

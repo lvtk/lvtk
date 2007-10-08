@@ -124,14 +124,14 @@ namespace LV2 {
     static LV2_Handle create_advanced_instance(const LV2_Descriptor* descriptor,
 					       double sample_rate,
 					       const char* bundle_path,
-					       const LV2_Host_Feature* const* host_features) {
-      // check that the host supports the Advanced extension
+					       const LV2_Feature* const* features) {
+      // check that the host supports the c/f extension
       size_t i;
       LV2_CommandHostDescriptor* chd = 0; 
-      for (i = 0; host_features[i]; ++i) {
-	if (!std::strcmp(host_features[i]->URI, 
+      for (i = 0; features[i]; ++i) {
+	if (!std::strcmp(features[i]->URI, 
 			 "<http://ll-plugins.nongnu.org/lv2/namespace#dont-use-this-extension>")) {
-	  chd = static_cast<LV2_CommandHostDescriptor*>(host_features[i]->data);
+	  chd = static_cast<LV2_CommandHostDescriptor*>(features[i]->data);
 	  break;
 	}
       }
@@ -139,7 +139,7 @@ namespace LV2 {
 	return 0;
     
       // create and return an instance of the plugin
-      T* t = new T(sample_rate, bundle_path, host_features);
+      T* t = new T(sample_rate, bundle_path, features);
       static_cast<Advanced*>(t)->m_feedback_real = chd->feedback;
       static_cast<Advanced*>(t)->m_host_data = chd->host_data;
     
