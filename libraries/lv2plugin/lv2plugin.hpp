@@ -222,7 +222,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   template <class T>
   class Register {
   public:
-    Register(const std::string& uri) {
+    Register(const std::string& uri) __attribute__((deprecated)) {
       Plugin::register_class<T>(uri);
     }
   };

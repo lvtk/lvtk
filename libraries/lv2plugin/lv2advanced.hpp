@@ -152,7 +152,7 @@ namespace LV2 {
   template <class T>
   class RegisterAdvanced {
   public:
-    RegisterAdvanced(const std::string& uri) {
+    RegisterAdvanced(const std::string& uri) __attribute__((deprecated)) {
       LV2_Descriptor desc;
       std::memset(&desc, 0, sizeof(LV2_Descriptor));
       char* c_uri = new char[uri.size() + 1];
