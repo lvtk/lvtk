@@ -72,6 +72,12 @@ namespace LV2 {
     }
     
     
+    ~Synth() {
+      for (unsigned i = 0; i < m_voices.size(); ++i)
+	delete m_voices[i];
+    }
+    
+    
     unsigned find_free_voice(unsigned char key, unsigned char velocity) {
       for (unsigned i = 0; i < m_voices.size(); ++i) {
 	if (m_voices[i]->get_key() == INVALID_KEY)
@@ -128,6 +134,7 @@ namespace LV2 {
       
     }
     
+
     void add_audio_ports(uint32_t p1 = -1, uint32_t p2 = -1, uint32_t p3 = -1,
 			 uint32_t p4 = -1, uint32_t p5 = -1, uint32_t p6 = -1) {
       if (p1 == uint32_t(-1))
@@ -150,6 +157,72 @@ namespace LV2 {
       m_audio_ports.push_back(p6);
     }
     
+
+    void add_voices(V* v01 = 0, V* v02 = 0, V* v03 = 0, V* v04 = 0, V* v05 = 0,
+		    V* v06 = 0, V* v07 = 0, V* v08 = 0, V* v09 = 0, V* v10 = 0,
+		    V* v11 = 0, V* v12 = 0, V* v13 = 0, V* v14 = 0, V* v15 = 0,
+		    V* v16 = 0, V* v17 = 0, V* v18 = 0, V* v19 = 0, V* v20 = 0){
+      if (v01 == 0)
+	return;
+      m_voices.push_back(v01);
+      if (v02 == 0)
+	return;
+      m_voices.push_back(v02);
+      if (v03 == 0)
+	return;
+      m_voices.push_back(v03);
+      if (v04 == 0)
+	return;
+      m_voices.push_back(v04);
+      if (v05 == 0)
+	return;
+      m_voices.push_back(v05);
+      if (v06 == 0)
+	return;
+      m_voices.push_back(v06);
+      if (v07 == 0)
+	return;
+      m_voices.push_back(v07);
+      if (v08 == 0)
+	return;
+      m_voices.push_back(v08);
+      if (v09 == 0)
+	return;
+      m_voices.push_back(v09);
+      if (v10 == 0)
+	return;
+      m_voices.push_back(v10);
+      if (v11 == 0)
+	return;
+      m_voices.push_back(v11);
+      if (v12 == 0)
+	return;
+      m_voices.push_back(v12);
+      if (v13 == 0)
+	return;
+      m_voices.push_back(v13);
+      if (v14 == 0)
+	return;
+      m_voices.push_back(v14);
+      if (v15 == 0)
+	return;
+      m_voices.push_back(v15);
+      if (v16 == 0)
+	return;
+      m_voices.push_back(v16);
+      if (v17 == 0)
+	return;
+      m_voices.push_back(v17);
+      if (v18 == 0)
+	return;
+      m_voices.push_back(v18);
+      if (v19 == 0)
+	return;
+      m_voices.push_back(v19);
+      if (v20 == 0)
+	return;
+      m_voices.push_back(v20);
+    }    
   protected:
     
     std::vector<V*> m_voices;
