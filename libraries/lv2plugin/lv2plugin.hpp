@@ -129,7 +129,7 @@ struct Init {
         @endcode
     */
     template <class T>
-    static void register_class(const std::string& uri) {
+    static unsigned register_class(const std::string& uri) {
       LV2_Descriptor desc;
       std::memset(&desc, 0, sizeof(LV2_Descriptor));
       char* c_uri = new char[uri.size() + 1];
@@ -142,6 +142,7 @@ struct Init {
       desc.deactivate = &Plugin::deactivate<T>;
       desc.cleanup = &Plugin::delete_plugin_instance<T>;
       get_lv2_descriptors().push_back(desc);
+      return get_lv2_descriptors().size() - 1;
     }
     
   protected:
