@@ -34,7 +34,16 @@
 
 
 namespace LV2 {
-
+  
+  /** @internal
+      A thin wrapper around std::vector<LV2_Descriptor> that frees the URI
+      members of the descriptors. */
+  class DescList : public std::vector<LV2_Descriptor> {
+  public:
+    ~DescList();
+  };
+  
+  
   /** This is a base class for LV2 plugins. It has default implementations for
       all functions, so you only have to implement the functions that you need
       (for example run()). All subclasses must have a constructor whose 
@@ -208,8 +217,6 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     }
   
 
-    typedef std::vector<LV2_Descriptor> DescList;
-  
     /** @internal
 	This returns a list of all registered plugins. It is only used 
 	internally. */

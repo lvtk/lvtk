@@ -24,6 +24,7 @@
 #define LV2SYNTH_HPP
 
 #include <cmath>
+#include <cstring>
 #include <iostream>
 #include <vector>
 
@@ -33,13 +34,30 @@
 
 namespace LV2 {
   
+  static const unsigned char INVALID_KEY = 255;
+  
+  
+  float key2hz(unsigned char key) {
+    return 8.1758 * std::pow(1.0594, key);
+  }
+  
 
   class Voice {
   public:
-    void on(unsigned char key, unsigned char velocity) { };
-    void off(unsigned char velocity) { };
-    void fast_off() { };
-    unsigned char get_key() { return 255; }
+
+    void set_port_buffers(std::vector<void*>& ports) { m_ports = &ports; }
+
+  protected:
+  
+    template <typename T> inline T*& p(uint32_t port) {
+      return reinterpret_cast<T*&>((*m_ports)[port]);
+    }
+  
+    float*& p(uint32_t port) {
+      return reinterpret_cast<float*&>((*m_ports)[port]);
+    }
+  
+    std::vector<void*>* m_ports;
   };
   
   
@@ -47,106 +65,99 @@ namespace LV2 {
   class Synth : public Plugin {
   public:
     
-
     Synth(uint32_t ports, uint32_t midi_input) 
-      : Plugin(ports), 
+      : Plugin(ports),
 	m_midi_input(midi_input) { 
-      
+    
     }
     
     
-    ~Synth() {
-      for (unsigned i = 0; i < m_voices.size(); ++i)
-	delete m_voices[i];
-    }
-    
-    
-    void render_voices(uint32_t from, uint32_t to) { }
-    
-    
-    unsigned find_free_voice(unsigned char key) {
-      unsigned i;
-      for (i = 0; i < m_voices.size(); ++i) {
-	if (m_voices[i]->get_key() == 255)
-	  break;
+    unsigned find_free_voice(unsigned char key, unsigned char velocity) {
+      for (unsigned i = 0; i < m_voices.size(); ++i) {
+	if (m_voices[i]->get_key() == INVALID_KEY)
+	  return i;
       }
-      if (i == m_voices.size())
-	return 0;
-      return i;
+      return 0;
     }
     
     
-    void run(uint32_t sample_count) { 
+    void handle_midi(uint32_t size, unsigned char* data) {
+      if (size != 3)
+	return;
+      if (data[0] == 0x90) {
+	m_voices[find_free_voice(data[1], data[2])]->on(data[1], data[2]);
+      }
+      else if (data[0] == 0x80) {
+	for (unsigned i = 0; i < m_voices.size(); ++i) {
+	  if (m_voices[i]->get_key() == data[1]) {
+	    m_voices[i]->off(data[2]);
+	    break;
+	  }
+	}
+      }
+    }
+    
+    
+    void run(uint32_t sample_count) {
       
-      std::cerr<<__PRETTY_FUNCTION__<<std::endl;
+      // zero output buffers
+      for (unsigned i = 0; i < m_audio_ports.size(); ++i)
+	std::memset(p(m_audio_ports[i]), 0, sizeof(float) * sample_count);
+      
+      // prepare voices
+      for (unsigned i = 0; i < m_voices.size(); ++i)
+	m_voices[i]->set_port_buffers(m_ports);
       
       LV2_MIDIState ms = { p<LV2_MIDI>(m_midi_input), sample_count, 0 };
       double event_time;
       uint32_t event_size;
       unsigned char* event_data;
       uint32_t samples_done = 0;
-      do {
-	
+      
+      while (samples_done < sample_count) {
 	lv2midi_get_event(&ms, &event_time, &event_size, &event_data);
-	
-	std::cerr<<"EVENT: "<<event_time<<", "<<event_size<<std::endl;
-	
 	lv2midi_step(&ms);
-	uint32_t to(std::floor(event_time));
+	handle_midi(event_size, event_data);
+	uint32_t to = event_time;
 	if (to > samples_done) {
-	  render_voices(samples_done, to);
+	  for (unsigned i = 0; i < m_voices.size(); ++i)
+	    m_voices[i]->render(samples_done, to);
 	  samples_done = to;
 	}
-	
-	if (samples_done < sample_count && event_size == 3) {
-	  switch (event_data[0]) {
-	    
-	    // note off
-	  case 0x80:
-	    for (unsigned i = 0; i < m_voices.size(); ++i) {
-	      if (m_voices[i]->get_key() == event_data[1]) {
-		m_voices[i]->off(event_data[2]);
-		break;
-	      }
-	    }
-	    break;
-	    
-	    // note on
-	  case 0x90:
-	    m_voices[find_free_voice(event_data[1])]->
-	      on(event_data[1], event_data[2]);
-	    break;
-	    
-	    // controller
-	  case 0xB0:
-	    // all notes off
-	    if (event_data[1] == 0x7B) {
-	      for (unsigned i = 0; i < m_voices.size(); ++i)
-		m_voices[i]->off(64);
-	    }
-	    // all sound off
-	    if (event_data[1] == 0x78) {
-	      for (unsigned i = 0; i < m_voices.size(); ++i)
-		m_voices[i]->fast_off();
-	    }
-	    break;
-
-	  }
-	}
-      } while (samples_done < sample_count);
+      }
+      
     }
     
+    void add_audio_ports(uint32_t p1 = -1, uint32_t p2 = -1, uint32_t p3 = -1,
+			 uint32_t p4 = -1, uint32_t p5 = -1, uint32_t p6 = -1) {
+      if (p1 == uint32_t(-1))
+	return;
+      m_audio_ports.push_back(p1);
+      if (p2 == uint32_t(-1))
+	return;
+      m_audio_ports.push_back(p2);
+      if (p3 == uint32_t(-1))
+	return;
+      m_audio_ports.push_back(p3);
+      if (p4 == uint32_t(-1))
+	return;
+      m_audio_ports.push_back(p4);
+      if (p5 == uint32_t(-1))
+	return;
+      m_audio_ports.push_back(p5);
+      if (p6 == uint32_t(-1))
+	return;
+      m_audio_ports.push_back(p6);
+    }
     
   protected:
     
     std::vector<V*> m_voices;
-    int m_pwheel;
-    
-  private:
-    
+    std::vector<uint32_t> m_audio_ports;
     uint32_t m_midi_input;
-  };
     
+  };
+  
 }
 
 

@@ -25,23 +25,27 @@
 
 namespace LV2 {
   
-  // we need at least one exported function here that is used by the plugin 
-  // implementations, otherwise this object file may not be linked into the
-  // plugin and then there won't be a lv2_descriptor() function
-  Plugin::DescList& Plugin::get_lv2_descriptors() {
+  DescList::~DescList() {
+    for (unsigned i = 0; i < size(); ++i)
+      delete [] operator[](i).URI;
+  }
+
+  DescList& Plugin::get_lv2_descriptors() {
     static DescList descriptors;
     return descriptors;
   }
-
+  
 }
 
 
 extern "C" {
+  
   const LV2_Descriptor* lv2_descriptor(uint32_t index) {
     if (index < LV2::Plugin::get_lv2_descriptors().size())
       return &LV2::Plugin::get_lv2_descriptors()[index];
     return NULL;
   }
+  
 }
 
 
