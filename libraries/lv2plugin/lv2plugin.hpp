@@ -26,14 +26,95 @@
 #include <unistd.h>
 
 #include <cstring>
+#include <map>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <lv2.h>
+#include <lv2-command.h>
 
 
 namespace LV2 {
+  
+  
+  /** Convenient typedef for the feature handler function type. */
+  typedef void(*FeatureHandler)(void*, void*);
+  
+  /** Convenient typedef for the feature handler map type. */
+  typedef std::map<std::string, FeatureHandler> FeatureHandlerMap;
+  
+  
+
+  /** @internal
+      This template class is used to terminate the recursive inheritance trees
+      created by InheritanceTree. */
+  template <class A, bool B>
+  struct End {
+    
+  };
+  
+
+  /** @internal
+      This template class creates an inheritance tree of extension templates
+      from a parameter list. It is inherited by the Plugin class to make
+      it possible to add overridable extension functions to the class.
+      The first template parameter will be used as the first template
+      parameter of @c E1, and also be passed as the first parameter of the
+      next level of the inheritance tree. Each @c bool parameter will be used
+      as the second parameter to the template directly preceding it. */
+  template <class A,
+	    template <class, bool> class E1 = End, bool B1 = false,
+	    template <class, bool> class E2 = End, bool B2 = false,
+	    template <class, bool> class E3 = End, bool B3 = false,
+	    template <class, bool> class E4 = End, bool B4 = false,
+	    template <class, bool> class E5 = End, bool B5 = false,
+	    template <class, bool> class E6 = End, bool B6 = false,
+	    template <class, bool> class E7 = End, bool B7 = false,
+	    template <class, bool> class E8 = End, bool B8 = false,
+	    template <class, bool> class E9 = End, bool B9 = false>
+  struct InheritanceTree 
+    : E1<A, B1>, InheritanceTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
+				 E6, B6, E7, B7, E8, B8, E9, B9> {
+    
+    typedef InheritanceTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
+			    E6, B6, E7, B7, E8, B8, E9, B9> Parent;
+    
+    /** @internal
+	Add feature handlers to @c hmap for the feature URIs. */
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      E1<A, B1>::map_feature_handlers(hmap);
+      Parent::map_feature_handlers(hmap);
+    }
+    
+    /** Check if the features are OK with the plugin initialisation. */
+    bool check_ok() const { 
+      return E1<A, B1>::check_ok() && Parent::check_ok();
+    }
+    
+    /** Return any extension data. */
+    static const void* extension_data(const char* uri) {
+      const void* result = E1<A, B1>::extension_data(uri);
+      if (result)
+	return result;
+      return Parent::extension_data(uri);
+    }
+    
+  };
+
+
+  /** @internal
+      This is a specialisation of the inheritance tree template that terminates
+      the recursion. */
+  template <class A>
+  struct InheritanceTree<A, 
+			 End, false, End, false, End, false, 
+			 End, false, End, false, End, false, 
+			 End, false, End, false, End, false> {
+    static void map_feature_handlers(FeatureHandlerMap& hmap) { }
+    bool check_ok() const { return true; }
+    static const void* extension_data(const char* uri) { return 0; }
+  };
+
   
   /** @internal
       A thin wrapper around std::vector<LV2_Descriptor> that frees the URI
@@ -42,31 +123,39 @@ namespace LV2 {
   public:
     ~DescList();
   };
+
+
+  /** @internal
+      This returns a list of all registered plugins. It is only used 
+      internally. */
+  DescList& get_lv2_descriptors();
+
   
-  
-  /** This is a base class for LV2 plugins. It has default implementations for
-      all functions, so you only have to implement the functions that you need
-      (for example run()). All subclasses must have a constructor whose 
-      signature matches the one in the example code below, otherwise it will 
-      not work with the template class LV2::Register. The host will use 
-      these parameter to pass the sample rate, the path to the bundle directory
-      and the list of features passed from the host when it creates a new 
-      instance of the plugin. 
+  /** This is a template base class for LV2 plugins. It has default 
+      implementations for all functions, so you only have to implement the 
+      functions that you need (for example run()). All subclasses must have 
+      a constructor whose signature matches the one in the example code below, 
+      otherwise it will not work with the template class LV2::Register. The 
+      host will use these parameter to pass the sample rate, the path to the 
+      bundle directory and the list of features passed from the host when it 
+      creates a new instance of the plugin. 
       
+      This is a template so that simulated dynamic binding can be used for
+      the callbacks. This is not all that useful for simple plugins but it may
+      come in handy for extensions and it doesn't add any additional vtable
+      lookup and function call costs, like real dynamic binding would.
       @code
       #include <lv2plugin.hpp>
       
-      class TestLV2 : public LV2::Plugin {
+      class TestLV2 : public LV2::Plugin<TestLV2> {
       public:
-        TestLV2(double, const char*, const LV2_Feature* const*) : LV2::Plugin(2) { }
+        TestLV2(double, const char*, const LV2_Feature* const*) : LV2::Plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
           memcpy(p(1), p(0), sample_count * sizeof(float));
         }
       };
       
-      static struct Init {
-        Init() { LV2::Plugin::register_class<TestLV2>("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0"); }
-      } init;
+      static unsigned _ = TestLV2::register_class<TestLV2>("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0");
       @endcode
       
       If the above code is compiled and linked with @c -llv2_plugin into a 
@@ -74,12 +163,38 @@ namespace LV2 {
       functional (but not very useful) LV2 plugin with one audio input port
       and one audio output port that just copies the input to the output.
   */
-  class Plugin {
+template <class Derived, 
+	  template <class, bool> class Ext1 = End, bool Req1 = false,
+	  template <class, bool> class Ext2 = End, bool Req2 = false,
+	  template <class, bool> class Ext3 = End, bool Req3 = false,
+	  template <class, bool> class Ext4 = End, bool Req4 = false,
+	  template <class, bool> class Ext5 = End, bool Req5 = false,
+	  template <class, bool> class Ext6 = End, bool Req6 = false,
+	  template <class, bool> class Ext7 = End, bool Req7 = false,
+	  template <class, bool> class Ext8 = End, bool Req8 = false,
+	  template <class, bool> class Ext9 = End, bool Req9 = false>
+class Plugin : public InheritanceTree<Derived, 
+				      Ext1, Req1, Ext2, Req2, Ext3, Req3,
+				      Ext4, Req4, Ext5, Req5, Ext6, Req6,
+				      Ext7, Req7, Ext8, Req8, Ext9, Req9> {
   public:
     
     /** This constructor is needed to initialise the port vector with the
-	correct number of ports. */
-    Plugin(uint32_t ports) : m_ports(ports, 0) { }
+	correct number of ports, and to check if all the required features
+	are provided. */
+    Plugin(uint32_t ports, const LV2_Feature* const* f = 0) 
+      : m_ports(ports, 0) {
+      if (f) {
+	FeatureHandlerMap hmap;
+	Derived::map_feature_handlers(hmap);
+	for (const LV2_Feature* const* iter = f; *iter != 0; ++iter) {
+	  FeatureHandlerMap::iterator miter;
+	  miter = hmap.find((*iter)->URI);
+	  if (miter != hmap.end())
+	    miter->second(static_cast<Derived*>(this), (*iter)->data);
+	}
+      }
+    }
     
     /** Connects the ports. You shouldn't have to override this, just use
 	p(port) to access the port buffers. 
@@ -109,43 +224,7 @@ namespace LV2 {
 	run() (unless it calls activate() again). */
     void deactivate() { }
     
-    /** Use this function to register your plugin class so that the host
-	can find it. You pass the plugin class as the template parameter
-	and the URI for the plugin as the function parameter, like this:
-	
-	@code
-LV2::Plugin::register_class<MyPluginClass>("http://my.plugin.class");
-        @endcode
-	
-	You need to do this when the shared library is loaded by the host.
-	One way of doing that is to put the function call in the constructor
-	for a class or struct and create a global object of that type, 
-	like this:
-	
-	@code
-struct Init { 
-  Init() { LV2::Plugin::register_class<MyPluginClass>("http://my.plugin.class"); }
-} init;
-        @endcode
-    */
-    template <class T>
-    static unsigned register_class(const std::string& uri) {
-      LV2_Descriptor desc;
-      std::memset(&desc, 0, sizeof(LV2_Descriptor));
-      char* c_uri = new char[uri.size() + 1];
-      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
-      desc.URI = c_uri;
-      desc.instantiate = &Plugin::create_plugin_instance<T>;
-      desc.connect_port = &Plugin::connect_port<T>;
-      desc.activate = &Plugin::activate<T>;
-      desc.run = &Plugin::run<T>;
-      desc.deactivate = &Plugin::deactivate<T>;
-      desc.cleanup = &Plugin::delete_plugin_instance<T>;
-      get_lv2_descriptors().push_back(desc);
-      return get_lv2_descriptors().size() - 1;
-    }
-    
-  protected:
+  //  protected:
   
     /** Use this function to access and cast port buffers, for example
         like this:
@@ -156,7 +235,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 	
 	If you want to access a port buffer as a pointer-to-float (i.e. an audio
 	or control port) you can use the non-template version instead. */
-    template <typename T> inline T*& p(uint32_t port) {
+    template <typename T> T*& p(uint32_t port) {
       return reinterpret_cast<T*&>(m_ports[port]);
     }
   
@@ -164,7 +243,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     float*& p(uint32_t port) {
       return reinterpret_cast<float*&>(m_ports[port]);
     }
-  
+
     /** @internal
 	This vector contains pointers to all port buffers. You don't need to
 	access it directly, use the p() function instead. */
@@ -173,67 +252,149 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 
   public:
 
-    template <class T>
-    static void connect_port(LV2_Handle instance, uint32_t port, 
+    static void _connect_port(LV2_Handle instance, uint32_t port, 
 			     void* data_location) {
-      reinterpret_cast<T*>(instance)->connect_port(port, data_location);
+      reinterpret_cast<Derived*>(instance)->connect_port(port, data_location);
     }
   
-    template <class T>
-    static void activate(LV2_Handle instance) {
-      reinterpret_cast<T*>(instance)->activate();
+    static void _activate(LV2_Handle instance) {
+      reinterpret_cast<Derived*>(instance)->activate();
     }
   
-    template <class T>
-    static void run(LV2_Handle instance, uint32_t sample_count) {
-      reinterpret_cast<T*>(instance)->run(sample_count);
+    static void _run(LV2_Handle instance, uint32_t sample_count) {
+      reinterpret_cast<Derived*>(instance)->run(sample_count);
     }
   
-    template <class T>
-    static void deactivate(LV2_Handle instance) {
-      reinterpret_cast<T*>(instance)->deactivate();
+    static void _deactivate(LV2_Handle instance) {
+      reinterpret_cast<Derived*>(instance)->deactivate();
     }
   
     /** @internal
-	This template function creates an instance of a plugin. It is used as
+	This function creates an instance of a plugin. It is used as
 	the instantiate() callback in the LV2 descriptor. You should not use
 	it directly. */
-    template <class T>
-    static LV2_Handle create_plugin_instance(const LV2_Descriptor* descriptor,
-					     double sample_rate,
-					     const char* bundle_path,
-					     const LV2_Feature* const* 
-					     features) {
-      T* t = new T(sample_rate, bundle_path, features);
-      return reinterpret_cast<LV2_Handle>(t);
+    static LV2_Handle _create_plugin_instance(const LV2_Descriptor* descriptor,
+					      double sample_rate,
+					      const char* bundle_path,
+					      const LV2_Feature* const* 
+					      features) {
+      Derived* t = new Derived(sample_rate, bundle_path, features);
+      if (t->check_ok())
+	return reinterpret_cast<LV2_Handle>(t);
+      delete t;
+      return 0;
     }
-  
+	    
     /** @internal
 	This function destroys an instance of a plugin. It is used as the
 	cleanup() callback in the LV2 descriptor. You should not use it
 	directly. */
-    template <class T>
-    static void delete_plugin_instance(LV2_Handle instance) {
-      delete reinterpret_cast<T*>(instance);
+    static void _delete_plugin_instance(LV2_Handle instance) {
+      delete reinterpret_cast<Derived*>(instance);
     }
+
+
+    /** Use this function to register your plugin class so that the host
+	can find it. You need to do this when the shared library is loaded 
+	by the host. One way of doing that is to put the function call in 
+	the initialiser for a global variable, like this:
+	
+	@code
+unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
+        @endcode
+    */
+    static unsigned register_class(const std::string& uri) {
+      LV2_Descriptor desc;
+      std::memset(&desc, 0, sizeof(LV2_Descriptor));
+      char* c_uri = new char[uri.size() + 1];
+      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
+      desc.URI = c_uri;
+      desc.instantiate = &Derived::_create_plugin_instance;
+      desc.connect_port = &Derived::_connect_port;
+      desc.activate = &Derived::_activate;
+      desc.run = &Derived::_run;
+      desc.deactivate = &Derived::_deactivate;
+      desc.cleanup = &Derived::_delete_plugin_instance;
+      desc.extension_data = &Derived::extension_data;
+      get_lv2_descriptors().push_back(desc);
+      return get_lv2_descriptors().size() - 1;
+    }
+
+
+  };
   
-
-    /** @internal
-	This returns a list of all registered plugins. It is only used 
-	internally. */
-    static DescList& get_lv2_descriptors();
-
+  
+  /** @internal
+      The URI used for the Command extension. */
+  static const char* command_uri = 
+		 "http://ll-plugins.nongnu.org/lv2/namespace#dont-use-this-extension";
+  
+  
+  /** Base class for extensions. Extension clases don't have to inherit from
+      this class, but it's convenient. */
+  template <bool Required>
+  struct Extension {
+    
+    Extension() : m_ok(!Required) { }
+    
+    /** Default implementation does nothing - no handlers added. */
+    static void map_feature_handlers(FeatureHandlerMap& hmap) { }
+    
+    /** Return @c true if the plugin instance is OK, @c false if it isn't. */
+    bool check_ok() const { return m_ok; }
+  
+    /** Return a data pointer corresponding to the URI if this extension 
+	has one. */
+    static const void* extension_data(const char* uri) { return 0; }
+  
+  protected:
+  
+    bool m_ok;
+  
   };
 
   
-  /** @deprecated Don't use this class, use Plugin::register_class() instead. */
-  template <class T>
-  class Register {
-  public:
-    Register(const std::string& uri) __attribute__((deprecated)) {
-      Plugin::register_class<T>(uri);
+  /** The Command extension. */
+  template <class Derived, bool Required>
+  struct CommandExt : Extension<Required> {
+    
+    CommandExt() : m_chd(0) { }
+    
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      hmap[command_uri] = &CommandExt::handle_feature;
     }
+    
+    static void handle_feature(void* instance, void* data) { 
+      Derived* d = reinterpret_cast<Derived*>(instance);
+      CommandExt* ce = static_cast<CommandExt*>(d);
+      ce->m_chd = reinterpret_cast<LV2_CommandHostDescriptor*>(data);
+      ce->m_ok = (data != 0);
+    }
+  
+    static const void* extension_data(const char* uri) { 
+      if (!std::strcmp(uri, command_uri)) {
+	static LV2_CommandDescriptor cdesc = { &CommandExt::_command };
+	return &cdesc;
+      }
+      return 0;
+    }
+  
+    char* command(uint32_t argc, const char* const* argv) { }
+  
+    static char* _command(LV2_Handle h, 
+			  uint32_t argc, const char* const* argv) {
+      reinterpret_cast<Derived*>(h)->command(argc, argv);
+    }
+  
+    void feedback(uint32_t argc, const char* const* argv) {
+      (*m_chd->feedback)(m_chd->host_data, argc, argv);
+    }
+  
+    LV2_CommandHostDescriptor* m_chd;
+  
   };
+
+
 
 
 }

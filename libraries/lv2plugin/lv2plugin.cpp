@@ -30,7 +30,7 @@ namespace LV2 {
       delete [] operator[](i).URI;
   }
 
-  DescList& Plugin::get_lv2_descriptors() {
+  DescList& get_lv2_descriptors() {
     static DescList descriptors;
     return descriptors;
   }
@@ -41,8 +41,8 @@ namespace LV2 {
 extern "C" {
   
   const LV2_Descriptor* lv2_descriptor(uint32_t index) {
-    if (index < LV2::Plugin::get_lv2_descriptors().size())
-      return &LV2::Plugin::get_lv2_descriptors()[index];
+    if (index < LV2::get_lv2_descriptors().size())
+      return &LV2::get_lv2_descriptors()[index];
     return NULL;
   }
   

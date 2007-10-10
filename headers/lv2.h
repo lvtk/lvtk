@@ -327,7 +327,7 @@ typedef struct _LV2_Descriptor {
    * function pointers (which is valid standard C++, and a much better idea
    * for extensibility anyway).
    */
-  void* (*extension_data)(const char * URI); 
+  const void* (*extension_data)(const char * URI); 
 
 } LV2_Descriptor;
 

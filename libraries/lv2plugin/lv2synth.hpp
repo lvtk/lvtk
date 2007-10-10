@@ -159,15 +159,36 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 };
       @endcode
   */
-  template <class V, class D>
-  class Synth : public Plugin {
+  template <class V, class D,
+	    template <class, bool> class Ext1 = End, bool Req1 = false,
+	    template <class, bool> class Ext2 = End, bool Req2 = false,
+	    template <class, bool> class Ext3 = End, bool Req3 = false,
+	    template <class, bool> class Ext4 = End, bool Req4 = false,
+	    template <class, bool> class Ext5 = End, bool Req5 = false,
+	    template <class, bool> class Ext6 = End, bool Req6 = false,
+	    template <class, bool> class Ext7 = End, bool Req7 = false,
+	    template <class, bool> class Ext8 = End, bool Req8 = false,
+	    template <class, bool> class Ext9 = End, bool Req9 = false>
+  class Synth : public Plugin<D, 
+			      Ext1, Req1, Ext2, Req2, Ext3, Req3,
+			      Ext4, Req4, Ext5, Req5, Ext6, Req6,
+			      Ext7, Req7, Ext8, Req8, Ext9, Req9> {
   public:
     
+    /** @internal
+	Convenient typedef for the parent class. */
+    typedef Plugin<D, Ext1, Req1, Ext2, Req2, Ext3, Req3, Ext4, Req4, 
+		   Ext5, Req5, Ext6, Req6, Ext7, Req7, Ext8, Req8, Ext9, Req9>
+    Parent;
+    
+
     /** @c ports is the total number of ports in this plugin, and @c midi_input
 	is the index of the main MIDI input port (the one that the synth should
 	use for note input). */
-    Synth(uint32_t ports, uint32_t midi_input) 
-      : Plugin(ports),
+    Synth(uint32_t ports, const LV2_Feature* const* f, uint32_t midi_input) 
+    //      : Plugin<D, Ext1, Req1, Ext2, Req2, Ext3, Req3, Ext4, Req4, Ext5, Req5, 
+    //	       Ext6, Req6, Ext7, Req7, Ext8, Req8, Ext9, Req9>(ports),
+      : Parent(ports, f),
 	m_midi_input(midi_input) { 
     
     }
@@ -254,7 +275,8 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       
       // zero output buffers
       for (unsigned i = 0; i < m_audio_ports.size(); ++i)
-	std::memset(p(m_audio_ports[i]), 0, sizeof(float) * sample_count);
+	std::memset(p(m_audio_ports[i]), 0, 
+		    sizeof(float) * sample_count);
       
       // if there are no voices, do nothing
       if (m_voices.size() == 0)
@@ -262,7 +284,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       
       // prepare voices
       for (unsigned i = 0; i < m_voices.size(); ++i)
-	m_voices[i]->set_port_buffers(m_ports);
+	m_voices[i]->set_port_buffers(Parent::m_ports);
       
       LV2_MIDIState ms = { p<LV2_MIDI>(m_midi_input), sample_count, 0 };
       double event_time;
@@ -388,6 +410,17 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     }    
   protected:
     
+    /** Use this function to access data buffers for ports. */
+    template <typename T> T*& p(uint32_t port) {
+      return reinterpret_cast<T*&>(Parent::m_ports[port]);
+    }
+  
+    /** Use this function to access data buffers for control or audio ports. */
+    float*& p(uint32_t port) {
+      return reinterpret_cast<float*&>(Parent::m_ports[port]);
+    }
+
+
     /** @internal
 	The voice objects that render the audio. */
     std::vector<V*> m_voices;
