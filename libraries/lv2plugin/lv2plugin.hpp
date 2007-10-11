@@ -27,6 +27,7 @@
 
 #include <cstring>
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -354,7 +355,7 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
   };
 
   
-  /** The Command extension. */
+  /** The Command extension. Deprecated, but still used. */
   template <class Derived, bool Required>
   struct CommandExt : Extension<Required> {
     
@@ -378,20 +379,56 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
       }
       return 0;
     }
-  
+    
+    /** This function is called by the host when the GUI sends a command
+	to the plugin. You should override it in your plugin if you want
+	to do something when you get a command. */
     char* command(uint32_t argc, const char* const* argv) { }
-  
+    
+    /** @internal
+	Static callback wrapper. */
     static char* _command(LV2_Handle h, 
 			  uint32_t argc, const char* const* argv) {
       reinterpret_cast<Derived*>(h)->command(argc, argv);
     }
-  
+    
+    /** This function sends a message to the host, which sends it to the
+	GUI. Use it to send feedback to the GUI when reacting to commands. */
     void feedback(uint32_t argc, const char* const* argv) {
       (*m_chd->feedback)(m_chd->host_data, argc, argv);
     }
-  
+    
+    /** Convenient wrapper for the other feedback() function. The first 
+	parameter is a OSC-like type signature, where "s" means @c char*,
+	"i" means @c long and "f" means @c double. */
+    void feedback(const std::string& types, ...) {
+      va_list ap;
+      va_start(ap, types);
+      uint32_t argc = types.size();
+      char** argv = static_cast<char**>(malloc(sizeof(char*) * argc));
+      for (uint32_t i = 0; i < argc; ++i) {
+	if (types[i] == 's')
+	  argv[i] = strdup(va_arg(ap, const char*));
+	else if (types[i] == 'i') {
+	  std::ostringstream oss;
+	  oss<<va_arg(ap, long);
+	  argv[i] = strdup(oss.str().c_str());
+	}
+	else if (types[i] == 'f') {
+	  std::ostringstream oss;
+	  oss<<va_arg(ap, double);
+	  argv[i] = strdup(oss.str().c_str());
+	}
+      }
+      va_end(ap);
+      feedback(argc, argv);
+    }
+    
+    /** @internal
+	The host descriptor as defined by the Command extension
+	specification. */
     LV2_CommandHostDescriptor* m_chd;
-  
+    
   };
 
 
