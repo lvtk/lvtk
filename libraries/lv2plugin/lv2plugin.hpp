@@ -325,12 +325,6 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
   };
   
   
-  /** @internal
-      The URI used for the Command extension. */
-  static const char* command_uri = 
-		 "http://ll-plugins.nongnu.org/lv2/namespace#dont-use-this-extension";
-  
-  
   /** Base class for extensions. Extension clases don't have to inherit from
       this class, but it's convenient. */
   template <bool Required>
@@ -354,6 +348,12 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
   
   };
 
+  
+  /** @internal
+      The URI used for the Command extension. */
+  static const char* command_uri = 
+		 "http://ll-plugins.nongnu.org/lv2/namespace#dont-use-this-extension";
+  
   
   /** The Command extension. Deprecated, but still used. */
   template <class Derived, bool Required>
@@ -391,6 +391,8 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
 			  uint32_t argc, const char* const* argv) {
       reinterpret_cast<Derived*>(h)->command(argc, argv);
     }
+
+  protected:
     
     /** This function sends a message to the host, which sends it to the
 	GUI. Use it to send feedback to the GUI when reacting to commands. */
@@ -430,9 +432,75 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
     LV2_CommandHostDescriptor* m_chd;
     
   };
+  
+  
+  static const char* fixed_uri = 
+    "http://tapas.affenbande.org/lv2/ext/fixed-buffersize";
+  
+  /** The fixed buffer size extension. A host that supports this will always
+      call the plugin's run() function with the same @c sample_count parameter,
+      which will be equal to the uint32_t variable pointed to by the data
+      pointer for this feature. */
+  template <class Derived, bool Required>
+  struct FixedExt : Extension<Required> {
+    
+    FixedExt() : m_buffer_size(0) { }
+    
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      hmap[fixed_uri] = &FixedExt::handle_feature;
+    }
+    
+    static void handle_feature(void* instance, void* data) { 
+      Derived* d = reinterpret_cast<Derived*>(instance);
+      FixedExt* fe = static_cast<FixedExt*>(d);
+      fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
+      fe->m_ok = true;
+    }
+    
+  protected:
+    
+    /** This returns the buffer size that the host has promised to use.
+	If the host does not support this extension this function will
+	return 0. */
+    uint32_t get_buffer_size() const { return m_buffer_size; }
+    
+    uint32_t m_buffer_size;
+
+  };
 
 
+  static const char* fixedp2_uri = 
+    "http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize";
+  
+  /** The fixed power-of-2 buffer size extension. This works just like 
+      FixedExt with the additional requirement that the buffer size must
+      be a power of 2. */
+  template <class Derived, bool Required>
+  struct FixedP2Ext : Extension<Required> {
+    
+    FixedP2Ext() : m_buffer_size(0) { }
+    
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      hmap[fixedp2_uri] = &FixedP2Ext::handle_feature;
+    }
+    
+    static void handle_feature(void* instance, void* data) { 
+      Derived* d = reinterpret_cast<Derived*>(instance);
+      FixedP2Ext* fe = static_cast<FixedP2Ext*>(d);
+      fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
+      fe->m_ok = true;
+    }
+    
+  protected:
+    
+    /** This returns the buffer size that the host has promised to use.
+	If the host does not support this extension this function will
+	return 0. */
+    uint32_t get_buffer_size() const { return m_buffer_size; }
+    
+    uint32_t m_buffer_size;
 
+  };
 
 }
 

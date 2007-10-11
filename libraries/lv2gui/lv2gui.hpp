@@ -169,11 +169,18 @@ namespace LV2 {
       // a Gtk+ or PyGtk host or some other language
       Gtk::Main::init_gtkmm_internals();
       
+      // create a Controller object that wraps all the host callbacks
       Controller* controller = new Controller(write_func, command_func,
 					      program_func, save_func,
 					      ctrl, features);
+      
+      // create the GUI object
       T* t = new T(*controller, plugin_uri, bundle_path);
+      
+      // the GUI object assumes ownership of the Controller pointer and will delete
+      // it in its destructor
       t->m_controller = controller;
+      
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
       return reinterpret_cast<LV2UI_Handle>(t);
     }

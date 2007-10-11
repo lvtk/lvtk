@@ -95,7 +95,6 @@ namespace LV2 {
   
   
   void GUI::delete_ui_instance(LV2UI_Handle instance) {
-    delete static_cast<GUI*>(instance)->m_controller;
     delete static_cast<GUI*>(instance);
   }
   
