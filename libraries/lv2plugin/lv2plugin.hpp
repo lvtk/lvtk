@@ -24,6 +24,7 @@
 #define LV2PLUGIN_HPP
 
 #include <unistd.h>
+#include <stdarg.h>
 
 #include <cstring>
 #include <map>
