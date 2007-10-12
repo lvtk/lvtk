@@ -711,12 +711,12 @@ namespace PAQ {
   string TurtleParser::absolutise(const std::string& str) {
     
     // check if it's an absolute URI, if so return
-    unsigned cpos = str.find(':');
+    size_t cpos = str.find(':');
     if (cpos != string::npos && cpos > 0) {
       if (str.size() > 0) {
 	if ((str[0] >= 'a' && str[0] <= 'z') ||
 	    (str[0] >= 'A' && str[0] <= 'Z')) {
-	  unsigned int i;
+	  size_t i;
 	  for (i = 1; i < cpos; ++i) {
 	    if (!((str[i] >= 'a' && str[i] <= 'z') ||
 		  (str[i] >= 'A' && str[i] <= 'Z') ||
@@ -735,7 +735,7 @@ namespace PAQ {
     else if (str.size() >= 2 && str.substr(0, 2) == "//")
       return m_base_uri.substr(m_base_uri.find(':')) + str;
     else if (str.size() >= 1 && str[0] == '/') {
-      unsigned a = str.find("//");
+      size_t a = str.find("//");
       if (a == string::npos)
 	return m_base_uri.substr(m_base_uri.find('/')) + str;
       else
