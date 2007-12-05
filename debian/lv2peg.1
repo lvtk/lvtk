@@ -1,0 +1,46 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH LV2PEG 1 "December  5, 2007"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+lv2peg \- C header file generator for LV2 plugin writers
+.SH SYNOPSIS
+.B lv2peg
+.RI "input file" "output file"
+.br
+.B bar
+.RI [ options ] " files" ...
+.SH DESCRIPTION
+This manual page documents briefly the
+.B lv2peg
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
+.\" respectively.
+\flv2peg\fP is a program that generates a C header file from RDF data in a
+Turtle file that describes LV2 plugins. It parses the input file and generates
+an enum with the port indices and a static array containing some information
+about the ports for every plugin in the input file that has the triple
+.B <http://some.lv2.plugin/> <http://ll-plugins.nongnu.org/lv2/namespace#> "p"
+where "p" will be used as a prefix for all generated symbols in the header
+file.
+.br
+.SH AUTHOR
+lv2peg was written by Lars Luthman.
+.PP
+This manual page was written by Lars Luthman <lars.luthman@gmail.com>,
+for the Debian project (but may be used by others).

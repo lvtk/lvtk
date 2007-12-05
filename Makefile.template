@@ -11,7 +11,7 @@ pkgdocdir = $(docdir)/$(PACKAGE_NAME)
 includedir = $(prefix)/include
 pkgincludedir = $(includedir)/$(PACKAGE_NAME)
 lv2plugindir = $(libdir)/lv2
-LV2PEG = programs/lv2peg/lv2peg
+LV2PEG = lv2peg
 
 # Don't modify any variables below this line
 UNAME = $(shell uname)
@@ -162,7 +162,7 @@ endef
 $(foreach lv2,$(LV2_BUNDLES),$(eval $(call LV2_BUNDLE_template,$(lv2),$(subst .,_,$(lv2)))))
 
 # PEG target
-%.peg: %.ttl $(LV2PEG)
+%.peg: %.ttl
 	$(LV2PEG) $*.ttl $@
 
 # END OF LV2 PLUGINS
@@ -292,6 +292,9 @@ DEPDIRS = $(shell for i in . */ */*/ */*/*/ */*/*/*/; do echo -n " -I$$i"; done)
 	@$(CC) -MM $(DEPDIRS) $(PKG_DEPDIRS) -MT $@ -o $@.dep $<
 	@cat $@.dep >> $@
 	@rm -f $@.dep
+	@cat $@ | sed -e 's/ *\\$$//' -e 's/^[^:]*: *//' -e 's/^ *//' -e 's/ /\n/' | sed -e 's/[^ ]$$/&:/' > $@.alltgts
+	@cat $@.alltgts >> $@
+	@rm -f $@.alltgts
 	@echo .
 
 Makefile.deps: $(DEP_FILES)
@@ -308,8 +311,6 @@ clean:
 # GLOBAL INSTALL
 ARCHIVES_INST = $(filter-out $(ARCHIVES_NOINST),$(ARCHIVES))
 install-archives: $(patsubst %,install-%,$(subst .,_,$(ARCHIVES_INST)))
-	echo $(ARCHIVES)
-	echo $(ARCHIVES_NOINST)
 
 PROGRAMS_INST = $(filter-out $(PROGRAMS_NOINST),$(PROGRAMS))
 install-programs: $(patsubst %,install-%,$(subst .,_,$(PROGRAMS_INST)))

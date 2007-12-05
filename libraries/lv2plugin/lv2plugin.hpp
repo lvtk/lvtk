@@ -326,7 +326,7 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
   };
   
   
-  /** Base class for extensions. Extension clases don't have to inherit from
+  /** Base class for extensions. Extension classes don't have to inherit from
       this class, but it's convenient. */
   template <bool Required>
   struct Extension {

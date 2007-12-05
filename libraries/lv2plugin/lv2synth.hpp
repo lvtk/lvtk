@@ -40,7 +40,7 @@ namespace LV2 {
   
   /** A simple function that translates a MIDI key number to a fundamental
       frequency in Hz. */
-  float key2hz(unsigned char key) {
+  static inline float key2hz(unsigned char key) {
     return 8.1758 * std::pow(1.0594, key);
   }
   

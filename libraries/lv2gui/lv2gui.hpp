@@ -46,8 +46,13 @@ namespace LV2 {
 	control anything. */
     Controller();
     
-    /** Set the value of a control rate float port in the plugin instance. */
+    /** Write to a port in the plugin instance. */
     void write(uint32_t port, uint32_t buffer_size, const void* buffer);
+    
+    /** Convenient wrapper for writing to control ports. */
+    inline void write_control(uint32_t port, const float& value) {
+      write(port, sizeof(float), &value);
+    }
     
     /** Send a command to the plugin instance. */
     void command(uint32_t argc, const char* const* argv);
@@ -124,7 +129,7 @@ namespace LV2 {
     virtual void* extension_data(const std::string& URI) { return 0; }
 
     /** Use this template function to register a class as a LV2 GUI. */
-    template <typename T> static void register_class(const std::string& URI) {
+    template <typename T> static int register_class(const std::string& URI) {
       LV2UI_Descriptor* desc = new LV2UI_Descriptor;
       std::memset(desc, 0, sizeof(LV2UI_Descriptor));
       desc->URI = strdup(URI.c_str());
@@ -138,6 +143,7 @@ namespace LV2 {
       desc->current_program_changed = &current_program_changed;
       desc->extension_data = &extension_data;
       get_lv2g2g_descriptors().push_back(desc);
+      return get_lv2g2g_descriptors().size() - 1;
     }
     
     typedef std::vector<LV2UI_Descriptor*> DescList;
