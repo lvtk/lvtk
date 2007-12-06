@@ -26,7 +26,7 @@ Description: A library of C++ classes for writing LV2 plugins
 Package: liblv2-gui-dev
 Architecture: any
 Section: libdevel
-Depends: libgtkmm-2.4-dev (>= 2.10.10)
+Depends: libgtkmm-2.4-dev (>= 2.10.10), liblv2-plugin-dev (= ${binary:Version})
 Description: A library of C++ classes for writing LV2 plugin GUIs
  A library of C++ classes that makes it easier to write GUIs for LV2 plugins.
 

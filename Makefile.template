@@ -323,7 +323,7 @@ install-modules: $(patsubst %,install-%,$(subst .,_,$(MODULES_INST)))
 
 LIBRARIES_INST = $(filter-out $(LIBRARIES_NOINST),$(LIBRARIES))
 install-libraries: $(patsubst %,install-%,$(subst .,_,$(LIBRARIES_INST)))
-	$(if $(LIBRARIES),ldconfig -n $(libdir))
+	$(if $(LIBRARIES),/sbin/ldconfig -n $(libdir))
 
 LV2_BUNDLES_INST = $(filter-out $(LV2_BUNDLES_NOINST),$(LV2_BUNDLES))
 install-lv2-plugins: $(patsubst %,install-%,$(subst .,_,$(LV2_BUNDLES_INST)))
@@ -355,7 +355,7 @@ install: install-archives install-libraries install-modules install-programs ins
 # DISTRIBUTION
 THIS_FILE = $(patsubst ./%,%,$(firstword $(filter %/Makefile.template,$(patsubst %,./%,$(MAKEFILE_LIST)))))
 CONFIGURE_SCRIPT = $(if $(__path_to_configure),$(__path_to_configure),configure)
-ALL_DIST_FILES = $(sort $(ALL_SOURCES) $(DATA) $(DOCS) $(EXTRA_DIST) $(ALL_DATA))
+ALL_DIST_FILES = $(sort $(ALL_SOURCES) $(DATA) $(DOCS) $(PCFILES) $(EXTRA_DIST) $(ALL_DATA))
 dist: 
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
@@ -378,3 +378,19 @@ check-pkg-deps:
 	@$(foreach pkg, $(PKG_DEPS), if pkg-config --atleast-version $(sort $(subst >=, ,$(pkg))) ; then true; else echo "*** You don't have $(pkg), which you need in order to build this software."; false; fi && ) true
 
 
+# DEBIAN PACKAGES
+deb-dir: debian dist
+	rm -rf deb
+	mkdir deb
+	cp $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2 deb
+	cd deb && tar xjf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
+	cd deb && bunzip2 $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
+	cd deb && gzip $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
+	cd deb && mv $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(PACKAGE_NAME)_$(PACKAGE_VERSION).orig.tar.gz
+	cp -R debian deb/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	cd deb/$(PACKAGE_NAME)-$(PACKAGE_VERSION) && (dch -v $(PACKAGE_VERSION) "User package build" || true)
+	cd deb/$(PACKAGE_NAME)-$(PACKAGE_VERSION) && dpkg-buildpackage -b -ptrue -i -rfakeroot
+
+deb: deb-dir
+	mv -f deb/*.deb .
+	rm -rf deb

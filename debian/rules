@@ -47,28 +47,51 @@ install-indep:
 	dh_installdirs -i
 	dh_install -i
 
+IDIR = $(CURDIR)/debian/liblv2-plugin-dev
+
 install-arch:
 	dh_testdir
 	dh_testroot
 	dh_clean -k -s 
 	dh_installdirs -s
 
+	# First, install everything to the liblv2-plugin-dev directory
+	$(MAKE) DESTDIR=$(IDIR) install
+
+	# Remove all files that shouldn't be in the packages
+	rm -rf $(IDIR)/usr/share/doc/lv2-c++-tools
+
+	# Move all files that should be in other packages
+
+	# lv2peg
+	mkdir -p $(CURDIR)/debian/lv2peg/usr/bin
+	mv $(IDIR)/usr/bin/lv2peg $(CURDIR)/debian/lv2peg/usr/bin
+
+	# liblv2-gui-dev
+	mkdir -p $(CURDIR)/debian/liblv2-gui-dev/usr/lib/pkgconfig
+	mv $(IDIR)/usr/lib/liblv2-gui.a $(CURDIR)/debian/liblv2-gui-dev/usr/lib
+	mv $(IDIR)/usr/lib/pkgconfig/lv2-gui.pc $(CURDIR)/debian/liblv2-gui-dev/usr/lib/pkgconfig
+	mkdir -p $(CURDIR)/debian/liblv2-gui-dev/usr/include/lv2-c++-tools
+	cd $(IDIR)/usr/include/lv2-c++-tools && mv lv2gui.hpp lv2-gui.h $(CURDIR)/debian/liblv2-gui-dev/usr/include/lv2-c++-tools
+
+	# libpaq0
+	mkdir -p $(CURDIR)/debian/libpaq0/usr/lib
+	mv $(IDIR)/usr/lib/libpaq.so.*.0.0 $(CURDIR)/debian/libpaq0/usr/lib
+
+	# libpaq0-dev
+	mkdir -p $(CURDIR)/debian/libpaq0-dev/usr/lib/pkgconfig
+	cd $(IDIR)/usr/lib && mv libpaq.a libpaq.so $(CURDIR)/debian/libpaq0-dev/usr/lib
+	mv $(IDIR)/usr/lib/pkgconfig/paq.pc $(CURDIR)/debian/libpaq0-dev/usr/lib/pkgconfig
+	mkdir -p $(CURDIR)/debian/libpaq0-dev/usr/include/lv2-c++-tools
+	cd $(IDIR)/usr/include/lv2-c++-tools && mv namespaces.hpp query.hpp rdf.hpp turtleparser.hpp unicode.hpp $(CURDIR)/debian/libpaq0-dev/usr/include/lv2-c++-tools
+
+	# Do special stuff
+
 	# lv2peg	
-	$(MAKE) DESTDIR=$(CURDIR)/debian/lv2peg install-lv2peg
 	mkdir -p $(CURDIR)/debian/lv2peg/usr/share/man/man1
 	cp $(CURDIR)/debian/lv2peg.1 $(CURDIR)/debian/lv2peg/usr/share/man/man1
 
-	# liblv2-plugin
-	$(MAKE) DESTDIR=$(CURDIR)/debian/liblv2-plugin-dev install-liblv2-plugin_a
-
-	# liblv2-gui
-	$(MAKE) DESTDIR=$(CURDIR)/debian/liblv2-gui-dev install-liblv2-gui_a
-
 	# libpaq
-	$(MAKE) DESTDIR=$(CURDIR)/debian/libpaq0-dev install-libpaq_so
-	$(MAKE) DESTDIR=$(CURDIR)/debian/libpaq0-dev install-libpaq_a
-	mkdir -p $(CURDIR)/debian/libpaq0/usr/lib
-	mv $(CURDIR)/debian/libpaq0-dev/usr/lib/libpaq.so.0.0.0 $(CURDIR)/debian/libpaq0/usr/lib/
 	cd $(CURDIR)/debian/libpaq0/usr/lib && ln -s libpaq.so.0.0.0 libpaq.so.0
 
 	dh_install -s

@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.360
+PACKAGE_VERSION = 0.1.361
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -45,3 +45,4 @@ PCFILES = lv2-plugin.pc lv2-gui.pc paq.pc
 
 # Do the magic
 include Makefile.template
+
