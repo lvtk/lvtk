@@ -83,6 +83,8 @@ endif
 define LIBRARY_template
 
 # variables
+$(2)_IFACE = $$(if $$($(2)_ABI),$$($(2)_ABI),0)
+$(2)_IFSFX = $$($(2)_IFACE).0.0
 $(2)_SRCPRF = $$(if $$($(2)_SOURCEDIR),$$($(2)_SOURCEDIR),.)
 $(2)_BLDPRF = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
 $(2)_FULLSOURCES = $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_SOURCES) $$($(2)_HEADERS))
@@ -95,7 +97,7 @@ $(2)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(notdir $$($(2)_LIBRARIES)))
 $(2)_LOCALLDFLAGS = $$(patsubst %,-L%,$$(sort $$(dir $$($(2)_LIBRARIES))))
 ALL_OBJECTS += $$($(2)_OBJECTS)
 ALL_SOURCES += $$($(2)_FULLSOURCES)
-LIBRARIES_REAL += $$($(2)_BLDPRF)/$(1)
+LIBRARIES_REAL += $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX)
 LIBRARIES_NOINST += $$(if $$($(2)_NOINST),$(2),)
 ALL_LIBHEADER_INSTALLS += $$(if $$($(2)_HEADERS),install-$(2)-headers)
 $(2)_INSTDIR = $$(if $$($(2)_INSTALLDIR),$$($(2)_INSTALLDIR),$(libdir))
@@ -107,15 +109,16 @@ $$($(2)_COBJECTS): Makefile.config
 $$($(2)_CXXOBJECTS): Makefile.config
 	$(CXX) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$(subst .o,.cpp,$$@)
 
-$$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
-	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).0
+$$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
+	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).$$($(2)_IFACE)
 
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
 	mkdir -p $(DESTDIR)/$(pkgincludedir)
 	cp $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS)) $(DESTDIR)/$(pkgincludedir)
 
-install-$(2): $$($(2)_BLDPRF)/$(1) $$(if $$($(2)_HEADERS),install-$(2)-headers)
-	mkdir -p $(DESTDIR)/$$($(2)_INSTDIR) && cp $$($(2)_BLDPRF)/$(1) $(DESTDIR)/$$($(2)_INSTDIR)
+install-$(2): $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX) $$(if $$($(2)_HEADERS),install-$(2)-headers)
+	mkdir -p $(DESTDIR)/$$($(2)_INSTDIR) && cp $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX) $(DESTDIR)/$$($(2)_INSTDIR)
+	cd $(DESTDIR)/$$($(2)_INSTDIR) && ln -f -s $(1).$$($(2)_IFSFX) $(1)
 
 endef
 bad_libraries = $(filter-out lib%.so,$(LIBRARIES))

@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.358
+PACKAGE_VERSION = 0.1.359
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -27,7 +27,9 @@ liblv2-gui_a_INSTALLDIR = $(libdir)
 
 libpaq_a_SOURCES = turtleparser.cpp rdf.cpp query.cpp
 libpaq_a_SOURCEDIR = libraries/paq
+libpaq_a_INSTALLDIR = $(libdir)
 
+libpaq_so_ABI = 0
 libpaq_so_ARCHIVES = libraries/paq/libpaq.a
 libpaq_so_HEADERS = turtleparser.hpp rdf.hpp query.hpp unicode.hpp namespaces.hpp
 libpaq_so_SOURCEDIR = libraries/paq
