@@ -22,8 +22,6 @@ build: build-arch build-indep
 
 build-arch: build-arch-stamp
 build-arch-stamp:
-
-	# Add here commands to compile the arch part of the package.
 	dh_testdir
 	./configure --prefix=/usr --CFLAGS=$(CFLAGS)
 	$(MAKE) programs/lv2peg/lv2peg
@@ -31,20 +29,14 @@ build-arch-stamp:
 
 build-indep: build-indep-stamp
 build-indep-stamp:
-
-	# Add here commands to compile the indep part of the package.
-	#$(MAKE) doc
 	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp build-indep-stamp 
-
-	# Add here commands to clean up after the build process.
 	$(MAKE) clean
 	rm -f Makefile.deps
-
 	dh_clean 
 
 install: install-indep install-arch
@@ -53,11 +45,6 @@ install-indep:
 	dh_testroot
 	dh_clean -k -i 
 	dh_installdirs -i
-
-	# Add here commands to install the indep part of the package into
-	# debian/<package>-doc.
-	#INSTALLDOC#
-
 	dh_install -i
 
 install-arch:
@@ -81,7 +68,8 @@ install-arch:
 	$(MAKE) DESTDIR=$(CURDIR)/debian/libpaq0-dev install-libpaq_so
 	$(MAKE) DESTDIR=$(CURDIR)/debian/libpaq0-dev install-libpaq_a
 	mkdir -p $(CURDIR)/debian/libpaq0/usr/lib
-	mv $(CURDIR)/debian/libpaq0-dev/usr/lib/libpaq.so $(CURDIR)/debian/libpaq0/usr/lib/
+	mv $(CURDIR)/debian/libpaq0-dev/usr/lib/libpaq.so.0.0.0 $(CURDIR)/debian/libpaq0/usr/lib/
+	cd $(CURDIR)/debian/libpaq0/usr/lib && ln -s libpaq.so.0.0.0 libpaq.so.0
 
 	dh_install -s
 

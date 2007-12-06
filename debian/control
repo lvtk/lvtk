@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: lv2peg
 Architecture: any
-Depends: libstdc++6 (>= 4.2.1)
+Depends: ${shlibs:Depends}
 Description: A RDF/Turtle to C translator for LV2 plugin authors
  LV2 plugins consist of RDF data in Turtle files and a shared library
  that contains the actual plugin implementation. The Turtle files and
@@ -18,13 +18,15 @@ Description: A RDF/Turtle to C translator for LV2 plugin authors
 
 Package: liblv2-plugin-dev
 Architecture: any
-Depends: libstdc++6 (>= 4.2.1)
+Section: libdevel
+Depends: libstdc++6-dev (>= 4.2.1)
 Description: A library of C++ classes for writing LV2 plugins
  A library of C++ classes that makes it easier to write LV2 plugins.
 
 Package: liblv2-gui-dev
 Architecture: any
-Depends: libgtkmm-2.4-1c2a (>= 2.10.10)
+Section: libdevel
+Depends: libgtkmm-2.4-dev (>= 2.10.10)
 Description: A library of C++ classes for writing LV2 plugin GUIs
  A library of C++ classes that makes it easier to write GUIs for LV2 plugins.
 
@@ -37,6 +39,7 @@ Description: A simple library for parsing and querying RDF/Turtle data
 
 Package:libpaq0-dev
 Architecture: any
-Depends: libpaq0
+Section: libdevel
+Depends: libpaq0 (= ${binary:Version}), libboost-dev (>= 1.33.1)
 Description: Development files for the RDF parsing and querying library
  Headers and static library files for the RDF parsing and querying library.
