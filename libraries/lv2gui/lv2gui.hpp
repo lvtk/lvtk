@@ -47,7 +47,16 @@ namespace LV2 {
       used internally. */
   GUIDescList& get_lv2g2g_descriptors();
 
-
+  
+  /** @internal
+      This class contains no data, it's just used to make it impossible to
+      create copies of instances of subclasses.  */
+  class NonCopyable {
+    NonCopyable(const NonCopyable&) { }
+    const NonCopyable& operator=(const NonCopyable&) { }
+  };
+  
+  
   /** This class is an interface for controlling a plugin instance. An object
       of this class will be provided by the host when a plugin GUI is 
       instantiated. */
@@ -55,13 +64,20 @@ namespace LV2 {
            class Ext1 = Empty, class Ext2 = Empty, class Ext3 = Empty,
            class Ext4 = Empty, class Ext5 = Empty, class Ext6 = Empty,
            class Ext7 = Empty, class Ext8 = Empty, class Ext9 = Empty>
-  class Controller : SimpleMixinTree<Derived, Ext1, Ext2, Ext3, Ext4, 
-				     Ext5, Ext6, Ext7, Ext8, Ext9> {
+  class Controller : public SimpleMixinTree<Derived, Ext1, Ext2, Ext3, Ext4, 
+					    Ext5, Ext6, Ext7, Ext8, Ext9>, 
+		     private NonCopyable {
   public:
     
-    /** This constructor creates an invalid controller that doesn't actually
-	control anything. */
-    Controller() : m_wfunc(0), m_ctrl(0) { }
+    /** @internal
+	This is only used by the wrapper functions. */
+    Controller(LV2UI_Write_Function wfunc, 
+	       LV2UI_Controller ctrl,
+	       const LV2_Feature* const* features)
+      : m_wfunc(wfunc),
+	m_ctrl(ctrl) {
+      
+    }
     
     /** Write to a port in the plugin instance. */
     void write(uint32_t port, uint32_t buffer_size, const void* buffer) {
@@ -106,18 +122,9 @@ namespace LV2 {
     
   protected:
     
-    //friend class GUI;
-    
-    Controller(LV2UI_Write_Function wfunc, 
-	       LV2UI_Controller ctrl,
-	       const LV2_Feature* const* features)
-      : m_wfunc(wfunc),
-	m_ctrl(ctrl) {
-      
-    }
-    
     LV2UI_Write_Function m_wfunc;
     LV2UI_Controller m_ctrl;
+
   };
   
 
@@ -163,34 +170,12 @@ namespace LV2 {
     Controller;
 
     
-    virtual ~GUI() { delete m_controller; }
+    ~GUI() { delete m_controller; }
     
     /** Override this if you want your GUI to do something when a control port
 	value changes in the plugin instance. */
     void port_event(uint32_t port, uint32_t buffer_size, const void* buffer) { }
     
-    /*virtual void feedback(uint32_t argc, const char* const* argv) { }*/
-    
-    /** Override this if you want your GUI to do something when a program has
-	been added for the plugin instance. */
-    /*virtual void program_added(unsigned char number, const char* name) { }*/
-    
-    /** Override this if you want your GUI to do something when a program has
-	been removed for the plugin instance. */
-    /*virtual void program_removed(unsigned char number) { }*/
-    
-    /** Override this if you want your GUI to do something when the host
-	removes all programs for the plugin instance. */
-    /*virtual void programs_cleared() { }*/
-    
-    /** Override this if you want your GUI to do something when the host
-	changes the program for the plugin instance. */
-    /*virtual void current_program_changed(unsigned char number) { }*/
-    
-    /** Return data associated with an extension URI, or 0 if that extension
-	is not supported or does not have any data for use in plugin GUIs. */
-    void* extension_data(const std::string& URI) { return 0; }
-
     /** Use this template function to register a class as a LV2 GUI. */
     static int register_class(const std::string& URI) {
       LV2UI_Descriptor* desc = new LV2UI_Descriptor;
