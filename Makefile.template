@@ -374,6 +374,12 @@ dist:
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	bzip2 $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
 
+dist-test: dist
+	tar xjvf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
+	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && configure --prefix=`pwd`/installation
+	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && make install
+	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	@echo Distribution test succeded!
 
 # PKG-CONFIG DEPENDENCY CHECK
 PKG_DEPDIRS = `pkg-config --cflags $(filter-out =%,$(subst >, ,$(PKG_DEPS))) 2> /dev/null`
