@@ -5,9 +5,13 @@
     C API.
     
     The classes are separated into two libraries. One, called liblv2-plugin,
-    contains the class LV2::Plugin, defined in the file lv2plugin.hpp. It
-    is a base class that you can inherit in order to create new LV2 plugins.
-    The other library, called liblv2-gui, contains the classes LV2::Controller
-    and LV2::GUI, defined in the file lv2gui.hpp, which you can use in a 
-    similar way to create new LV2 plugin GUIs.
+    contains the classes LV2::Plugin and LV2::Synth, defined in the files 
+    lv2plugin.hpp and lv2synth.hpp. They are base classes that you can inherit
+    in order to create new LV2 plugins. The other library, called liblv2-gui, 
+    contains the class LV2::GUI, defined in the file lv2gui.hpp, which you can
+    use in a similar way to create new LV2 plugin GUIs.
+
+    These libraries are still in development - the API may change in future
+    versions. However, if you only link to the static libraries you should
+    at least not get any runtime problems with plugins that are already built.
 */
