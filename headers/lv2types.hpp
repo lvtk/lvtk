@@ -35,13 +35,17 @@ namespace LV2 {
   typedef std::map<std::string, FeatureHandler> FeatureHandlerMap;
   
   
+  struct Empty {
 
+  };
+  
+  
   /** @internal
       This template class is used to terminate the recursive inheritance trees
-      created by InheritanceTree. */
+      created by MixinTree. */
   template <class A, bool B>
   struct End {
-    
+    typedef Empty C;
   };
   
 
@@ -63,12 +67,12 @@ namespace LV2 {
 	    template <class, bool> class E7 = End, bool B7 = false,
 	    template <class, bool> class E8 = End, bool B8 = false,
 	    template <class, bool> class E9 = End, bool B9 = false>
-  struct InheritanceTree 
-    : E1<A, B1>, InheritanceTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
-				 E6, B6, E7, B7, E8, B8, E9, B9> {
+  struct MixinTree 
+    : E1<A, B1>, MixinTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
+			   E6, B6, E7, B7, E8, B8, E9, B9> {
     
-    typedef InheritanceTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
-			    E6, B6, E7, B7, E8, B8, E9, B9> Parent;
+    typedef MixinTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
+                      E6, B6, E7, B7, E8, B8, E9, B9> Parent;
     
     /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
@@ -97,13 +101,30 @@ namespace LV2 {
       This is a specialisation of the inheritance tree template that terminates
       the recursion. */
   template <class A>
-  struct InheritanceTree<A, 
-			 End, false, End, false, End, false, 
-			 End, false, End, false, End, false, 
-			 End, false, End, false, End, false> {
+  struct MixinTree<A, 
+		   End, false, End, false, End, false, 
+		   End, false, End, false, End, false, 
+		   End, false, End, false, End, false> {
     static void map_feature_handlers(FeatureHandlerMap& hmap) { }
     bool check_ok() const { return true; }
     static const void* extension_data(const char* uri) { return 0; }
+  };
+
+
+  template <class A, 
+	    class E1 = Empty, class E2 = Empty, class E3 = Empty,
+	    class E4 = Empty, class E5 = Empty, class E6 = Empty,
+	    class E7 = Empty, class E8 = Empty, class E9 = Empty>
+  struct SimpleMixinTree 
+    : E1, SimpleMixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
+    
+  };
+
+
+  template <class A>
+  struct SimpleMixinTree<A, Empty, Empty, Empty, Empty, 
+			 Empty, Empty, Empty, Empty, Empty> {
+    
   };
 
   

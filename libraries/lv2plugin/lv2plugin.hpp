@@ -97,10 +97,10 @@ namespace LV2 {
 	    template <class, bool> class Ext7 = End, bool Req7 = false,
 	    template <class, bool> class Ext8 = End, bool Req8 = false,
 	    template <class, bool> class Ext9 = End, bool Req9 = false>
-  class Plugin : public InheritanceTree<Derived, 
-				      Ext1, Req1, Ext2, Req2, Ext3, Req3,
-				      Ext4, Req4, Ext5, Req5, Ext6, Req6,
-				      Ext7, Req7, Ext8, Req8, Ext9, Req9> {
+  class Plugin : public MixinTree<Derived, 
+				  Ext1, Req1, Ext2, Req2, Ext3, Req3,
+				  Ext4, Req4, Ext5, Req5, Ext6, Req6,
+				  Ext7, Req7, Ext8, Req8, Ext9, Req9> {
   public:
     
     /** This constructor is needed to initialise the port vector with the
