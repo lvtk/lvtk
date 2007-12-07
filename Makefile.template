@@ -112,6 +112,9 @@ $$($(2)_CXXOBJECTS): Makefile.config
 $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
 	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).$$($(2)_IFACE)
 
+$$($(2)_BLDPRF)/$(1): $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX)
+	ln -f -s $$^ $$@
+
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
 	mkdir -p $(DESTDIR)/$(pkgincludedir)
 	cp $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS)) $(DESTDIR)/$(pkgincludedir)
@@ -183,7 +186,7 @@ $(1)_CXXSOURCES = $$(filter %.cpp,$$($(1)_FULLSOURCES))
 $(1)_COBJECTS = $$(subst .c,.o,$$($(1)_CSOURCES))
 $(1)_CXXOBJECTS = $$(subst .cpp,.o,$$($(1)_CXXSOURCES))
 $(1)_OBJECTS = $$($(1)_COBJECTS) $$($(1)_CXXOBJECTS)
-$(1)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(basename $$(basename $$(basename $$(notdir $$($(1)_LIBRARIES))))))
+$(1)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(notdir $$($(1)_LIBRARIES)))
 $(1)_LOCALLDFLAGS = $$(patsubst %,-L%,$$(sort $$(dir $$($(1)_LIBRARIES)))) 
 ALL_OBJECTS += $$($(1)_OBJECTS)
 ALL_SOURCES += $$($(1)_FULLSOURCES)

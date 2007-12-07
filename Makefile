@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.364
+PACKAGE_VERSION = 0.1.365
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -36,7 +36,7 @@ libpaq_so_SOURCEDIR = libraries/paq
 
 lv2peg_SOURCES = lv2peg.cpp
 lv2peg_CFLAGS = -Ilibraries/paq -DVERSION=\"$(PACKAGE_VERSION)\"
-lv2peg_LIBRARIES = libraries/paq/libpaq.so.0.0.0
+lv2peg_LIBRARIES = libraries/paq/libpaq.so
 lv2peg_SOURCEDIR = programs/lv2peg
 
 DOCS = COPYING AUTHORS README
