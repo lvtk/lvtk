@@ -1,5 +1,5 @@
 lv2-c++-tools for Debian
------------------
+------------------------
 
 There are quite a few binary packages generated from this source tree - the
 reason is that they all have different dependencies and can be used separately,
@@ -8,15 +8,16 @@ don't need.
 
 * liblv2-plugin-dev is a C++ framework for LV2 plugins that contains C++ header 
   files and a static library (built with -fPIC so it can be linked to plugins)
-  which has the main LV2 callback that will be dlsym()ed by a LV2 host.
-  There is no liblv2-plugin package.
+  which has the main LV2 callback that will be dlsym()ed by a LV2 host. It has no
+  dependencies other than the standard C++ library. There is no liblv2-plugin package.
 
 * liblv2-gui-dev is a C++ framework for LV2 GUI plugins, depending on gtkmm. It's
   also built with -fPIC for the same reason and there is no liblv2-gui package.
 
-* libpaq0 and libpaq0-dev contain libraries and header files for the PAQ library,
-  a basic RDF/Turtle querying library that is used by
+* libpaq0 and libpaq0-dev (which depends on libboost-dev) which contain libraries 
+  and header files for the PAQ library, a basic RDF/Turtle querying library that 
+  is used by...
 
-* lv2peg, which contains the single program lv2peg and its manual.
+* ...lv2peg, which contains the single program lv2peg and its manual.
 
  -- Lars Luthman <lars.luthman@gmail.com>, Fri, 7 Dec 2007 12:41:58 +0100
