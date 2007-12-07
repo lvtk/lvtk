@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.369
+PACKAGE_VERSION = 0.1.370
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a

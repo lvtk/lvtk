@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: lv2peg
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: libstdc++6-dev (>= 4.2.1), libpaq0 (= ${binary:Version})
 Description: A RDF/Turtle to C translator for LV2 plugin authors
  LV2 plugins consist of RDF data in Turtle files and a shared library
  that contains the actual plugin implementation. The Turtle files and
