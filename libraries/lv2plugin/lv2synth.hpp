@@ -142,7 +142,7 @@ struct NoiseVoice : public LV2::Voice {
   
 struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 
-  NoiseSynth(double, const char*, const LV2_Feature* const*) 
+  NoiseSynth(double, const char*, const LV2::Feature* const*) 
     : LV2::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_state(0) {
     add_voices(new NoiseVoice, new NoiseVoice, new NoiseVoice);
     add_audio_outputs(AUDIO_PORT);
@@ -185,7 +185,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     /** @c ports is the total number of ports in this plugin, and @c midi_input
 	is the index of the main MIDI input port (the one that the synth should
 	use for note input). */
-    Synth(uint32_t ports, const LV2_Feature* const* f, uint32_t midi_input) 
+    Synth(uint32_t ports, const Feature* const* f, uint32_t midi_input) 
     //      : Plugin<D, Ext1, Req1, Ext2, Req2, Ext3, Req3, Ext4, Req4, Ext5, Req5, 
     //	       Ext6, Req6, Ext7, Req7, Ext8, Req8, Ext9, Req9>(ports),
       : Parent(ports, f),

@@ -38,6 +38,8 @@
 
 namespace LV2 {
   
+  /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
+  typedef LV2_Feature Feature;
   
   /** Convenient typedef for the feature handler function type. */
   typedef void(*FeatureHandler)(void*, void*);
@@ -151,7 +153,7 @@ namespace LV2 {
       
       class TestLV2 : public LV2::Plugin<TestLV2> {
       public:
-        TestLV2(double, const char*, const LV2_Feature* const*) : LV2::Plugin<TestLV2>(2) { }
+        TestLV2(double, const char*, const LV2::Feature* const*) : LV2::Plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
           memcpy(p(1), p(0), sample_count * sizeof(float));
         }
@@ -165,17 +167,17 @@ namespace LV2 {
       functional (but not very useful) LV2 plugin with one audio input port
       and one audio output port that just copies the input to the output.
   */
-template <class Derived, 
-	  template <class, bool> class Ext1 = End, bool Req1 = false,
-	  template <class, bool> class Ext2 = End, bool Req2 = false,
-	  template <class, bool> class Ext3 = End, bool Req3 = false,
-	  template <class, bool> class Ext4 = End, bool Req4 = false,
-	  template <class, bool> class Ext5 = End, bool Req5 = false,
-	  template <class, bool> class Ext6 = End, bool Req6 = false,
-	  template <class, bool> class Ext7 = End, bool Req7 = false,
-	  template <class, bool> class Ext8 = End, bool Req8 = false,
-	  template <class, bool> class Ext9 = End, bool Req9 = false>
-class Plugin : public InheritanceTree<Derived, 
+  template <class Derived, 
+	    template <class, bool> class Ext1 = End, bool Req1 = false,
+	    template <class, bool> class Ext2 = End, bool Req2 = false,
+	    template <class, bool> class Ext3 = End, bool Req3 = false,
+	    template <class, bool> class Ext4 = End, bool Req4 = false,
+	    template <class, bool> class Ext5 = End, bool Req5 = false,
+	    template <class, bool> class Ext6 = End, bool Req6 = false,
+	    template <class, bool> class Ext7 = End, bool Req7 = false,
+	    template <class, bool> class Ext8 = End, bool Req8 = false,
+	    template <class, bool> class Ext9 = End, bool Req9 = false>
+  class Plugin : public InheritanceTree<Derived, 
 				      Ext1, Req1, Ext2, Req2, Ext3, Req3,
 				      Ext4, Req4, Ext5, Req5, Ext6, Req6,
 				      Ext7, Req7, Ext8, Req8, Ext9, Req9> {
@@ -184,12 +186,12 @@ class Plugin : public InheritanceTree<Derived,
     /** This constructor is needed to initialise the port vector with the
 	correct number of ports, and to check if all the required features
 	are provided. */
-    Plugin(uint32_t ports, const LV2_Feature* const* f = 0) 
+    Plugin(uint32_t ports, const Feature* const* f = 0) 
       : m_ports(ports, 0) {
       if (f) {
 	FeatureHandlerMap hmap;
 	Derived::map_feature_handlers(hmap);
-	for (const LV2_Feature* const* iter = f; *iter != 0; ++iter) {
+	for (const Feature* const* iter = f; *iter != 0; ++iter) {
 	  FeatureHandlerMap::iterator miter;
 	  miter = hmap.find((*iter)->URI);
 	  if (miter != hmap.end())
