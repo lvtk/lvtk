@@ -37,7 +37,7 @@ Depends: libstdc++6 (>= 4.2.1)
 Description: A simple library for parsing and querying RDF/Turtle data
  A simple C++ library for querying and parsing RDF data in Turtle format.
 
-Package:libpaq0-dev
+Package: libpaq0-dev
 Architecture: any
 Section: libdevel
 Depends: libpaq0 (= ${binary:Version}), libboost-dev (>= 1.33.1)
