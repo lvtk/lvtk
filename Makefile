@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.368
+PACKAGE_VERSION = 0.1.369
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -14,7 +14,8 @@ liblv2-plugin_a_HEADERS = \
 	../../headers/lv2.h \
 	../../headers/lv2-command.h \
 	../../headers/lv2-midiport.h \
-	../../headers/lv2-midifunctions.h
+	../../headers/lv2-midifunctions.h \
+	../../headers/lv2types.hpp
 liblv2-plugin_a_CFLAGS = -Iheaders
 liblv2-plugin_a_SOURCEDIR = libraries/lv2plugin
 liblv2-plugin_a_INSTALLDIR = $(libdir)

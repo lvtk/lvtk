@@ -31,7 +31,8 @@
 #include <gtkmm/main.h>
 #include <gtkmm/widget.h>
 
-#include "lv2-gui.h"
+#include <lv2-gui.h>
+#include <lv2types.hpp>
 
 
 namespace LV2 {
@@ -75,7 +76,7 @@ namespace LV2 {
     Controller(LV2UI_Write_Function wfcn, LV2UI_Command_Function cfcn,
 	       LV2UI_Program_Change_Function pfcn, 
 	       LV2UI_Program_Save_Function sfcn, LV2UI_Controller ctrl, 
-	       const LV2_Feature* const* features);
+	       const Feature* const* features);
     
     LV2UI_Write_Function m_wfunc;
     LV2UI_Command_Function m_cfunc;
