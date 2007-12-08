@@ -33,6 +33,7 @@
 #include <gtkmm/widget.h>
 
 #include <lv2-gui.h>
+#include <lv2-gui-programs.h>
 #include <lv2types.hpp>
 
 
@@ -166,8 +167,7 @@ namespace LV2 {
 		       typename Ext6<Derived, false>::C, 
 		       typename Ext7<Derived, false>::C, 
 		       typename Ext8<Derived, false>::C,
-		       typename Ext9<Derived, false>::C> 
-    Controller;
+		       typename Ext9<Derived, false>::C> Controller;
 
     
     ~GUI() { delete m_controller; }
@@ -181,15 +181,10 @@ namespace LV2 {
       LV2UI_Descriptor* desc = new LV2UI_Descriptor;
       std::memset(desc, 0, sizeof(LV2UI_Descriptor));
       desc->URI = strdup(URI.c_str());
-      desc->instantiate = &create_ui_instance;
-      desc->cleanup = &delete_ui_instance;
-      desc->port_event = &port_event;
-      desc->feedback = &feedback;
-      desc->program_added = &program_added;
-      desc->program_removed = &program_removed;
-      desc->programs_cleared = &programs_cleared;
-      desc->current_program_changed = &current_program_changed;
-      desc->extension_data = &extension_data;
+      desc->instantiate = &Derived::create_ui_instance;
+      desc->cleanup = &Derived::delete_ui_instance;
+      desc->port_event = &Derived::port_event;
+      desc->extension_data = &Derived::extension_data;
       get_lv2g2g_descriptors().push_back(desc);
       return get_lv2g2g_descriptors().size() - 1;
     }
@@ -235,11 +230,16 @@ namespace LV2 {
       delete static_cast<Derived*>(instance);
     }
     
+    
+    /** @internal
+	This is the main port_event() callback. You should not use it directly.
+    */
     static void port_event(LV2UI_Handle instance, uint32_t port, 
 			   uint32_t buffer_size, const void* buffer) {
       static_cast<Derived*>(instance)->port_event(port, buffer_size, buffer);
     }
     
+    /*
     static void feedback(LV2UI_Handle instance, uint32_t argc, 
 			 const char* const* argv) {
       static_cast<Derived*>(instance)->feedback(argc, argv);
@@ -261,12 +261,9 @@ namespace LV2 {
     static void current_program_changed(LV2UI_Handle instance, unsigned char number) {
       static_cast<Derived*>(instance)->current_program_changed(number);
     }
+    */
     
-    static void* extension_data(LV2UI_Handle instance, const char* URI) {
-      return static_cast<GUI*>(instance)->extension_data(URI);
-    }
-    
-    
+
     Controller* m_controller;
     
   };
@@ -281,6 +278,64 @@ namespace LV2 {
     
   };
 
+  
+  /** Program GUI extension - the host will tell the GUI what presets are
+      available and which is currently active, the GUI can request saving
+      and using programs.
+  */
+  template <class Derived, bool Required>
+  struct Programs : public GUIExtension<Required> {
+    
+    void program_added(unsigned char number, 
+		       const char*   name) {
+      
+    }
+    
+    void program_removed(unsigned char number) {
+
+    }
+  
+    void programs_cleared() {
+
+    }
+  
+    void current_program_changed(unsigned char number) {
+
+    }
+
+    static const void* extension_data(const char* uri) { 
+      static LV2UI_Programs_GDesc desc = { &_program_added,
+					   &_program_removed,
+					   &_programs_cleared,
+					   &_current_program_changed };
+      if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#ext_programs"))
+	return &desc;
+      return 0;
+    }
+
+  private:
+    
+    static void _program_added(LV2UI_Handle  gui, 
+			       unsigned char number, 
+			       const char*   name) {
+      static_cast<Derived*>(gui)->program_added(number, name);
+    }
+  
+    static void _program_removed(LV2UI_Handle  gui, 
+				 unsigned char number) {
+      static_cast<Derived*>(gui)->program_removed(number);
+    }
+    
+    static void _programs_cleared(LV2UI_Handle gui) {
+      static_cast<Derived*>(gui)->programs_cleared();
+    }
+    
+    static void _current_program_changed(LV2UI_Handle  gui, 
+					 unsigned char number) {
+      static_cast<Derived*>(gui)->current_program_changed(number);
+    }
+
+  };
   
 }
 

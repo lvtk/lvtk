@@ -161,32 +161,9 @@ typedef void (*LV2UI_Write_Function)(LV2UI_Controller controller,
     send arbitrary commands to the plugin. @c argv should be an array of length
     @c argc, containing command arguments. The arguments have no meaning
     to the host and should be passed verbatim to the plugin. */
-typedef void (*LV2UI_Command_Function)(LV2UI_Controller   controller,
-                                       uint32_t           argc,
-                                       const char* const* argv);
-
-/** This is the type of the host-provided function that the GUI can use to
-    request a program change in the host. A function of this type will be 
-    provided to the GUI by the host in the instantiate() function. Calling
-    this function does not guarantee that the program will change, it is just
-    a request. If the program does change, the GUI's current_program_changed() 
-    callback will be called, either before or after this function returns
-    depending on whether the GUI host <-> plugin instance communication is
-    synchronous or asynchronous. */
-typedef void (*LV2UI_Program_Change_Function)(LV2UI_Controller controller,
-                                              unsigned char    program);
-
-/** This is the type of the host-provided function that the GUI can use to
-    request that the current state of the plugin is saved to a program.
-    A function of this type will be provided to the GUI by the host in the
-    instantiate function. Calling this function does not guarantee that the
-    state will be saved, it is just a request. If the state is saved, the 
-    GUI's program_added() callback will be called, either before or after
-    this function returns depending on whether the GUI host <-> plugin
-    instance communication is synchronous or asynchronous. */
-typedef void (*LV2UI_Program_Save_Function)(LV2UI_Controller controller,
-                                            unsigned char    program,
-                                            const char*      name);
+//typedef void (*LV2UI_Command_Function)(LV2UI_Controller   controller,
+//                                       uint32_t           argc,
+//                                       const char* const* argv);
 
 
 /** */
@@ -226,9 +203,6 @@ typedef struct _LV2UI_Descriptor {
                               const char*                     plugin_uri,
                               const char*                     bundle_path,
                               LV2UI_Write_Function            write_function,
-                              LV2UI_Command_Function          command_function,
-                              LV2UI_Program_Change_Function   program_function,
-                              LV2UI_Program_Save_Function     save_function,
                               LV2UI_Controller                controller,
                               LV2UI_Widget*                   widget,
                               const LV2_Feature* const*       features);
@@ -286,33 +260,33 @@ typedef struct _LV2UI_Descriptor {
                      const void*    buffer);
   
   /** * WILL BE DEPRECATED * */
-  void (*feedback)(LV2UI_Handle       gui, 
-                   uint32_t           argc, 
-                   const char* const* argv);
+  //void (*feedback)(LV2UI_Handle       gui, 
+  //                 uint32_t           argc, 
+  //                 const char* const* argv);
   
   /** This function is called when the host adds a new program to its program
       list, or changes the name of an old one. It may be set to NULL if the 
       GUI isn't interested in displaying program information. */
-  void (*program_added)(LV2UI_Handle  gui, 
-                        unsigned char number, 
-                        const char*   name);
+  //void (*program_added)(LV2UI_Handle  gui, 
+  //                      unsigned char number, 
+  //                      const char*   name);
   
   /** This function is called when the host removes a program from its program
       list. It may be set to NULL if the GUI isn't interested in displaying
       program information. */
-  void (*program_removed)(LV2UI_Handle  gui, 
-                          unsigned char number);
+  //void (*program_removed)(LV2UI_Handle  gui, 
+  //                        unsigned char number);
   
   /** This function is called when the host clears its program list. It may be
       set to NULL if the GUI isn't interested in displaying program 
       information. */
-  void (*programs_cleared)(LV2UI_Handle gui);
+  //void (*programs_cleared)(LV2UI_Handle gui);
   
   /** This function is called when the host changes the current program. It may
       be set to NULL if the GUI isn't interested in displaying program 
       information. */
-  void (*current_program_changed)(LV2UI_Handle  gui, 
-                                  unsigned char number);
+  //void (*current_program_changed)(LV2UI_Handle  gui, 
+  //                                unsigned char number);
 
   /** Returns a data structure associated with an extension URI, for example
       a struct containing additional function pointers. Avoid returning

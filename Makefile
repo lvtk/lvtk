@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.374
+PACKAGE_VERSION = 0.1.375
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -21,7 +21,10 @@ liblv2-plugin_a_SOURCEDIR = libraries/lv2plugin
 liblv2-plugin_a_INSTALLDIR = $(libdir)
 
 liblv2-gui_a_SOURCES = lv2gui.cpp
-liblv2-gui_a_HEADERS = lv2gui.hpp ../../headers/lv2-gui.h
+liblv2-gui_a_HEADERS = \
+	lv2gui.hpp \
+	../../headers/lv2-gui.h \
+	../../headers/lv2-gui-programs.h
 liblv2-gui_a_CFLAGS = `pkg-config --cflags gtkmm-2.4` -Iheaders
 liblv2-gui_a_SOURCEDIR = libraries/lv2gui
 liblv2-gui_a_INSTALLDIR = $(libdir)
