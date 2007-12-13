@@ -103,7 +103,7 @@ namespace LV2 {
       desc->URI = strdup(uri);
       desc->instantiate = &Derived::create_ui_instance;
       desc->cleanup = &Derived::delete_ui_instance;
-      desc->port_event = &Derived::port_event;
+      desc->port_event = &Derived::_port_event;
       desc->extension_data = &Derived::extension_data;
       get_lv2g2g_descriptors().push_back(desc);
       return get_lv2g2g_descriptors().size() - 1;
@@ -175,8 +175,8 @@ namespace LV2 {
     /** @internal
 	This is the main port_event() callback. You should not use it directly.
     */
-    static void port_event(LV2UI_Handle instance, uint32_t port, 
-			   uint32_t buffer_size, void const* buffer) {
+    static void _port_event(LV2UI_Handle instance, uint32_t port, 
+			    uint32_t buffer_size, void const* buffer) {
       static_cast<Derived*>(instance)->port_event(port, buffer_size, buffer);
     }
     
@@ -196,24 +196,61 @@ namespace LV2 {
     static LV2::Feature const* const* s_features;
     
   };
-  
-
-  /** Base class for GUI extensions. GUI extension mixin classes don't have to 
-      inherit from this class, but it's convenient. */
-  template <bool Required>
-  struct GUIExtension : public Extension<Required> {
-    
-    typedef Empty C;
-    
-  };
 
   
+  /* Yes, static variables are messy. */
+  template<class Derived,
+           template <class, bool> class Ext1, bool Req1,
+           template <class, bool> class Ext2, bool Req2,
+           template <class, bool> class Ext3, bool Req3,
+           template <class, bool> class Ext4, bool Req4,
+           template <class, bool> class Ext5, bool Req5,
+           template <class, bool> class Ext6, bool Req6,
+           template <class, bool> class Ext7, bool Req7,
+           template <class, bool> class Ext8, bool Req8,
+           template <class, bool> class Ext9, bool Req9>
+  void* GUI<Derived, 
+	    Ext1, Req1, Ext2, Req2, Ext3, Req3, 
+	    Ext4, Req4, Ext5, Req5, Ext6, Req6, 
+	    Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_ctrl = 0; 
+  
+  template<class Derived,
+           template <class, bool> class Ext1, bool Req1,
+           template <class, bool> class Ext2, bool Req2,
+           template <class, bool> class Ext3, bool Req3,
+           template <class, bool> class Ext4, bool Req4,
+           template <class, bool> class Ext5, bool Req5,
+           template <class, bool> class Ext6, bool Req6,
+           template <class, bool> class Ext7, bool Req7,
+           template <class, bool> class Ext8, bool Req8,
+           template <class, bool> class Ext9, bool Req9>
+  LV2UI_Write_Function GUI<Derived, 
+			   Ext1, Req1, Ext2, Req2, Ext3, Req3, 
+			   Ext4, Req4, Ext5, Req5, Ext6, Req6, 
+			   Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_wfunc = 0; 
+  
+  template<class Derived,
+           template <class, bool> class Ext1, bool Req1,
+           template <class, bool> class Ext2, bool Req2,
+           template <class, bool> class Ext3, bool Req3,
+           template <class, bool> class Ext4, bool Req4,
+           template <class, bool> class Ext5, bool Req5,
+           template <class, bool> class Ext6, bool Req6,
+           template <class, bool> class Ext7, bool Req7,
+           template <class, bool> class Ext8, bool Req8,
+           template <class, bool> class Ext9, bool Req9>
+  LV2::Feature const* const* GUI<Derived, 
+				 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
+				 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
+				 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_features = 0;
+  
+
   /** Program GUI extension - the host will tell the GUI what presets are
       available and which is currently active, the GUI can request saving
       and using programs.
   */
   template <class Derived, bool Required>
-  struct Programs : public GUIExtension<Required> {
+  struct Programs : public Extension<Required> {
     
     /** This is called by the host to let the GUI know that a new 
 	program has been added or renamed. The number is always in the 
