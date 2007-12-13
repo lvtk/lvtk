@@ -185,10 +185,10 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     /** @c ports is the total number of ports in this plugin, and @c midi_input
 	is the index of the main MIDI input port (the one that the synth should
 	use for note input). */
-    Synth(uint32_t ports, const Feature* const* f, uint32_t midi_input) 
+    Synth(uint32_t ports, uint32_t midi_input) 
     //      : Plugin<D, Ext1, Req1, Ext2, Req2, Ext3, Req3, Ext4, Req4, Ext5, Req5, 
     //	       Ext6, Req6, Ext7, Req7, Ext8, Req8, Ext9, Req9>(ports),
-      : Parent(ports, f),
+      : Parent(ports),
 	m_midi_input(midi_input) { 
     
     }

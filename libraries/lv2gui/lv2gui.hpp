@@ -86,9 +86,11 @@ namespace LV2 {
       m_ctrl = s_ctrl;
       m_wfunc = s_wfunc;
       m_features = s_features;
+      m_bundle_path = s_bundle_path;
       s_ctrl = 0;
       s_wfunc = 0;
       s_features = 0;
+      s_bundle_path = 0;
     }
     
     /** Override this if you want your GUI to do something when a control port
@@ -126,9 +128,15 @@ namespace LV2 {
     
     /** Get the feature array that was passed by the host. This may only
 	be valid while the constructor is running. */
-    inline LV2::Feature const* const* get_features() {
+    inline LV2::Feature const* const* features() {
       return m_features;
     }
+    
+    /** Get the filesystem path to the bundle that contains this GUI. */
+    inline char const* bundle_path() const {
+      return m_bundle_path;
+    }
+    
     
   private:
     
@@ -150,13 +158,14 @@ namespace LV2 {
       s_ctrl = ctrl;
       s_wfunc = write_func;
       s_features = features;
+      s_bundle_path = bundle_path;
       
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
       Gtk::Main::init_gtkmm_internals();
       
       // create the GUI object
-      Derived* t = new Derived(plugin_uri, bundle_path);
+      Derived* t = new Derived(plugin_uri);
       
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
       return reinterpret_cast<LV2UI_Handle>(t);
@@ -180,20 +189,16 @@ namespace LV2 {
       static_cast<Derived*>(instance)->port_event(port, buffer_size, buffer);
     }
     
-    /*
-    static void feedback(LV2UI_Handle instance, uint32_t argc, 
-			 char const* const* argv) {
-      static_cast<Derived*>(instance)->feedback(argc, argv);
-    }
-    */
-    
+
     void* m_ctrl;
     LV2UI_Write_Function m_wfunc;
     LV2::Feature const* const* m_features;
+    char const* m_bundle_path;
     
     static void* s_ctrl;
     static LV2UI_Write_Function s_wfunc;
     static LV2::Feature const* const* s_features;
+    static char const* s_bundle_path;
     
   };
 
@@ -243,6 +248,21 @@ namespace LV2 {
 				 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
 				 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
 				 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_features = 0;
+  
+  template<class Derived,
+           template <class, bool> class Ext1, bool Req1,
+           template <class, bool> class Ext2, bool Req2,
+           template <class, bool> class Ext3, bool Req3,
+           template <class, bool> class Ext4, bool Req4,
+           template <class, bool> class Ext5, bool Req5,
+           template <class, bool> class Ext6, bool Req6,
+           template <class, bool> class Ext7, bool Req7,
+           template <class, bool> class Ext8, bool Req8,
+           template <class, bool> class Ext9, bool Req9>
+  char const* GUI<Derived, 
+		  Ext1, Req1, Ext2, Req2, Ext3, Req3, 
+		  Ext4, Req4, Ext5, Req5, Ext6, Req6, 
+		  Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_bundle_path = 0; 
   
 
   /** Program GUI extension - the host will tell the GUI what presets are
