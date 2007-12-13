@@ -157,14 +157,6 @@ typedef void (*LV2UI_Write_Function)(LV2UI_Controller controller,
                                      uint32_t         buffer_size,
                                      const void*      buffer);
 
-/** This is the type of the host-provided function that the GUI can use to
-    send arbitrary commands to the plugin. @c argv should be an array of length
-    @c argc, containing command arguments. The arguments have no meaning
-    to the host and should be passed verbatim to the plugin. */
-//typedef void (*LV2UI_Command_Function)(LV2UI_Controller   controller,
-//                                       uint32_t           argc,
-//                                       const char* const* argv);
-
 
 /** */
 typedef struct _LV2UI_Descriptor {
@@ -183,8 +175,7 @@ typedef struct _LV2UI_Descriptor {
       @param write_function A function provided by the host that the GUI can
                             use to send data to the plugin's input ports.
       @param controller A handle for the plugin instance that should be passed
-                        as the first parameter of @c write_function,
-			@c program_function and @c save_function.
+                        as the first parameter of @c write_function.
       @param widget     A pointer to an LV2UI_Widget. The GUI will write a
                         widget pointer to this location (what type of widget 
 			depends on the RDF class of the GUI) that will be the
