@@ -336,13 +336,13 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     /** This function is called by the host when the GUI sends a command
 	to the plugin. You should override it in your plugin if you want
 	to do something when you get a command. */
-    char* command(uint32_t argc, const char* const* argv) { }
+    char* command(uint32_t argc, const char* const* argv) { return 0; }
     
     /** @internal
 	Static callback wrapper. */
     static char* _command(LV2_Handle h, 
 			  uint32_t argc, const char* const* argv) {
-      reinterpret_cast<Derived*>(h)->command(argc, argv);
+      return reinterpret_cast<Derived*>(h)->command(argc, argv);
     }
 
   protected:
