@@ -333,9 +333,6 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
   };
   
   
-  static const char* fixed_uri = 
-    "http://tapas.affenbande.org/lv2/ext/fixed-buffersize";
-  
   /** The fixed buffer size extension. A host that supports this will always
       call the plugin's run() function with the same @c sample_count parameter,
       which will be equal to the uint32_t variable pointed to by the data
@@ -346,7 +343,8 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
     FixedExt() : m_buffer_size(0) { }
     
     static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap[fixed_uri] = &FixedExt::handle_feature;
+      hmap["http://tapas.affenbande.org/lv2/ext/fixed-buffersize"] = 
+	&FixedExt::handle_feature;
     }
     
     static void handle_feature(void* instance, void* data) { 
@@ -368,9 +366,6 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
   };
 
 
-  static const char* fixedp2_uri = 
-    "http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize";
-  
   /** The fixed power-of-2 buffer size extension. This works just like 
       FixedExt with the additional requirement that the buffer size must
       be a power of 2. */
@@ -380,7 +375,8 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
     FixedP2Ext() : m_buffer_size(0) { }
     
     static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap[fixedp2_uri] = &FixedP2Ext::handle_feature;
+      hmap["http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize"] = 
+	&FixedP2Ext::handle_feature;
     }
     
     static void handle_feature(void* instance, void* data) { 

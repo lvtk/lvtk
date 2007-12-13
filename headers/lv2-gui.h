@@ -33,7 +33,7 @@
     shared object files in an LV2 bundle and are referenced in the RDF data
     using the triples (Turtle shown)
 <pre>    
-    @@prefix guiext: <http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#> .
+    @@prefix guiext: <http://ll-plugins.nongnu.org/lv2/ext/gui/dev/2#> .
     <http://my.plugin>    guiext:gui    <http://my.plugingui> .
     <http://my.plugin>    a             guiext:GtkGUI .
     <http://my.plugingui> guiext:binary <mygui.so> .
@@ -182,11 +182,6 @@ typedef struct _LV2UI_Descriptor {
 			 trailing '/'.
       @param write_function A function provided by the host that the GUI can
                             use to send data to the plugin's input ports.
-      @param command_function * WILL BE DEPRECATED *
-      @param program_function A function that the GUI can use to request a 
-                              preset change in the plugin.
-      @param save_function A function that the GUI can use to request that the
-                           current state of the plugin is saved as a preset.
       @param controller A handle for the plugin instance that should be passed
                         as the first parameter of @c write_function,
 			@c program_function and @c save_function.
@@ -259,35 +254,6 @@ typedef struct _LV2UI_Descriptor {
                      uint32_t       buffer_size,
                      const void*    buffer);
   
-  /** * WILL BE DEPRECATED * */
-  //void (*feedback)(LV2UI_Handle       gui, 
-  //                 uint32_t           argc, 
-  //                 const char* const* argv);
-  
-  /** This function is called when the host adds a new program to its program
-      list, or changes the name of an old one. It may be set to NULL if the 
-      GUI isn't interested in displaying program information. */
-  //void (*program_added)(LV2UI_Handle  gui, 
-  //                      unsigned char number, 
-  //                      const char*   name);
-  
-  /** This function is called when the host removes a program from its program
-      list. It may be set to NULL if the GUI isn't interested in displaying
-      program information. */
-  //void (*program_removed)(LV2UI_Handle  gui, 
-  //                        unsigned char number);
-  
-  /** This function is called when the host clears its program list. It may be
-      set to NULL if the GUI isn't interested in displaying program 
-      information. */
-  //void (*programs_cleared)(LV2UI_Handle gui);
-  
-  /** This function is called when the host changes the current program. It may
-      be set to NULL if the GUI isn't interested in displaying program 
-      information. */
-  //void (*current_program_changed)(LV2UI_Handle  gui, 
-  //                                unsigned char number);
-
   /** Returns a data structure associated with an extension URI, for example
       a struct containing additional function pointers. Avoid returning
       function pointers directly since standard C++ has no valid way of
@@ -295,8 +261,7 @@ typedef struct _LV2UI_Descriptor {
       if the GUI is not interested in supporting any extensions. This is similar
       to the extension_data() member in LV2_Descriptor.
   */
-  void* (*extension_data)(LV2UI_Handle gui,
-                          const char*  uri);
+  const void* (*extension_data)(const char*  uri);
 
 } LV2UI_Descriptor;
 

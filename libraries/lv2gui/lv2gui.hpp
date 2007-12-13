@@ -26,7 +26,6 @@
 
 #include <iostream>
 #include <map>
-#include <string>
 
 #include <gtkmm/box.h>
 #include <gtkmm/main.h>
@@ -39,7 +38,9 @@
 
 namespace LV2 {
 
-
+  
+  /** @internal
+      A convenient typedef that is only used internally. */
   typedef std::vector<LV2UI_Descriptor*> GUIDescList;
     
   
@@ -49,97 +50,17 @@ namespace LV2 {
   GUIDescList& get_lv2g2g_descriptors();
 
   
-  /** @internal
-      This class contains no data, it's just used to make it impossible to
-      create copies of instances of subclasses.  */
-  class NonCopyable {
-    NonCopyable(const NonCopyable&) { }
-    const NonCopyable& operator=(const NonCopyable&) { }
-  };
-  
-  
-  /** This class is an interface for controlling a plugin instance. An object
-      of this class will be provided by the host when a plugin GUI is 
-      instantiated. */
-  template<class Derived,
-           class Ext1 = Empty, class Ext2 = Empty, class Ext3 = Empty,
-           class Ext4 = Empty, class Ext5 = Empty, class Ext6 = Empty,
-           class Ext7 = Empty, class Ext8 = Empty, class Ext9 = Empty>
-  class Controller : public SimpleMixinTree<Derived, Ext1, Ext2, Ext3, Ext4, 
-					    Ext5, Ext6, Ext7, Ext8, Ext9>, 
-		     private NonCopyable {
-  public:
-    
-    /** @internal
-	This is only used by the wrapper functions. */
-    Controller(LV2UI_Write_Function wfunc, 
-	       LV2UI_Controller ctrl,
-	       const LV2_Feature* const* features)
-      : m_wfunc(wfunc),
-	m_ctrl(ctrl) {
-      
-    }
-    
-    /** Write to a port in the plugin instance. */
-    void write(uint32_t port, uint32_t buffer_size, const void* buffer) {
-      if (m_wfunc)
-	m_wfunc(m_ctrl, port, buffer_size, buffer);
-    }
-    
-    /** Convenient wrapper for writing to control ports. */
-    inline void write_control(uint32_t port, const float& value) {
-      write(port, sizeof(float), &value);
-    }
-    
-    /** Send a command to the plugin instance. */
-    /*
-    void command(uint32_t argc, const char* const* argv) {
-      std::cerr<<__PRETTY_FUNCTION__<<std::endl;
-      std::cerr<<"POINTERS:"<<std::endl;
-      for (unsigned i = 0; i < argc; ++i)
-	std::cerr<<"  "<<(const void*)(argv[i])<<std::endl;
-      
-      if (m_cfunc)
-	m_cfunc(m_ctrl, argc, argv);
-    }
-    */
-    
-    /** Tell the plugin host to switch to program @c number for the plugin
-	instance. */
-    /*
-    void request_program(unsigned char number) {
-      if (m_pfunc)
-	m_pfunc(m_ctrl, number);
-    }
-    */
-    
-    /** Tell the plugin host to save the current plugin state to a program. */
-    /*
-    void request_save(unsigned char number, const char* name) {
-      if (m_sfunc)
-	m_sfunc(m_ctrl, number, name);
-    }
-    */
-    
-  protected:
-    
-    LV2UI_Write_Function m_wfunc;
-    LV2UI_Controller m_ctrl;
-
-  };
-  
-
   /** This is the base class for a plugin GUI. You should inherit it and 
-      override any functions you want to provide implementations for. 
-      All subclasses must have a constructor with the signature
+      override any public member functions you want to provide 
+      implementations for. All subclasses must have a constructor with 
+      the signature
       
-      MyGUI(LV2::Controller& controller, const char* plugin_URI, 
-            const char* bundle_path, Gtk::Widget*& UI_widget);
+      MyGUI(char const* plugin_uri, char const* bundle_path);
 	    
-      Where @c controller is the interface for controlling the plugin instance
-      and @c UI_widget should be set to point to a widget that the host will
-      display to the user. The plugin is responsible for deallocating the 
-      widget when the destructor for the LV2GUI subclass is called. */
+      where @c plugin_uri is the URI of the plugin that this GUI will
+      control (not the URI for the GUI itself) and @c bundle_path is
+      the filesystem path to the LV2 bundle that contains this GUI.
+  */
   template<class Derived,
            template <class, bool> class Ext1 = End, bool Req1 = false,
            template <class, bool> class Ext2 = End, bool Req2 = false,
@@ -157,30 +78,29 @@ namespace LV2 {
 						 Ext7, Req7, Ext8, Req8, 
 						 Ext9, Req9> {
   public:
-
-    typedef Controller<Derived, 
-		       typename Ext1<Derived, false>::C, 
-		       typename Ext2<Derived, false>::C,
-		       typename Ext3<Derived, false>::C, 
-		       typename Ext4<Derived, false>::C, 
-		       typename Ext5<Derived, false>::C, 
-		       typename Ext6<Derived, false>::C, 
-		       typename Ext7<Derived, false>::C, 
-		       typename Ext8<Derived, false>::C,
-		       typename Ext9<Derived, false>::C> Controller;
-
     
-    ~GUI() { delete m_controller; }
+    /** @internal
+	The constructor for the GUI class. You should never use it directly.
+    */
+    inline GUI() {
+      m_ctrl = s_ctrl;
+      m_wfunc = s_wfunc;
+      m_features = s_features;
+      s_ctrl = 0;
+      s_wfunc = 0;
+      s_features = 0;
+    }
     
     /** Override this if you want your GUI to do something when a control port
 	value changes in the plugin instance. */
-    void port_event(uint32_t port, uint32_t buffer_size, const void* buffer) { }
+    inline void port_event(uint32_t port, uint32_t buffer_size, 
+			   void const* buffer) { }
     
     /** Use this template function to register a class as a LV2 GUI. */
-    static int register_class(const std::string& URI) {
+    static int register_class(char const* uri) {
       LV2UI_Descriptor* desc = new LV2UI_Descriptor;
       std::memset(desc, 0, sizeof(LV2UI_Descriptor));
-      desc->URI = strdup(URI.c_str());
+      desc->URI = strdup(uri);
       desc->instantiate = &Derived::create_ui_instance;
       desc->cleanup = &Derived::delete_ui_instance;
       desc->port_event = &Derived::port_event;
@@ -189,34 +109,54 @@ namespace LV2 {
       return get_lv2g2g_descriptors().size() - 1;
     }
     
+  protected:
+    
+    /** Send a chunk of data to a plugin port. The format of the chunk is
+	determined by the port type and the transfer mechanisms used, you
+	should probably use a wrapper function instead such as write_control().
+    */
+    inline void write(uint32_t port, uint32_t buffer_size, void const* buffer) {
+      (*m_wfunc)(m_ctrl, port, buffer_size, buffer);
+    }
+    
+    /** Set the value of a control input port in the plugin instance. */
+    inline void write_control(uint32_t port, float value) {
+      write(port, sizeof(float), &value);
+    }
+    
+    /** Get the feature array that was passed by the host. This may only
+	be valid while the constructor is running. */
+    inline LV2::Feature const* const* get_features() {
+      return m_features;
+    }
+    
   private:
     
     /** @internal
 	This function creates an instance of a plugin GUI. It is used 
 	as the instantiate() callback in the LV2 descriptor. You should not use
 	it directly. */
-    static LV2UI_Handle create_ui_instance(const struct _LV2UI_Descriptor* 
+    static LV2UI_Handle create_ui_instance(struct _LV2UI_Descriptor const* 
 					   descriptor,
-					   const char* plugin_uri,
-					   const char* bundle_path,
+					   char const* plugin_uri,
+					   char const* bundle_path,
 					   LV2UI_Write_Function write_func,
 					   LV2UI_Controller ctrl,
 					   LV2UI_Widget* widget,
-					   const LV2_Feature* const* features) {
+					   LV2_Feature const* const* features) {
+      
+      // copy some data to static variables so the subclasses don't have to
+      // bother with it
+      s_ctrl = ctrl;
+      s_wfunc = write_func;
+      s_features = features;
       
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
       Gtk::Main::init_gtkmm_internals();
       
-      // create a Controller object that wraps all the host callbacks
-      Controller* controller = new Controller(write_func, ctrl, features);
-      
       // create the GUI object
-      Derived* t = new Derived(*controller, plugin_uri, bundle_path);
-      
-      // the GUI object assumes ownership of the Controller pointer and will delete
-      // it in its destructor
-      t->m_controller = controller;
+      Derived* t = new Derived(plugin_uri, bundle_path);
       
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
       return reinterpret_cast<LV2UI_Handle>(t);
@@ -225,7 +165,8 @@ namespace LV2 {
 
     /** @internal
 	This function destroys an instance of a GUI. It is used as the
-	cleanup() callback in the LV2UI descriptor. You should not use it directly. */
+	cleanup() callback in the LV2UI descriptor. You should not use it 
+	directly. */
     static void delete_ui_instance(LV2UI_Handle instance) {
       delete static_cast<Derived*>(instance);
     }
@@ -235,36 +176,24 @@ namespace LV2 {
 	This is the main port_event() callback. You should not use it directly.
     */
     static void port_event(LV2UI_Handle instance, uint32_t port, 
-			   uint32_t buffer_size, const void* buffer) {
+			   uint32_t buffer_size, void const* buffer) {
       static_cast<Derived*>(instance)->port_event(port, buffer_size, buffer);
     }
     
     /*
     static void feedback(LV2UI_Handle instance, uint32_t argc, 
-			 const char* const* argv) {
+			 char const* const* argv) {
       static_cast<Derived*>(instance)->feedback(argc, argv);
-    }
-    
-    static void program_added(LV2UI_Handle instance, unsigned char number, 
-			      const char* name) {
-      static_cast<Derived*>(instance)->program_added(number, name);
-    }
-    
-    static void program_removed(LV2UI_Handle instance, unsigned char number) {
-      static_cast<Derived*>(instance)->program_removed(number);
-    }
-    
-    static void programs_cleared(LV2UI_Handle instance) {
-      static_cast<Derived*>(instance)->programs_cleared();
-    }
-    
-    static void current_program_changed(LV2UI_Handle instance, unsigned char number) {
-      static_cast<Derived*>(instance)->current_program_changed(number);
     }
     */
     
-
-    Controller* m_controller;
+    void* m_ctrl;
+    LV2UI_Write_Function m_wfunc;
+    LV2::Feature const* const* m_features;
+    
+    static void* s_ctrl;
+    static LV2UI_Write_Function s_wfunc;
+    static LV2::Feature const* const* s_features;
     
   };
   
@@ -286,24 +215,41 @@ namespace LV2 {
   template <class Derived, bool Required>
   struct Programs : public GUIExtension<Required> {
     
+    /** This is called by the host to let the GUI know that a new 
+	program has been added or renamed. The number is always in the 
+	interval [0,127].
+    */
     void program_added(unsigned char number, 
-		       const char*   name) {
+		       char const*   name) {
       
     }
     
+    /** This is called by the host to let the GUI know that a previously 
+	existing program has been removed.
+    */
     void program_removed(unsigned char number) {
 
     }
-  
+    
+    /** This is called by the host to let the GUI know that all previously
+	existing programs have been removed. 
+    */
     void programs_cleared() {
 
     }
-  
+    
+    /** This is called by the host to let the GUI know that the current 
+	program has changed. The number will always be in the range [0,127]
+	or equal to 255, in which case there is no current program.
+    */
     void current_program_changed(unsigned char number) {
 
     }
-
-    static const void* extension_data(const char* uri) { 
+    
+    /** @internal
+	Returns the plugin descriptor for this extension.
+    */
+    static void const* extension_data(char const* uri) { 
       static LV2UI_Programs_GDesc desc = { &_program_added,
 					   &_program_removed,
 					   &_programs_cleared,
@@ -317,7 +263,7 @@ namespace LV2 {
     
     static void _program_added(LV2UI_Handle  gui, 
 			       unsigned char number, 
-			       const char*   name) {
+			       char const*   name) {
       static_cast<Derived*>(gui)->program_added(number, name);
     }
   
