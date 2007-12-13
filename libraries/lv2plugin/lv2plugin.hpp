@@ -106,12 +106,16 @@ namespace LV2 {
     /** This constructor is needed to initialise the port vector with the
 	correct number of ports, and to check if all the required features
 	are provided. */
-    Plugin(uint32_t ports, const Feature* const* f = 0) 
+    Plugin(uint32_t ports) 
       : m_ports(ports, 0) {
-      if (f) {
+      m_features = s_features;
+      m_bundle_path = s_bundle_path;
+      s_features = 0;
+      s_bundle_path = 0;
+      if (m_features) {
 	FeatureHandlerMap hmap;
 	Derived::map_feature_handlers(hmap);
-	for (const Feature* const* iter = f; *iter != 0; ++iter) {
+	for (const Feature* const* iter = m_features; *iter != 0; ++iter) {
 	  FeatureHandlerMap::iterator miter;
 	  miter = hmap.find((*iter)->URI);
 	  if (miter != hmap.end())
@@ -148,7 +152,33 @@ namespace LV2 {
 	run() (unless it calls activate() again). */
     void deactivate() { }
     
-  //  protected:
+    /** Use this function to register your plugin class so that the host
+	can find it. You need to do this when the shared library is loaded 
+	by the host. One way of doing that is to put the function call in 
+	the initialiser for a global variable, like this:
+	
+	@code
+unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
+        @endcode
+    */
+    static unsigned register_class(const std::string& uri) {
+      LV2_Descriptor desc;
+      std::memset(&desc, 0, sizeof(LV2_Descriptor));
+      char* c_uri = new char[uri.size() + 1];
+      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
+      desc.URI = c_uri;
+      desc.instantiate = &Derived::_create_plugin_instance;
+      desc.connect_port = &Derived::_connect_port;
+      desc.activate = &Derived::_activate;
+      desc.run = &Derived::_run;
+      desc.deactivate = &Derived::_deactivate;
+      desc.cleanup = &Derived::_delete_plugin_instance;
+      desc.extension_data = &Derived::extension_data;
+      get_lv2_descriptors().push_back(desc);
+      return get_lv2_descriptors().size() - 1;
+    }
+
+  protected:
   
     /** Use this function to access and cast port buffers, for example
         like this:
@@ -167,14 +197,18 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     float*& p(uint32_t port) {
       return reinterpret_cast<float*&>(m_ports[port]);
     }
-
+    
+    /** Returns the filesystem path to the bundle that contains this plugin. */
+    const char* bundle_path() const {
+      return m_bundle_path;
+    }
+    
     /** @internal
 	This vector contains pointers to all port buffers. You don't need to
 	access it directly, use the p() function instead. */
     std::vector<void*> m_ports;
 
-
-  public:
+  private:
 
     static void _connect_port(LV2_Handle instance, uint32_t port, 
 			     void* data_location) {
@@ -202,7 +236,13 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 					      const char* bundle_path,
 					      const LV2_Feature* const* 
 					      features) {
-      Derived* t = new Derived(sample_rate, bundle_path, features);
+
+      // copy some data to static variables so the subclasses don't have to
+      // bother with it
+      s_features = features;
+      s_bundle_path = bundle_path;
+
+      Derived* t = new Derived(sample_rate);
       if (t->check_ok())
 	return reinterpret_cast<LV2_Handle>(t);
       delete t;
@@ -218,36 +258,50 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     }
 
 
-    /** Use this function to register your plugin class so that the host
-	can find it. You need to do this when the shared library is loaded 
-	by the host. One way of doing that is to put the function call in 
-	the initialiser for a global variable, like this:
-	
-	@code
-unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
-        @endcode
-    */
-    static unsigned register_class(const std::string& uri) {
-      LV2_Descriptor desc;
-      std::memset(&desc, 0, sizeof(LV2_Descriptor));
-      char* c_uri = new char[uri.size() + 1];
-      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
-      desc.URI = c_uri;
-      desc.instantiate = &Derived::_create_plugin_instance;
-      desc.connect_port = &Derived::_connect_port;
-      desc.activate = &Derived::_activate;
-      desc.run = &Derived::_run;
-      desc.deactivate = &Derived::_deactivate;
-      desc.cleanup = &Derived::_delete_plugin_instance;
-      desc.extension_data = &Derived::extension_data;
-      get_lv2_descriptors().push_back(desc);
-      return get_lv2_descriptors().size() - 1;
-    }
+  private:
 
+    LV2::Feature const* const* m_features;
+    char const* m_bundle_path;
+    
+    static LV2::Feature const* const* s_features;
+    static char const* s_bundle_path;
 
   };
+
+
+  template<class Derived,
+	   template <class, bool> class Ext1, bool Req1,
+	   template <class, bool> class Ext2, bool Req2,
+	   template <class, bool> class Ext3, bool Req3,
+	   template <class, bool> class Ext4, bool Req4,
+	   template <class, bool> class Ext5, bool Req5,
+	   template <class, bool> class Ext6, bool Req6,
+	   template <class, bool> class Ext7, bool Req7,
+	   template <class, bool> class Ext8, bool Req8,
+	   template <class, bool> class Ext9, bool Req9>
+  LV2::Feature const* const* 
+  Plugin<Derived, 
+	 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
+	 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
+	 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_features = 0;
   
-  
+  template<class Derived,
+	   template <class, bool> class Ext1, bool Req1,
+	   template <class, bool> class Ext2, bool Req2,
+	   template <class, bool> class Ext3, bool Req3,
+	   template <class, bool> class Ext4, bool Req4,
+	   template <class, bool> class Ext5, bool Req5,
+	   template <class, bool> class Ext6, bool Req6,
+	   template <class, bool> class Ext7, bool Req7,
+	   template <class, bool> class Ext8, bool Req8,
+	   template <class, bool> class Ext9, bool Req9>
+  char const* 
+  Plugin<Derived, 
+	 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
+	 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
+	 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_bundle_path = 0;
+
+
   /** @internal
       The URI used for the Command extension. */
   static const char* command_uri = 
