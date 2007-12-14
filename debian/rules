@@ -78,12 +78,12 @@ install-arch:
 	mkdir -p $(CURDIR)/debian/libpaq0/usr/lib
 	mv $(IDIR)/usr/lib/libpaq.so.*.0.0 $(CURDIR)/debian/libpaq0/usr/lib
 
-	# libpaq0-dev
-	mkdir -p $(CURDIR)/debian/libpaq0-dev/usr/lib/pkgconfig
-	cd $(IDIR)/usr/lib && mv libpaq.a libpaq.so $(CURDIR)/debian/libpaq0-dev/usr/lib
-	mv $(IDIR)/usr/lib/pkgconfig/paq.pc $(CURDIR)/debian/libpaq0-dev/usr/lib/pkgconfig
-	mkdir -p $(CURDIR)/debian/libpaq0-dev/usr/include/lv2-c++-tools
-	cd $(IDIR)/usr/include/lv2-c++-tools && mv namespaces.hpp query.hpp rdf.hpp turtleparser.hpp unicode.hpp $(CURDIR)/debian/libpaq0-dev/usr/include/lv2-c++-tools
+	# libpaq-dev
+	mkdir -p $(CURDIR)/debian/libpaq-dev/usr/lib/pkgconfig
+	cd $(IDIR)/usr/lib && mv libpaq.a libpaq.so $(CURDIR)/debian/libpaq-dev/usr/lib
+	mv $(IDIR)/usr/lib/pkgconfig/paq.pc $(CURDIR)/debian/libpaq-dev/usr/lib/pkgconfig
+	mkdir -p $(CURDIR)/debian/libpaq-dev/usr/include/lv2-c++-tools
+	cd $(IDIR)/usr/include/lv2-c++-tools && mv namespaces.hpp query.hpp rdf.hpp turtleparser.hpp unicode.hpp $(CURDIR)/debian/libpaq-dev/usr/include/lv2-c++-tools
 
 	# Do special stuff
 
