@@ -91,6 +91,16 @@ namespace LV2 {
       s_wfunc = 0;
       s_features = 0;
       s_bundle_path = 0;
+      if (m_features) {
+	FeatureHandlerMap hmap;
+	Derived::map_feature_handlers(hmap);
+	for (const Feature* const* iter = m_features; *iter != 0; ++iter) {
+	  FeatureHandlerMap::iterator miter;
+	  miter = hmap.find((*iter)->URI);
+	  if (miter != hmap.end())
+	    miter->second(static_cast<Derived*>(this), (*iter)->data);
+	}
+      }
     }
     
     /** Override this if you want your GUI to do something when a control port
@@ -137,8 +147,28 @@ namespace LV2 {
       return m_bundle_path;
     }
     
+    /** Get the controller - a handle on the plugin instance this GUI
+	is controlling. You only need it if you want to handle extensions
+	yourself. */
+    inline void* controller() {
+      return m_ctrl;
+    }
+    
     
   private:
+    
+    // XXX This is quite ugly and only needed to allow extension mixins
+    //     access to controller() without making it a public member function.
+    //     Should be handled in a nicer way.
+    friend class Ext1<Derived, Req1>;
+    friend class Ext2<Derived, Req1>;
+    friend class Ext3<Derived, Req1>;
+    friend class Ext4<Derived, Req1>;
+    friend class Ext5<Derived, Req1>;
+    friend class Ext6<Derived, Req1>;
+    friend class Ext7<Derived, Req1>;
+    friend class Ext8<Derived, Req1>;
+    friend class Ext9<Derived, Req1>;
     
     /** @internal
 	This function creates an instance of a plugin GUI. It is used 
@@ -166,9 +196,13 @@ namespace LV2 {
       
       // create the GUI object
       Derived* t = new Derived(plugin_uri);
-      
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
-      return reinterpret_cast<LV2UI_Handle>(t);
+      
+      // check that everything is OK
+      if (t->check_ok())
+	return reinterpret_cast<LV2UI_Handle>(t);
+      delete t;
+      return 0;
     }
     
 
@@ -265,6 +299,54 @@ namespace LV2 {
 		  Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_bundle_path = 0; 
   
 
+  /** This extension provides no extra functions or data, it just makes sure
+      that the GUI will not instantiate unless the host passes a LV2_Feature
+      for the noUserResize GUI feature defined in the GUI extension (if
+      @c Required is @c true).
+  */
+  template <class Derived, bool Required>
+  struct NoUserResize : public Extension<Required> {
+
+    /** @internal */
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      hmap["http://ll-plugins.nongnu.org/lv2/dev/gui#noUserResize"] = 
+	&NoUserResize::handle_feature;
+    }
+    
+    /** @internal */
+    static void handle_feature(void* instance, void* data) { 
+      Derived* d = reinterpret_cast<Derived*>(instance);
+      NoUserResize* e = static_cast<NoUserResize*>(d);
+      e->m_ok = true;
+    }
+    
+  };
+
+
+  /** This extension provides no extra functions or data, it just makes sure
+      that the GUI will not instantiate unless the host passes a LV2_Feature
+      for the fixedSize GUI feature defined in the GUI extension (if
+      @c Required is @c true).
+  */
+  template <class Derived, bool Required>
+  struct FixedSize : public Extension<Required> {
+    
+    /** @internal */
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      hmap["http://ll-plugins.nongnu.org/lv2/dev/gui#fixedSize"] = 
+	&FixedSize::handle_feature;
+    }
+    
+    /** @internal */
+    static void handle_feature(void* instance, void* data) {
+      Derived* d = reinterpret_cast<Derived*>(instance);
+      FixedSize* e = static_cast<FixedSize*>(d);
+      e->m_ok = true;
+    }
+    
+  };
+
+
   /** Program GUI extension - the host will tell the GUI what presets are
       available and which is currently active, the GUI can request saving
       and using programs.
@@ -272,6 +354,24 @@ namespace LV2 {
   template <class Derived, bool Required>
   struct Programs : public Extension<Required> {
     
+    /** @internal */
+    Programs() : m_hdesc(0) { }
+    
+    /** @internal */
+    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      hmap["http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs"] = 
+	&Programs::handle_feature;
+    }
+    
+    /** @internal */
+    static void handle_feature(void* instance, void* data) {
+      Derived* d = reinterpret_cast<Derived*>(instance);
+      Programs* e = static_cast<Programs*>(d);
+      e->m_hdesc = static_cast<LV2UI_Programs_HDesc*>(data);
+      e->m_ok = (e->m_hdesc != 0);
+    }
+    
+
     /** This is called by the host to let the GUI know that a new 
 	program has been added or renamed. The number is always in the 
 	interval [0,127].
@@ -315,7 +415,25 @@ namespace LV2 {
 	return &desc;
       return 0;
     }
-
+    
+  protected:
+    
+    /** You can call this to request that the host changes the current 
+	program to @c program. */
+    void change_program(unsigned char program) {
+      if (m_hdesc)
+	m_hdesc->change_program(static_cast<Derived*>(this)->controller(), 
+				program);
+    }
+    
+    /** You can call this to request that the host saves the current state
+	of the plugin instance to a program. */
+    void save_program(unsigned char program, char const* name) {
+      if (m_hdesc)
+	m_hdesc->save_program(static_cast<Derived*>(this)->controller(), 
+			      program, name);
+    }
+    
   private:
     
     static void _program_added(LV2UI_Handle  gui, 
@@ -337,8 +455,12 @@ namespace LV2 {
 					 unsigned char number) {
       static_cast<Derived*>(gui)->current_program_changed(number);
     }
+    
+    
+    LV2UI_Programs_HDesc* m_hdesc;
 
   };
+  
   
 }
 
