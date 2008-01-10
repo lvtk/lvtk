@@ -41,9 +41,8 @@ namespace LV2 {
   
   
   /** @internal
-      This template class is used to terminate the recursive inheritance trees
+      This class is used to terminate the recursive inheritance trees
       created by MixinTree. */
-  template <class A, bool B>
   struct End {
     typedef Empty C;
   };
@@ -58,37 +57,35 @@ namespace LV2 {
       next level of the inheritance tree. Each @c bool parameter will be used
       as the second parameter to the template directly preceding it. */
   template <class A,
-	    template <class, bool> class E1 = End, bool B1 = false,
-	    template <class, bool> class E2 = End, bool B2 = false,
-	    template <class, bool> class E3 = End, bool B3 = false,
-	    template <class, bool> class E4 = End, bool B4 = false,
-	    template <class, bool> class E5 = End, bool B5 = false,
-	    template <class, bool> class E6 = End, bool B6 = false,
-	    template <class, bool> class E7 = End, bool B7 = false,
-	    template <class, bool> class E8 = End, bool B8 = false,
-	    template <class, bool> class E9 = End, bool B9 = false>
+	    class E1 = End, 
+	    class E2 = End, 
+	    class E3 = End, 
+	    class E4 = End, 
+	    class E5 = End, 
+	    class E6 = End, 
+	    class E7 = End, 
+	    class E8 = End, 
+	    class E9 = End>
   struct MixinTree 
-    : E1<A, B1>, MixinTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
-			   E6, B6, E7, B7, E8, B8, E9, B9> {
+    : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
     
-    typedef MixinTree<A, E2, B2, E3, B3, E4, B4, E5, B5, 
-                      E6, B6, E7, B7, E8, B8, E9, B9> Parent;
+    typedef MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> Parent;
     
     /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
     static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      E1<A, B1>::map_feature_handlers(hmap);
+      E1::template I<A>::map_feature_handlers(hmap);
       Parent::map_feature_handlers(hmap);
     }
     
     /** Check if the features are OK with the plugin initialisation. */
     bool check_ok() const { 
-      return E1<A, B1>::check_ok() && Parent::check_ok();
+      return E1::template I<A>::check_ok() && Parent::check_ok();
     }
     
     /** Return any extension data. */
     static const void* extension_data(const char* uri) {
-      const void* result = E1<A, B1>::extension_data(uri);
+      const void* result = E1::template I<A>::extension_data(uri);
       if (result)
 	return result;
       return Parent::extension_data(uri);
@@ -101,10 +98,7 @@ namespace LV2 {
       This is a specialisation of the inheritance tree template that terminates
       the recursion. */
   template <class A>
-  struct MixinTree<A, 
-		   End, false, End, false, End, false, 
-		   End, false, End, false, End, false, 
-		   End, false, End, false, End, false> {
+  struct MixinTree<A, End, End, End, End, End, End, End, End, End> {
     static void map_feature_handlers(FeatureHandlerMap& hmap) { }
     bool check_ok() const { return true; }
     static const void* extension_data(const char* uri) { return 0; }

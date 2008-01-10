@@ -61,22 +61,12 @@ namespace LV2 {
       control (not the URI for the GUI itself) and @c bundle_path is
       the filesystem path to the LV2 bundle that contains this GUI.
   */
-  template<class Derived,
-           template <class, bool> class Ext1 = End, bool Req1 = false,
-           template <class, bool> class Ext2 = End, bool Req2 = false,
-           template <class, bool> class Ext3 = End, bool Req3 = false,
-           template <class, bool> class Ext4 = End, bool Req4 = false,
-           template <class, bool> class Ext5 = End, bool Req5 = false,
-           template <class, bool> class Ext6 = End, bool Req6 = false,
-           template <class, bool> class Ext7 = End, bool Req7 = false,
-           template <class, bool> class Ext8 = End, bool Req8 = false,
-           template <class, bool> class Ext9 = End, bool Req9 = false>
+  template<class Derived, class Ext1 = End, class Ext2 = End, class Ext3 = End,
+           class Ext4 = End, class Ext5 = End, class Ext6 = End,
+	   class Ext7 = End, class Ext8 = End, class Ext9 = End>
   class GUI : public Gtk::HBox, public MixinTree<Derived, 
-						 Ext1, Req1, Ext2, Req2,
-						 Ext3, Req3, Ext4, Req4, 
-						 Ext5, Req5, Ext6, Req6,
-						 Ext7, Req7, Ext8, Req8, 
-						 Ext9, Req9> {
+						 Ext1, Ext2, Ext3, Ext4, 
+						 Ext5, Ext6, Ext7, Ext8, Ext9> {
   public:
     
     /** @internal
@@ -147,6 +137,7 @@ namespace LV2 {
       return m_bundle_path;
     }
     
+  public:
     /** Get the controller - a handle on the plugin instance this GUI
 	is controlling. You only need it if you want to handle extensions
 	yourself. */
@@ -160,15 +151,15 @@ namespace LV2 {
     // XXX This is quite ugly and only needed to allow extension mixins
     //     access to controller() without making it a public member function.
     //     Should be handled in a nicer way.
-    friend class Ext1<Derived, Req1>;
-    friend class Ext2<Derived, Req1>;
-    friend class Ext3<Derived, Req1>;
-    friend class Ext4<Derived, Req1>;
-    friend class Ext5<Derived, Req1>;
-    friend class Ext6<Derived, Req1>;
-    friend class Ext7<Derived, Req1>;
-    friend class Ext8<Derived, Req1>;
-    friend class Ext9<Derived, Req1>;
+    //friend class Ext1::template I<Derived>;
+    //friend class Ext2::template I<Derived>;
+    //friend class Ext3::template I<Derived>;
+    //friend class Ext4::template I<Derived>;
+    //friend class Ext5::template I<Derived>;
+    //friend class Ext6::template I<Derived>;
+    //friend class Ext7::template I<Derived>;
+    //friend class Ext8::template I<Derived>;
+    //friend class Ext9::template I<Derived>;
     
     /** @internal
 	This function creates an instance of a plugin GUI. It is used 
@@ -238,65 +229,25 @@ namespace LV2 {
 
   
   /* Yes, static variables are messy. */
-  template<class Derived,
-           template <class, bool> class Ext1, bool Req1,
-           template <class, bool> class Ext2, bool Req2,
-           template <class, bool> class Ext3, bool Req3,
-           template <class, bool> class Ext4, bool Req4,
-           template <class, bool> class Ext5, bool Req5,
-           template <class, bool> class Ext6, bool Req6,
-           template <class, bool> class Ext7, bool Req7,
-           template <class, bool> class Ext8, bool Req8,
-           template <class, bool> class Ext9, bool Req9>
-  void* GUI<Derived, 
-	    Ext1, Req1, Ext2, Req2, Ext3, Req3, 
-	    Ext4, Req4, Ext5, Req5, Ext6, Req6, 
-	    Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_ctrl = 0; 
+  template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+           class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
+  void* GUI<Derived, Ext1, Ext2, Ext3, Ext4, 
+	    Ext5, Ext6, Ext7, Ext8, Ext9>::s_ctrl = 0; 
   
-  template<class Derived,
-           template <class, bool> class Ext1, bool Req1,
-           template <class, bool> class Ext2, bool Req2,
-           template <class, bool> class Ext3, bool Req3,
-           template <class, bool> class Ext4, bool Req4,
-           template <class, bool> class Ext5, bool Req5,
-           template <class, bool> class Ext6, bool Req6,
-           template <class, bool> class Ext7, bool Req7,
-           template <class, bool> class Ext8, bool Req8,
-           template <class, bool> class Ext9, bool Req9>
-  LV2UI_Write_Function GUI<Derived, 
-			   Ext1, Req1, Ext2, Req2, Ext3, Req3, 
-			   Ext4, Req4, Ext5, Req5, Ext6, Req6, 
-			   Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_wfunc = 0; 
+  template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+           class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
+  LV2UI_Write_Function GUI<Derived, Ext1, Ext2, Ext3, Ext4, 
+			   Ext5, Ext6, Ext7, Ext8, Ext9>::s_wfunc = 0;
   
-  template<class Derived,
-           template <class, bool> class Ext1, bool Req1,
-           template <class, bool> class Ext2, bool Req2,
-           template <class, bool> class Ext3, bool Req3,
-           template <class, bool> class Ext4, bool Req4,
-           template <class, bool> class Ext5, bool Req5,
-           template <class, bool> class Ext6, bool Req6,
-           template <class, bool> class Ext7, bool Req7,
-           template <class, bool> class Ext8, bool Req8,
-           template <class, bool> class Ext9, bool Req9>
-  LV2::Feature const* const* GUI<Derived, 
-				 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
-				 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
-				 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_features = 0;
+  template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+           class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
+  LV2::Feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4, 
+				 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
-  template<class Derived,
-           template <class, bool> class Ext1, bool Req1,
-           template <class, bool> class Ext2, bool Req2,
-           template <class, bool> class Ext3, bool Req3,
-           template <class, bool> class Ext4, bool Req4,
-           template <class, bool> class Ext5, bool Req5,
-           template <class, bool> class Ext6, bool Req6,
-           template <class, bool> class Ext7, bool Req7,
-           template <class, bool> class Ext8, bool Req8,
-           template <class, bool> class Ext9, bool Req9>
-  char const* GUI<Derived, 
-		  Ext1, Req1, Ext2, Req2, Ext3, Req3, 
-		  Ext4, Req4, Ext5, Req5, Ext6, Req6, 
-		  Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_bundle_path = 0; 
+  template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+           class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
+  char const* GUI<Derived, Ext1, Ext2, Ext3, Ext4, 
+		  Ext5, Ext6, Ext7, Ext8, Ext9>::s_bundle_path = 0;
   
 
   /** This extension provides no extra functions or data, it just makes sure
@@ -304,21 +255,25 @@ namespace LV2 {
       for the noUserResize GUI feature defined in the GUI extension (if
       @c Required is @c true).
   */
-  template <class Derived, bool Required>
-  struct NoUserResize : public Extension<Required> {
-
-    /** @internal */
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap["http://ll-plugins.nongnu.org/lv2/dev/gui#noUserResize"] = 
-	&NoUserResize::handle_feature;
-    }
+  template <bool Required>
+  struct NoUserResize {
     
-    /** @internal */
-    static void handle_feature(void* instance, void* data) { 
-      Derived* d = reinterpret_cast<Derived*>(instance);
-      NoUserResize* e = static_cast<NoUserResize*>(d);
-      e->m_ok = true;
-    }
+    template <class Derived> struct I : public Extension<Required> {
+      
+      /** @internal */
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap["http://ll-plugins.nongnu.org/lv2/dev/gui#noUserResize"] = 
+	  &I<Derived>::handle_feature;
+      }
+      
+      /** @internal */
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* e = static_cast<I<Derived>*>(d);
+	e->m_ok = true;
+      }
+      
+    };
     
   };
 
@@ -328,139 +283,147 @@ namespace LV2 {
       for the fixedSize GUI feature defined in the GUI extension (if
       @c Required is @c true).
   */
-  template <class Derived, bool Required>
-  struct FixedSize : public Extension<Required> {
+  template <bool Required>
+  struct FixedSize {
     
-    /** @internal */
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap["http://ll-plugins.nongnu.org/lv2/dev/gui#fixedSize"] = 
-	&FixedSize::handle_feature;
-    }
+    template <class Derived> struct I : public Extension<Required> {
+      
+      /** @internal */
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap["http://ll-plugins.nongnu.org/lv2/dev/gui#fixedSize"] = 
+	  &I<Derived>::handle_feature;
+      }
+      
+      /** @internal */
+      static void handle_feature(void* instance, void* data) {
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* e = static_cast<I<Derived>*>(d);
+	e->m_ok = true;
+      }
     
-    /** @internal */
-    static void handle_feature(void* instance, void* data) {
-      Derived* d = reinterpret_cast<Derived*>(instance);
-      FixedSize* e = static_cast<FixedSize*>(d);
-      e->m_ok = true;
-    }
+    };
     
   };
 
 
   /** Program GUI extension - the host will tell the GUI what presets are
-      available and which is currently active, the GUI can request saving
-      and using programs.
+    available and which is currently active, the GUI can request saving
+    and using programs.
   */
-  template <class Derived, bool Required>
-  struct Programs : public Extension<Required> {
+  template <bool Required>
+  struct Programs {
     
-    /** @internal */
-    Programs() : m_hdesc(0) { }
-    
-    /** @internal */
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap["http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs"] = 
-	&Programs::handle_feature;
-    }
-    
-    /** @internal */
-    static void handle_feature(void* instance, void* data) {
-      Derived* d = reinterpret_cast<Derived*>(instance);
-      Programs* e = static_cast<Programs*>(d);
-      e->m_hdesc = static_cast<LV2UI_Programs_HDesc*>(data);
-      e->m_ok = (e->m_hdesc != 0);
-    }
-    
-
-    /** This is called by the host to let the GUI know that a new 
-	program has been added or renamed. The number is always in the 
-	interval [0,127].
-    */
-    void program_added(unsigned char number, 
-		       char const*   name) {
+    template <class Derived> struct I : public Extension<Required> {
       
-    }
-    
-    /** This is called by the host to let the GUI know that a previously 
-	existing program has been removed.
-    */
-    void program_removed(unsigned char number) {
-
-    }
-    
-    /** This is called by the host to let the GUI know that all previously
-	existing programs have been removed. 
-    */
-    void programs_cleared() {
-
-    }
-    
-    /** This is called by the host to let the GUI know that the current 
-	program has changed. The number will always be in the range [0,127]
-	or equal to 255, in which case there is no current program.
-    */
-    void current_program_changed(unsigned char number) {
-
-    }
-    
-    /** @internal
-	Returns the plugin descriptor for this extension.
-    */
-    static void const* extension_data(char const* uri) { 
-      static LV2UI_Programs_GDesc desc = { &_program_added,
-					   &_program_removed,
-					   &_programs_cleared,
-					   &_current_program_changed };
-      if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#ext_programs"))
-	return &desc;
-      return 0;
-    }
-    
-  protected:
-    
-    /** You can call this to request that the host changes the current 
-	program to @c program. */
-    void change_program(unsigned char program) {
-      if (m_hdesc)
-	m_hdesc->change_program(static_cast<Derived*>(this)->controller(), 
-				program);
-    }
-    
-    /** You can call this to request that the host saves the current state
-	of the plugin instance to a program. */
-    void save_program(unsigned char program, char const* name) {
-      if (m_hdesc)
-	m_hdesc->save_program(static_cast<Derived*>(this)->controller(), 
-			      program, name);
-    }
-    
-  private:
-    
-    static void _program_added(LV2UI_Handle  gui, 
-			       unsigned char number, 
-			       char const*   name) {
-      static_cast<Derived*>(gui)->program_added(number, name);
-    }
-  
-    static void _program_removed(LV2UI_Handle  gui, 
-				 unsigned char number) {
-      static_cast<Derived*>(gui)->program_removed(number);
-    }
-    
-    static void _programs_cleared(LV2UI_Handle gui) {
-      static_cast<Derived*>(gui)->programs_cleared();
-    }
-    
-    static void _current_program_changed(LV2UI_Handle  gui, 
-					 unsigned char number) {
-      static_cast<Derived*>(gui)->current_program_changed(number);
-    }
-    
-    
-    LV2UI_Programs_HDesc* m_hdesc;
+      /** @internal */
+      I() : m_hdesc(0) { }
+	
+	/** @internal */
+	static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	  hmap["http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs"] = 
+	    &I<Derived>::handle_feature;
+	}
+	
+	/** @internal */
+	static void handle_feature(void* instance, void* data) {
+	  Derived* d = reinterpret_cast<Derived*>(instance);
+	  I<Derived>* e = static_cast<I<Derived>*>(d);
+	  e->m_hdesc = static_cast<LV2UI_Programs_HDesc*>(data);
+	  e->m_ok = (e->m_hdesc != 0);
+	}
+	
+	
+	/** This is called by the host to let the GUI know that a new 
+	    program has been added or renamed. The number is always in the 
+	    interval [0,127].
+	*/
+	void program_added(unsigned char number, 
+			   char const*   name) {
+	  
+	}
+	
+	/** This is called by the host to let the GUI know that a previously 
+	    existing program has been removed.
+	*/
+	void program_removed(unsigned char number) {
+	  
+	}
+	
+	/** This is called by the host to let the GUI know that all previously
+	    existing programs have been removed. 
+	*/
+	void programs_cleared() {
+	  
+	}
+	
+	/** This is called by the host to let the GUI know that the current 
+	    program has changed. The number will always be in the range [0,127]
+	    or equal to 255, in which case there is no current program.
+	*/
+	void current_program_changed(unsigned char number) {
+	  
+	}
+	
+	/** @internal
+	    Returns the plugin descriptor for this extension.
+	*/
+	static void const* extension_data(char const* uri) { 
+	  static LV2UI_Programs_GDesc desc = { &_program_added,
+					       &_program_removed,
+					       &_programs_cleared,
+					       &_current_program_changed };
+	  if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#ext_programs"))
+	    return &desc;
+	  return 0;
+	}
+	
+    protected:
+	
+	/** You can call this to request that the host changes the current 
+	    program to @c program. */
+	void change_program(unsigned char program) {
+	  if (m_hdesc)
+	    m_hdesc->change_program(static_cast<Derived*>(this)->controller(), 
+				    program);
+	}
+	
+	/** You can call this to request that the host saves the current state
+	    of the plugin instance to a program. */
+	void save_program(unsigned char program, char const* name) {
+	  if (m_hdesc)
+	    m_hdesc->save_program(static_cast<Derived*>(this)->controller(), 
+				  program, name);
+	}
+	
+    private:
+	
+	static void _program_added(LV2UI_Handle  gui, 
+				   unsigned char number, 
+				   char const*   name) {
+	  static_cast<Derived*>(gui)->program_added(number, name);
+	}
+	
+	static void _program_removed(LV2UI_Handle  gui, 
+				     unsigned char number) {
+	  static_cast<Derived*>(gui)->program_removed(number);
+	}
+	
+	static void _programs_cleared(LV2UI_Handle gui) {
+	  static_cast<Derived*>(gui)->programs_cleared();
+	}
+	
+	static void _current_program_changed(LV2UI_Handle  gui, 
+					     unsigned char number) {
+	  static_cast<Derived*>(gui)->current_program_changed(number);
+	}
+	
+	
+	LV2UI_Programs_HDesc* m_hdesc;
+	
+    };
 
   };
-  
+
   
 }
 

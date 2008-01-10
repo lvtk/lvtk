@@ -160,25 +160,16 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       @endcode
   */
   template <class V, class D,
-	    template <class, bool> class Ext1 = End, bool Req1 = false,
-	    template <class, bool> class Ext2 = End, bool Req2 = false,
-	    template <class, bool> class Ext3 = End, bool Req3 = false,
-	    template <class, bool> class Ext4 = End, bool Req4 = false,
-	    template <class, bool> class Ext5 = End, bool Req5 = false,
-	    template <class, bool> class Ext6 = End, bool Req6 = false,
-	    template <class, bool> class Ext7 = End, bool Req7 = false,
-	    template <class, bool> class Ext8 = End, bool Req8 = false,
-	    template <class, bool> class Ext9 = End, bool Req9 = false>
-  class Synth : public Plugin<D, 
-			      Ext1, Req1, Ext2, Req2, Ext3, Req3,
-			      Ext4, Req4, Ext5, Req5, Ext6, Req6,
-			      Ext7, Req7, Ext8, Req8, Ext9, Req9> {
+	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
+	    class Ext4 = End, class Ext5 = End, class Ext6 = End,
+	    class Ext7 = End, class Ext8 = End, class Ext9 = End>
+  class Synth : public Plugin<D, Ext1, Ext2, Ext3, Ext4, 
+			      Ext5, Ext6, Ext7, Ext8, Ext9> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, Ext1, Req1, Ext2, Req2, Ext3, Req3, Ext4, Req4, 
-		   Ext5, Req5, Ext6, Req6, Ext7, Req7, Ext8, Req8, Ext9, Req9>
+    typedef Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
     Parent;
     
 

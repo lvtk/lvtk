@@ -88,19 +88,18 @@ namespace LV2 {
       and one audio output port that just copies the input to the output.
   */
   template <class Derived, 
-	    template <class, bool> class Ext1 = End, bool Req1 = false,
-	    template <class, bool> class Ext2 = End, bool Req2 = false,
-	    template <class, bool> class Ext3 = End, bool Req3 = false,
-	    template <class, bool> class Ext4 = End, bool Req4 = false,
-	    template <class, bool> class Ext5 = End, bool Req5 = false,
-	    template <class, bool> class Ext6 = End, bool Req6 = false,
-	    template <class, bool> class Ext7 = End, bool Req7 = false,
-	    template <class, bool> class Ext8 = End, bool Req8 = false,
-	    template <class, bool> class Ext9 = End, bool Req9 = false>
+	    class Ext1 = End,
+	    class Ext2 = End, 
+	    class Ext3 = End,
+	    class Ext4 = End, 
+	    class Ext5 = End, 
+	    class Ext6 = End, 
+	    class Ext7 = End, 
+	    class Ext8 = End, 
+	    class Ext9 = End>
   class Plugin : public MixinTree<Derived, 
-				  Ext1, Req1, Ext2, Req2, Ext3, Req3,
-				  Ext4, Req4, Ext5, Req5, Ext6, Req6,
-				  Ext7, Req7, Ext8, Req8, Ext9, Req9> {
+				  Ext1, Ext2, Ext3, Ext4, Ext5, 
+				  Ext6, Ext7, Ext8, Ext9> {
   public:
     
     /** This constructor is needed to initialise the port vector with the
@@ -269,37 +268,17 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
 
 
-  template<class Derived,
-	   template <class, bool> class Ext1, bool Req1,
-	   template <class, bool> class Ext2, bool Req2,
-	   template <class, bool> class Ext3, bool Req3,
-	   template <class, bool> class Ext4, bool Req4,
-	   template <class, bool> class Ext5, bool Req5,
-	   template <class, bool> class Ext6, bool Req6,
-	   template <class, bool> class Ext7, bool Req7,
-	   template <class, bool> class Ext8, bool Req8,
-	   template <class, bool> class Ext9, bool Req9>
+  template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
   LV2::Feature const* const* 
-  Plugin<Derived, 
-	 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
-	 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
-	 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_features = 0;
+  Plugin<Derived, Ext1, Ext2, Ext3, Ext4, 
+	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
-  template<class Derived,
-	   template <class, bool> class Ext1, bool Req1,
-	   template <class, bool> class Ext2, bool Req2,
-	   template <class, bool> class Ext3, bool Req3,
-	   template <class, bool> class Ext4, bool Req4,
-	   template <class, bool> class Ext5, bool Req5,
-	   template <class, bool> class Ext6, bool Req6,
-	   template <class, bool> class Ext7, bool Req7,
-	   template <class, bool> class Ext8, bool Req8,
-	   template <class, bool> class Ext9, bool Req9>
+  template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
   char const* 
-  Plugin<Derived, 
-	 Ext1, Req1, Ext2, Req2, Ext3, Req3, 
-	 Ext4, Req4, Ext5, Req5, Ext6, Req6, 
-	 Ext7, Req7, Ext8, Req8, Ext9, Req9>::s_bundle_path = 0;
+  Plugin<Derived, Ext1, Ext2, Ext3, Ext4, 
+	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_bundle_path = 0;
 
 
   /** @internal
@@ -309,81 +288,84 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   
   
   /** The Command extension. Deprecated, but still used. */
-  template <class Derived, bool Required>
-  struct CommandExt : Extension<Required> {
+  template <bool Required>
+  struct CommandExt {
     
-    CommandExt() : m_chd(0) { }
-    
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap[command_uri] = &CommandExt::handle_feature;
-    }
-    
-    static void handle_feature(void* instance, void* data) { 
-      Derived* d = reinterpret_cast<Derived*>(instance);
-      CommandExt* ce = static_cast<CommandExt*>(d);
-      ce->m_chd = reinterpret_cast<LV2_CommandHostDescriptor*>(data);
-      ce->m_ok = (data != 0);
-    }
-  
-    static const void* extension_data(const char* uri) { 
-      if (!std::strcmp(uri, command_uri)) {
-	static LV2_CommandDescriptor cdesc = { &CommandExt::_command };
-	return &cdesc;
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() : m_chd(0) { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[command_uri] = &I<Derived>::handle_feature;
       }
-      return 0;
-    }
-    
-    /** This function is called by the host when the GUI sends a command
-	to the plugin. You should override it in your plugin if you want
-	to do something when you get a command. */
-    char* command(uint32_t argc, const char* const* argv) { return 0; }
-    
-    /** @internal
-	Static callback wrapper. */
-    static char* _command(LV2_Handle h, 
-			  uint32_t argc, const char* const* argv) {
-      return reinterpret_cast<Derived*>(h)->command(argc, argv);
-    }
-
-  protected:
-    
-    /** This function sends a message to the host, which sends it to the
-	GUI. Use it to send feedback to the GUI when reacting to commands. */
-    void feedback(uint32_t argc, const char* const* argv) {
-      (*m_chd->feedback)(m_chd->host_data, argc, argv);
-    }
-    
-    /** Convenient wrapper for the other feedback() function. The first 
-	parameter is a OSC-like type signature, where "s" means @c char*,
-	"i" means @c long and "f" means @c double. */
-    void feedback(const std::string& types, ...) {
-      va_list ap;
-      va_start(ap, types);
-      uint32_t argc = types.size();
-      char** argv = static_cast<char**>(malloc(sizeof(char*) * argc));
-      for (uint32_t i = 0; i < argc; ++i) {
-	if (types[i] == 's')
-	  argv[i] = strdup(va_arg(ap, const char*));
-	else if (types[i] == 'i') {
-	  std::ostringstream oss;
-	  oss<<va_arg(ap, long);
-	  argv[i] = strdup(oss.str().c_str());
-	}
-	else if (types[i] == 'f') {
-	  std::ostringstream oss;
-	  oss<<va_arg(ap, double);
-	  argv[i] = strdup(oss.str().c_str());
-	}
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* ce = static_cast<I<Derived>*>(d);
+	ce->m_chd = reinterpret_cast<LV2_CommandHostDescriptor*>(data);
+	ce->m_ok = (data != 0);
       }
-      va_end(ap);
-      feedback(argc, argv);
-    }
-    
-    /** @internal
-	The host descriptor as defined by the Command extension
-	specification. */
-    LV2_CommandHostDescriptor* m_chd;
-    
+      
+      static const void* extension_data(const char* uri) { 
+	if (!std::strcmp(uri, command_uri)) {
+	  static LV2_CommandDescriptor cdesc = { &I<Derived>::_command };
+	  return &cdesc;
+	}
+	return 0;
+      }
+      
+      /** This function is called by the host when the GUI sends a command
+	  to the plugin. You should override it in your plugin if you want
+	  to do something when you get a command. */
+      char* command(uint32_t argc, const char* const* argv) { return 0; }
+      
+      /** @internal
+	  Static callback wrapper. */
+      static char* _command(LV2_Handle h, 
+			    uint32_t argc, const char* const* argv) {
+	return reinterpret_cast<Derived*>(h)->command(argc, argv);
+      }
+      
+    protected:
+      
+      /** This function sends a message to the host, which sends it to the
+	  GUI. Use it to send feedback to the GUI when reacting to commands. */
+      void feedback(uint32_t argc, const char* const* argv) {
+	(*m_chd->feedback)(m_chd->host_data, argc, argv);
+      }
+      
+      /** Convenient wrapper for the other feedback() function. The first 
+	  parameter is a OSC-like type signature, where "s" means @c char*,
+	  "i" means @c long and "f" means @c double. */
+      void feedback(const std::string& types, ...) {
+	va_list ap;
+	va_start(ap, types);
+	uint32_t argc = types.size();
+	char** argv = static_cast<char**>(malloc(sizeof(char*) * argc));
+	for (uint32_t i = 0; i < argc; ++i) {
+	  if (types[i] == 's')
+	    argv[i] = strdup(va_arg(ap, const char*));
+	  else if (types[i] == 'i') {
+	    std::ostringstream oss;
+	    oss<<va_arg(ap, long);
+	    argv[i] = strdup(oss.str().c_str());
+	  }
+	  else if (types[i] == 'f') {
+	    std::ostringstream oss;
+	    oss<<va_arg(ap, double);
+	    argv[i] = strdup(oss.str().c_str());
+	  }
+	}
+	va_end(ap);
+	feedback(argc, argv);
+      }
+      
+      /** @internal
+	  The host descriptor as defined by the Command extension
+	  specification. */
+      LV2_CommandHostDescriptor* m_chd;
+      
+    };
   };
   
   
@@ -391,66 +373,74 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       call the plugin's run() function with the same @c sample_count parameter,
       which will be equal to the uint32_t variable pointed to by the data
       pointer for this feature. */
-  template <class Derived, bool Required>
-  struct FixedExt : Extension<Required> {
+  template <bool Required>
+  struct FixedExt {
     
-    FixedExt() : m_buffer_size(0) { }
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() : m_buffer_size(0) { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap["http://tapas.affenbande.org/lv2/ext/fixed-buffersize"] = 
+	  &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
+	fe->m_ok = true;
+      }
+      
+    protected:
+      
+      /** This returns the buffer size that the host has promised to use.
+	  If the host does not support this extension this function will
+	  return 0. */
+      uint32_t get_buffer_size() const { return m_buffer_size; }
+      
+      uint32_t m_buffer_size;
+      
+    };
     
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap["http://tapas.affenbande.org/lv2/ext/fixed-buffersize"] = 
-	&FixedExt::handle_feature;
-    }
-    
-    static void handle_feature(void* instance, void* data) { 
-      Derived* d = reinterpret_cast<Derived*>(instance);
-      FixedExt* fe = static_cast<FixedExt*>(d);
-      fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-      fe->m_ok = true;
-    }
-    
-  protected:
-    
-    /** This returns the buffer size that the host has promised to use.
-	If the host does not support this extension this function will
-	return 0. */
-    uint32_t get_buffer_size() const { return m_buffer_size; }
-    
-    uint32_t m_buffer_size;
-
   };
-
-
+  
   /** The fixed power-of-2 buffer size extension. This works just like 
       FixedExt with the additional requirement that the buffer size must
       be a power of 2. */
-  template <class Derived, bool Required>
-  struct FixedP2Ext : Extension<Required> {
+  template <bool Required>
+  struct FixedP2Ext {
     
-    FixedP2Ext() : m_buffer_size(0) { }
-    
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
-      hmap["http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize"] = 
-	&FixedP2Ext::handle_feature;
-    }
-    
-    static void handle_feature(void* instance, void* data) { 
-      Derived* d = reinterpret_cast<Derived*>(instance);
-      FixedP2Ext* fe = static_cast<FixedP2Ext*>(d);
-      fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-      fe->m_ok = true;
-    }
-    
-  protected:
-    
-    /** This returns the buffer size that the host has promised to use.
-	If the host does not support this extension this function will
-	return 0. */
-    uint32_t get_buffer_size() const { return m_buffer_size; }
-    
-    uint32_t m_buffer_size;
-
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() : m_buffer_size(0) { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap["http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize"] = 
+	  &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
+	fe->m_ok = true;
+      }
+      
+    protected:
+      
+      /** This returns the buffer size that the host has promised to use.
+	  If the host does not support this extension this function will
+	  return 0. */
+      uint32_t get_buffer_size() const { return m_buffer_size; }
+      
+      uint32_t m_buffer_size;
+      
+    };
+  
   };
-
+ 
+  
 }
 
 
