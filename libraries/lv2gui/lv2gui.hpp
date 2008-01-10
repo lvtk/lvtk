@@ -24,7 +24,6 @@
 #ifndef LV2GUI_HPP
 #define LV2GUI_HPP
 
-#include <iostream>
 #include <map>
 
 #include <gtkmm/box.h>
@@ -367,12 +366,12 @@ namespace LV2 {
 	/** @internal
 	    Returns the plugin descriptor for this extension.
 	*/
-	static void const* extension_data(char const* uri) { 
+	static void const* extension_data(char const* uri) {
 	  static LV2UI_Programs_GDesc desc = { &_program_added,
 					       &_program_removed,
 					       &_programs_cleared,
 					       &_current_program_changed };
-	  if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#ext_programs"))
+	  if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs"))
 	    return &desc;
 	  return 0;
 	}

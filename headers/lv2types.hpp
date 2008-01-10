@@ -23,6 +23,7 @@
 #ifndef LV2TYPES_HPP
 #define LV2TYPES_HPP
 
+
 namespace LV2 {
   
   /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
