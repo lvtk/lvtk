@@ -315,7 +315,7 @@ namespace LV2 {
     template <class Derived> struct I : public Extension<Required> {
       
       /** @internal */
-      I() : m_hdesc(0) { }
+      I() : m_hdesc(0), m_host_support(false) { }
 	
 	/** @internal */
 	static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -329,6 +329,7 @@ namespace LV2 {
 	  I<Derived>* e = static_cast<I<Derived>*>(d);
 	  e->m_hdesc = static_cast<LV2UI_Programs_HDesc*>(data);
 	  e->m_ok = (e->m_hdesc != 0);
+	  e->m_host_support = (e->m_hdesc != 0);
 	}
 	
 	
@@ -393,6 +394,12 @@ namespace LV2 {
 	    m_hdesc->save_program(static_cast<Derived*>(this)->controller(), 
 				  program, name);
 	}
+      
+        /** Returns @c true if the host supports the Program feature, @c false
+	    if it does not. */
+        bool host_supports_programs() const {
+	  return m_host_support;
+	}
 	
     private:
 	
@@ -418,6 +425,7 @@ namespace LV2 {
 	
 	
 	LV2UI_Programs_HDesc* m_hdesc;
+        bool m_host_support;
 	
     };
 
