@@ -2,7 +2,7 @@
  *
  * Program management extension for LV2 GUIs
  *
- * Copyright (C) 2007 Lars Luthman <lars.luthman@gmail.com>
+ * Copyright (C) 2007-2008 Lars Luthman <lars.luthman@gmail.com>
  * 
  * This header is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -26,9 +26,20 @@
 
 #include <lv2-gui.h>
 
+/** This is a LV2 GUI Feature (not a LV2 Feature) that allows a LV2 GUI
+    host to tell a plugin GUI about existing presets for the plugin, and
+    a plugin GUI to request switching to one of those presets or saving
+    the current state as a new preset. It does only specify the way GUIs
+    and hosts communicate about plugin presets, not how or where these
+    presets are actually stored - that is up to the host.
+    
+    Presets are called "programs" and should map well to a bank of MIDI
+    programs. Each program has a name and a numeric identifier in the range
+    [0,127].
+*/
 
-/** The host descriptor. One of these should be passed to the GUI's
-    instantiate() callback in a LV2_Feature with the URI 
+/** The host descriptor. A pointer to one of these should be passed to the 
+    GUI's instantiate() callback in a LV2_Feature with the URI 
     http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs.
 */
 typedef struct {
