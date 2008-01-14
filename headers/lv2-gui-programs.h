@@ -33,9 +33,13 @@
     and hosts communicate about plugin presets, not how or where these
     presets are actually stored - that is up to the host.
     
-    Presets are called "programs" and should map well to a bank of MIDI
-    programs. Each program has a name and a numeric identifier in the range
-    [0,127].
+    Each preset has a name and a numeric identifier. The numeric identifier
+    is a uint32_t, the 7 least significant bits of which should be considered
+    the "program number" and the rest, shifted 7 bits to the right, the "bank
+    number" to correspond to MIDI programs. The full 25 bit range of the bank
+    number may be used, but remember that MIDI only has 14 bit bank numbers
+    (7 bit coarse + 7 bit fine) so anything above that will not be addressable
+    by MIDI program changes.
 */
 
 /** The host descriptor. A pointer to one of these should be passed to the 
@@ -52,12 +56,10 @@ typedef struct {
       whether the GUI host <-> plugin instance communication is
       synchronous or asynchronous.
       
-      The program must be in the interval [0,127].
-      
       This member must not be set to NULL.
   */
   void (*change_program)(LV2UI_Controller controller,
-			 unsigned char    program);
+			 uint32_t         program);
 
   /** This is the host-provided function that the GUI can use to request 
       that the current state of the plugin is saved to a program. Calling 
@@ -67,14 +69,11 @@ typedef struct {
       depending on whether the GUI host <-> plugin instance communication
       is synchronous or asynchronous.
       
-      The program must be in the interval [0,127]. There are no limitations
-      on the name.
-      
       This member must not be set to NULL.
   */
   
   void (*save_program)(LV2UI_Controller controller,
-		       unsigned char    program,
+		       uint32_t         program,
 		       const char*      name);
   
 } LV2UI_Programs_HDesc;
@@ -89,23 +88,20 @@ typedef struct {
   /** This function is called when the host adds a new program to its program
       list, or changes the name of an old one. It may be set to NULL if the 
       GUI isn't interested in displaying program information.
-      
-      The number should always be in the interval [0,127].
   */
-  void (*program_added)(LV2UI_Handle  gui, 
-                        unsigned char number, 
-			const char*   name);
+  void (*program_added)(LV2UI_Handle gui, 
+                        uint32_t     number, 
+			const char*  name);
   
   /** This function is called when the host removes a program from its program
       list. It may be set to NULL if the GUI isn't interested in displaying
       program information.
       
-      The number should always be in the interval [0,127], and should always
-      be a number for a program that has been added previously for this
-      GUI instance.
+      The number parameter should always be a number for a program that has 
+      been added previously for this GUI instance.
   */
-  void (*program_removed)(LV2UI_Handle  gui, 
-                          unsigned char number);
+  void (*program_removed)(LV2UI_Handle gui, 
+                          uint32_t     number);
   
   /** This function is called when the host clears its program list. It may be
       set to NULL if the GUI isn't interested in displaying program 
@@ -117,12 +113,11 @@ typedef struct {
       be set to NULL if the GUI isn't interested in displaying program 
       information.
       
-      The number should always be in the interval [0,127], and should always
-      be the number of a program that has been added previously for this
-      GUI instance.
+      The number parameter should always be the number of a program that has 
+      been added previously for this GUI instance.
   */
-  void (*current_program_changed)(LV2UI_Handle  gui, 
-                                  unsigned char number);
+  void (*current_program_changed)(LV2UI_Handle gui, 
+                                  uint32_t     number);
 
 } LV2UI_Programs_GDesc;
 

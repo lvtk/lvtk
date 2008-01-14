@@ -334,18 +334,17 @@ namespace LV2 {
 	
 	
 	/** This is called by the host to let the GUI know that a new 
-	    program has been added or renamed. The number is always in the 
-	    interval [0,127].
+	    program has been added or renamed.
 	*/
-	void program_added(unsigned char number, 
-			   char const*   name) {
+	void program_added(uint32_t    number, 
+			   char const* name) {
 	  
 	}
 	
 	/** This is called by the host to let the GUI know that a previously 
 	    existing program has been removed.
 	*/
-	void program_removed(unsigned char number) {
+	void program_removed(uint32_t number) {
 	  
 	}
 	
@@ -360,7 +359,7 @@ namespace LV2 {
 	    program has changed. The number will always be in the range [0,127]
 	    or equal to 255, in which case there is no current program.
 	*/
-	void current_program_changed(unsigned char number) {
+	void current_program_changed(uint32_t number) {
 	  
 	}
 	
@@ -381,7 +380,7 @@ namespace LV2 {
 	
 	/** You can call this to request that the host changes the current 
 	    program to @c program. */
-	void change_program(unsigned char program) {
+	void change_program(uint32_t program) {
 	  if (m_hdesc)
 	    m_hdesc->change_program(static_cast<Derived*>(this)->controller(), 
 				    program);
@@ -389,7 +388,7 @@ namespace LV2 {
 	
 	/** You can call this to request that the host saves the current state
 	    of the plugin instance to a program. */
-	void save_program(unsigned char program, char const* name) {
+	void save_program(uint32_t program, char const* name) {
 	  if (m_hdesc)
 	    m_hdesc->save_program(static_cast<Derived*>(this)->controller(), 
 				  program, name);
@@ -403,14 +402,14 @@ namespace LV2 {
 	
     private:
 	
-	static void _program_added(LV2UI_Handle  gui, 
-				   unsigned char number, 
-				   char const*   name) {
+	static void _program_added(LV2UI_Handle gui, 
+				   uint32_t     number, 
+				   char const*  name) {
 	  static_cast<Derived*>(gui)->program_added(number, name);
 	}
 	
-	static void _program_removed(LV2UI_Handle  gui, 
-				     unsigned char number) {
+	static void _program_removed(LV2UI_Handle gui, 
+				     uint32_t     number) {
 	  static_cast<Derived*>(gui)->program_removed(number);
 	}
 	
@@ -418,8 +417,8 @@ namespace LV2 {
 	  static_cast<Derived*>(gui)->programs_cleared();
 	}
 	
-	static void _current_program_changed(LV2UI_Handle  gui, 
-					     unsigned char number) {
+	static void _current_program_changed(LV2UI_Handle gui, 
+					     uint32_t     number) {
 	  static_cast<Derived*>(gui)->current_program_changed(number);
 	}
 	
