@@ -40,6 +40,10 @@
     number may be used, but remember that MIDI only has 14 bit bank numbers
     (7 bit coarse + 7 bit fine) so anything above that will not be addressable
     by MIDI program changes.
+    
+    The special numeric identifier 4294967295 = 2^32 - 1 (all bits set) may 
+    only be used in the plugin callback current_program_changed() to indicate 
+    that there is no currently active program.
 */
 
 /** The host descriptor. A pointer to one of these should be passed to the 
@@ -114,7 +118,8 @@ typedef struct {
       information.
       
       The number parameter should always be the number of a program that has 
-      been added previously for this GUI instance.
+      been added previously for this GUI instance, or 2^32 - 1 to indicate 
+      that there is no currently active preset.
   */
   void (*current_program_changed)(LV2UI_Handle gui, 
                                   uint32_t     number);
