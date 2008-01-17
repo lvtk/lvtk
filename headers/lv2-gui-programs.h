@@ -24,7 +24,7 @@
 #ifndef LV2_GUI_PROGRAMS_H
 #define LV2_GUI_PROGRAMS_H
 
-#include <lv2-gui.h>
+#include <lv2-ui.h>
 
 /** This is a LV2 GUI Feature (not a LV2 Feature) that allows a LV2 GUI
     host to tell a plugin GUI about existing presets for the plugin, and

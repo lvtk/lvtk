@@ -30,7 +30,7 @@
 #include <gtkmm/main.h>
 #include <gtkmm/widget.h>
 
-#include <lv2-gui.h>
+#include <lv2-ui.h>
 #include <lv2-gui-programs.h>
 #include <lv2types.hpp>
 
