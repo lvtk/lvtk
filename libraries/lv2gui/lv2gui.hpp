@@ -170,6 +170,7 @@ namespace LV2 {
 					   char const* bundle_path,
 					   LV2UI_Write_Function write_func,
 					   LV2UI_Controller ctrl,
+					   LV2UI_Host_Data hdata,
 					   LV2UI_Widget* widget,
 					   LV2_Feature const* const* features) {
       
