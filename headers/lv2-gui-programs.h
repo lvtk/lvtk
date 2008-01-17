@@ -48,7 +48,7 @@
 
 /** The host descriptor. A pointer to one of these should be passed to the 
     GUI's instantiate() callback in a LV2_Feature with the URI 
-    http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs.
+    http://ll-plugins.nongnu.org/lv2/ext/ui#ext_programs.
 */
 typedef struct {
   
@@ -85,7 +85,7 @@ typedef struct {
 
 /** The GUI descriptor. One of these should be returned by the GUI's
     extension_data() callback when called with the URI
-    http://ll-plugins.nongnu.org/lv2/ext/gui#ext_programs.
+    http://ll-plugins.nongnu.org/lv2/ext/ui#ext_programs.
 */    
 typedef struct {
   
