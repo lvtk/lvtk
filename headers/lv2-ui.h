@@ -125,7 +125,7 @@ typedef void* LV2UI_Widget;
     the type URI of the UI.  Hosts can use this to pass toolkit specific data
     to a UI it needs to instantiate (type map, drawing context, etc). For the
     uiext:GtkUI type this should be NULL. */
-typedef void* LV2UI_HostData;
+typedef void* LV2UI_Host_Data;
 	
   
 /** This handle indicates a particular instance of a UI.
