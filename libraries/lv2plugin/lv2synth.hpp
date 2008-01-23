@@ -216,8 +216,10 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       if (size != 3)
 	return;
       if (data[0] == 0x90) {
-	m_voices[static_cast<D*>(this)->find_free_voice(data[1], data[2])]->
-	  on(data[1], data[2]);
+	unsigned voice = 
+	  static_cast<D*>(this)->find_free_voice(data[1], data[2]);
+	if (voice < m_voices.size())
+	  m_voices[voice]->on(data[1], data[2]);
       }
       else if (data[0] == 0x80) {
 	for (unsigned i = 0; i < m_voices.size(); ++i) {

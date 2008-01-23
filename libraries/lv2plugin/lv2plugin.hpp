@@ -100,7 +100,8 @@ namespace LV2 {
 	correct number of ports, and to check if all the required features
 	are provided. */
     Plugin(uint32_t ports) 
-      : m_ports(ports, 0) {
+      : m_ports(ports, 0),
+	m_ok(true) {
       m_features = s_features;
       m_bundle_path = s_bundle_path;
       s_features = 0;
@@ -170,6 +171,14 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
       get_lv2_descriptors().push_back(desc);
       return get_lv2_descriptors().size() - 1;
     }
+    
+    /** @internal
+     */
+    bool check_ok() {
+      return m_ok && MixinTree<Derived, 
+	                       Ext1, Ext2, Ext3, Ext4, Ext5, 
+	                       Ext6, Ext7, Ext8, Ext9>::check_ok();
+    }
 
   protected:
   
@@ -194,6 +203,12 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     /** Returns the filesystem path to the bundle that contains this plugin. */
     const char* bundle_path() const {
       return m_bundle_path;
+    }
+    
+    /** Sets the OK state of the plugin. If it's @c true the plugin has been
+	instantiated OK, if @c false it has not and the host will discard it. */
+    void set_ok(bool ok) {
+      m_ok = ok;
     }
     
     /** @internal
@@ -258,6 +273,8 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     
     static LV2::Feature const* const* s_features;
     static char const* s_bundle_path;
+    
+    bool m_ok;
 
   };
 
