@@ -29,7 +29,7 @@
 #include <vector>
 
 #include <lv2plugin.hpp>
-#include <lv2-midifunctions.h>
+#include <lv2_event_helpers.h>
 
 
 namespace LV2 {
@@ -162,14 +162,15 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
   template <class V, class D,
 	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
 	    class Ext4 = End, class Ext5 = End, class Ext6 = End,
-	    class Ext7 = End, class Ext8 = End, class Ext9 = End>
-  class Synth : public Plugin<D, Ext1, Ext2, Ext3, Ext4, 
-			      Ext5, Ext6, Ext7, Ext8, Ext9> {
+	    class Ext7 = End, class Ext8 = End>
+  class Synth : public Plugin<D, UriMapExt<true>, Ext1, Ext2, Ext3, Ext4, 
+			      Ext5, Ext6, Ext7, Ext8> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
+    typedef Plugin<D, UriMapExt<true>, Ext1, Ext2, Ext3, Ext4, 
+		   Ext5, Ext6, Ext7, Ext8>
     Parent;
     
 
@@ -177,11 +178,10 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	is the index of the main MIDI input port (the one that the synth should
 	use for note input). */
     Synth(uint32_t ports, uint32_t midi_input) 
-    //      : Plugin<D, Ext1, Req1, Ext2, Req2, Ext3, Req3, Ext4, Req4, Ext5, Req5, 
-    //	       Ext6, Req6, Ext7, Req7, Ext8, Req8, Ext9, Req9>(ports),
       : Parent(ports),
-	m_midi_input(midi_input) { 
-    
+	m_midi_input(midi_input) {
+      m_midi_type = Parent::uri_to_id(LV2_EVENT_URI,
+				      "http://lv2plug.in/ns/ext/midi#MidiEvent"); 
     }
     
     
@@ -279,23 +279,32 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       for (unsigned i = 0; i < m_voices.size(); ++i)
 	m_voices[i]->set_port_buffers(Parent::m_ports);
       
-      LV2_MIDIState ms = { p<LV2_MIDI>(m_midi_input), sample_count, 0 };
-      double event_time;
-      uint32_t event_size;
-      unsigned char* event_data;
+      LV2_Event_Iterator iter;
+      if (!lv2_event_begin(&iter, p<LV2_Event_Buffer>(m_midi_input)))
+	return;
+      
+      uint8_t* event_data;
       uint32_t samples_done = 0;
       
       while (samples_done < sample_count) {
-	lv2midi_get_event(&ms, &event_time, &event_size, &event_data);
-	lv2midi_step(&ms);
-	handle_midi(event_size, event_data);
-	uint32_t to = event_time;
+	uint32_t to = sample_count;
+	LV2_Event* ev = 0;
+	if (lv2_event_is_valid(&iter)) {
+	  ev = lv2_event_get(&iter, &event_data);
+	  to = ev->frames;
+	  lv2_event_increment(&iter);
+	}
 	if (to > samples_done) {
 	  static_cast<D*>(this)->pre_process(samples_done, to);
 	  for (unsigned i = 0; i < m_voices.size(); ++i)
 	    m_voices[i]->render(samples_done, to);
 	  static_cast<D*>(this)->post_process(samples_done, to);
 	  samples_done = to;
+	}
+	if (ev) {
+	  if (ev->type == m_midi_type)
+	    handle_midi(ev->size, event_data);
+	  // XXX handle type 0 events here (unref)
 	}
       }
       
@@ -425,6 +434,10 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     /** @internal
 	The index of the main MIDI input port. */
     uint32_t m_midi_input;
+    
+    /** @internal
+	The numerical ID for the MIDI event type. */
+    uint32_t m_midi_type;
     
   };
   

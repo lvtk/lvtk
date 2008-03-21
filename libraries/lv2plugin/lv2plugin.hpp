@@ -3,7 +3,8 @@
     lv2plugin.hpp - support file for writing LV2 plugins in C++
     
     Copyright (C) 2006-2007 Lars Luthman <lars.luthman@gmail.com>
-    
+    Modified by Dave Robillard, 2008
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
@@ -31,9 +32,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream> // XXX just for debugging
 
 #include <lv2.h>
 #include <lv2-command.h>
+#include <lv2_uri_map.h>
 #include <lv2types.hpp>
 
 
@@ -450,8 +453,51 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     };
   
   };
- 
+
+
+  /** The URI map extension. */
+  template <bool Required>
+  struct UriMapExt {
+    
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() : m_callback_data(0), m_func(0) { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	std::cerr<<"*** Yahahahaha!"<<std::endl;
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+        LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
+        fe->m_callback_data = umf->callback_data;
+        fe->m_func = umf->uri_to_id;
+        fe->m_ok = (fe->m_func != 0);
+        std::cerr<<"*** The pointer to the uri_to_id() function is "
+		   <<((void*)fe->m_func)<<std::endl;
+      }
+      
+    protected:
+      
+      /** This returns the buffer size that the host has promised to use.
+          If the host does not support this extension this function will
+          return 0. */
+      uint32_t uri_to_id(const char* map, const char* uri) const {
+	std::cerr<<"*** Calling the uri_to_id() function at "
+		 <<((void*)(m_func))<<std::endl;
+	return m_func(m_callback_data, map, uri);
+      }
+    
+      LV2_URI_Map_Callback_Data m_callback_data;
+      uint32_t (*m_func)(LV2_URI_Map_Callback_Data, const char*, const char*);
+      
+    };
+    
+  };
   
+
 }
 
 

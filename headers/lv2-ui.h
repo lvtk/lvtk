@@ -166,6 +166,7 @@ typedef void* LV2UI_Controller;
 typedef void (*LV2UI_Write_Function)(LV2UI_Controller controller,
                                      uint32_t         port_index,
                                      uint32_t         buffer_size,
+				     uint32_t         format,
                                      const void*      buffer);
 
 

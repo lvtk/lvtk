@@ -2,7 +2,8 @@
     
     lv2gui.hpp - Wrapper library to make it easier to write LV2 GUIs in C++
     
-    Copyright (C) 2006-2007 Lars Luthman <lars.luthman@gmail.com>
+    Copyright (C) 2006-2008 Lars Luthman <lars.luthman@gmail.com>
+    Modified by Dave Robillard, 2008 (URI map mixin)
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@
 #include <lv2-ui.h>
 #include <lv2-gui-programs.h>
 #include <lv2-ui-command.h>
+#include <lv2_uri_map.h>
 #include <lv2types.hpp>
 
 
@@ -118,7 +120,8 @@ namespace LV2 {
 	should probably use a wrapper function instead such as write_control().
     */
     inline void write(uint32_t port, uint32_t buffer_size, void const* buffer) {
-      (*m_wfunc)(m_ctrl, port, buffer_size, buffer);
+      // XXX fix the format thing
+      (*m_wfunc)(m_ctrl, port, buffer_size, 0 /* format */, buffer);
     }
     
     /** Set the value of a control input port in the plugin instance. */
@@ -506,6 +509,42 @@ namespace LV2 {
     };
     
   };
+
+
+  /** The URI map extension. */
+  template <bool Required>
+  struct UriMapExt {
+    
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() : m_uri_map_feature(0) { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+	fe->m_uri_map_feature = reinterpret_cast<LV2_URI_Map_Feature*>(data);
+	fe->m_ok = true;
+      }
+      
+    protected:
+      
+      /** This returns the buffer size that the host has promised to use.
+          If the host does not support this extension this function will
+          return 0. */
+      uint32_t uri_to_id(const char* map, const char* uri) const {
+	return m_uri_map_feature->uri_to_id(m_uri_map_feature->callback_data, 
+					    map, uri);
+      }
+      
+      LV2_URI_Map_Feature* m_uri_map_feature;
+      
+    };
+    
+  };  
   
   
 }
