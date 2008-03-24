@@ -98,7 +98,7 @@ namespace LV2 {
     /** Override this if you want your GUI to do something when a control port
 	value changes in the plugin instance. */
     inline void port_event(uint32_t port, uint32_t buffer_size, 
-			   void const* buffer) { }
+			   uint32_t format, void const* buffer) { }
     
     /** Use this template function to register a class as a LV2 GUI. */
     static int register_class(char const* uri) {
@@ -214,8 +214,10 @@ namespace LV2 {
 	This is the main port_event() callback. You should not use it directly.
     */
     static void _port_event(LV2UI_Handle instance, uint32_t port, 
-			    uint32_t buffer_size, void const* buffer) {
-      static_cast<Derived*>(instance)->port_event(port, buffer_size, buffer);
+			    uint32_t buffer_size, uint32_t format, 
+			    void const* buffer) {
+      static_cast<Derived*>(instance)->port_event(port, buffer_size, 
+						  format, buffer);
     }
     
 

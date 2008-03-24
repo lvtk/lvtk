@@ -82,6 +82,40 @@
     These features may be used to specify how to pass data between the UI
     and the plugin port buffers - see LV2UI_Write_Function for details.
     
+    There are two features defined in this extension that hosts may want to
+    implement:
+<pre>
+    <http://ll-plugins.nongnu.org/lv2/ext/ui#makeResident>
+    <http://ll-plugins.nongnu.org/lv2/ext/ui#makeSONameResident>
+</pre>
+    If the first feature, @c uiext:makeResident, is required by a UI the host
+    MUST never unload the shared library containing the UI implementation 
+    during the lifetime of the host process (e.g. never calling dlclose() on
+    Linux). This feature may be needed by e.g. a uiext:GtkUI that registers
+    its own Glib types using g_type_register_static() - if it gets unloaded
+    and then loaded again the type registration will break, since there is no 
+    way to unregister the types when the library is unloaded.
+
+    The second feature, @c uiext:makeSONameResident, is ELF specific
+    and if it is required by an UI the UI should also list a number of 
+    SO names (shared object names) for libraries that the UI shared object
+    depends on and that may not be unloaded during the lifetime of the host
+    process, using the predicate @c uiext:residentSONames, like this:
+<pre>
+    <http://my.pluginui> uiext:residentSONames "libgtkmm-2.4.so.1", "libfoo.so.0"
+</pre>
+    The host MUST then make sure that the shared libraries with the given ELF
+    SO names are not unloaded when the plugin UI is, but stay loaded during
+    the entire lifetime of the host process. On Linux this can be accomplished
+    by calling dlopen() on the shared library file with that SO name and never
+    calling a matching dlclose(). However, if a plugin UI requires the 
+    @c uiext:makeSONameResident feature, it MUST always be safe for the host to
+    just never unload the shared object containing the UI implementation, i.e.
+    act as if the UI required the @c uiext:makeResident feature instead. Thus
+    the host only needs to find the shared library files corresponding to the
+    given SO names if it wants to save RAM by unloading the UI shared object 
+    file when it is no longer needed.
+    
     UIs written to this specification do not need to be threadsafe - the 
     functions defined below may only be called in the same thread as the UI
     main loop is running in.
@@ -96,8 +130,8 @@
     device, depending on the RDF class of the UI.
 */
 
-#ifndef LV2_IPUI_H
-#define LV2_IPUI_H
+#ifndef LV2_UI_H
+#define LV2_UI_H
 
 #include "lv2.h"
 
@@ -162,7 +196,23 @@ typedef void* LV2UI_Controller;
     transfer mechanism, or to an output port. The UI is responsible for 
     allocating the buffer and deallocating it after the call. A function 
     pointer of this type will be provided to the UI by the host in the 
-    instantiate() function. */
+    instantiate() function. 
+
+    An UI may list multiple transfer mechanisms for the same port type.
+    To tell the host which mechanism is to be used, it passes an integer ID
+    for the mechanism in the @c format parameter. This ID is retrieved from
+    a URI-to-integer mapping function provided by the host, using the URI Map 
+    feature <http://lv2plug.in/ns/ext/uri-map> with the map URI 
+    "http://ll-plugins.nongnu.org/lv2/ext/ui". Thus a UI that requires transfer
+    mechanism features MUST also require the URI Map feature. A @c format
+    value of 0 is a special case that always means that the buffer should
+    be interpreted as a single IEEE-754 float, and may only be written to 
+    a control port.
+    
+    An UI MUST NOT pass a @c format parameter value (except 0) that has not
+    been returned by the host-provided URI mapping function for a 
+    host-supported transfer mechanism feature URI.
+*/
 typedef void (*LV2UI_Write_Function)(LV2UI_Controller controller,
                                      uint32_t         port_index,
                                      uint32_t         buffer_size,
@@ -218,13 +268,14 @@ typedef struct _LV2UI_Descriptor {
   
   /** Tell the UI that something interesting has happened at a plugin port.
       What is interesting and how it is written to the buffer passed to this
-      function is defined by the specified transfer mechanism for that port 
-      class (see LV2UI_Write_Function). The only exception is ports of the 
-      class lv2:ControlPort, for which this function should be called
-      when the port value changes (it must not be called for every single 
-      change if the host's UI thread has problems keeping up with the thread
-      the plugin is running in), @c buffer_size should be 4 and the buffer
-      should contain a single IEEE-754 float.
+      function is defined by  transfer mechanism extensions (see 
+      LV2UI_Write_Function). The only exception is ports of the class 
+      lv2:ControlPort, for which this function should be called
+      when the port value changes (it does not have to be called for every 
+      single change if the host's UI thread has problems keeping up with 
+      the thread the plugin is running in), @c buffer_size should be 4 and the 
+      buffer should contain a single IEEE-754 float. In this case the @c format
+      parameter should be 0.
       
       By default, the host should only call this function for input ports of
       the lv2:ControlPort class. However, the default setting can be modified
@@ -256,10 +307,14 @@ typedef struct _LV2UI_Descriptor {
       
       This member may be set to NULL if the UI is not interested in any 
       port events.
+      
+      The @c format parameter is used to specify the format of the buffer 
+      contents, with the same restrictions as in LV2_Write_Function.
   */
   void (*port_event)(LV2UI_Handle ui,
-                     uint32_t     port,
+                     uint32_t     port_index,
                      uint32_t     buffer_size,
+		     uint32_t     format,
                      const void*  buffer);
   
   /** Returns a data structure associated with an extension URI, for example
