@@ -280,6 +280,45 @@ namespace PAQ {
   Filter* operator!=(double value, Variable& var) {
     return no(new NumericEquality(var, value));
   }
+
+
+  StringEquality::StringEquality(Variable& var, const std::string& value) 
+    : m_var(&var), 
+      m_value(value) { 
+  
+  }
+  
+  
+  void StringEquality::set_variable_indices(Query& query) {
+    RDFTerm* t = query.data.add_variable(m_var);
+    m_index = t->index;
+    m_var = 0;
+  }
+
+
+  bool StringEquality::execute(QueryEngine& engine) {
+    return (engine.N1[engine.mapping[m_index]]->name == m_value);
+  }
+
+
+  Filter* operator==(Variable& var, const std::string& value) {
+    return new StringEquality(var, value);
+  }
+
+
+  Filter* operator==(const std::string& value, Variable& var) {
+    return new StringEquality(var, value);
+  }
+
+
+  Filter* operator!=(Variable& var, const std::string& value) {
+    return no(new StringEquality(var, value));
+  }
+
+
+  Filter* operator!=(const std::string& value, Variable& var) {
+    return no(new StringEquality(var, value));
+  }  
   
   
   BinaryFilter::BinaryFilter(Variable& var1, Variable& var2) 

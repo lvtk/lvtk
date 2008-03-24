@@ -2,7 +2,7 @@
  *
  * In-process UI extension for LV2
  *
- * Copyright (C) 2006-2007 Lars Luthman <lars.luthman@gmail.com>
+ * Copyright (C) 2006-2008 Lars Luthman <lars.luthman@gmail.com>
  * 
  * Based on lv2.h, which was
  *
@@ -85,8 +85,8 @@
     There are two features defined in this extension that hosts may want to
     implement:
 <pre>
-    <http://ll-plugins.nongnu.org/lv2/ext/ui#makeResident>
-    <http://ll-plugins.nongnu.org/lv2/ext/ui#makeSONameResident>
+    uiext:makeResident
+    uiext:makeSONameResident
 </pre>
     If the first feature, @c uiext:makeResident, is required by a UI the host
     MUST never unload the shared library containing the UI implementation 
@@ -160,7 +160,7 @@ typedef void* LV2UI_Widget;
     to a UI it needs to instantiate (type map, drawing context, etc). For the
     uiext:GtkUI type this should be NULL. */
 typedef void* LV2UI_Host_Data;
-	
+        
   
 /** This handle indicates a particular instance of a UI.
     It is valid to compare this to NULL (0 for C++) but otherwise the 
@@ -216,7 +216,7 @@ typedef void* LV2UI_Controller;
 typedef void (*LV2UI_Write_Function)(LV2UI_Controller controller,
                                      uint32_t         port_index,
                                      uint32_t         buffer_size,
-				     uint32_t         format,
+                                     uint32_t         format,
                                      const void*      buffer);
 
 
@@ -240,8 +240,8 @@ typedef struct _LV2UI_Descriptor {
                         as the first parameter of @c write_function.
       @param host_data  Data required from the host for instantiation.
                         The type of this depends on the RDF class of the UI.
-			If the UI type does not specify anything to be passed
-			here, the host should pass NULL.
+                        If the UI type does not specify anything to be passed
+                        here, the host should pass NULL.
       @param widget     A pointer to an LV2UI_Widget. The UI will write a
                         widget pointer to this location (what type of widget 
                         depends on the RDF class of the UI) that will be the
@@ -314,7 +314,7 @@ typedef struct _LV2UI_Descriptor {
   void (*port_event)(LV2UI_Handle ui,
                      uint32_t     port_index,
                      uint32_t     buffer_size,
-		     uint32_t     format,
+                     uint32_t     format,
                      const void*  buffer);
   
   /** Returns a data structure associated with an extension URI, for example

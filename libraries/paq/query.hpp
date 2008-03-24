@@ -252,7 +252,8 @@ namespace PAQ {
   Filter* operator<(double value, Variable& var);
   
   
-  /** A filter that checks if the node's value is equal to a constant. */
+  /** A filter that checks if the node's value is equal to a numeric 
+      constant. */
   class NumericEquality : public NumericCompare {
   public:
     NumericEquality(Variable& var, double value) : NumericCompare(var, value) { }
@@ -273,6 +274,34 @@ namespace PAQ {
       a constant. */
   Filter* operator!=(double value, Variable& var);
   
+
+  /** A filter that checks if the node's value is equal to a string 
+      constant. */
+  class StringEquality : public Filter {
+  public:
+    StringEquality(Variable& var, const std::string& value);
+    virtual void set_variable_indices(Query& q);
+    bool execute(QueryEngine& engine);
+  protected:
+    Variable* m_var;
+    std::string m_value;
+    size_t m_index;
+  };
+  
+  /** Creates a filter that checks if the node's value is equal to a constant.*/
+  Filter* operator==(Variable& var, const std::string& value);
+
+  /** Creates a filter that checks if the node's value is equal to a constant.*/
+  Filter* operator==(const std::string& value, Variable& var);
+
+  /** Creates a filter that checks if the node's value is different from
+      a constant. */
+  Filter* operator!=(Variable& var, const std::string& value);
+
+  /** Creates a filter that checks if the node's value is different from
+      a constant. */
+  Filter* operator!=(const std::string& value, Variable& var);  
+
   
   /** Abstract base class for all binary filters. */
   class BinaryFilter : public Filter {
