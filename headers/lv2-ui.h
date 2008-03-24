@@ -238,10 +238,6 @@ typedef struct _LV2UI_Descriptor {
                             use to send data to the plugin's input ports.
       @param controller A handle for the plugin instance that should be passed
                         as the first parameter of @c write_function.
-      @param host_data  Data required from the host for instantiation.
-                        The type of this depends on the RDF class of the UI.
-                        If the UI type does not specify anything to be passed
-                        here, the host should pass NULL.
       @param widget     A pointer to an LV2UI_Widget. The UI will write a
                         widget pointer to this location (what type of widget 
                         depends on the RDF class of the UI) that will be the
@@ -256,7 +252,6 @@ typedef struct _LV2UI_Descriptor {
                               const char*                     bundle_path,
                               LV2UI_Write_Function            write_function,
                               LV2UI_Controller                controller,
-                              LV2UI_Host_Data                 host_data,
                               LV2UI_Widget*                   widget,
                               const LV2_Feature* const*       features);
 
