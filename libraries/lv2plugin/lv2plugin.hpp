@@ -37,6 +37,7 @@
 #include <lv2.h>
 #include <lv2-command.h>
 #include <lv2_uri_map.h>
+#include <lv2-saverestore.h>
 #include <lv2types.hpp>
 
 
@@ -468,15 +469,12 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       }
       
       static void handle_feature(void* instance, void* data) { 
-	std::cerr<<"*** Yahahahaha!"<<std::endl;
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
         LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
         fe->m_callback_data = umf->callback_data;
         fe->m_func = umf->uri_to_id;
         fe->m_ok = (fe->m_func != 0);
-        std::cerr<<"*** The pointer to the uri_to_id() function is "
-		   <<((void*)fe->m_func)<<std::endl;
       }
       
     protected:
@@ -485,8 +483,6 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
           If the host does not support this extension this function will
           return 0. */
       uint32_t uri_to_id(const char* map, const char* uri) const {
-	std::cerr<<"*** Calling the uri_to_id() function at "
-		 <<((void*)(m_func))<<std::endl;
 	return m_func(m_callback_data, map, uri);
       }
     
@@ -496,6 +492,61 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     };
     
   };
+  
+
+  /** The Command extension. Deprecated, but still used. */
+  template <bool Required>
+  struct SaveRestoreExt {
+    
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[LV2_SAVERESTORE_URI] = &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+	fe->m_ok = true;
+      }
+      
+      static const void* extension_data(const char* uri) { 
+	if (!std::strcmp(uri, LV2_SAVERESTORE_URI)) {
+	  static LV2SR_Descriptor srdesc = { &I<Derived>::_save,
+					     &I<Derived>::_restore };
+	  return &srdesc;
+	}
+	return 0;
+      }
+      
+      /** This function is called by the host when it wants to save the 
+	  current state of the plugin. You should override it. */
+      char* save(const char* directory, LV2SR_File** files) { return 0; }
+      
+      /** This function is called by the host when it wants to restore
+	  the plugin to a previous state. You should override it. */
+      char* restore(const LV2SR_File** files) { return 0; }
+      
+    protected:
+      
+      /** @internal
+	  Static callback wrapper. */
+      static char* _save(LV2_Handle h, 
+			 const char* directory, LV2SR_File** files) {
+	return reinterpret_cast<Derived*>(h)->save(directory, files);
+      }
+      
+      /** @internal
+	  Static callback wrapper. */
+      static char* _restore(LV2_Handle h, const LV2SR_File** files) {
+	return reinterpret_cast<Derived*>(h)->restore(files);
+      }
+      
+    };
+  };
+  
   
 
 }
