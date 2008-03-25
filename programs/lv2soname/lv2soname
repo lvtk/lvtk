@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# This script can be used in your build system to translate a linker option 
+# (e.g. -lgtkmm2.4) into the soname (e.g. libgtkmm-2.4.so.1) for the shared library
+# that ld will link to when given that command line option. It will generate the
+# RDF triples needed to tell hosts that the library with that soname must never be
+# unloaded even after your plugin GUI library has been unloaded. If the script for
+# some reason can't determine the soname it will instead generate the RDF needed to
+# tell the host to never unload the GUI library at all.
+#
+# Written by Lars Luthman in 2008. Consider this script free to use, modify and 
+# distribute for any purpose.
+
+
+GUIURI=$1
+PREDICATE=$2
+LINKEROPTION=$3
+
+SONAME=`objdump -x \`ld -o /dev/null -t $LINKEROPTION 2> /dev/null | grep ^$LINKEROPTION | awk '{print substr($2, 2, length($2)-2)}'\` 2> /dev/null | grep SONAME | awk '{print $2}'`
+
+if [ x$SONAME != x ]; then
+    echo
+    echo $GUIURI 
+    echo "  " $PREDICATE '<http://ll-plugins.nongnu.org/lv2/ext/ui#makeSONameResident>;'
+    echo "  " '<http://ll-plugins.nongnu.org/lv2/ext/ui#residentSONames>' \"$SONAME\".
+else
+    echo
+    echo $GUIURI $PREDICATE '<http://ll-plugins.nongnu.org/lv2/ext/ui#makeResident>;'
+fi
