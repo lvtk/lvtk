@@ -2,7 +2,7 @@
  *
  * Save/Restore extension for LV2
  *
- * Copyright (C) 2007 Lars Luthman <lars.luthman@gmail.com>
+ * Copyright (C) 2007-2008 Lars Luthman <lars.luthman@gmail.com>
  * 
  * This header is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
