@@ -523,7 +523,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       
       /** This function is called by the host when it wants to save the 
 	  current state of the plugin. You should override it. */
-      char* save(const char* directory, LV2SR_File** files) { return 0; }
+      char* save(const char* directory, LV2SR_File*** files) { return 0; }
       
       /** This function is called by the host when it wants to restore
 	  the plugin to a previous state. You should override it. */
@@ -534,7 +534,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       /** @internal
 	  Static callback wrapper. */
       static char* _save(LV2_Handle h, 
-			 const char* directory, LV2SR_File** files) {
+			 const char* directory, LV2SR_File*** files) {
 	return reinterpret_cast<Derived*>(h)->save(directory, files);
       }
       

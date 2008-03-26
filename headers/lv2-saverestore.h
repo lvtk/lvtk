@@ -113,7 +113,7 @@ extern "C" {
     
     /** This function tells the plugin instance to save its current state.
 	
-        The files parameter should be a pointer to a valid LV2SR_File*. After 
+        The files parameter should be a pointer to a valid LV2SR_File**. After 
 	the call to save() has returned, files MUST point to the start of 
 	a NULL-terminated array of LV2SR_File pointers allocated by 
 	the plugin, that the host should store as part of the plugin's saved
@@ -145,7 +145,7 @@ extern "C" {
     */
     char* (*save)(LV2_Handle       handle,
 		  const char*      directory,
-		  LV2SR_File**     files);
+		  LV2SR_File***    files);
     
     /** This function tells the plugin instance to restore to a saved state.
 	
