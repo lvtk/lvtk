@@ -33,7 +33,7 @@
     shared object files in an LV2 bundle and are referenced in the RDF data
     using the triples (Turtle shown)
 <pre>    
-    @@prefix uiext: <http://ll-plugins.nongnu.org/lv2/ext/ui#> .
+    @@prefix uiext: <http://lv2plug.in/ns/extensions/ui#> .
     <http://my.plugin>    uiext:ui     <http://my.pluginui> .
     <http://my.plugin>    a            uiext:GtkUI .
     <http://my.pluginui>  uiext:binary <myui.so> .
@@ -133,7 +133,9 @@
 #ifndef LV2_UI_H
 #define LV2_UI_H
 
-#include "lv2.h"
+#include <lv2.h>
+
+#define LV2_UI_URI "http://lv2plug.in/ns/extensions/ui"
 
 
 #ifdef __cplusplus
@@ -203,7 +205,7 @@ typedef void* LV2UI_Controller;
     for the mechanism in the @c format parameter. This ID is retrieved from
     a URI-to-integer mapping function provided by the host, using the URI Map 
     feature <http://lv2plug.in/ns/ext/uri-map> with the map URI 
-    "http://ll-plugins.nongnu.org/lv2/ext/ui". Thus a UI that requires transfer
+    "http://lv2plug.in/ns/extensions/ui". Thus a UI that requires transfer
     mechanism features MUST also require the URI Map feature. A @c format
     value of 0 is a special case that always means that the buffer should
     be interpreted as a single IEEE-754 float, and may only be written to 

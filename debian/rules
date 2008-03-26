@@ -72,7 +72,7 @@ install-arch:
 	mv $(IDIR)/usr/lib/liblv2-gui.a $(CURDIR)/debian/liblv2-gui-dev/usr/lib
 	mv $(IDIR)/usr/lib/pkgconfig/lv2-gui.pc $(CURDIR)/debian/liblv2-gui-dev/usr/lib/pkgconfig
 	mkdir -p $(CURDIR)/debian/liblv2-gui-dev/usr/include/lv2-c++-tools
-	cd $(IDIR)/usr/include/lv2-c++-tools && mv lv2gui.hpp lv2-gui.h $(CURDIR)/debian/liblv2-gui-dev/usr/include/lv2-c++-tools
+	cd $(IDIR)/usr/include/lv2-c++-tools && mv lv2gui.hpp lv2-ui.h $(CURDIR)/debian/liblv2-gui-dev/usr/include/lv2-c++-tools
 
 	# libpaq0
 	mkdir -p $(CURDIR)/debian/libpaq0/usr/lib

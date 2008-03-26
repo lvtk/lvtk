@@ -325,7 +325,7 @@ namespace LV2 {
 	
 	/** @internal */
 	static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	  hmap["http://ll-plugins.nongnu.org/lv2/ext/ui#ext_programs"] = 
+	  hmap[LV2_UI_URI "#ext_programs"] = 
 	    &I<Derived>::handle_feature;
 	}
 	
@@ -377,7 +377,7 @@ namespace LV2 {
 					       &_program_removed,
 					       &_programs_cleared,
 					       &_current_program_changed };
-	  if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/ui#ext_programs"))
+	  if (!std::strcmp(uri, LV2_UI_URI "#ext_programs"))
 	    return &desc;
 	  return 0;
 	}
@@ -450,7 +450,7 @@ namespace LV2 {
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap["http://ll-plugins.nongnu.org/lv2/ext/ui#ext_command"] = 
+	hmap[LV2_UI_URI "#ext_command"] = 
 	  &I<Derived>::handle_feature;
       }
       
@@ -476,7 +476,7 @@ namespace LV2 {
       */
       static void const* extension_data(char const* uri) {
 	static LV2UI_Command_GDesc desc = { &_feedback };
-	if (!std::strcmp(uri, "http://ll-plugins.nongnu.org/lv2/ext/ui#ext_command"))
+	if (!std::strcmp(uri, LV2_UI_URI "#ext_command"))
 	  return &desc;
 	return 0;
       }
