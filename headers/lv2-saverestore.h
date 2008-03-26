@@ -84,6 +84,10 @@ extern "C" {
 	  there and change the 'path' member to reflect the new location
 	- save the names and paths for all elements in 'files' somewhere as
           part of the session
+	  
+      Most simple plugins whose behaviour is completely defined by the current
+      values in its control input ports should not need to implement this
+      extension.
       
   */
   
@@ -126,22 +130,22 @@ extern "C" {
 	state is restored again. This array as well as all the name and path
 	members of its elements should be deallocated by the host.
 	
-	The parameter directory can either be NULL or a path to an existing
-	directory. If the plugin creates any new files as a part of its save
-	process and this parameter is not NULL the plugin must create the new
-	files in that directory, if the parameter is NULL it may create them
-	anywhere it wants. This is to help the host avoid unnecessary copying 
-	of files.
+	The parameter directory MUST be a path to an existing directory. If 
+        the plugin creates any new must_copy files as a part of its save 
+	process it SHOULD create the new files in that directory. This is to
+	help the host avoid unnecessary copying of files.
 
 	A plugin that creates new files as a part of its save process must NOT
-	overwrite or delete existing files, even if it knows that it created 
-	them itself for an earlier save. The host may want to keep them around 
-	for reverting back to an earlier state.
+	overwrite or delete existing files in that directory, even if it knows
+	that it created them itself for an earlier save. The host may want to
+	keep them around for reverting back to an earlier state.
 	
 	This function should return NULL if the plugin has successfully saved
 	its state and a dynamically allocated error message if not (e.g. not 
 	enough room on the disk). Any returned error message should be 
-	deallocated by the host. 
+	deallocated by the host using free(). If NULL is returned the host 
+	should not try to access or deallocate the array pointed to by the 
+	files parameter, or it's elements.
     */
     char* (*save)(LV2_Handle       handle,
 		  const char*      directory,
