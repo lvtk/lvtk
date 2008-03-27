@@ -156,14 +156,6 @@ extern "C" {
 typedef void* LV2UI_Widget;
 
 
-/** A pointer to some host data required to instantiate a UI.
-    Like the type of the widget, the actual type of this pointer is defined by
-    the type URI of the UI.  Hosts can use this to pass toolkit specific data
-    to a UI it needs to instantiate (type map, drawing context, etc). For the
-    uiext:GtkUI type this should be NULL. */
-typedef void* LV2UI_Host_Data;
-        
-  
 /** This handle indicates a particular instance of a UI.
     It is valid to compare this to NULL (0 for C++) but otherwise the 
     host MUST not attempt to interpret it. The UI plugin may use it to 
