@@ -31,6 +31,7 @@
 extern "C" {
 #endif
 
+#define LV2_COMMAND_URI "http://ll-plugins.nongnu.org/lv2/namespace#dont-use-this-extension"
 
 /* 
    XXX more docs here - function class etc

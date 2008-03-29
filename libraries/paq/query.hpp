@@ -173,6 +173,41 @@ namespace PAQ {
   Filter* no(Filter* filter);
   
   
+  /** A filter that is built from two other filters. */
+  class Aggregate : public Filter {
+  public:
+    Aggregate(Filter* f1, Filter* f2);
+    ~Aggregate();
+    void set_variable_indices(Query& q);
+  protected:
+    Filter* m_f1;
+    Filter* m_f2;
+  };
+
+  
+  /** A filter that checks if one filter OR another is true. */
+  class Or : public Aggregate {
+  public:
+    Or(Filter* f1, Filter* f2);
+    bool execute(QueryEngine& engine);
+  };
+
+  /** Creates a filter that checks if at least one of two other 
+      filters is true. */
+  Filter* or_filter(Filter* f1, Filter* f2);
+  
+  
+  /** A filter that checks if one filter AND another is true. */
+  class And : public Aggregate {
+  public:
+    And(Filter* f1, Filter* f2);
+    bool execute(QueryEngine& engine);
+  };
+
+  /** Creates a filter that checks if two other filters is true. */
+  Filter* and_filter(Filter* f1, Filter* f2);
+  
+  
   /** A filter that compares the numeric value of a node to a constant. */
   class NumericCompare : public Filter {
   public:

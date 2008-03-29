@@ -181,6 +181,57 @@ namespace PAQ {
   Filter* no(Filter* filter) { 
     return new Negation(filter); 
   }
+
+
+  Aggregate::Aggregate(Filter* f1, Filter* f2)
+    : m_f1(f1),
+      m_f2(f2) {
+    
+  }
+  
+  
+  Aggregate::~Aggregate() {
+    delete m_f1;
+    delete m_f2;
+  }
+  
+  
+  void Aggregate::set_variable_indices(Query& q) {
+    m_f1->set_variable_indices(q);
+    m_f2->set_variable_indices(q);
+  }
+
+  
+  Or::Or(Filter* f1, Filter* f2)
+    : Aggregate(f1, f2) {
+
+  }
+
+
+  bool Or::execute(QueryEngine& engine) {
+    return m_f1->execute(engine) || m_f2->execute(engine);
+  }
+
+  
+  Filter* or_filter(Filter* f1, Filter* f2) {
+    return new Or(f1, f2);
+  }
+  
+  
+  And::And(Filter* f1, Filter* f2)
+    : Aggregate(f1, f2) {
+
+  }
+  
+  
+  bool And::execute(QueryEngine& engine) {
+    return m_f1->execute(engine) && m_f2->execute(engine);
+  }
+
+
+  Filter* and_filter(Filter* f1, Filter* f2) {
+    return new And(f1, f2);
+  }
   
   
   NumericCompare::NumericCompare(Variable& var, double value) 

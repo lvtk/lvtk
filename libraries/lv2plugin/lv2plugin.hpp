@@ -38,6 +38,8 @@
 #include <lv2-command.h>
 #include <lv2_uri_map.h>
 #include <lv2-saverestore.h>
+#include <lv2_event.h>
+#include <lv2_contexts.h>
 #include <lv2types.hpp>
 
 
@@ -221,7 +223,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
     std::vector<void*> m_ports;
 
   private:
-
+    
     static void _connect_port(LV2_Handle instance, uint32_t port, 
 			     void* data_location) {
       reinterpret_cast<Derived*>(instance)->connect_port(port, data_location);
@@ -296,12 +298,6 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_bundle_path = 0;
 
 
-  /** @internal
-      The URI used for the Command extension. */
-  static const char* command_uri = 
-		 "http://ll-plugins.nongnu.org/lv2/namespace#dont-use-this-extension";
-  
-  
   /** The Command extension. Deprecated, but still used. */
   template <bool Required>
   struct CommandExt {
@@ -311,7 +307,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       I() : m_chd(0) { }
       
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[command_uri] = &I<Derived>::handle_feature;
+	hmap[LV2_COMMAND_URI] = &I<Derived>::handle_feature;
       }
       
       static void handle_feature(void* instance, void* data) { 
@@ -322,7 +318,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       }
       
       static const void* extension_data(const char* uri) { 
-	if (!std::strcmp(uri, command_uri)) {
+	if (!std::strcmp(uri, LV2_COMMAND_URI)) {
 	  static LV2_CommandDescriptor cdesc = { &I<Derived>::_command };
 	  return &cdesc;
 	}
@@ -494,7 +490,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
   
 
-  /** The Command extension. Deprecated, but still used. */
+  /** The save/restore extension. */
   template <bool Required>
   struct SaveRestoreExt {
     
@@ -548,6 +544,86 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
   
   
+  /** The event ref/unref function, required for plugins with event ports. */
+  template <bool Required>
+  struct EventExt {
+    
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
+      
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[LV2_EVENT_URI] = &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+        LV2_Event_Feature* ef = reinterpret_cast<LV2_Event_Feature*>(data);
+        fe->m_callback_data = ef->callback_data;
+        fe->m_ref_func = ef->lv2_event_ref;
+        fe->m_unref_func = ef->lv2_event_unref;
+        fe->m_ok = true;
+      }
+      
+    protected:
+      
+      uint32_t event_ref(LV2_Event* event, uint32_t context) {
+	return m_ref_func(m_callback_data, event, context);
+      }
+    
+      uint32_t event_unref(LV2_Event* event, uint32_t context) {
+	return m_unref_func(m_callback_data, event, context);
+      }
+    
+      LV2_Event_Callback_Data m_callback_data;
+      uint32_t (*m_ref_func)(LV2_Event_Callback_Data, LV2_Event*, uint32_t);
+      uint32_t (*m_unref_func)(LV2_Event_Callback_Data, LV2_Event*, uint32_t);
+      
+    };
+    
+  };
+
+
+  /** The message context extension. */
+  template <bool Required>
+  struct MessageExt {
+    
+    template <class Derived> struct I : Extension<Required> {
+      
+      I() { }
+      
+      static const void* extension_data(const char* uri) { 
+	if (!std::strcmp(uri, LV2_CONTEXT_MESSAGE)) {
+	  static LV2_Blocking_Context desc = { &I<Derived>::_blocking_run,
+					       &I<Derived>::_connect_port };
+	  return &desc;
+	}
+	return 0;
+      }
+      
+      bool blocking_run(uint8_t* outputs_written) { return false; }
+      
+    protected:
+      
+      /** @internal
+	  Static callback wrapper. */
+      static bool _blocking_run(LV2_Handle h, uint8_t* outputs_written) {
+	return reinterpret_cast<Derived*>(h)->blocking_run(outputs_written);
+      }
+      
+      /** @internal
+	  Static callback wrapper. */
+      static void _connect_port(LV2_Handle h, uint32_t port, void* buffer) {
+	reinterpret_cast<Derived*>(h)->connect_port(port, buffer);
+      }
+      
+    };
+  };
+  
+  
+  
+
 
 }
 

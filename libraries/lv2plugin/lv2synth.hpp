@@ -162,15 +162,15 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
   template <class V, class D,
 	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
 	    class Ext4 = End, class Ext5 = End, class Ext6 = End,
-	    class Ext7 = End, class Ext8 = End>
-  class Synth : public Plugin<D, UriMapExt<true>, Ext1, Ext2, Ext3, Ext4, 
-			      Ext5, Ext6, Ext7, Ext8> {
+	    class Ext7 = End>
+  class Synth : public Plugin<D, UriMapExt<true>, EventExt<true>,
+			      Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, UriMapExt<true>, Ext1, Ext2, Ext3, Ext4, 
-		   Ext5, Ext6, Ext7, Ext8>
+    typedef Plugin<D, UriMapExt<true>, EventExt<true>, 
+		   Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
     Parent;
     
 
@@ -266,16 +266,16 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	applied. Don't override it unless you know what you're doing. */
     void run(uint32_t sample_count) {
       
-      // zero output buffers
+      // Zero output buffers so voices can add to them
       for (unsigned i = 0; i < m_audio_ports.size(); ++i)
 	std::memset(p(m_audio_ports[i]), 0, 
 		    sizeof(float) * sample_count);
       
-      // if there are no voices, do nothing
+      // If there are no voices, do nothing
       if (m_voices.size() == 0)
 	return;
       
-      // prepare voices
+      // Make the port buffers available to the voices
       for (unsigned i = 0; i < m_voices.size(); ++i)
 	m_voices[i]->set_port_buffers(Parent::m_ports);
       
@@ -301,10 +301,19 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	  static_cast<D*>(this)->post_process(samples_done, to);
 	  samples_done = to;
 	}
+	
+	/* This is what we do with events:
+	   - if it's a MIDI event, pass it to handle_midi()
+	   - if it's a reference counted event, decrease the count and ignore it
+	   - if it's something else, just ignore it (it's safe)
+	*/
 	if (ev) {
 	  if (ev->type == m_midi_type)
 	    handle_midi(ev->size, event_data);
-	  // XXX handle type 0 events here (unref)
+	  else if (ev->type == 0)
+	    /* We need to qualify this so the compiler knows that there is an
+	       event_unref() function */
+	    Parent::event_unref(ev, 0);
 	}
       }
       
