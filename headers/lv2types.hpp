@@ -80,7 +80,7 @@ namespace LV2 {
     }
     
     /** Check if the features are OK with the plugin initialisation. */
-    bool check_ok() const { 
+    bool check_ok() { 
       return E1::template I<A>::check_ok() && Parent::check_ok();
     }
     
@@ -134,7 +134,7 @@ namespace LV2 {
     static void map_feature_handlers(FeatureHandlerMap& hmap) { }
     
     /** Return @c true if the plugin instance is OK, @c false if it isn't. */
-    bool check_ok() const { return m_ok; }
+    bool check_ok() { return m_ok; }
   
     /** Return a data pointer corresponding to the URI if this extension 
 	has one. */

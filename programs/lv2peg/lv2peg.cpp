@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
   
   // find all plugins in the file
   Namespace lv2("<http://lv2plug.in/ns/lv2core#>");
+  Namespace cx("<http://ll-plugins.nongnu.org/lv2/dev/contexts/1#>");
   Namespace ll("<http://ll-plugins.nongnu.org/lv2/namespace#>");
   Variable plugin, pegname;
   vector<QueryResult> qr =
@@ -103,7 +104,8 @@ int main(int argc, char** argv) {
   map<string, map<int, PortInfo> > info;
   map<string, string>::const_iterator plug_iter;
   for (plug_iter = plugins.begin(); plug_iter != plugins.end(); ++plug_iter) {
-    // query the ports
+
+    // query the plugin ports
     Variable port, index, symbol;
     qr = select(index, symbol)
       .where(plug_iter->first, lv2("port"), port)
@@ -115,6 +117,31 @@ int main(int argc, char** argv) {
     map<int, PortInfo> ports;
     for (size_t i = 0; i < qr.size(); ++i) {
       int port_index = atoi(qr[i][index]->name.c_str());
+      if (ports.find(port_index) != ports.end()) {
+	cerr<<"Index "<<port_index<<" is used for more than one port"<<endl;
+	return -1;
+      }
+      ports[port_index].name = qr[i][symbol]->name;
+    }
+    
+    // query the context ports
+    Variable cx_pred, context;
+    qr = select(index, symbol)
+      .where(plug_iter->first, cx_pred, context)
+      .where(context, cx("port"), port)
+      .where(port, lv2("index"), index)
+      .where(port, lv2("symbol"), symbol)
+      .filter(or_filter(cx_pred == cx("optionalContext"),
+			cx_pred == cx("requiredContext")))
+      .run(data);
+  
+    // put them in the map too
+    for (size_t i = 0; i < qr.size(); ++i) {
+      int port_index = atoi(qr[i][index]->name.c_str());
+      if (ports.find(port_index) != ports.end()) {
+	cerr<<"Index "<<port_index<<" is used for more than one port"<<endl;
+	return -1;
+      }
       ports[port_index].name = qr[i][symbol]->name;
     }
     

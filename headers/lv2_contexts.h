@@ -21,9 +21,10 @@
 #ifndef LV2_CONTEXTS_H
 #define LV2_CONTEXTS_H
 
-#define LV2_CONTEXT_URI "http://lv2plug.in/ns/ext/context"
+#define LV2_CONTEXT_URI "http://ll-plugins.nongnu.org/lv2/dev/contexts/1"
 
-#define LV2_CONTEXT_MESSAGE "http://lv2plug.in/ns/ext/context#MessageContext"
+
+#define LV2_CONTEXT_MESSAGE "http://ll-plugins.nongnu.org/lv2/dev/contexts/1#MessageContext"
 
 #define LV2_CONTEXTS_SET_OUTPUT_WRITTEN(flags, index) \
 	(flags)[(index) / 8] |= 1 << ((index) % 8)

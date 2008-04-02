@@ -593,6 +593,16 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       
       I() { }
       
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[LV2_CONTEXT_MESSAGE] = &I<Derived>::handle_feature;
+      }
+      
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+        fe->m_ok = true;
+      }
+      
       static const void* extension_data(const char* uri) { 
 	if (!std::strcmp(uri, LV2_CONTEXT_MESSAGE)) {
 	  static LV2_Blocking_Context desc = { &I<Derived>::_blocking_run,
