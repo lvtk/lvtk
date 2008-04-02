@@ -452,13 +452,12 @@ namespace LV2 {
     */
     inline void write(uint32_t port, uint32_t buffer_size, 
 		      uint32_t format, void const* buffer) {
-      // XXX fix the format thing
       (*m_wfunc)(m_ctrl, port, buffer_size, format, buffer);
     }
     
     /** Set the value of a control input port in the plugin instance. */
     inline void write_control(uint32_t port, float value) {
-      write(port, sizeof(float), &value);
+      write(port, sizeof(float), 0, &value);
     }
     
     /** Get the feature array that was passed by the host. This may only
