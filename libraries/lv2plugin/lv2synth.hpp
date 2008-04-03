@@ -313,7 +313,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	  else if (ev->type == 0)
 	    /* We need to qualify this so the compiler knows that there is an
 	       event_unref() function */
-	    Parent::event_unref(ev, 0);
+	    Parent::event_unref(ev);
 	}
       }
       

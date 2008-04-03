@@ -568,17 +568,17 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       
     protected:
       
-      uint32_t event_ref(LV2_Event* event, uint32_t context) {
-	return m_ref_func(m_callback_data, event, context);
+      uint32_t event_ref(LV2_Event* event) {
+	return m_ref_func(m_callback_data, event);
       }
     
-      uint32_t event_unref(LV2_Event* event, uint32_t context) {
-	return m_unref_func(m_callback_data, event, context);
+      uint32_t event_unref(LV2_Event* event) {
+	return m_unref_func(m_callback_data, event);
       }
     
       LV2_Event_Callback_Data m_callback_data;
-      uint32_t (*m_ref_func)(LV2_Event_Callback_Data, LV2_Event*, uint32_t);
-      uint32_t (*m_unref_func)(LV2_Event_Callback_Data, LV2_Event*, uint32_t);
+      uint32_t (*m_ref_func)(LV2_Event_Callback_Data, LV2_Event*);
+      uint32_t (*m_unref_func)(LV2_Event_Callback_Data, LV2_Event*);
       
     };
     
