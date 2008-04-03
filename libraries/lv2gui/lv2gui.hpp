@@ -36,6 +36,7 @@
 #include <lv2-ui-command.h>
 #include <lv2_uri_map.h>
 #include <lv2_event_helpers.h>
+#include <lv2_osc.h>
 #include <lv2types.hpp>
 
 
@@ -383,6 +384,54 @@ namespace LV2 {
   };  
   
   
+  /** A mixin that allows easy sending of OSC from GUI to plugin. */
+  struct WriteOsc {
+    
+    template <class Derived> struct I : Extension<false> {
+      
+      I() : m_osc_type(0) {
+	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + 256, 0);
+      }
+      
+      bool check_ok() {
+	Derived* d = static_cast<Derived*>(this);
+	m_osc_type = d->
+	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/osc#OscEvent");
+	m_event_buffer_format = 1; // XXX Fix this
+	return m_osc_type && m_event_buffer_format;
+      }
+      
+    protected:
+      
+      void write_osc(uint32_t port, const char* path, const char* types, ...) {
+	lv2_event_buffer_reset(m_buffer, 0, m_buffer->data);
+	LV2_Event_Iterator iter;
+	lv2_event_begin(&iter, m_buffer);
+	va_list ap;
+	va_start(ap, types);
+	uint32_t size = lv2_osc_event_vsize(path, types, ap);
+	va_end(ap);
+	if (!size)
+	  return;
+	va_start(ap, types);
+	bool success = lv2_osc_buffer_vappend(&iter, 0, 0, m_osc_type, 
+					      path, types, size, ap);
+	va_end(ap);
+	static_cast<Derived*>(this)->
+	  write(port, m_buffer->header_size + m_buffer->capacity, 
+		m_event_buffer_format, m_buffer);
+
+      }
+      
+      uint32_t m_osc_type;
+      uint32_t m_event_buffer_format;
+      LV2_Event_Buffer* m_buffer;
+      
+    };
+    
+  };  
+  
+  
   /** This is the base class for a plugin GUI. You should inherit it and 
       override any public member functions you want to provide 
       implementations for. All subclasses must have a constructor with 
@@ -485,15 +534,7 @@ namespace LV2 {
     // XXX This is quite ugly but needed to allow these mixins to call 
     // protected functions in the GUI class, which we want.
     friend class WriteMidi::I<Derived>;
-    //friend class Ext1::template I<Derived>;
-    //friend class Ext2::template I<Derived>;
-    //friend class Ext3::template I<Derived>;
-    //friend class Ext4::template I<Derived>;
-    //friend class Ext5::template I<Derived>;
-    //friend class Ext6::template I<Derived>;
-    //friend class Ext7::template I<Derived>;
-    //friend class Ext8::template I<Derived>;
-    //friend class Ext9::template I<Derived>;
+    friend class WriteOsc::I<Derived>;
     
     /** @internal
 	This function creates an instance of a plugin GUI. It is used 
