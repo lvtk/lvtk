@@ -20,13 +20,13 @@
 #ifndef LV2_URI_MAP_H
 #define LV2_URI_MAP_H
 
-#define LV2_URI_MAP_URI "http://lv2plug.in/ns/ext/uri-map"
+#define LV2_URI_MAP_URI "http://lv2plug.in/ns/extensions/uri-map"
 
 #include <stdint.h>
 
 /** @file
  * This header defines the LV2 URI Map extension with the URI
- * <http://lv2plug.in/ns/ext/uri-map> (preferred prefix 'lv2urimap').
+ * <http://lv2plug.in/ns/extensions/uri-map> (preferred prefix 'lv2urimap').
  *
  * This extension defines a simple mechanism for plugins to map URIs to
  * integers, usually for performance reasons (e.g. processing events
@@ -45,7 +45,7 @@ typedef void* LV2_URI_Map_Callback_Data;
 /** The data field of the LV2_Feature for this extension.
  *
  * To support this feature the host must pass an LV2_Feature struct to the
- * plugin's instantiate method with URI "http://lv2plug.in/ns/ext/uri-map"
+ * plugin's instantiate method with URI "http://lv2plug.in/ns/extensions/uri-map"
  * and data pointed to an instance of this struct.
  */
 typedef struct {

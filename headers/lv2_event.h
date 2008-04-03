@@ -39,6 +39,10 @@
  * which is mapped to an integer by the host for performance reasons.
  *
  * This extension requires the host to support the LV2 URI Map extension.
+ * This requirement is implicit - a plugin does not have to list the URI Map
+ * feature as required or optional in its RDF data for the host to provide
+ * the URI Map LV2_Feature in the instantiation function.
+ *
  * Any host which supports this extension MUST guarantee that any call to
  * the LV2 URI Map uri_to_id function with the URI of this extension as the
  * 'map' argument returns a value within the range of uint16_t.
