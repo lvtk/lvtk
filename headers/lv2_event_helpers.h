@@ -228,7 +228,7 @@ lv2_event_write_event(LV2_Event_Iterator* iter,
 			(uint8_t*)iter->buf->data + iter->offset);
 	
 	*write_ev = *ev;
-	memcpy((uint8_t*)ev + sizeof(LV2_Event), data, ev->size);
+	memcpy((uint8_t*)write_ev + sizeof(LV2_Event), data, ev->size);
 	++iter->buf->event_count;
 	
 	const uint16_t size = lv2_event_pad_size(sizeof(LV2_Event) + ev->size);
