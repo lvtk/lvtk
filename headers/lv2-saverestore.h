@@ -26,7 +26,7 @@
 
 #include <lv2.h>
 
-#define LV2_SAVERESTORE_URI "http://ll-plugins.nongnu.org/lv2/dev/saverestore/1"
+#define LV2_SAVERESTORE_URI "http://ll-plugins.nongnu.org/lv2/ext/saverestore"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,12 +37,12 @@ extern "C" {
       This extension defines a way to save and restore the internal state
       of an LV2 plugin instance. The internal state does not include input
       port values, which are visible to the host, but rather things that
-      the host has no way of knowing, such as loaded sample buffers that has
-      been modified using GUI commands, or internal variables that has been
+      the host has no way of knowing, such as loaded sample buffers that have
+      been modified using GUI commands, or internal variables that have been
       updated and modified as a reaction to the input streams. A plugin that
       implements this extension must list 
-      <http://ll-plugins.nongnu.org/lv2/dev/saverestore/1> as an optional
-      or required host feature in its RDF data, and it must have an 
+      <http://ll-plugins.nongnu.org/lv2/ext/saverestore> as an optional
+      or required Feature in its RDF data, and it must have an 
       extension_data() function pointer in its descriptor that returns a 
       pointer to a LV2SR_Descriptor, defined below, when called with the same
       URI. The data pointer for the host feature passed to the plugin's 
@@ -85,6 +85,13 @@ extern "C" {
 	- save the names and paths for all elements in 'files' somewhere as
           part of the session
 	  
+      This extension allows for two "levels" of saving a plugin's state - 
+      the host can either just copy the files with the 'must_copy' flag set 
+      into its session directory and rely on the other files staying at the
+      same paths in the filesystem (a "shallow" save) or it can copy every
+      mentioned file into its session directory (a "deep" save). The latter
+      may be useful when moving sessions between machines.
+      
       Most simple plugins whose behaviour is completely defined by the current
       values in its control input ports should not need to implement this
       extension.
@@ -146,6 +153,8 @@ extern "C" {
 	deallocated by the host using free(). If NULL is returned the host 
 	should not try to access or deallocate the array pointed to by the 
 	files parameter, or it's elements.
+	
+	This function pointer must not be set to NULL.
     */
     char* (*save)(LV2_Handle       handle,
 		  const char*      directory,
@@ -164,6 +173,8 @@ extern "C" {
 	This function should return NULL if it successfully restores a state
 	from the given parameters and an error message otherwise. Any returned
 	error message should be deallocated by the host. 
+
+	This function pointer must not be set to NULL.
     */
     char* (*restore)(LV2_Handle         handle,
 		     const LV2SR_File** files);
