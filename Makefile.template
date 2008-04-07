@@ -163,6 +163,7 @@ $$($(2)_BLDPRF)/$(1): $$($(2)_FULLDATA) $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_
 install-$(2): $$($(2)_BLDPRF)/$(1) $$(if $$($(2)_HEADERS),install-$(2)-headers)
 	rm -rf $(DESTDIR)/$$($(2)_INSTDIR)/$(1)
 	mkdir -p $(DESTDIR)/$$($(2)_INSTDIR) && cp -R $$($(2)_BLDPRF)/$(1) $(DESTDIR)/$$($(2)_INSTDIR)
+	$$(if $$($(2)_POSTINSTALL),cd $(DESTDIR)/$$($(2)_INSTDIR) && $$($(2)_POSTINSTALL))
 
 endef
 $(foreach lv2,$(LV2_BUNDLES),$(eval $(call LV2_BUNDLE_template,$(lv2),$(subst .,_,$(lv2)))))
