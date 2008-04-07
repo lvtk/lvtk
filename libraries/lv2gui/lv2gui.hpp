@@ -32,7 +32,7 @@
 #include <gtkmm/widget.h>
 
 #include <lv2-ui.h>
-#include <lv2-gui-programs.h>
+#include <lv2-ui-presets.h>
 #include <lv2-ui-command.h>
 #include <lv2_uri_map.h>
 #include <lv2_event_helpers.h>
@@ -110,12 +110,12 @@ namespace LV2 {
   };
 
 
-  /** Program GUI extension - the host will tell the GUI what presets are
+  /** Preset GUI extension - the host will tell the GUI what presets are
     available and which is currently active, the GUI can request saving
-    and using programs.
+    and using presets.
   */
   template <bool Required>
-  struct Programs {
+  struct Presets {
     
     template <class Derived> struct I : public Extension<Required> {
       
@@ -124,47 +124,46 @@ namespace LV2 {
 	
 	/** @internal */
 	static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	  hmap[LV2_UI_URI "#ext_programs"] = 
-	    &I<Derived>::handle_feature;
+	  hmap[LV2_UI_PRESETS_URI] = &I<Derived>::handle_feature;
 	}
 	
 	/** @internal */
 	static void handle_feature(void* instance, void* data) {
 	  Derived* d = reinterpret_cast<Derived*>(instance);
 	  I<Derived>* e = static_cast<I<Derived>*>(d);
-	  e->m_hdesc = static_cast<LV2UI_Programs_HDesc*>(data);
+	  e->m_hdesc = static_cast<LV2UI_Presets_Feature*>(data);
 	  e->m_ok = (e->m_hdesc != 0);
 	  e->m_host_support = (e->m_hdesc != 0);
 	}
 	
 	
 	/** This is called by the host to let the GUI know that a new 
-	    program has been added or renamed.
+	    preset has been added or renamed.
 	*/
-	void program_added(uint32_t    number, 
+	void preset_added(uint32_t    number, 
 			   char const* name) {
 	  
 	}
 	
 	/** This is called by the host to let the GUI know that a previously 
-	    existing program has been removed.
+	    existing preset has been removed.
 	*/
-	void program_removed(uint32_t number) {
+	void preset_removed(uint32_t number) {
 	  
 	}
 	
 	/** This is called by the host to let the GUI know that all previously
-	    existing programs have been removed. 
+	    existing presets have been removed. 
 	*/
-	void programs_cleared() {
+	void presets_cleared() {
 	  
 	}
 	
 	/** This is called by the host to let the GUI know that the current 
-	    program has changed. The number will always be in the range [0,127]
-	    or equal to 255, in which case there is no current program.
+	    preset has changed. The number will always be in the range [0,127]
+	    or equal to 255, in which case there is no current preset.
 	*/
-	void current_program_changed(uint32_t number) {
+	void current_preset_changed(uint32_t number) {
 	  
 	}
 	
@@ -172,11 +171,11 @@ namespace LV2 {
 	    Returns the plugin descriptor for this extension.
 	*/
 	static void const* extension_data(char const* uri) {
-	  static LV2UI_Programs_GDesc desc = { &_program_added,
-					       &_program_removed,
-					       &_programs_cleared,
-					       &_current_program_changed };
-	  if (!std::strcmp(uri, LV2_UI_URI "#ext_programs"))
+	  static LV2UI_Presets_GDesc desc = { &_preset_added,
+					      &_preset_removed,
+					      &_presets_cleared,
+					      &_current_preset_changed };
+	  if (!std::strcmp(uri, LV2_UI_URI "#ext_presetss"))
 	    return &desc;
 	  return 0;
 	}
@@ -184,51 +183,51 @@ namespace LV2 {
     protected:
 	
 	/** You can call this to request that the host changes the current 
-	    program to @c program. */
-	void change_program(uint32_t program) {
+	    preset to @c preset. */
+	void change_preset(uint32_t preset) {
 	  if (m_hdesc)
-	    m_hdesc->change_program(static_cast<Derived*>(this)->controller(), 
-				    program);
+	    m_hdesc->change_preset(static_cast<Derived*>(this)->controller(), 
+				   preset);
 	}
 	
 	/** You can call this to request that the host saves the current state
-	    of the plugin instance to a program. */
-	void save_program(uint32_t program, char const* name) {
+	    of the plugin instance to a preset. */
+	void save_preset(uint32_t preset, char const* name) {
 	  if (m_hdesc)
-	    m_hdesc->save_program(static_cast<Derived*>(this)->controller(), 
-				  program, name);
+	    m_hdesc->save_preset(static_cast<Derived*>(this)->controller(), 
+				 preset, name);
 	}
       
-        /** Returns @c true if the host supports the Program feature, @c false
+        /** Returns @c true if the host supports the Preset feature, @c false
 	    if it does not. */
-        bool host_supports_programs() const {
+        bool host_supports_presets() const {
 	  return m_host_support;
 	}
 	
     private:
 	
-	static void _program_added(LV2UI_Handle gui, 
+	static void _preset_added(LV2UI_Handle gui, 
 				   uint32_t     number, 
 				   char const*  name) {
-	  static_cast<Derived*>(gui)->program_added(number, name);
+	  static_cast<Derived*>(gui)->preset_added(number, name);
 	}
 	
-	static void _program_removed(LV2UI_Handle gui, 
+	static void _preset_removed(LV2UI_Handle gui, 
 				     uint32_t     number) {
-	  static_cast<Derived*>(gui)->program_removed(number);
+	  static_cast<Derived*>(gui)->preset_removed(number);
 	}
 	
-	static void _programs_cleared(LV2UI_Handle gui) {
-	  static_cast<Derived*>(gui)->programs_cleared();
+	static void _presets_cleared(LV2UI_Handle gui) {
+	  static_cast<Derived*>(gui)->presets_cleared();
 	}
 	
-	static void _current_program_changed(LV2UI_Handle gui, 
+	static void _current_preset_changed(LV2UI_Handle gui, 
 					     uint32_t     number) {
-	  static_cast<Derived*>(gui)->current_program_changed(number);
+	  static_cast<Derived*>(gui)->current_preset_changed(number);
 	}
 	
 	
-	LV2UI_Programs_HDesc* m_hdesc;
+	LV2UI_Presets_Feature* m_hdesc;
         bool m_host_support;
 	
     };
