@@ -146,6 +146,24 @@ lv2_event_get(LV2_Event_Iterator* iter,
 }
 
 
+/** Get the type of the non-POD event referenced by an event iterator.
+ * @a iter must be valid.
+ * @return The type of the non-POD event, or 0 if the event is not non-POD. */
+static inline uint16_t
+lv2_event_get_nonpod_type(LV2_Event_Iterator* iter)
+{
+	assert(lv2_event_is_valid(iter));
+
+	LV2_Event* const ev = (LV2_Event*)(
+			(uint8_t*)iter->buf->data + iter->offset);
+	
+	if (ev->type != 0 || ev->size < 2)
+	  return 0;
+	
+	return *(uint16_t*)((uint8_t*)ev + sizeof(LV2_Event));
+}
+
+
 /** Write an event at @a iter.
  * The event (if any) pointed to by @iter will be overwritten, and @a iter
  * incremented to point to the following event (i.e. several calls to this

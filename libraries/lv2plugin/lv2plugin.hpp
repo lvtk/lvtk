@@ -300,7 +300,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 
   /** The Command extension. Deprecated, but still used. */
   template <bool Required>
-  struct CommandExt {
+  struct Command {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -385,7 +385,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       which will be equal to the uint32_t variable pointed to by the data
       pointer for this feature. */
   template <bool Required>
-  struct FixedExt {
+  struct FixedBufSize {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -417,10 +417,10 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
   
   /** The fixed power-of-2 buffer size extension. This works just like 
-      FixedExt with the additional requirement that the buffer size must
+      FixedBufSize with the additional requirement that the buffer size must
       be a power of 2. */
   template <bool Required>
-  struct FixedP2Ext {
+  struct FixedP2BufSize {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -454,7 +454,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 
   /** The URI map extension. */
   template <bool Required>
-  struct UriMapExt {
+  struct URIMap {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -492,7 +492,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 
   /** The save/restore extension. */
   template <bool Required>
-  struct SaveRestoreExt {
+  struct SaveRestore {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -546,7 +546,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   
   /** The event ref/unref function, required for plugins with event ports. */
   template <bool Required>
-  struct EventExt {
+  struct EventRef {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -587,7 +587,7 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
 
   /** The message context extension. */
   template <bool Required>
-  struct MessageExt {
+  struct MsgContext {
     
     template <class Derived> struct I : Extension<Required> {
       

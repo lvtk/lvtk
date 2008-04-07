@@ -21,17 +21,17 @@
 #ifndef LV2_EVENT_H
 #define LV2_EVENT_H
  
-#define LV2_EVENT_URI "http://lv2plug.in/ns/extensions/event"
+#define LV2_EVENT_URI "http://lv2plug.in/ns/ext/event"
 #define LV2_EVENT_AUDIO_STAMP 0
 
 #include <stdint.h>
 
 /** @file
  * This header defines the code portion of the LV2 events extension with
- * URI <http://lv2plug.in/ns/extensions/event>.
+ * URI <http://lv2plug.in/ns/ext/event>.
  *
  * Below, the URI prefix 'lv2ev' is assumed to expand to 
- * <http://lv2plug.in/ns/extensions/event#>.
+ * <http://lv2plug.in/ns/ext/event#>.
  *
  * This extension is a generic transport mechanism for time stamped events
  * of any type (e.g. MIDI, OSC, ramps, etc).  Each port can transport mixed
@@ -54,24 +54,6 @@
  * by all integers from 1 through 18 inclusive, and powers of 2 up to 2^12.
  */
 static const uint32_t LV2_EVENT_PPQN = 3136573440U;
-
-
-/** The structure of the event data for a non-POD event (see below).
- */
-typedef struct {
-
-	/** A pointer to the actual data for this non-POD event. 
-	 */
-	void* data;
-
-	/** The 'internal type' of this non-POD event. This should be a numeric
-	 * identifier returned from the uri_to_id mapping function using the 
-	 * same map URI as for the normal event types (see below). This may
-	 * not be 0.
-	 */
-	uint16_t type;
-
-} LV2_Event_NonPOD;
 
 
 /** An LV2 event (header only).
@@ -121,10 +103,11 @@ typedef struct {
 	 * but with minimal hassle on simple plugins that "don't care" about 
 	 * these more advanced features.
 	 *
-	 * The size of the data buffer for a non-POD event is always equal to
-	 * sizeof(LV2_Event_NonPOD), and it will contain a void pointer to the
-	 * external data buffer followed by a uint16_t specifying its type (see
-	 * the documentation for LV2_Event_NonPOD above).
+	 * When the type is 0 the first two bytes of the event data will be
+	 * another uint16_t giving the numeric ID for that particular type of
+	 * non-POD event, obtained from the URI map extension in the same way.
+	 * The interpretation of the rest of the data depends on that type,
+	 * which must not be 0.
 	 */
 	uint16_t type;
 
@@ -230,7 +213,7 @@ typedef void* LV2_Event_Callback_Data;
 /** The data field of the LV2_Feature for this extension.
  *
  * To support this extension the host must pass an LV2_Feature struct to the
- * plugin's instantiate method with URI "http://lv2plug.in/ns/extensions/event"
+ * plugin's instantiate method with URI "http://lv2plug.in/ns/ext/event"
  * and data pointed to an instance of this struct.  The plugin does not have
  * to list that URI as a required or optional feature in its RDF data - the 
  * host MUST pass this LV2_Feature if the plugin has an port of class 

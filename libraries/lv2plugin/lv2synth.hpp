@@ -163,13 +163,13 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
 	    class Ext4 = End, class Ext5 = End, class Ext6 = End,
 	    class Ext7 = End>
-  class Synth : public Plugin<D, UriMapExt<true>, EventExt<true>,
+  class Synth : public Plugin<D, URIMap<true>, EventRef<true>,
 			      Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, UriMapExt<true>, EventExt<true>, 
+    typedef Plugin<D, URIMap<true>, EventRef<true>, 
 		   Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
     Parent;
     
