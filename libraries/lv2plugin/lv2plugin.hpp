@@ -79,13 +79,13 @@ namespace LV2 {
       
       class TestLV2 : public LV2::Plugin<TestLV2> {
       public:
-        TestLV2(double, const char*, const LV2::Feature* const*) : LV2::Plugin<TestLV2>(2) { }
+        TestLV2(double) : LV2::Plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
           memcpy(p(1), p(0), sample_count * sizeof(float));
         }
       };
       
-      static unsigned _ = TestLV2::register_class<TestLV2>("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0");
+      static unsigned _ = TestLV2::register_class("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0");
       @endcode
       
       If the above code is compiled and linked with @c -llv2_plugin into a 
@@ -192,7 +192,7 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
         like this:
     
         @code
-LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
+LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
         @endcode
 	
 	If you want to access a port buffer as a pointer-to-float (i.e. an audio
@@ -297,8 +297,23 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   Plugin<Derived, Ext1, Ext2, Ext3, Ext4, 
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_bundle_path = 0;
 
-
-  /** The Command extension. Deprecated, but still used. */
+  
+  /** @defgroup pluginmixins Plugin mixins
+      These template classes implement extra functionality that you may
+      want to have in your plugin class, usually Features. You add them
+      to your class by passing them as template parameters to LV2::Plugin
+      when inheriting it. They will then be inherited by your plugin class,
+      so that any public and protected members they have will be available
+      to your plugin as if they were declared in your plugin class.
+      
+      They are done as separate template classes so they won't add to the
+      code size of your plugin if you don't need them.
+  */
+  
+  
+  /** The Command extension. Deprecated, but still used. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct Command {
     
@@ -383,7 +398,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   /** The fixed buffer size extension. A host that supports this will always
       call the plugin's run() function with the same @c sample_count parameter,
       which will be equal to the uint32_t variable pointed to by the data
-      pointer for this feature. */
+      pointer for this feature. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct FixedBufSize {
     
@@ -418,7 +435,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   
   /** The fixed power-of-2 buffer size extension. This works just like 
       FixedBufSize with the additional requirement that the buffer size must
-      be a power of 2. */
+      be a power of 2. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct FixedP2BufSize {
     
@@ -452,7 +471,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
 
 
-  /** The URI map extension. */
+  /** The URI map extension. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct URIMap {
     
@@ -490,7 +511,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
   
 
-  /** The save/restore extension. */
+  /** The save/restore extension. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct SaveRestore {
     
@@ -544,7 +567,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
   
   
-  /** The event ref/unref function, required for plugins with event ports. */
+  /** The event ref/unref function, required for plugins with event ports. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct EventRef {
     
@@ -585,7 +610,9 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
   };
 
 
-  /** The message context extension. */
+  /** The message context extension. 
+      @ingroup pluginmixins
+  */
   template <bool Required>
   struct MsgContext {
     
@@ -630,9 +657,6 @@ LV2_MIDI* midibuffer = p<LV2_MIDI>(midiport_index);
       
     };
   };
-  
-  
-  
 
 
 }

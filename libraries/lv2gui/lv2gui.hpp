@@ -52,12 +52,48 @@ namespace LV2 {
       This function returns the list of LV2 descriptors. It should only be 
       used internally. */
   GUIDescList& get_lv2g2g_descriptors();
+  
+  
+  /** @defgroup guimixins GUI mixins
+      These classes implement extra functionality that you may want to have
+      in your GUI class, just like the @ref pluginmixins "plugin mixins" do
+      for plugin classes. Some of them are template classes with a boolean
+      @c Required parameter - if this is true the GUI will fail to instantiate
+      unless the host supports the extension implemented by that mixin.
+      For example, if you wanted a GUI that wrote a MIDI Note On event to port
+      3 in the plugin whenever the user clicked a button, you could do it like
+      this:
+      @code
+#include <lv2gui.hpp>
+#include <gtkmm.h>
+
+class MyGUI : public LV2::GUI<MyGUI, LV2::URIMap<true>, LV2::WriteMIDI> {
+public:
+  MyGUI(const char* plugin_uri)
+    : m_button("Click me!") {
+    pack_start(m_button);
+    m_button.signal_clicked().connect(sigc::mem_fun(*this, &MyGUI::send_event));
+  }
+protected:
+  void send_event() {
+    uint8_t noteon[] = { 0x90, 0x50, 0x40 };
+    write_midi(3, 3, noteon);
+  }
+  Gtk::Button m_button;
+};
+      @endcode
+      The function @c write_midi() is implemented in LV2::WriteMIDI and thus
+      available in @c MyGUI. LV2::WriteMIDI requires that LV2::URIMap is also
+      used (because of the way event types work in LV2) - if you don't add
+      LV2::URIMap as well you will get a compilation error.
+  */
 
 
   /** This extension provides no extra functions or data, it just makes sure
       that the GUI will not instantiate unless the host passes a LV2_Feature
       for the noUserResize GUI feature defined in the GUI extension (if
       @c Required is @c true).
+      @ingroup guimixins
   */
   template <bool Required>
   struct NoUserResize {
@@ -86,6 +122,7 @@ namespace LV2 {
       that the GUI will not instantiate unless the host passes a LV2_Feature
       for the fixedSize GUI feature defined in the GUI extension (if
       @c Required is @c true).
+      @ingroup guimixins
   */
   template <bool Required>
   struct FixedSize {
@@ -111,8 +148,9 @@ namespace LV2 {
 
 
   /** Preset GUI extension - the host will tell the GUI what presets are
-    available and which is currently active, the GUI can request saving
-    and using presets.
+      available and which is currently active, the GUI can request saving
+      and using presets.
+      @ingroup guimixins
   */
   template <bool Required>
   struct Presets {
@@ -237,6 +275,7 @@ namespace LV2 {
   
   /** Command GUI extension - the GUI can send commands to the plugin,
       and the plugin can send feedback back to the GUI.
+      @ingroup guimixins
   */
   template <bool Required>
   struct CommandGUI {
@@ -310,9 +349,11 @@ namespace LV2 {
   };
 
 
-  /** The URI map extension. */
+  /** The URI map extension. 
+      @ingroup guimixins
+  */
   template <bool Required>
-  struct UriMapExt {
+  struct URIMap {
     
     template <class Derived> struct I : Extension<Required> {
       
@@ -343,8 +384,10 @@ namespace LV2 {
   };  
   
   
-  /** A mixin that allows easy sending of MIDI from GUI to plugin. */
-  struct WriteMidi {
+  /** A mixin that allows easy sending of MIDI from GUI to plugin. 
+      @ingroup guimixins
+  */
+  struct WriteMIDI {
     
     template <class Derived> struct I : Extension<false> {
       
@@ -383,8 +426,10 @@ namespace LV2 {
   };  
   
   
-  /** A mixin that allows easy sending of OSC from GUI to plugin. */
-  struct WriteOsc {
+  /** A mixin that allows easy sending of OSC from GUI to plugin. 
+      @ingroup guimixins
+  */
+  struct WriteOSC {
     
     template <class Derived> struct I : Extension<false> {
       
@@ -532,8 +577,8 @@ namespace LV2 {
     
     // XXX This is quite ugly but needed to allow these mixins to call 
     // protected functions in the GUI class, which we want.
-    friend class WriteMidi::I<Derived>;
-    friend class WriteOsc::I<Derived>;
+    friend class WriteMIDI::I<Derived>;
+    friend class WriteOSC::I<Derived>;
     
     /** @internal
 	This function creates an instance of a plugin GUI. It is used 
@@ -549,7 +594,8 @@ namespace LV2 {
 					   LV2_Feature const* const* features) {
       
       // copy some data to static variables so the subclasses don't have to
-      // bother with it
+      // bother with it - this is threadsafe since hosts are not allowed
+      // to instantiate the same plugin concurrently
       s_ctrl = ctrl;
       s_wfunc = write_func;
       s_features = features;
