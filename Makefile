@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.709
+PACKAGE_VERSION = 0.1.710
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -58,8 +58,9 @@ lv2soname_SOURCEDIR = programs/lv2soname
 lv2soname_INSTALLDIR = $(bindir)
 
 # extra files
-DOCS = COPYING AUTHORS README
+DOCS = COPYING AUTHORS README ChangeLog
 PCFILES = lv2-plugin.pc lv2-gui.pc paq.pc
+EXTRA_DIST = Doxyfile
 
 
 # Do the magic
