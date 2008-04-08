@@ -63,11 +63,12 @@ namespace LV2 {
       For example, if you wanted a GUI that wrote a MIDI Note On event to port
       3 in the plugin whenever the user clicked a button, you could do it like
       this:
+
       @code
 #include <lv2gui.hpp>
 #include <gtkmm.h>
 
-class MyGUI : public LV2::GUI<MyGUI, LV2::URIMap<true>, LV2::WriteMIDI> {
+class MyGUI : public LV2::GUI<MyGUI, LV2::URIMap<true>, LV2::WriteMIDI<true> > {
 public:
   MyGUI(const char* plugin_uri)
     : m_button("Click me!") {
@@ -82,6 +83,7 @@ protected:
   Gtk::Button m_button;
 };
       @endcode
+
       The function @c write_midi() is implemented in LV2::WriteMIDI and thus
       available in @c MyGUI. LV2::WriteMIDI requires that LV2::URIMap is also
       used (because of the way event types work in LV2) - if you don't add
@@ -93,11 +95,18 @@ protected:
       that the GUI will not instantiate unless the host passes a LV2_Feature
       for the noUserResize GUI feature defined in the GUI extension (if
       @c Required is @c true).
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup guimixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct NoUserResize {
     
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	NoUserResize mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
     template <class Derived> struct I : public Extension<Required> {
       
       /** @internal */
@@ -122,11 +131,18 @@ protected:
       that the GUI will not instantiate unless the host passes a LV2_Feature
       for the fixedSize GUI feature defined in the GUI extension (if
       @c Required is @c true).
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup guimixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct FixedSize {
     
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	FixedSize mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
     template <class Derived> struct I : public Extension<Required> {
       
       /** @internal */
@@ -148,13 +164,20 @@ protected:
 
 
   /** Preset GUI extension - the host will tell the GUI what presets are
-      available and which is currently active, the GUI can request saving
-      and using presets.
+      available and which one of them is currently active, the GUI can request 
+      saving and using presets.
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup guimixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct Presets {
     
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	Presets mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
     template <class Derived> struct I : public Extension<Required> {
       
       /** @internal */
@@ -177,6 +200,8 @@ protected:
 	
 	/** This is called by the host to let the GUI know that a new 
 	    preset has been added or renamed.
+	    @param number The number of the added preset.
+	    @param name The name of the added preset.
 	*/
 	void preset_added(uint32_t    number, 
 			   char const* name) {
@@ -185,6 +210,7 @@ protected:
 	
 	/** This is called by the host to let the GUI know that a previously 
 	    existing preset has been removed.
+	    @param number The number of the removed preset.
 	*/
 	void preset_removed(uint32_t number) {
 	  
@@ -198,8 +224,10 @@ protected:
 	}
 	
 	/** This is called by the host to let the GUI know that the current 
-	    preset has changed. The number will always be in the range [0,127]
-	    or equal to 255, in which case there is no current preset.
+	    preset has changed. If the number is equal to 
+	    @c LV2_UI_PRESETS_NOPRESET there is no current preset.
+	    @param param The number of the active preset, or 
+	                 LV2_UI_PRESETS_NOPRESET if there is no active preset.
 	*/
 	void current_preset_changed(uint32_t number) {
 	  
@@ -229,7 +257,8 @@ protected:
 	}
 	
 	/** You can call this to request that the host saves the current state
-	    of the plugin instance to a preset. */
+	    of the plugin instance to a preset with the given number and name.
+	*/
 	void save_preset(uint32_t preset, char const* name) {
 	  if (m_hdesc)
 	    m_hdesc->save_preset(static_cast<Derived*>(this)->controller(), 
@@ -275,11 +304,19 @@ protected:
   
   /** Command GUI extension - the GUI can send commands to the plugin,
       and the plugin can send feedback back to the GUI.
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
+      @deprecated Do not use this.
       @ingroup guimixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct CommandGUI {
     
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	CommandGUI mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
     template <class Derived> struct I : public Extension<Required> {
       
       /** @internal */
@@ -349,47 +386,20 @@ protected:
   };
 
 
-  /** The URI map extension. 
-      @ingroup guimixins
-  */
-  template <bool Required>
-  struct URIMap {
-    
-    template <class Derived> struct I : Extension<Required> {
-      
-      I() : m_uri_map_feature(0) { }
-      
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
-      }
-      
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-	fe->m_uri_map_feature = reinterpret_cast<LV2_URI_Map_Feature*>(data);
-	fe->m_ok = true;
-      }
-      
-    protected:
-      
-      LV2_URI_Map_Feature* m_uri_map_feature;
-
-      uint32_t uri_to_id(const char* map, const char* uri) const {
-	return m_uri_map_feature->uri_to_id(m_uri_map_feature->callback_data, 
-					    map, uri);
-      }
-      
-    };
-    
-  };  
-  
-  
   /** A mixin that allows easy sending of MIDI from GUI to plugin. 
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup guimixins
   */
+  template <bool Required = true>
   struct WriteMIDI {
     
-    template <class Derived> struct I : Extension<false> {
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	WriteMIDI mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
+    template <class Derived> struct I : Extension<Required> {
       
       I() : m_midi_type(0) {
 	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + 4, 0);
@@ -400,14 +410,17 @@ protected:
 	m_midi_type = d->
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 	m_event_buffer_format = 1; // XXX Fix this
-	return m_midi_type && m_event_buffer_format;
+	return !Required || (m_midi_type && m_event_buffer_format);
       }
       
     protected:
       
-      void write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
+      bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
+	if (m_midi_type == 0)
+	  return false;
+	// XXX handle all sizes
 	if (size > 4)
-	  return;
+	  return false;
 	lv2_event_buffer_reset(m_buffer, 0, m_buffer->data);
 	LV2_Event_Iterator iter;
 	lv2_event_begin(&iter, m_buffer);
@@ -415,6 +428,7 @@ protected:
 	static_cast<Derived*>(this)->
 	  write(port, m_buffer->header_size + m_buffer->capacity, 
 		m_event_buffer_format, m_buffer);
+	return true;
       }
       
       uint32_t m_midi_type;
@@ -427,11 +441,19 @@ protected:
   
   
   /** A mixin that allows easy sending of OSC from GUI to plugin. 
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup guimixins
   */
+  template <bool Required = true>
   struct WriteOSC {
     
-    template <class Derived> struct I : Extension<false> {
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	WriteOSC mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
+    template <class Derived> struct I : Extension<Required> {
       
       I() : m_osc_type(0) {
 	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + 256, 0);
@@ -442,12 +464,14 @@ protected:
 	m_osc_type = d->
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/osc#OscEvent");
 	m_event_buffer_format = 1; // XXX Fix this
-	return m_osc_type && m_event_buffer_format;
+	return !Required || (m_osc_type && m_event_buffer_format);
       }
       
     protected:
       
-      void write_osc(uint32_t port, const char* path, const char* types, ...) {
+      bool write_osc(uint32_t port, const char* path, const char* types, ...) {
+	if (m_osc_type == 0)
+	  return false;
 	lv2_event_buffer_reset(m_buffer, 0, m_buffer->data);
 	LV2_Event_Iterator iter;
 	lv2_event_begin(&iter, m_buffer);
@@ -456,15 +480,18 @@ protected:
 	uint32_t size = lv2_osc_event_vsize(path, types, ap);
 	va_end(ap);
 	if (!size)
-	  return;
+	  return false;
 	va_start(ap, types);
 	bool success = lv2_osc_buffer_vappend(&iter, 0, 0, m_osc_type, 
 					      path, types, size, ap);
 	va_end(ap);
-	static_cast<Derived*>(this)->
-	  write(port, m_buffer->header_size + m_buffer->capacity, 
-		m_event_buffer_format, m_buffer);
-
+	if (success) {
+	  static_cast<Derived*>(this)->
+	    write(port, m_buffer->header_size + m_buffer->capacity, 
+		  m_event_buffer_format, m_buffer);
+	  return true;
+	}
+	return false;
       }
       
       uint32_t m_osc_type;
@@ -481,11 +508,16 @@ protected:
       implementations for. All subclasses must have a constructor with 
       the signature
       
-      MyGUI(char const* plugin_uri, char const* bundle_path);
-	    
+      @code
+      MyGUI(char const* plugin_uri);
+      @endcode
+      
       where @c plugin_uri is the URI of the plugin that this GUI will
-      control (not the URI for the GUI itself) and @c bundle_path is
-      the filesystem path to the LV2 bundle that contains this GUI.
+      control (not the URI for the GUI itself).
+
+      You can extend your GUI classes, for example adding support for
+      GUI extensions, by passing @ref guimixins "GUI mixin classes" as template
+      parameters to GUI (second template parameter and onwards).
   */
   template<class Derived, class Ext1 = End, class Ext2 = End, class Ext3 = End,
            class Ext4 = End, class Ext5 = End, class Ext6 = End,
@@ -577,8 +609,10 @@ protected:
     
     // XXX This is quite ugly but needed to allow these mixins to call 
     // protected functions in the GUI class, which we want.
-    friend class WriteMIDI::I<Derived>;
-    friend class WriteOSC::I<Derived>;
+    friend class WriteMIDI<true>::I<Derived>;
+    friend class WriteMIDI<false>::I<Derived>;
+    friend class WriteOSC<true>::I<Derived>;
+    friend class WriteOSC<false>::I<Derived>;
     
     /** @internal
 	This function creates an instance of a plugin GUI. It is used 

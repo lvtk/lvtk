@@ -52,11 +52,16 @@ namespace LV2 {
   public:
     
     /** Turn the voice on. This default implementation does nothing, you 
-	probably want to override it. */
+	probably want to override it. 
+	@param key The MIDI key for the note that the voice should play.
+	@param velocity The MIDI velocity for the Note On event.
+    */
     void on(unsigned char key, unsigned char velocity) { }
     
     /** Turn the voice off. This default implementation does nothing, you
-	probably want to override it. */
+	probably want to override it.
+	@param velocity The MIDI velocity for the Note Off event.
+    */
     void off(unsigned char velocity) { }
     
     /** Return the MIDI key that the voice is currently playing. 
@@ -67,22 +72,26 @@ namespace LV2 {
     /** Render audio for this voice to the output buffers, from sample
 	@c from to sample @c to. The buffers may already contain audio from
 	other voices, so use += instead of = when writing to it. This default
-	implementation does nothing, you probably want to override it. */
+	implementation does nothing, you probably want to override it. 
+    */
     void render(uint32_t from, uint32_t to) { }
     
     /** @internal
-	Set the port buffer vector. The Synth class calls this before it calls
-	render(). */
+	Set the port buffer vector. The Synth class always calls this before 
+	it calls render(). 
+    */
     void set_port_buffers(std::vector<void*>& ports) { m_ports = &ports; }
 
   protected:
     
-    /** Same as Plugin::p(). */
+    /** Same as Plugin::p() - returns the buffer for the given port. 
+     */
     template <typename T> inline T*& p(uint32_t port) {
       return reinterpret_cast<T*&>((*m_ports)[port]);
     }
     
-    /** Same as Plugin::p(). */
+    /** Same as Plugin::p() - returns the buffer for the given port.
+     */
     float*& p(uint32_t port) {
       return reinterpret_cast<float*&>((*m_ports)[port]);
     }
@@ -99,11 +108,18 @@ namespace LV2 {
       template parameter the base class can call member functions in the 
       derived class without resorting to virtual function calls, which are
       hard to optimise. 
-  
+      
+      You can use @ref pluginmixins "mixins" with this class just like with
+      the Plugin class, but don't use EventRef or URIMap - they are already
+      added automatically.
+      
       Here is an example of a complete synth plugin. Granted, not a very
       exciting one, but it should be enough to explain how to do it:
       
       @code
+#include <cstdlib>
+#include <lv2synth.hpp>
+
 enum {
   MIDI_PORT,
   AUDIO_PORT,
@@ -143,19 +159,19 @@ struct NoiseVoice : public LV2::Voice {
 struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 
   NoiseSynth(double, const char*, const LV2::Feature* const*) 
-    : LV2::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_state(0) {
+    : LV2::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_filterstate(0) {
     add_voices(new NoiseVoice, new NoiseVoice, new NoiseVoice);
     add_audio_outputs(AUDIO_PORT);
   }
 
   void post_process(uint32_t from, uint32_t to) {
     for (uint32_t i = from; i < to; ++i) {
-      p(AUDIO_PORT)[i] = m_state * 0.9 + p(AUDIO_PORT)[i] * 0.1;
-      m_state = p(AUDIO_PORT)[i];
+      p(AUDIO_PORT)[i] = m_filterstate * 0.9 + p(AUDIO_PORT)[i] * 0.1;
+      m_filterstate = p(AUDIO_PORT)[i];
     }
   }
 
-  float m_state;
+  float m_filterstate;
 };
       @endcode
   */
@@ -174,18 +190,23 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     Parent;
     
 
-    /** @c ports is the total number of ports in this plugin, and @c midi_input
-	is the index of the main MIDI input port (the one that the synth should
-	use for note input). */
+    /** This constructor must be called in the initialiser list for your 
+	synth class.
+	@param ports The total number of ports in your plugin. 
+	@param midi_input The index of the main MIDI input port (the one that 
+	                  the synth should use for note input).
+    */
     Synth(uint32_t ports, uint32_t midi_input) 
       : Parent(ports),
 	m_midi_input(midi_input) {
-      m_midi_type = Parent::uri_to_id(LV2_EVENT_URI,
-				      "http://lv2plug.in/ns/ext/midi#MidiEvent"); 
+      m_midi_type = 
+	Parent::uri_to_id(LV2_EVENT_URI,
+			  "http://lv2plug.in/ns/ext/midi#MidiEvent"); 
     }
     
     
-    /** This is needed to delete the voices. */
+    /** This is needed to delete the voices. 
+     */
     ~Synth() {
       for (unsigned i = 0; i < m_voices.size(); ++i)
 	delete m_voices[i];
@@ -241,7 +262,8 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	This is not a virtual function, but if you override it in a subclass
 	this class will still use that implementation thanks to the second
 	template class parameter. This means that you can override this function
-	if you want to implement your own pre-processing. */
+	if you want to implement your own pre-processing. 
+    */
     void pre_process(uint32_t from, uint32_t to) {
 
     }
@@ -255,15 +277,17 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	This is not a virtual function, but if you override it in a subclass
 	this class will still use that implementation thanks to the second
 	template class parameter. This means that you can override this function
-	if you want to implement your own post-processing. */
+	if you want to implement your own post-processing. 
+    */
     void post_process(uint32_t from, uint32_t to) {
 
     }
     
     
     /** This is the main run function. It handles incoming MIDI events and 
-	mixes the voices to the output buffers with pre- and post-processing
-	applied. Don't override it unless you know what you're doing. */
+	mixes the voices to the output buffers with pre and post-processing
+	applied. Don't override it unless you really know what you're doing. 
+    */
     void run(uint32_t sample_count) {
       
       // Zero output buffers so voices can add to them
@@ -320,10 +344,16 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     }
     
     
-    /** This is typically called in the constructor of your derived class
+    /** This should be called in the constructor of your derived class
 	to tell the synth which ports the voices are using as audio output 
 	buffers, so the synth engine can fill them with zeros before rendering
-	the voice audio. */
+	the voice audio. 
+	
+	If you for some reason don't want to zero your audio output buffers 
+	before the voices get mixed (you may for example want to fill them with
+	something else in pre_process()) you should not	call this function - 
+	but then you MUST take care of initialising the buffers yourself.
+    */
     void add_audio_outputs(uint32_t p1 = -1, uint32_t p2 = -1, 
 			   uint32_t p3 = -1, uint32_t p4 = -1, 
 			   uint32_t p5 = -1, uint32_t p6 = -1) {
@@ -351,9 +381,9 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     /** This is typically called in the constructor of your derived class
 	to add voices to the synth. The number of voices you add determine the
 	polyphony. It can also be called while the plugin is running to change
-	the polyphony on the fly, but it is NOT threadsafe - you have to make
-	sure that the run() callback isn't executing simultaneously with this
-	function. */
+	the polyphony on the fly, but it is NOT realtime safe and NOT 
+	threadsafe - you have to make sure that the run() callback isn't 
+	executing simultaneously with this function. */
     void add_voices(V* v01 = 0, V* v02 = 0, V* v03 = 0, V* v04 = 0, V* v05 = 0,
 		    V* v06 = 0, V* v07 = 0, V* v08 = 0, V* v09 = 0, V* v10 = 0,
 		    V* v11 = 0, V* v12 = 0, V* v13 = 0, V* v14 = 0, V* v15 = 0,
@@ -421,12 +451,15 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     }    
   protected:
     
-    /** Use this function to access data buffers for ports. */
+    /** Use this function to access data buffers for ports. They will be
+	casted to pointers to the template parameter @c T.
+    */
     template <typename T> T*& p(uint32_t port) {
       return reinterpret_cast<T*&>(Parent::m_ports[port]);
     }
   
-    /** Use this function to access data buffers for control or audio ports. */
+    /** Use this function to access data buffers for control or audio ports. 
+     */
     float*& p(uint32_t port) {
       return reinterpret_cast<float*&>(Parent::m_ports[port]);
     }

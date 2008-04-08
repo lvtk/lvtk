@@ -65,33 +65,41 @@ namespace LV2 {
       implementations for all functions, so you only have to implement the 
       functions that you need (for example run()). All subclasses must have 
       a constructor whose signature matches the one in the example code below, 
-      otherwise it will not work with the template class LV2::Register. The 
-      host will use these parameter to pass the sample rate, the path to the 
-      bundle directory and the list of features passed from the host when it 
-      creates a new instance of the plugin. 
+      otherwise it will not work with the register_class() function. The 
+      host will use this @c double parameter to pass the sample rate that the
+      plugin should run at when it creates a new instance of the plugin. 
       
       This is a template so that simulated dynamic binding can be used for
       the callbacks. This is not all that useful for simple plugins but it may
-      come in handy for extensions and it doesn't add any additional vtable
-      lookup and function call costs, like real dynamic binding would.
+      come in handy when using @ref pluginmixins "mixins" and it doesn't add 
+      any additional vtable lookup and function call costs, like real dynamic
+      binding would.
       @code
+      #include <cstring>
       #include <lv2plugin.hpp>
       
       class TestLV2 : public LV2::Plugin<TestLV2> {
       public:
         TestLV2(double) : LV2::Plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
-          memcpy(p(1), p(0), sample_count * sizeof(float));
+          std::memcpy(p(1), p(0), sample_count * sizeof(float));
         }
       };
       
-      static unsigned _ = TestLV2::register_class("http://ll-plugins.sf.net/plugins/TestLV2#0.0.0");
+      static unsigned _ = TestLV2::register_class("http://ll-plugins.sf.net/plugins/TestLV2");
       @endcode
       
       If the above code is compiled and linked with @c -llv2_plugin into a 
       shared module, it could form the shared object part of a fully 
       functional (but not very useful) LV2 plugin with one audio input port
       and one audio output port that just copies the input to the output.
+      
+      You can extend your plugin classes, for example adding support for
+      LV2 extensions, by passing @ref pluginmixins "mixin classes" as template
+      parameters to Plugin (second template parameter and onwards). 
+      
+      If you want to write a synth plugin you should probably inherit the 
+      Synth class instead of this one.
   */
   template <class Derived, 
 	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
@@ -104,7 +112,10 @@ namespace LV2 {
     
     /** This constructor is needed to initialise the port vector with the
 	correct number of ports, and to check if all the required features
-	are provided. */
+	are provided. This must be called as the first item in the 
+	initialiser list for your plugin class.
+	@param ports The number of ports in this plugin.
+    */
     Plugin(uint32_t ports) 
       : m_ports(ports, 0),
 	m_ok(true) {
@@ -125,11 +136,14 @@ namespace LV2 {
     }
     
     /** Connects the ports. You shouldn't have to override this, just use
-	p(port) to access the port buffers. 
+	p() to access the port buffers. 
     
 	If you do override this function, remember that if you want your plugin
 	to be realtime safe this function may not block, allocate memory or
-	otherwise take a long time to return. */
+	otherwise take a long time to return.
+	@param port The index of the port to connect.
+	@param data_location The buffer to connect it to.
+    */
     void connect_port(uint32_t port, void* data_location) {
       m_ports[port] = data_location;
     }
@@ -140,26 +154,34 @@ namespace LV2 {
     void activate() { }
   
     /** This is the process callback which should fill all output port buffers. 
-	You most likely want to override it. 
+	You most likely want to override it - the default implementation does
+	nothing.
 	
 	Remember that if you want your plugin to be realtime safe, this function
 	may not block, allocate memory or take more than O(sample_count) time
-	to execute. */
+	to execute.
+	@param sample_count The number of audio frames to process/generate in 
+	                    this call.
+    */
     void run(uint32_t sample_count) { }
   
     /** Override this function if you need to do anything on deactivation. 
 	The host calls this when it does not plan to make any more calls to 
-	run() (unless it calls activate() again). */
+	run() (unless it calls activate() again). 
+    */
     void deactivate() { }
     
     /** Use this function to register your plugin class so that the host
 	can find it. You need to do this when the shared library is loaded 
-	by the host. One way of doing that is to put the function call in 
-	the initialiser for a global variable, like this:
+	by the host. One portable way of doing that is to put the function 
+	call in the initialiser for a global variable, like this:
 	
 	@code
 unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
         @endcode
+	
+	The return value is not important, it's just there so you can use that
+	trick.
     */
     static unsigned register_class(const std::string& uri) {
       LV2_Descriptor desc;
@@ -179,6 +201,12 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
     }
     
     /** @internal
+	This is called by the plugin instantiation wrapper after the plugin
+	object has been created. If it returns false the object will be
+	discarded and NULL will be returned to the host.
+	
+	This function computes the AND combination of the results of check_ok()
+	calls to any inherited @ref pluginmixins "mixins".
      */
     bool check_ok() {
       return m_ok && MixinTree<Derived, 
@@ -196,23 +224,35 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
         @endcode
 	
 	If you want to access a port buffer as a pointer-to-float (i.e. an audio
-	or control port) you can use the non-template version instead. */
+	or control port) you can use the non-template version instead.
+	@param port The index of the port whose buffer you want to access.
+    */
     template <typename T> T*& p(uint32_t port) {
       return reinterpret_cast<T*&>(m_ports[port]);
     }
   
-    /** Use this function to access data buffers for control or audio ports. */
+    /** Use this function to access data buffers for control or audio ports.
+	@param port The index of the port whose buffer you want to access.
+    */
     float*& p(uint32_t port) {
       return reinterpret_cast<float*&>(m_ports[port]);
     }
     
-    /** Returns the filesystem path to the bundle that contains this plugin. */
+    /** Returns the filesystem path to the bundle that contains this plugin. 
+	This may only be called after the Plugin constructor is done executing.
+    */
     const char* bundle_path() const {
       return m_bundle_path;
     }
     
-    /** Sets the OK state of the plugin. If it's @c true the plugin has been
-	instantiated OK, if @c false it has not and the host will discard it. */
+    /** Sets the OK state of the plugin. If it's @c true (which is the default)
+	the plugin has been instantiated OK, if @c false it has not and the 
+	host will discard it. You can call this in the constructor for your 
+	plugin class if you need to check some condition that isn't taken care 
+	of by a @ref pluginmixins "mixin". 
+	@param ok True if the plugin instance is OK and can be used, false if
+                  it should be discarded.
+    */
     void set_ok(bool ok) {
       m_ok = ok;
     }
@@ -224,19 +264,31 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 
   private:
     
+    /** @internal
+	Wrapper function for connect_port().
+    */
     static void _connect_port(LV2_Handle instance, uint32_t port, 
 			     void* data_location) {
       reinterpret_cast<Derived*>(instance)->connect_port(port, data_location);
     }
   
+    /** @internal
+	Wrapper function for activate().
+    */
     static void _activate(LV2_Handle instance) {
       reinterpret_cast<Derived*>(instance)->activate();
     }
   
+    /** @internal
+	Wrapper function for run().
+    */
     static void _run(LV2_Handle instance, uint32_t sample_count) {
       reinterpret_cast<Derived*>(instance)->run(sample_count);
     }
   
+    /** @internal
+	Wrapper function for deactivate().
+    */
     static void _deactivate(LV2_Handle instance) {
       reinterpret_cast<Derived*>(instance)->deactivate();
     }
@@ -273,18 +325,42 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 
 
   private:
-
+    
+    /** @internal
+	The Feature array passed to this plugin instance. May not be valid
+	after the constructor has returned.
+    */
     LV2::Feature const* const* m_features;
+    
+    /** @internal
+	The bundle path passed to this plugin instance. May not be valid
+	after the constructor has returned.
+    */
     char const* m_bundle_path;
     
+    /** @internal
+	Used to pass the Feature array to the plugin without having to pass
+	it through the constructor of the plugin class.
+    */
     static LV2::Feature const* const* s_features;
+
+    /** @internal
+	Used to pass the bundle path to the plugin without having to pass
+	it through the constructor of the plugin class.
+    */
     static char const* s_bundle_path;
     
+    /** @internal
+	Local OK flag. Initialised to @c true, but the plugin class can set 
+	this to @c false using set_ok() in its constructor if the plugin 
+	instance for some reason should not be used.
+    */
     bool m_ok;
 
   };
 
-
+  
+  // The static variables need to be initialised. 
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
 	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
   LV2::Feature const* const* 
@@ -302,29 +378,42 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       These template classes implement extra functionality that you may
       want to have in your plugin class, usually Features. You add them
       to your class by passing them as template parameters to LV2::Plugin
-      when inheriting it. They will then be inherited by your plugin class,
-      so that any public and protected members they have will be available
-      to your plugin as if they were declared in your plugin class.
+      when inheriting it. The internal structs of the mixin template classes,
+      named @c I, will then be inherited by your plugin class, so that any 
+      public and protected members they have will be available to your 
+      plugin as if they were declared in your plugin class. 
       
       They are done as separate template classes so they won't add to the
-      code size of your plugin if you don't need them.
+      code size of your plugin if you don't need them. 
   */
   
   
   /** The Command extension. Deprecated, but still used. 
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct Command {
     
+    /** This is the type that your plugin class will inherit when you use the
+	Command mixin. The public and protected members defined here
+	will be available in your plugin class.
+    */
     template <class Derived> struct I : Extension<Required> {
       
+      /** @internal 
+       */
       I() : m_chd(0) { }
       
+      /** @internal 
+       */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
 	hmap[LV2_COMMAND_URI] = &I<Derived>::handle_feature;
       }
       
+      /** @internal */
       static void handle_feature(void* instance, void* data) { 
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* ce = static_cast<I<Derived>*>(d);
@@ -332,6 +421,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	ce->m_ok = (data != 0);
       }
       
+      /** @internal */
       static const void* extension_data(const char* uri) { 
 	if (!std::strcmp(uri, LV2_COMMAND_URI)) {
 	  static LV2_CommandDescriptor cdesc = { &I<Derived>::_command };
@@ -397,22 +487,31 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   
   /** The fixed buffer size extension. A host that supports this will always
       call the plugin's run() function with the same @c sample_count parameter,
-      which will be equal to the uint32_t variable pointed to by the data
-      pointer for this feature. 
+      which will be equal to the value returned by I::get_buffer_size(). 
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct FixedBufSize {
     
+    /** This is the type that your plugin class will inherit when you use the
+	FixedBufSize mixin. The public and protected members defined here
+	will be available in your plugin class.
+    */
     template <class Derived> struct I : Extension<Required> {
       
+      /** @internal */
       I() : m_buffer_size(0) { }
       
+      /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
 	hmap["http://tapas.affenbande.org/lv2/ext/fixed-buffersize"] = 
 	  &I<Derived>::handle_feature;
       }
       
+      /** @internal */
       static void handle_feature(void* instance, void* data) { 
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
@@ -436,20 +535,30 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   /** The fixed power-of-2 buffer size extension. This works just like 
       FixedBufSize with the additional requirement that the buffer size must
       be a power of 2. 
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct FixedP2BufSize {
     
+    /** This is the type that your plugin class will inherit when you use the
+	FixedP2BufSize mixin. The public and protected members defined here
+	will be available in your plugin class.
+    */
     template <class Derived> struct I : Extension<Required> {
       
+      /** @internal */
       I() : m_buffer_size(0) { }
       
+      /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
 	hmap["http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize"] = 
 	  &I<Derived>::handle_feature;
       }
       
+      /** @internal */
       static void handle_feature(void* instance, void* data) { 
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
@@ -471,66 +580,37 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   };
 
 
-  /** The URI map extension. 
-      @ingroup pluginmixins
-  */
-  template <bool Required>
-  struct URIMap {
-    
-    template <class Derived> struct I : Extension<Required> {
-      
-      I() : m_callback_data(0), m_func(0) { }
-      
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
-      }
-      
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-        LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
-        fe->m_callback_data = umf->callback_data;
-        fe->m_func = umf->uri_to_id;
-        fe->m_ok = (fe->m_func != 0);
-      }
-      
-    protected:
-      
-      /** This returns the buffer size that the host has promised to use.
-          If the host does not support this extension this function will
-          return 0. */
-      uint32_t uri_to_id(const char* map, const char* uri) const {
-	return m_func(m_callback_data, map, uri);
-      }
-    
-      LV2_URI_Map_Callback_Data m_callback_data;
-      uint32_t (*m_func)(LV2_URI_Map_Callback_Data, const char*, const char*);
-      
-    };
-    
-  };
-  
-
   /** The save/restore extension. 
+      
+      The actual type that your plugin class will
+      inherit when you use this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct SaveRestore {
     
+    /** This is the type that your plugin class will inherit when you use the
+	SaveRestore mixin. The public and protected members defined here
+	will be available in your plugin class.
+    */
     template <class Derived> struct I : Extension<Required> {
       
+      /** @internal */
       I() { }
       
+      /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
 	hmap[LV2_SAVERESTORE_URI] = &I<Derived>::handle_feature;
       }
       
+      /** @internal */
       static void handle_feature(void* instance, void* data) { 
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_ok = true;
       }
       
+      /** @internal */
       static const void* extension_data(const char* uri) { 
 	if (!std::strcmp(uri, LV2_SAVERESTORE_URI)) {
 	  static LV2SR_Descriptor srdesc = { &I<Derived>::_save,
@@ -541,11 +621,25 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       /** This function is called by the host when it wants to save the 
-	  current state of the plugin. You should override it. */
+	  current state of the plugin. You should override it. 
+	  @param directory A filesystem path to a directory where the plugin
+	                   should write any files it creates while saving.
+	  @param files A pointer to a NULL-terminated array of @c LV2SR_File 
+	               pointers. The plugin should set @c *files to point to 
+		       the first element in a dynamically allocated array of 
+		       @c LV2SR_File pointers to (also dynamically allocated) 
+		       @c LV2SR_File objects, listing the files to which the 
+		       internal state of the plugin instance has been saved. 
+		       These objects, and the array, will be freed by the host.
+      */
       char* save(const char* directory, LV2SR_File*** files) { return 0; }
       
       /** This function is called by the host when it wants to restore
-	  the plugin to a previous state. You should override it. */
+	  the plugin to a previous state. You should override it.
+	  @param files An array of pointers to @c LV2SR_File objects, listing
+	               the files from which the internal state of the plugin 
+		       instance should be restored.
+      */
       char* restore(const LV2SR_File** files) { return 0; }
       
     protected:
@@ -568,19 +662,29 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   
   
   /** The event ref/unref function, required for plugins with event ports. 
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct EventRef {
     
+    /** This is the type that your plugin class will inherit when you use the
+	EventRef mixin. The public and protected members defined here
+	will be available in your plugin class.
+    */
     template <class Derived> struct I : Extension<Required> {
       
+      /** @internal */
       I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
       
+      /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
 	hmap[LV2_EVENT_URI] = &I<Derived>::handle_feature;
       }
       
+      /** @internal */
       static void handle_feature(void* instance, void* data) { 
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
@@ -593,10 +697,23 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       
     protected:
       
+      /** This should be called by the plugin for any event of type 0 if it
+	  creates an additional copy of it, either by saving more than one copy
+	  internally, passing more than one copy through to an output port,
+	  or a combination of those. It must be called once for each additional
+	  copy of the event.
+	  Note that you must not call this function if you just save one copy
+	  of the event, or just passes one copy through to an output port.
+	  @c param event The event, as returned by @c lv2_event_get().
+      */
       uint32_t event_ref(LV2_Event* event) {
 	return m_ref_func(m_callback_data, event);
       }
     
+      /** This should be called by the plugin for any event of type 0, unless
+	  it keeps a copy of it or passes it through to an event output port.
+	  @c param event The event, as returned by @c lv2_event_get().
+      */
       uint32_t event_unref(LV2_Event* event) {
 	return m_unref_func(m_callback_data, event);
       }
@@ -610,26 +727,38 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   };
 
 
-  /** The message context extension. 
+  /** @internal
+      The message context extension. Experimental and unsupported. Don't use it.
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required>
+  template <bool Required = true>
   struct MsgContext {
     
+    /** This is the type that your plugin class will inherit when you use the
+	MsgContext mixin. The public and protected members defined here
+	will be available in your plugin class.
+    */
     template <class Derived> struct I : Extension<Required> {
       
+      /** @internal */
       I() { }
       
+      /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
 	hmap[LV2_CONTEXT_MESSAGE] = &I<Derived>::handle_feature;
       }
       
+      /** @internal */
       static void handle_feature(void* instance, void* data) { 
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
         fe->m_ok = true;
       }
       
+      /** @internal */
       static const void* extension_data(const char* uri) { 
 	if (!std::strcmp(uri, LV2_CONTEXT_MESSAGE)) {
 	  static LV2_Blocking_Context desc = { &I<Derived>::_blocking_run,
@@ -639,6 +768,10 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	return 0;
       }
       
+      /** @internal
+	  This is called by the host when the plugin's message context is
+	  executed. Experimental and unsupported. Don't use it.
+      */
       bool blocking_run(uint8_t* outputs_written) { return false; }
       
     protected:

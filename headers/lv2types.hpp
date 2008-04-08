@@ -123,21 +123,31 @@ namespace LV2 {
   };
 
   
-  /** Base class for extensions. Extension mixin classes don't have to 
-      inherit from this class, but it's convenient. */
+  /** @internal
+      Base class for extensions. Extension mixin classes don't have to 
+      inherit from this class, but it's convenient.
+  */
   template <bool Required>
   struct Extension {
     
+    /** @internal 
+     */
     Extension() : m_ok(!Required) { }
     
-    /** Default implementation does nothing - no handlers added. */
+    /** @internal
+	Default implementation does nothing - no handlers added. 
+    */
     static void map_feature_handlers(FeatureHandlerMap& hmap) { }
     
-    /** Return @c true if the plugin instance is OK, @c false if it isn't. */
+    /** @internal
+	Return @c true if the plugin instance is OK, @c false if it isn't. 
+    */
     bool check_ok() { return m_ok; }
   
-    /** Return a data pointer corresponding to the URI if this extension 
-	has one. */
+    /** @internal
+	Return a data pointer corresponding to the URI if this extension 
+	has one. 
+    */
     static const void* extension_data(const char* uri) { return 0; }
   
   protected:
@@ -145,6 +155,62 @@ namespace LV2 {
     bool m_ok;
   
   };
+
+
+  /** The URI map mixin. This can be used by both plugins and GUIs.
+
+      The actual type that your plugin class will inherit when you use 
+      this mixin is the internal struct template I.
+      @ingroup pluginmixins
+      @ingroup guimixins
+  */
+  template <bool Required = true>
+  struct URIMap {
+    
+    /** This is the type that your plugin or GUI class will inherit when you 
+	use the	FixedBufSize mixin. The public and protected members defined 
+	here will be available in your plugin class.
+    */
+    template <class Derived> struct I : Extension<Required> {
+      
+      /** @internal */
+      I() : m_callback_data(0), m_func(0) { }
+      
+      /** @internal */
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+	hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
+      }
+      
+      /** @internal */
+      static void handle_feature(void* instance, void* data) { 
+	Derived* d = reinterpret_cast<Derived*>(instance);
+	I<Derived>* fe = static_cast<I<Derived>*>(d);
+        LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
+        fe->m_callback_data = umf->callback_data;
+        fe->m_func = umf->uri_to_id;
+        fe->m_ok = (fe->m_func != 0);
+      }
+      
+    protected:
+      
+      /** This returns a numeric identifier for a given URI and map.
+	  This is used for e.g. getting numeric IDs for event types
+	  specified by URIs. A return value of 0 should be considered to 
+	  mean that the URI you passed is not supported by the host.
+	  @param map An URI to be used as namespace.
+	  @param uri The URI that you want to map to a numeric ID.
+      */
+      uint32_t uri_to_id(const char* map, const char* uri) const {
+	return m_func(m_callback_data, map, uri);
+      }
+    
+      LV2_URI_Map_Callback_Data m_callback_data;
+      uint32_t (*m_func)(LV2_URI_Map_Callback_Data, const char*, const char*);
+      
+    };
+    
+  };
+  
 
   
 }
