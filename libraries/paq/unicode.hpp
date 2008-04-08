@@ -28,9 +28,6 @@
 #include <utility>
 
 
-#define BOOST_SPIRIT_DEBUG 1
-
-
 using namespace std;
 using namespace boost::spirit;
 

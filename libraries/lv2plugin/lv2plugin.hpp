@@ -24,15 +24,11 @@
 #ifndef LV2PLUGIN_HPP
 #define LV2PLUGIN_HPP
 
-#include <unistd.h>
-#include <stdarg.h>
+#include <cstdarg>
 
 #include <cstring>
-#include <map>
-#include <sstream>
 #include <string>
 #include <vector>
-#include <iostream> // XXX just for debugging
 
 #include <lv2.h>
 #include <lv2_uri_map.h>

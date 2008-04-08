@@ -184,8 +184,7 @@ namespace PAQ {
       
     language = +chset<>("a-z") >> *(ch_p('-') >> +chset<>("a-z0-9"));
       
-    // XXX BUG, many more characters should be allowed here but I'm lazy
-    // XXX Maybe this has been fixed now? I'm too lazy to check
+    // XXX Are these actually all the allowed characters?
     nameStartChar = (chset<>("A-Za-z_") | urange_p(0xC0, 0xD6) |
                      urange_p(0x00D8, 0x00F6) | urange_p(0x00F8, 0x02FF) |
                      urange_p(0x0370, 0x037D) | urange_p(0x037F, 0x1FFF) |

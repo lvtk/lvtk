@@ -21,8 +21,7 @@
 ****************************************************************************/
 
 #include "lv2plugin.hpp"
-// XXX temporary - just to run lv2synth.hpp through a compiler while messing with it
-#include "lv2synth.hpp"
+
 
 namespace LV2 {
   

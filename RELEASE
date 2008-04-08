@@ -1,0 +1,18 @@
+1. Make sure the version will be right (for a new minor version that means that you
+   should set the patch level to -1 so dcvs will bump it to 0)
+
+2. Write ChangeLog entry.
+
+3. make dist, check that it builds and installs correctly.
+
+4. CVS commit.
+
+5. cvs tag Release_X_Y_Z
+
+6. Sign and upload dist tarball.
+
+7. Generate new API documentation, upload it, update the redirect page.
+
+8. Update webpages.
+
+9. Announce on http://freshmeat.net and any relevant mailing lists.

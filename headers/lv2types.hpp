@@ -26,6 +26,9 @@
 #ifndef LV2TYPES_HPP
 #define LV2TYPES_HPP
 
+#include <map>
+#include <string>
+
 
 namespace LV2 {
   
@@ -109,23 +112,6 @@ namespace LV2 {
   };
 
 
-  template <class A, 
-	    class E1 = Empty, class E2 = Empty, class E3 = Empty,
-	    class E4 = Empty, class E5 = Empty, class E6 = Empty,
-	    class E7 = Empty, class E8 = Empty, class E9 = Empty>
-  struct SimpleMixinTree 
-    : E1, SimpleMixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
-    
-  };
-
-
-  template <class A>
-  struct SimpleMixinTree<A, Empty, Empty, Empty, Empty, 
-			 Empty, Empty, Empty, Empty, Empty> {
-    
-  };
-
-  
   /** @internal
       Base class for extensions. Extension mixin classes don't have to 
       inherit from this class, but it's convenient.

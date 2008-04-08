@@ -30,6 +30,8 @@
  * Additional (ie beyond raw OSC) indexing information is stored in the buffer
  * for performance, so that accessors for messages and arguments are very fast:
  * O(1) and realtime safe, unless otherwise noted.
+ *
+ * Everything in here is EXPERIMENTAL and UNSUPPORTED. Don't use any of it.
  */
 
 

@@ -25,6 +25,7 @@
 #ifndef LV2GUI_HPP
 #define LV2GUI_HPP
 
+#include <cstdlib>
 #include <map>
 
 #include <gtkmm/box.h>
@@ -310,6 +311,10 @@ protected:
   template <bool Required = true>
   struct WriteMIDI {
     
+    enum {
+      EVENT_BUFFER_SIZE = 4
+    };
+    
     /** This is the type that your plugin or GUI class will inherit when you 
 	use the	WriteMIDI mixin. The public and protected members defined 
 	here will be available in your plugin class.
@@ -317,14 +322,16 @@ protected:
     template <class Derived> struct I : Extension<Required> {
       
       I() : m_midi_type(0) {
-	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + 4, 0);
+	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE, 
+					0);
       }
       
       bool check_ok() {
 	Derived* d = static_cast<Derived*>(this);
 	m_midi_type = d->
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
-	m_event_buffer_format = 1; // XXX Fix this
+	m_event_buffer_format = d->
+	  uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
 	return !Required || (m_midi_type && m_event_buffer_format);
       }
       
@@ -333,16 +340,20 @@ protected:
       bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
 	if (m_midi_type == 0)
 	  return false;
-	// XXX handle all sizes
-	if (size > 4)
-	  return false;
-	lv2_event_buffer_reset(m_buffer, 0, m_buffer->data);
+	LV2_Event_Buffer* buffer;
+	if (size <= 4)
+	  buffer = m_buffer;
+	else
+	  buffer = lv2_event_buffer_new(sizeof(LV2_Event) + size, 0);
+ 	lv2_event_buffer_reset(m_buffer, 0, m_buffer->data);
 	LV2_Event_Iterator iter;
 	lv2_event_begin(&iter, m_buffer);
 	lv2_event_write(&iter, 0, 0, m_midi_type, size, data);
 	static_cast<Derived*>(this)->
 	  write(port, m_buffer->header_size + m_buffer->capacity, 
 		m_event_buffer_format, m_buffer);
+	if (size > 4)
+	  std::free(buffer);
 	return true;
       }
       
@@ -355,10 +366,13 @@ protected:
   };  
   
   
-  /** A mixin that allows easy sending of OSC from GUI to plugin. 
+  /** @internal
+      A mixin that allows easy sending of OSC from GUI to plugin. 
 
       The actual type that your plugin class will inherit when you use 
       this mixin is the internal struct template I.
+      
+      Do NOT use this. It may change in the future.
       @ingroup guimixins
   */
   template <bool Required = true>
@@ -378,7 +392,8 @@ protected:
 	Derived* d = static_cast<Derived*>(this);
 	m_osc_type = d->
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/osc#OscEvent");
-	m_event_buffer_format = 1; // XXX Fix this
+	m_event_buffer_format = d->
+	  uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
 	return !Required || (m_osc_type && m_event_buffer_format);
       }
       
@@ -387,6 +402,7 @@ protected:
       bool write_osc(uint32_t port, const char* path, const char* types, ...) {
 	if (m_osc_type == 0)
 	  return false;
+	// XXX handle all sizes here - this is dangerous
 	lv2_event_buffer_reset(m_buffer, 0, m_buffer->data);
 	LV2_Event_Iterator iter;
 	lv2_event_begin(&iter, m_buffer);
@@ -522,7 +538,7 @@ protected:
     
   private:
     
-    // XXX This is quite ugly but needed to allow these mixins to call 
+    // This is quite ugly but needed to allow these mixins to call 
     // protected functions in the GUI class, which we want.
     friend class WriteMIDI<true>::I<Derived>;
     friend class WriteMIDI<false>::I<Derived>;
