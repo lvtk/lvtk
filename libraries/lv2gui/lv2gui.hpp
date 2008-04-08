@@ -33,7 +33,6 @@
 
 #include <lv2-ui.h>
 #include <lv2-ui-presets.h>
-#include <lv2-ui-command.h>
 #include <lv2_uri_map.h>
 #include <lv2_event_helpers.h>
 #include <lv2_osc.h>
@@ -92,7 +91,7 @@ protected:
 
 
   /** This extension provides no extra functions or data, it just makes sure
-      that the GUI will not instantiate unless the host passes a LV2_Feature
+      that the GUI will not instantiate unless the host passes a Feature
       for the noUserResize GUI feature defined in the GUI extension (if
       @c Required is @c true).
 
@@ -128,7 +127,7 @@ protected:
 
 
   /** This extension provides no extra functions or data, it just makes sure
-      that the GUI will not instantiate unless the host passes a LV2_Feature
+      that the GUI will not instantiate unless the host passes a Feature
       for the fixedSize GUI feature defined in the GUI extension (if
       @c Required is @c true).
 
@@ -302,90 +301,6 @@ protected:
   };
 
   
-  /** Command GUI extension - the GUI can send commands to the plugin,
-      and the plugin can send feedback back to the GUI.
-
-      The actual type that your plugin class will inherit when you use 
-      this mixin is the internal struct template I.
-      @deprecated Do not use this.
-      @ingroup guimixins
-  */
-  template <bool Required = true>
-  struct CommandGUI {
-    
-    /** This is the type that your plugin or GUI class will inherit when you 
-	use the	CommandGUI mixin. The public and protected members defined 
-	here will be available in your plugin class.
-    */
-    template <class Derived> struct I : public Extension<Required> {
-      
-      /** @internal */
-      I() : m_hdesc(0), m_host_support(false) { }
-      
-      /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_UI_URI "#ext_command"] = 
-	  &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) {
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* e = static_cast<I<Derived>*>(d);
-	e->m_hdesc = static_cast<LV2UI_Command_HDesc*>(data);
-	e->m_ok = (e->m_hdesc != 0);
-	e->m_host_support = (e->m_hdesc != 0);
-      }
-      
-      
-      /** This is called by the host to send feedback to the GUI.
-       */
-      void feedback(uint32_t argc, char const* const* argv) {
-	
-      }
-      
-      
-      /** @internal
-	  Returns the plugin descriptor for this extension.
-      */
-      static void const* extension_data(char const* uri) {
-	static LV2UI_Command_GDesc desc = { &_feedback };
-	if (!std::strcmp(uri, LV2_UI_URI "#ext_command"))
-	  return &desc;
-	return 0;
-      }
-      
-    protected:
-	
-      /** You can call this to send a command to the plugin. */
-      void command(uint32_t argc, char const* const* argv) {
-	if (m_hdesc)
-	  m_hdesc->command(static_cast<Derived*>(this)->controller(), 
-			   argc, argv);
-      }
-      
-      
-      /** Returns @c true if the host supports the Command feature, @c false
-	  if it does not. */
-      bool host_supports_commands() const {
-	return m_host_support;
-      }
-      
-    private:
-      
-      static void _feedback(LV2UI_Handle gui, 
-			    uint32_t argc, char const* const* argv) {
-	static_cast<Derived*>(gui)->feedback(argc, argv);
-      }
-
-      LV2UI_Command_HDesc* m_hdesc;
-      bool m_host_support;
-      
-    };
-    
-  };
-
-
   /** A mixin that allows easy sending of MIDI from GUI to plugin. 
 
       The actual type that your plugin class will inherit when you use 
@@ -625,7 +540,7 @@ protected:
 					   LV2UI_Write_Function write_func,
 					   LV2UI_Controller ctrl,
 					   LV2UI_Widget* widget,
-					   LV2_Feature const* const* features) {
+					   Feature const* const* features) {
       
       // copy some data to static variables so the subclasses don't have to
       // bother with it - this is threadsafe since hosts are not allowed

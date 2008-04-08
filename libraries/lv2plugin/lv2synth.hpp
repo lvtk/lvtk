@@ -158,7 +158,7 @@ struct NoiseVoice : public LV2::Voice {
   
 struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 
-  NoiseSynth(double, const char*, const LV2::Feature* const*) 
+  NoiseSynth(double) 
     : LV2::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_filterstate(0) {
     add_voices(new NoiseVoice, new NoiseVoice, new NoiseVoice);
     add_audio_outputs(AUDIO_PORT);

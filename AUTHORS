@@ -1,1 +1,14 @@
-Lars Luthman <lars.luthman@gmail.com>
+The files in the directory headers/ are written by
+
+ * Paul Davis
+ * Richard W.E. Furse
+ * Steve Harris
+ * Lars Luthman
+ * Dave Robillard
+ * Stefan Westerfeld
+
+See the comments in those files for details on who wrote what.
+
+The first version of the URIMap mixin was written by Dave Robillard.
+
+Everything else is written by Lars Luthman <lars.luthman@gmail.com>.

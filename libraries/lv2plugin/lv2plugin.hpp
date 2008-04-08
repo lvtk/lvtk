@@ -35,7 +35,6 @@
 #include <iostream> // XXX just for debugging
 
 #include <lv2.h>
-#include <lv2-command.h>
 #include <lv2_uri_map.h>
 #include <lv2-saverestore.h>
 #include <lv2_event.h>
@@ -300,7 +299,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
     static LV2_Handle _create_plugin_instance(const LV2_Descriptor* descriptor,
 					      double sample_rate,
 					      const char* bundle_path,
-					      const LV2_Feature* const* 
+					      const Feature* const* 
 					      features) {
 
       // copy some data to static variables so the subclasses don't have to
@@ -385,106 +384,12 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       
       They are done as separate template classes so they won't add to the
       code size of your plugin if you don't need them. 
+      
+      There are also @ref guimixins "GUI mixins" that you can use in the same
+      way with LV2::GUI.
   */
   
-  
-  /** The Command extension. Deprecated, but still used. 
 
-      The actual type that your plugin class will inherit when you use 
-      this mixin is the internal struct template I.
-      @ingroup pluginmixins
-  */
-  template <bool Required = true>
-  struct Command {
-    
-    /** This is the type that your plugin class will inherit when you use the
-	Command mixin. The public and protected members defined here
-	will be available in your plugin class.
-    */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal 
-       */
-      I() : m_chd(0) { }
-      
-      /** @internal 
-       */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_COMMAND_URI] = &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* ce = static_cast<I<Derived>*>(d);
-	ce->m_chd = reinterpret_cast<LV2_CommandHostDescriptor*>(data);
-	ce->m_ok = (data != 0);
-      }
-      
-      /** @internal */
-      static const void* extension_data(const char* uri) { 
-	if (!std::strcmp(uri, LV2_COMMAND_URI)) {
-	  static LV2_CommandDescriptor cdesc = { &I<Derived>::_command };
-	  return &cdesc;
-	}
-	return 0;
-      }
-      
-      /** This function is called by the host when the GUI sends a command
-	  to the plugin. You should override it in your plugin if you want
-	  to do something when you get a command. */
-      char* command(uint32_t argc, const char* const* argv) { return 0; }
-      
-      /** @internal
-	  Static callback wrapper. */
-      static char* _command(LV2_Handle h, 
-			    uint32_t argc, const char* const* argv) {
-	return reinterpret_cast<Derived*>(h)->command(argc, argv);
-      }
-      
-    protected:
-      
-      /** This function sends a message to the host, which sends it to the
-	  GUI. Use it to send feedback to the GUI when reacting to commands. */
-      void feedback(uint32_t argc, const char* const* argv) {
-	(*m_chd->feedback)(m_chd->host_data, argc, argv);
-      }
-      
-      /** Convenient wrapper for the other feedback() function. The first 
-	  parameter is a OSC-like type signature, where "s" means @c char*,
-	  "i" means @c long and "f" means @c double. */
-      void feedback(const std::string& types, ...) {
-	va_list ap;
-	va_start(ap, types);
-	uint32_t argc = types.size();
-	char** argv = static_cast<char**>(malloc(sizeof(char*) * argc));
-	for (uint32_t i = 0; i < argc; ++i) {
-	  if (types[i] == 's')
-	    argv[i] = strdup(va_arg(ap, const char*));
-	  else if (types[i] == 'i') {
-	    std::ostringstream oss;
-	    oss<<va_arg(ap, long);
-	    argv[i] = strdup(oss.str().c_str());
-	  }
-	  else if (types[i] == 'f') {
-	    std::ostringstream oss;
-	    oss<<va_arg(ap, double);
-	    argv[i] = strdup(oss.str().c_str());
-	  }
-	}
-	va_end(ap);
-	feedback(argc, argv);
-      }
-      
-      /** @internal
-	  The host descriptor as defined by the Command extension
-	  specification. */
-      LV2_CommandHostDescriptor* m_chd;
-      
-    };
-  };
-  
-  
   /** The fixed buffer size extension. A host that supports this will always
       call the plugin's run() function with the same @c sample_count parameter,
       which will be equal to the value returned by I::get_buffer_size(). 

@@ -2,8 +2,11 @@
     
     lv2types.hpp - support file for writing LV2 plugins in C++
     
-    Copyright (C) 2006-2007 Lars Luthman <lars.luthman@gmail.com>
-    
+    Copyright (C) 2006-2008 Lars Luthman <lars.luthman@gmail.com>
+
+    The first version of the URIMap class was written by Dave Robillard.
+    It has since been modified.
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
