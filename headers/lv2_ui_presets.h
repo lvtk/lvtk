@@ -24,7 +24,7 @@
 #ifndef LV2_UI_PRESETS_H
 #define LV2_UI_PRESETS_H
 
-#include <lv2-ui.h>
+#include <lv2_ui.h>
 
 /** This is a LV2 UI Feature (not a LV2 Feature) that allows a LV2 UI
     host to tell a plugin UI about existing presets for the plugin, and

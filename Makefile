@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 0.1.710
+PACKAGE_VERSION = 0.1.711
 PKG_DEPS = gtkmm-2.4>=2.8.8
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
@@ -11,14 +11,13 @@ DATAPACKS = lv2soname
 liblv2-plugin_a_SOURCES = lv2plugin.cpp
 liblv2-plugin_a_HEADERS = \
 	lv2plugin.hpp \
-	lv2advanced.hpp \
 	lv2synth.hpp \
 	../../headers/lv2.h \
 	../../headers/lv2_event.h \
 	../../headers/lv2_event_helpers.h \
 	../../headers/lv2_osc.h \
 	../../headers/lv2_uri_map.h \
-	../../headers/lv2-saverestore.h \
+	../../headers/lv2_saverestore.h \
 	../../headers/lv2_contexts.h \
 	../../headers/lv2types.hpp
 liblv2-plugin_a_CFLAGS = -Iheaders -Ilibraries/lv2plugin
@@ -29,8 +28,8 @@ liblv2-plugin_a_INSTALLDIR = $(libdir)
 liblv2-gui_a_SOURCES = lv2gui.cpp
 liblv2-gui_a_HEADERS = \
 	lv2gui.hpp \
-	../../headers/lv2-ui.h \
-	../../headers/lv2-ui-presets.h
+	../../headers/lv2_ui.h \
+	../../headers/lv2_ui_presets.h
 liblv2-gui_a_CFLAGS = `pkg-config --cflags gtkmm-2.4` -Iheaders
 liblv2-gui_a_SOURCEDIR = libraries/lv2gui
 liblv2-gui_a_INSTALLDIR = $(libdir)

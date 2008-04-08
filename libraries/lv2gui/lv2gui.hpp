@@ -31,8 +31,8 @@
 #include <gtkmm/main.h>
 #include <gtkmm/widget.h>
 
-#include <lv2-ui.h>
-#include <lv2-ui-presets.h>
+#include <lv2_ui.h>
+#include <lv2_ui_presets.h>
 #include <lv2_uri_map.h>
 #include <lv2_event_helpers.h>
 #include <lv2_osc.h>
@@ -225,8 +225,8 @@ protected:
 	/** This is called by the host to let the GUI know that the current 
 	    preset has changed. If the number is equal to 
 	    @c LV2_UI_PRESETS_NOPRESET there is no current preset.
-	    @param param The number of the active preset, or 
-	                 LV2_UI_PRESETS_NOPRESET if there is no active preset.
+	    @param number The number of the active preset, or 
+	                  LV2_UI_PRESETS_NOPRESET if there is no active preset.
 	*/
 	void current_preset_changed(uint32_t number) {
 	  

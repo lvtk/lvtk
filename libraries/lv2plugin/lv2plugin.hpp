@@ -36,7 +36,7 @@
 
 #include <lv2.h>
 #include <lv2_uri_map.h>
-#include <lv2-saverestore.h>
+#include <lv2_saverestore.h>
 #include <lv2_event.h>
 #include <lv2_contexts.h>
 #include <lv2types.hpp>
