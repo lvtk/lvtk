@@ -26,6 +26,7 @@
 #define LV2GUI_HPP
 
 #include <cstdlib>
+#include <cstring>
 #include <map>
 
 #include <gtkmm/box.h>
@@ -241,7 +242,7 @@ protected:
 					      &_preset_removed,
 					      &_presets_cleared,
 					      &_current_preset_changed };
-	  if (!std::strcmp(uri, LV2_UI_URI "#ext_presetss"))
+	  if (!std::strcmp(uri, LV2_UI_PRESETS_URI))
 	    return &desc;
 	  return 0;
 	}
@@ -320,12 +321,14 @@ protected:
 	here will be available in your plugin class.
     */
     template <class Derived> struct I : Extension<Required> {
-      
+
+      /** @internal */
       I() : m_midi_type(0) {
 	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE, 
 					0);
       }
       
+      /** @internal */
       bool check_ok() {
 	Derived* d = static_cast<Derived*>(this);
 	m_midi_type = d->
@@ -337,6 +340,16 @@ protected:
       
     protected:
       
+      /** This function can be used to write a MIDI event to an event input port
+	  in the plugin.
+	  @param port The port index.
+	  @param size The number of bytes in the MIDI event.
+	  @param data The MIDI data for the event. This should point to an array
+	              of @c size bytes.
+	  @return @c true if the event could be written to the plugin port, 
+	          @c false if it couldn't (for example if the host doesn't
+		     support MIDI events).
+      */
       bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
 	if (m_midi_type == 0)
 	  return false;

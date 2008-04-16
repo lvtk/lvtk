@@ -103,11 +103,8 @@ typedef struct {
 	 * but with minimal hassle on simple plugins that "don't care" about 
 	 * these more advanced features.
 	 *
-	 * When the type is 0 the first two bytes of the event data will be
-	 * another uint16_t giving the numeric ID for that particular type of
-	 * non-POD event, obtained from the URI map extension in the same way.
-	 * The interpretation of the rest of the data depends on that type,
-	 * which must not be 0.
+	 * Plugins should not interpret type 0 events in any way unless
+	 * specified by another extension.
 	 */
 	uint16_t type;
 

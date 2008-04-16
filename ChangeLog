@@ -1,2 +1,8 @@
+Version 1.0.1 (2008-04-16):
+	* Added documentation for the WriteMIDI GUI mixin
+	* Added missing include lines in lv2_event_helpers.h and lv2gui.hpp
+	* Fixed URI bug in the Presets GUI mixin
+	* Added documentation about LV2::INVALID_KEY to Voice::on()
+
 Version 1.0.0 (2008-04-08):
 	* First release

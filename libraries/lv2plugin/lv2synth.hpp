@@ -51,7 +51,11 @@ namespace LV2 {
   public:
     
     /** Turn the voice on. This default implementation does nothing, you 
-	probably want to override it. 
+	probably want to override it.
+	
+	If @c key is LV2::INVALID_KEY the voice should go silent as fast at
+	possible (the synth may use this when it receives an All Sound Off
+	event).
 	@param key The MIDI key for the note that the voice should play.
 	@param velocity The MIDI velocity for the Note On event.
     */

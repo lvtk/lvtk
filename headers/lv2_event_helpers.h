@@ -20,11 +20,13 @@
 #ifndef LV2_EVENT_HELPERS_H
 #define LV2_EVENT_HELPERS_H
 
-#include <stdint.h>
+#include <assert.h>
 #include <stdbool.h>
 #include <malloc.h>
-#include <assert.h>
-#include "lv2_event.h"
+#include <stdint.h>
+#include <string.h>
+
+#include <lv2_event.h>
 
 /** @file
  * This header defines some helper functions for the the LV2 events extension
@@ -42,7 +44,7 @@
 static inline uint16_t
 lv2_event_pad_size(uint16_t size)
 {
-	return (size + 7) & (~7);
+        return (size + 7) & (~7);
 }
 
 
@@ -52,11 +54,11 @@ lv2_event_pad_size(uint16_t size)
 static inline void
 lv2_event_buffer_reset(LV2_Event_Buffer* buf, uint16_t stamp_type, uint8_t *data)
 {
-	buf->data = data;
-	buf->header_size = sizeof(LV2_Event_Buffer);
-	buf->stamp_type = stamp_type;
-	buf->event_count = 0;
-	buf->size = 0;
+        buf->data = data;
+        buf->header_size = sizeof(LV2_Event_Buffer);
+        buf->stamp_type = stamp_type;
+        buf->event_count = 0;
+        buf->size = 0;
 }
 
 
@@ -64,14 +66,14 @@ lv2_event_buffer_reset(LV2_Event_Buffer* buf, uint16_t stamp_type, uint8_t *data
 static inline LV2_Event_Buffer*
 lv2_event_buffer_new(uint32_t capacity, uint16_t stamp_type)
 {
-	LV2_Event_Buffer* buf = (LV2_Event_Buffer*)malloc(sizeof(LV2_Event_Buffer) + capacity);
-	if (buf != NULL) {
-		buf->capacity = capacity;
-		lv2_event_buffer_reset(buf, stamp_type, (uint8_t *)(buf + 1));
-		return buf;
-	} else {
-		return NULL;
-	}
+        LV2_Event_Buffer* buf = (LV2_Event_Buffer*)malloc(sizeof(LV2_Event_Buffer) + capacity);
+        if (buf != NULL) {
+                buf->capacity = capacity;
+                lv2_event_buffer_reset(buf, stamp_type, (uint8_t *)(buf + 1));
+                return buf;
+        } else {
+                return NULL;
+        }
 }
 
 
@@ -80,8 +82,8 @@ lv2_event_buffer_new(uint32_t capacity, uint16_t stamp_type)
  * Multiple simultaneous read iterators over a single buffer is fine,
  * but changing the buffer invalidates all iterators (e.g. RW Lock). */
 typedef struct {
-	LV2_Event_Buffer* buf;
-	uint32_t          offset;
+        LV2_Event_Buffer* buf;
+        uint32_t          offset;
 } LV2_Event_Iterator;
 
 
@@ -91,9 +93,9 @@ static inline bool
 lv2_event_begin(LV2_Event_Iterator* iter,
                 LV2_Event_Buffer*   buf)
 {
-	iter->buf = buf;
-	iter->offset = 0;
-	return (buf->size > 0);
+        iter->buf = buf;
+        iter->offset = 0;
+        return (buf->size > 0);
 }
 
 
@@ -102,7 +104,7 @@ lv2_event_begin(LV2_Event_Iterator* iter,
 static inline bool
 lv2_event_is_valid(LV2_Event_Iterator* iter)
 {
-	return (iter->offset < iter->buf->size);
+        return (iter->offset < iter->buf->size);
 }
 
 
@@ -112,14 +114,14 @@ lv2_event_is_valid(LV2_Event_Iterator* iter)
 static inline bool
 lv2_event_increment(LV2_Event_Iterator* iter)
 {
-	assert(lv2_event_is_valid(iter));
+        assert(lv2_event_is_valid(iter));
 
-	LV2_Event* const ev = (LV2_Event*)(
-			(uint8_t*)iter->buf->data + iter->offset);
+        LV2_Event* const ev = (LV2_Event*)(
+                        (uint8_t*)iter->buf->data + iter->offset);
 
-	iter->offset += lv2_event_pad_size(sizeof(LV2_Event) + ev->size);	
-	
-	return true;
+        iter->offset += lv2_event_pad_size(sizeof(LV2_Event) + ev->size);       
+        
+        return true;
 }
 
 
@@ -134,15 +136,15 @@ static inline LV2_Event*
 lv2_event_get(LV2_Event_Iterator* iter,
               uint8_t**           data)
 {
-	assert(lv2_event_is_valid(iter));
+        assert(lv2_event_is_valid(iter));
 
-	LV2_Event* const ev = (LV2_Event*)(
-			(uint8_t*)iter->buf->data + iter->offset);
+        LV2_Event* const ev = (LV2_Event*)(
+                        (uint8_t*)iter->buf->data + iter->offset);
 
-	if (data)
-		*data = (uint8_t*)ev + sizeof(LV2_Event);
+        if (data)
+                *data = (uint8_t*)ev + sizeof(LV2_Event);
 
-	return ev;
+        return ev;
 }
 
 
@@ -152,15 +154,15 @@ lv2_event_get(LV2_Event_Iterator* iter,
 static inline uint16_t
 lv2_event_get_nonpod_type(LV2_Event_Iterator* iter)
 {
-	assert(lv2_event_is_valid(iter));
+        assert(lv2_event_is_valid(iter));
 
-	LV2_Event* const ev = (LV2_Event*)(
-			(uint8_t*)iter->buf->data + iter->offset);
-	
-	if (ev->type != 0 || ev->size < 2)
-	  return 0;
-	
-	return *(uint16_t*)((uint8_t*)ev + sizeof(LV2_Event));
+        LV2_Event* const ev = (LV2_Event*)(
+                        (uint8_t*)iter->buf->data + iter->offset);
+        
+        if (ev->type != 0 || ev->size < 2)
+          return 0;
+        
+        return *(uint16_t*)((uint8_t*)ev + sizeof(LV2_Event));
 }
 
 
@@ -177,55 +179,55 @@ lv2_event_write(LV2_Event_Iterator* iter,
                 uint16_t            size,
                 const uint8_t*      data)
 {
-	if (iter->buf->capacity - iter->buf->size < sizeof(LV2_Event) + size)
-		return false;
+        if (iter->buf->capacity - iter->buf->size < sizeof(LV2_Event) + size)
+                return false;
 
-	LV2_Event* const ev = (LV2_Event*)(
-			(uint8_t*)iter->buf->data + iter->offset);
-	
-	ev->frames = frames;
-	ev->subframes = subframes;
-	ev->type = type;
-	ev->size = size;
-	memcpy((uint8_t*)ev + sizeof(LV2_Event), data, size);
-	++iter->buf->event_count;
-	
-	size = lv2_event_pad_size(sizeof(LV2_Event) + size);
-	iter->buf->size += size;
-	iter->offset    += size;
-	
-	return true;
+        LV2_Event* const ev = (LV2_Event*)(
+                        (uint8_t*)iter->buf->data + iter->offset);
+        
+        ev->frames = frames;
+        ev->subframes = subframes;
+        ev->type = type;
+        ev->size = size;
+        memcpy((uint8_t*)ev + sizeof(LV2_Event), data, size);
+        ++iter->buf->event_count;
+        
+        size = lv2_event_pad_size(sizeof(LV2_Event) + size);
+        iter->buf->size += size;
+        iter->offset    += size;
+        
+        return true;
 }
 
 
 /** Reserve space for an event in the buffer and return a pointer to
-    the memory where the caller can write the event data, or NULL if there
-    is not enough room in the buffer. */
+ * the memory where the caller can write the event data, or NULL if there
+ * is not enough room in the buffer. */
 static inline uint8_t*
 lv2_event_reserve(LV2_Event_Iterator* iter,
-		  uint32_t frames,
-		  uint32_t subframes,
-		  uint16_t type,
-		  uint16_t size) 
+                  uint32_t frames,
+                  uint32_t subframes,
+                  uint16_t type,
+                  uint16_t size) 
 {
-	size = lv2_event_pad_size(size);
-	if (iter->buf->capacity - iter->buf->size < sizeof(LV2_Event) + size)
-		return NULL;
+        size = lv2_event_pad_size(size);
+        if (iter->buf->capacity - iter->buf->size < sizeof(LV2_Event) + size)
+                return NULL;
 
-	LV2_Event* const ev = (LV2_Event*)((uint8_t*)iter->buf->data + 
-					   iter->offset);
-	
-	ev->frames = frames;
-	ev->subframes = subframes;
-	ev->type = type;
-	ev->size = size;
-	++iter->buf->event_count;
-	
-	size = lv2_event_pad_size(sizeof(LV2_Event) + size);
-	iter->buf->size += size;
-	iter->offset    += size;
-	
-	return (uint8_t*)ev + sizeof(LV2_Event);
+        LV2_Event* const ev = (LV2_Event*)((uint8_t*)iter->buf->data + 
+                                           iter->offset);
+        
+        ev->frames = frames;
+        ev->subframes = subframes;
+        ev->type = type;
+        ev->size = size;
+        ++iter->buf->event_count;
+        
+        size = lv2_event_pad_size(sizeof(LV2_Event) + size);
+        iter->buf->size += size;
+        iter->offset    += size;
+        
+        return (uint8_t*)ev + sizeof(LV2_Event);
 }
 
 
@@ -239,21 +241,21 @@ lv2_event_write_event(LV2_Event_Iterator* iter,
                       const LV2_Event*    ev,
                       const uint8_t*      data)
 {
-	if (iter->buf->capacity - iter->buf->size < sizeof(LV2_Event) + ev->size)
-		return false;
+        if (iter->buf->capacity - iter->buf->size < sizeof(LV2_Event) + ev->size)
+                return false;
 
-	LV2_Event* const write_ev = (LV2_Event*)(
-			(uint8_t*)iter->buf->data + iter->offset);
-	
-	*write_ev = *ev;
-	memcpy((uint8_t*)write_ev + sizeof(LV2_Event), data, ev->size);
-	++iter->buf->event_count;
-	
-	const uint16_t size = lv2_event_pad_size(sizeof(LV2_Event) + ev->size);
-	iter->buf->size += size;
-	iter->offset    += size;
-	
-	return true;
+        LV2_Event* const write_ev = (LV2_Event*)(
+                        (uint8_t*)iter->buf->data + iter->offset);
+        
+        *write_ev = *ev;
+        memcpy((uint8_t*)write_ev + sizeof(LV2_Event), data, ev->size);
+        ++iter->buf->event_count;
+        
+        const uint16_t size = lv2_event_pad_size(sizeof(LV2_Event) + ev->size);
+        iter->buf->size += size;
+        iter->offset    += size;
+        
+        return true;
 }
 
 #endif // LV2_EVENT_HELPERS_H
