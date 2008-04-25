@@ -1,6 +1,6 @@
 /****************************************************************************
     
-    lv2plugin.hpp - support file for writing LV2 plugins in C++
+    lv2synth.hpp - support file for writing LV2 plugins in C++
     
     Copyright (C) 2007 Lars Luthman <lars.luthman@gmail.com>
     
@@ -234,8 +234,16 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     }
     
     
-    /** @internal
-	This function is called for every MIDI event in the input. */
+    /** This function is called for every MIDI event in the input. It will
+	respond to note on and note off events by calling on() and off() in
+	the voices.
+	
+	This is not a virtual function, but if you override it in a subclass
+	this class will still use that implementation thanks to the second
+	template class parameter. This means that you can override this function
+	if you want to respond to other MIDI events - just be sure to either
+	call this function for note on and note off events or turn on and off
+	the voices yourself. */
     void handle_midi(uint32_t size, unsigned char* data) {
       if (size != 3)
 	return;
@@ -298,17 +306,12 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	std::memset(p(m_audio_ports[i]), 0, 
 		    sizeof(float) * sample_count);
       
-      // If there are no voices, do nothing
-      if (m_voices.size() == 0)
-	return;
-      
       // Make the port buffers available to the voices
       for (unsigned i = 0; i < m_voices.size(); ++i)
 	m_voices[i]->set_port_buffers(Parent::m_ports);
       
       LV2_Event_Iterator iter;
-      if (!lv2_event_begin(&iter, p<LV2_Event_Buffer>(m_midi_input)))
-	return;
+      lv2_event_begin(&iter, p<LV2_Event_Buffer>(m_midi_input));
       
       uint8_t* event_data;
       uint32_t samples_done = 0;
@@ -336,7 +339,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	*/
 	if (ev) {
 	  if (ev->type == m_midi_type)
-	    handle_midi(ev->size, event_data);
+	    static_cast<D*>(this)->handle_midi(ev->size, event_data);
 	  else if (ev->type == 0)
 	    /* We need to qualify this so the compiler knows that there is an
 	       event_unref() function */
@@ -355,7 +358,8 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	If you for some reason don't want to zero your audio output buffers 
 	before the voices get mixed (you may for example want to fill them with
 	something else in pre_process()) you should not	call this function - 
-	but then you MUST take care of initialising the buffers yourself.
+	but then you MUST take care of initialising the buffers yourself in
+	every cycle.
     */
     void add_audio_outputs(uint32_t p1 = -1, uint32_t p2 = -1, 
 			   uint32_t p3 = -1, uint32_t p4 = -1, 
@@ -386,7 +390,10 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	polyphony. It can also be called while the plugin is running to change
 	the polyphony on the fly, but it is NOT realtime safe and NOT 
 	threadsafe - you have to make sure that the run() callback isn't 
-	executing simultaneously with this function. */
+	executing simultaneously with this function. 
+    
+	LV2::Synth will assume ownership of the voices and delete them in its
+	destructor. */
     void add_voices(V* v01 = 0, V* v02 = 0, V* v03 = 0, V* v04 = 0, V* v05 = 0,
 		    V* v06 = 0, V* v07 = 0, V* v08 = 0, V* v09 = 0, V* v10 = 0,
 		    V* v11 = 0, V* v12 = 0, V* v13 = 0, V* v14 = 0, V* v15 = 0,

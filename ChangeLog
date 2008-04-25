@@ -1,3 +1,9 @@
+Version 1.0.2 (2008-04-25):
+	* Run pre_process() and post_process() every cycle even if there are 
+	  no voices
+	* Render voices even if there are no events (fix from David Creswick)
+	* Made LV2::Synth::handle_midi() overrideable
+
 Version 1.0.1 (2008-04-16):
 	* Added documentation for the WriteMIDI GUI mixin
 	* Added missing include lines in lv2_event_helpers.h and lv2gui.hpp
