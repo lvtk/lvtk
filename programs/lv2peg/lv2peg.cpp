@@ -76,6 +76,8 @@ public:
 private:
   /** Copying is not allowed, that could cause multiple deletions. */
   RDFPtr(RDFPtr const&) { }
+  /** Assignment is not allowed, that could cause multiple deletions. */
+  RDFPtr& operator=(RDFPtr const&) { return *this; }
   
   T* m_t;
 };
@@ -141,12 +143,13 @@ librdf_model* parse_file(RDFWorld& world, string const& filename) {
     librdf nastyness. */
 librdf_query_results* run_query(RDFModel& model, RDFWorld& world,
 				string const& query, string const& base = "") {
-  RDFUri base_uri(0);
+  
+  librdf_uri* base_uri_p = 0;
   if (base != "")
-    base_uri = 
+    base_uri_p = 
       librdf_new_uri(world.get(), 
 		     reinterpret_cast<unsigned char const*>(base.c_str()));
-
+  RDFUri base_uri(base_uri_p);
   RDFQuery rdf_query(librdf_new_query(world.get(), "sparql", 0,
 				      reinterpret_cast<unsigned char const*>(query.c_str()),
 				      base_uri.get()));
@@ -276,10 +279,10 @@ int main(int argc, char** argv) {
       RDFResults results(run_query(model, world,
 				   "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
 				   "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-				   "SELECT ?index, ?min WHERE { \n"
+				   "SELECT ?index, ?max WHERE { \n"
 				   "<>        :port       ?port. \n"
 				   "?port     :index      ?index; \n"
-				   "          :maximum    ?min. }",
+				   "          :maximum    ?max. }",
 				   plug_iter->first));
       if (!results)
 	return -1;
