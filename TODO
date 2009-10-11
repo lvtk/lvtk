@@ -1,6 +1,6 @@
 Before 1.1:
 
- [ ] Make lv2peg use Redland tools instead of PAQ
+ [X] Make lv2peg use Redland tools instead of PAQ
  [ ] Move PAQ to its own package, or one shared with Elven
  [ ] Deprecate lv2soname, ELF libraries can say themselves
      whether they can be unloaded or not
