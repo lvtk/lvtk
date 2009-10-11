@@ -33,9 +33,6 @@
 #include <vector>
 
 #include <redland.h>
-//#include "turtleparser.hpp"
-//#include "query.hpp"
-//#include "namespaces.hpp"
 
 #ifndef VERSION
 #define VERSION "UNKNOWNVERSION"
@@ -43,7 +40,6 @@
 
 
 using namespace std;
-//using namespace PAQ;
 
 
 struct PortInfo {
@@ -64,6 +60,109 @@ struct PortInfo {
 };
 
 
+/** A template wrapper to handle all the annoying memory management for 
+    librdf types. */
+template <typename T, void(*F)(T*)>
+class RDFPtr {
+public:
+  /** In the constructor, just take ownership of a T pointer. */
+  RDFPtr(T* t) : m_t(t) { }
+  /** In the destructor, call the deallocation function. */
+  ~RDFPtr() { if (m_t) F(m_t); }
+  /** Get the underlying pointer, to pass to librdf functions. */
+  T* get() { return m_t; }
+  /** Bool conversion operator. */
+  operator bool() { return m_t != 0; }
+private:
+  /** Copying is not allowed, that could cause multiple deletions. */
+  RDFPtr(RDFPtr const&) { }
+  
+  T* m_t;
+};
+
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_uri. */
+typedef RDFPtr<librdf_uri, &librdf_free_uri> RDFUri;
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_query. */
+typedef RDFPtr<librdf_query, &librdf_free_query> RDFQuery;
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_world. */
+typedef RDFPtr<librdf_world, &librdf_free_world> RDFWorld;
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_model. */
+typedef RDFPtr<librdf_model, &librdf_free_model> RDFModel;
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_parser. */
+typedef RDFPtr<librdf_parser, &librdf_free_parser> RDFParser;
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_storage. */
+typedef RDFPtr<librdf_storage, &librdf_free_storage> RDFStorage;
+
+/** Convenient typedef for a RDFPtr instance wrapping librdf_query_results. */
+typedef RDFPtr<librdf_query_results, &librdf_free_query_results> RDFResults;
+
+
+/** Convenience function for parsing a Turtle file without all the librdf
+    nastyness. */
+librdf_model* parse_file(RDFWorld& world, string const& filename) {
+  
+  RDFParser parser(librdf_new_parser(world.get(), "turtle", 0, 0));
+  if (!parser) {
+    cerr<<"Failed to initialise Turtle parser."<<endl;
+    return 0;
+  }
+  
+  RDFStorage storage(librdf_new_storage(world.get(), "memory", "storage", 0));
+  if (!storage)  {
+    cerr<<"Failed to initialise RDF storage."<<endl;
+    return 0;
+  }
+  
+  librdf_model* model = librdf_new_model(world.get(), storage.get(), 0);
+  if (!model) {
+    cerr<<"Failed to initialise RDF data model."<<endl;
+    return 0;
+  }
+  
+  RDFUri file_uri(librdf_new_uri_from_filename(world.get(), filename.c_str()));
+  if (!file_uri) {
+    cerr<<"Failed to create URI from filename."<<endl;
+    return 0;
+  }
+  if (librdf_parser_parse_into_model(parser.get(), file_uri.get(), 0, model))
+    cerr<<"Failed to parse the input file."<<endl;
+  
+  return model;
+}
+
+
+/** Convenience function for running a SPARQL query on a model without all the
+    librdf nastyness. */
+librdf_query_results* run_query(RDFModel& model, RDFWorld& world,
+				string const& query, string const& base = "") {
+  RDFUri base_uri(0);
+  if (base != "")
+    base_uri = 
+      librdf_new_uri(world.get(), 
+		     reinterpret_cast<unsigned char const*>(base.c_str()));
+
+  RDFQuery rdf_query(librdf_new_query(world.get(), "sparql", 0,
+				      reinterpret_cast<unsigned char const*>(query.c_str()),
+				      base_uri.get()));
+  if (!rdf_query) {
+    cerr<<"Failed to initialise SPARQL query."<<endl;
+    return 0;
+  }
+  librdf_query_results* rdf_results =
+    librdf_query_execute(rdf_query.get(), model.get());
+  if (!rdf_results)
+    cerr<<"Failed to execute plugin query."<<endl;
+  
+  return rdf_results;
+}
+
+
 int main(int argc, char** argv) {
   
   for (int i = 1; i < argc; ++i) {
@@ -80,238 +179,164 @@ int main(int argc, char** argv) {
   }
   
   // initialise librdf
-  librdf_world* world = librdf_new_world();
+  RDFWorld world (librdf_new_world());
   if (!world) {
     cerr<<"Failed to initialise librdf."<<endl;
     return -1;
   }
   
   // parse turtle file
-  librdf_parser* parser = librdf_new_parser(world, "turtle", 0, 0);
-  if (!parser) {
-    cerr<<"Failed to initialise Turtle parser."<<endl;
+  RDFModel model(parse_file(world, argv[1]));
+  if (!model)
     return -1;
-  }
-  librdf_storage* storage = librdf_new_storage(world, "memory", "storage", 0);
-  if (!storage)  {
-    cerr<<"Failed to initialise RDF storage."<<endl;
-    return -1;
-  }
-  librdf_model* model = librdf_new_model(world, storage, 0);
-  if (!model) {
-    cerr<<"Failed to initialise RDF data model."<<endl;
-    return -1;
-  }
-  librdf_uri* file_uri = librdf_new_uri_from_filename(world, argv[1]);
-  if (!file_uri) {
-    cerr<<"Failed to create URI from filename."<<endl;
-    return -1;
-  }
-  if (librdf_parser_parse_into_model(parser, file_uri, 0, model)) {
-    cerr<<"Failed to parse the input file."<<endl;
-    return -1;
-  }
-  
+
   // find all plugins in the file
-  librdf_query* plugins_query = 
-    librdf_new_query(world, "sparql", 0,
-		     (const unsigned char*) // this is stupid
-		     "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		     "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-		     "SELECT DISTINCT ?plugin, ?pegname WHERE { \n"
-		     "?plugin a :Plugin. \n"
-		     "?plugin ll:pegName ?pegname. }",
-		     0);
-  if (!plugins_query) {
-    cerr<<"Failed to initialise plugin query."<<endl;
+  RDFResults 
+    results(run_query(model, world,
+		      "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+		      "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
+		      "SELECT DISTINCT ?plugin, ?pegname WHERE { \n"
+		      "?plugin a :Plugin. \n"
+		      "?plugin ll:pegName ?pegname. }"));
+  if (!results)
     return -1;
-  }
-  librdf_query_results* plugins_results =
-    librdf_query_execute(plugins_query, model);
-  if (!plugins_results) {
-    cerr<<"Failed to execute plugin query."<<endl;
-    return -1;
-  }
+
   map<string, string> plugins;
-  while (!librdf_query_results_finished(plugins_results)) {
-    plugins[(char*)librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(plugins_results, 0)))] = 
-      (char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(plugins_results, 1));
-    librdf_query_results_next(plugins_results);
+  while (!librdf_query_results_finished(results.get())) {
+    plugins[(char*)librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(results.get(), 0)))] = 
+      (char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1));
+    librdf_query_results_next(results.get());
   }
-  librdf_free_query_results(plugins_results);
-  librdf_free_query(plugins_query);
   
   // iterate over all plugins
   map<string, map<int, PortInfo> > info;
   map<string, string>::const_iterator plug_iter;
+  
   for (plug_iter = plugins.begin(); plug_iter != plugins.end(); ++plug_iter) {
     
     // query the plugin ports
-    librdf_uri* plugin_uri = librdf_new_uri(world, (const unsigned char*)plug_iter->first.c_str());
-    librdf_query* ports_query = 
-      librdf_new_query(world, "sparql", 0,
-		       (const unsigned char*) // this is stupid
-		       "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		       "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-		       "SELECT ?index, ?symbol WHERE { \n"
-		       "<>        :port       ?port. \n"
-		       "?port     :index      ?index; \n"
-		       "          :symbol     ?symbol. }",
-		       plugin_uri);
-    if (!ports_query) {
-      cerr<<"Failed to initialise port query."<<endl;
-      return -1;
-    }
-    librdf_query_results* ports_results =
-      librdf_query_execute(ports_query, model);
-    if (!ports_results) {
-      cerr<<"Failed to execute port query."<<endl;
-      return -1;
-    }
     map<int, PortInfo> ports;
-    while (!librdf_query_results_finished(ports_results)) {
-      int port_index = atoi((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(ports_results, 0)));
-      if (ports.find(port_index) != ports.end()) {
-	cerr<<"Index "<<port_index<<" is used for more than one port"<<endl;
+    {
+      RDFResults results(run_query(model, world,
+				   "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+				   "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
+				   "SELECT ?index, ?symbol WHERE { \n"
+				   "<>        :port       ?port. \n"
+				   "?port     :index      ?index; \n"
+				   "          :symbol     ?symbol. }",
+				   plug_iter->first));
+      if (!results)
 	return -1;
+
+      while (!librdf_query_results_finished(results.get())) {
+	int port_index = atoi((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
+	if (ports.find(port_index) != ports.end()) {
+	  cerr<<"Index "<<port_index<<" is used for more than one port"<<endl;
+	  return -1;
+	}
+	ports[port_index].name = (char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1));
+	librdf_query_results_next(results.get());
       }
-      ports[port_index].name = (char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(ports_results, 1));
-      librdf_query_results_next(ports_results);
-    }
-    librdf_free_query_results(ports_results);
-    librdf_free_query(ports_query);
-    
-    // check that the port indices are OK
-    map<int, PortInfo>::const_iterator iter;
-    int next = 0;
-    for (iter = ports.begin(); iter != ports.end(); ++iter) {
-      if (iter->first != next) {
-        cerr<<"There was no description of port "<<next
-            <<" in plugin "<<plug_iter->first<<endl;
-        return -1;
+      
+      // check that the port indices are OK
+      map<int, PortInfo>::const_iterator iter;
+      int next = 0;
+      for (iter = ports.begin(); iter != ports.end(); ++iter) {
+	if (iter->first != next) {
+	  cerr<<"There was no description of port "<<next
+	      <<" in plugin "<<plug_iter->first<<endl;
+	  return -1;
+	}
+	++next;
       }
-      ++next;
     }
     
     // get min values
-    librdf_query* min_query = 
-      librdf_new_query(world, "sparql", 0,
-		       (const unsigned char*) // this is stupid
-		       "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		       "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-		       "SELECT ?index, ?min WHERE { \n"
-		       "<>        :port       ?port. \n"
-		       "?port     :index      ?index; \n"
-		       "          :minimum    ?min. }",
-		       plugin_uri);
-    if (!min_query) {
-      cerr<<"Failed to initialise minimum value query."<<endl;
-      return -1;
+    {
+      RDFResults results(run_query(model, world,
+				   "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+				   "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
+				   "SELECT ?index, ?min WHERE { \n"
+				   "<>        :port       ?port. \n"
+				   "?port     :index      ?index; \n"
+				   "          :minimum    ?min. }",
+				   plug_iter->first));
+      if (!results)
+	return -1;
+      
+      while (!librdf_query_results_finished(results.get())) {
+	int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
+	ports[port_index].min = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1)));
+	librdf_query_results_next(results.get());
+      }
     }
-    librdf_query_results* min_results = librdf_query_execute(min_query, model);
-    if (!min_results) {
-      cerr<<"Failed to execute minimum value query."<<endl;
-      return -1;
-    }
-    while (!librdf_query_results_finished(min_results)) {
-      int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(min_results, 0)));
-      ports[port_index].min = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(min_results, 1)));
-      librdf_query_results_next(min_results);
-    }
-    librdf_free_query_results(min_results);
-    librdf_free_query(min_query);
     
     // get max values
-    librdf_query* max_query = 
-      librdf_new_query(world, "sparql", 0,
-		       (const unsigned char*) // this is stupid
-		       "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		       "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-		       "SELECT ?index, ?max WHERE { \n"
-		       "<>        :port       ?port. \n"
-		       "?port     :index      ?index; \n"
-		       "          :maximum    ?max. }",
-		       plugin_uri);
-    if (!max_query) {
-      cerr<<"Failed to initialise maximum value query."<<endl;
-      return -1;
+    {
+      RDFResults results(run_query(model, world,
+				   "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+				   "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
+				   "SELECT ?index, ?min WHERE { \n"
+				   "<>        :port       ?port. \n"
+				   "?port     :index      ?index; \n"
+				   "          :maximum    ?min. }",
+				   plug_iter->first));
+      if (!results)
+	return -1;
+      
+      while (!librdf_query_results_finished(results.get())) {
+	int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
+	ports[port_index].max = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1)));
+	librdf_query_results_next(results.get());
+      }
     }
-    librdf_query_results* max_results = librdf_query_execute(max_query, model);
-    if (!max_results) {
-      cerr<<"Failed to execute maximum value query."<<endl;
-      return -1;
-    }
-    while (!librdf_query_results_finished(max_results)) {
-      int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(max_results, 0)));
-      ports[port_index].max = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(max_results, 1)));
-      librdf_query_results_next(max_results);
-    }
-    librdf_free_query_results(max_results);
-    librdf_free_query(max_query);
     
     // get default values
-    librdf_query* default_query = 
-      librdf_new_query(world, "sparql", 0,
-		       (const unsigned char*) // this is stupid
-		       "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		       "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-		       "SELECT ?index, ?default WHERE { \n"
-		       "<>        :port       ?port. \n"
-		       "?port     :index      ?index; \n"
-		       "          :default    ?default. }",
-		       plugin_uri);
-    if (!default_query) {
-      cerr<<"Failed to initialise default value query."<<endl;
-      return -1;
+    {
+      RDFResults results(run_query(model, world,
+				   "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+				   "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
+				   "SELECT ?index, ?min WHERE { \n"
+				   "<>        :port       ?port. \n"
+				   "?port     :index      ?index; \n"
+				   "          :default    ?min. }",
+				   plug_iter->first));
+      if (!results)
+	return -1;
+      
+      while (!librdf_query_results_finished(results.get())) {
+	int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
+	ports[port_index].default_value = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1)));
+	librdf_query_results_next(results.get());
+      }
     }
-    librdf_query_results* default_results = librdf_query_execute(default_query, model);
-    if (!default_results) {
-      cerr<<"Failed to execute default value query."<<endl;
-      return -1;
-    }
-    while (!librdf_query_results_finished(default_results)) {
-      int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(default_results, 0)));
-      ports[port_index].default_value = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(default_results, 1)));
-      librdf_query_results_next(default_results);
-    }
-    librdf_free_query_results(default_results);
-    librdf_free_query(default_query);
     
     // get port hints
-    librdf_query* hints_query = 
-      librdf_new_query(world, "sparql", 0,
-		       (const unsigned char*) // this is stupid
-		       "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
-		       "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
-		       "SELECT ?index, ?hint WHERE { \n"
-		       "<>        :port       ?port. \n"
-		       "?port     :index      ?index. \n"
-		       "?port     :portHint   ?hint. }",
-		       plugin_uri);
-    if (!hints_query) {
-      cerr<<"Failed to initialise port hint query."<<endl;
-      return -1;
+    {
+      RDFResults results(run_query(model, world,
+				   "PREFIX : <http://lv2plug.in/ns/lv2core#>\n"
+				   "PREFIX ll: <http://ll-plugins.nongnu.org/lv2/namespace#>\n"
+				   "SELECT ?index, ?hint WHERE { \n"
+				   "<>        :port       ?port. \n"
+				   "?port     :index      ?index. \n"
+				   "?port     :portHint   ?hint. }",
+				   plug_iter->first));
+      if (!results)
+	return -1;
+      
+      while (!librdf_query_results_finished(results.get())) {
+	librdf_node* n = librdf_query_results_get_binding_value(results.get(), 0);
+	int port_index = atof((char*)librdf_node_get_literal_value(n));
+	string hint = (char*)librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(results.get(), 1)));
+	if (hint == "<http://lv2plug.in/ns#toggled")
+	  ports[port_index].toggled = true;
+	if (hint == "<http://lv2plug.in/ns#integer")
+	  ports[port_index].integer = true;
+	if (hint == "<http://lv2plug.in/ns#logarithmic")
+	  ports[port_index].logarithmic = true;
+	librdf_query_results_next(results.get());
+      }
     }
-    librdf_query_results* hints_results = 
-      librdf_query_execute(hints_query, model);
-    if (!hints_results) {
-      cerr<<"Failed to execute port hints query."<<endl;
-      return -1;
-    }
-    while (!librdf_query_results_finished(hints_results)) {
-      librdf_node* n = librdf_query_results_get_binding_value(hints_results, 0);
-      int port_index = atof((char*)librdf_node_get_literal_value(n));
-      string hint = (char*)librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(hints_results, 1)));
-      if (hint == "<http://lv2plug.in/ns#toggled")
-        ports[port_index].toggled = true;
-      if (hint == "<http://lv2plug.in/ns#integer")
-        ports[port_index].integer = true;
-      if (hint == "<http://lv2plug.in/ns#logarithmic")
-        ports[port_index].logarithmic = true;
-      librdf_query_results_next(hints_results);
-    }
-    librdf_free_query_results(hints_results);
-    librdf_free_query(hints_query);
     
     info[plug_iter->first] = ports;
   }
