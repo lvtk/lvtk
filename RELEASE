@@ -1,21 +1,16 @@
-1. Make sure the version will be right (for a new minor version that means that
-   you should set the patch level to -1 so dcvs will bump it to 0)
+1. Write ChangeLog entry.
 
-2. Write ChangeLog entry.
+2. make dist, check that it builds and installs correctly.
 
-3. Update PROJECT_NUMBER in Doxyfile.
+3. git commit
 
-4. make dist, check that it builds and installs correctly.
+4. git tag -s Release_X.Y.Z
 
-5. CVS commit.
-
-6. cvs tag Release_X_Y_Z
-
-7. Sign (gpg -b) and upload dist tarball 
+5. Sign (gpg -b) and upload dist tarball 
    (sftp larsl@dl.sv.nongnu.org:/releases/ll-plugins).
 
-8. Generate new API documentation, upload it, update the redirect page.
+6. Generate new API documentation, upload it, update the redirect page.
 
-9. Update webpages.
+7. Update webpages.
 
-10. Announce on http://freshmeat.net and any relevant mailing lists.
+8. Announce on http://freshmeat.net and any relevant mailing lists.
