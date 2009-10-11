@@ -367,7 +367,7 @@ dist:
 	mkdir -p $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	@echo "Copying files to $(PACKAGE_NAME)-$(PACKAGE_VERSION)/..."
 	cp $(THIS_FILE) $(CONFIGURE_SCRIPT) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
-	cat Makefile | sed s/$(subst /,\\/,$(THIS_FILE))/Makefile.template/ > $(PACKAGE_NAME)-$(PACKAGE_VERSION)/Makefile
+	cat Makefile | sed s/$(subst /,\\/,$(THIS_FILE))/Makefile.template/ | sed 's/PACKAGE_VERSION = .*/PACKAGE_VERSION = $(PACKAGE_VERSION)/' > $(PACKAGE_NAME)-$(PACKAGE_VERSION)/Makefile
 	@$(foreach file, $(patsubst %,./%,$(ALL_DIST_FILES)), mkdir -p $(PACKAGE_NAME)-$(PACKAGE_VERSION)/`echo $(file) | sed 's/\/[^\/]*$$//'` &&) true
 	@$(foreach file, $(ALL_DIST_FILES), cp $(file) $(PACKAGE_NAME)-$(PACKAGE_VERSION)/$(file) &&) true
 	touch $(PACKAGE_NAME)-$(PACKAGE_VERSION)/Makefile.config
@@ -377,8 +377,8 @@ dist:
 
 dist-test: dist
 	tar xjvf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
-	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && configure --prefix=`pwd`/installation
-	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && make install
+	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && ./configure --prefix=`pwd`/installation
+	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && make && make install
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	@echo Distribution test succeded!
 
