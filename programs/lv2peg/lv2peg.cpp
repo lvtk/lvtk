@@ -83,6 +83,28 @@ private:
 };
 
 
+/** A wrapper class for librdf_query_results. */
+
+class RDFResults : public RDFPtr<librdf_query_results, 
+				 &librdf_free_query_results> {
+public:
+  typedef RDFPtr<librdf_query_results, &librdf_free_query_results> Parent;
+  RDFResults(librdf_query_results* r) : Parent(r) { }
+  
+  /** Returns true if there are no more bindings. */
+  bool finished() { return librdf_query_results_finished(get()); }
+  
+  /** Returns the literal value of a bound node. */
+  char* get_literal(int i) { return reinterpret_cast<char*>(librdf_node_get_literal_value(librdf_query_results_get_binding_value(get(), i))); }
+
+  /** Returns the URI of a bound node as a C string. */
+  char* get_uri(int i) { return reinterpret_cast<char*>(librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(get(), i)))); }
+  
+  /** Goes to the next binding. */
+  void next() { librdf_query_results_next(get()); }
+};
+
+
 /** Convenient typedef for a RDFPtr instance wrapping librdf_uri. */
 typedef RDFPtr<librdf_uri, &librdf_free_uri> RDFUri;
 
@@ -100,10 +122,6 @@ typedef RDFPtr<librdf_parser, &librdf_free_parser> RDFParser;
 
 /** Convenient typedef for a RDFPtr instance wrapping librdf_storage. */
 typedef RDFPtr<librdf_storage, &librdf_free_storage> RDFStorage;
-
-/** Convenient typedef for a RDFPtr instance wrapping librdf_query_results. */
-typedef RDFPtr<librdf_query_results, &librdf_free_query_results> RDFResults;
-
 
 /** Convenience function for parsing a Turtle file without all the librdf
     nastyness. */
@@ -168,6 +186,7 @@ librdf_query_results* run_query(RDFModel& model, RDFWorld& world,
 
 int main(int argc, char** argv) {
   
+  // print the version info if requested
   for (int i = 1; i < argc; ++i) {
     if (string(argv[i]) == "-V" || string(argv[i]) == "--version") {
       cout<<"lv2peg "<<VERSION<<" by Lars Luthman <lars.luthman@gmail.com>"
@@ -176,6 +195,7 @@ int main(int argc, char** argv) {
     }
   }
   
+  // print usage info if the parameters are invalid
   if (argc < 3) {
     cerr<<"Use like this: lv2peg <input file> <output file> "<<endl;
     return -1;
@@ -203,12 +223,10 @@ int main(int argc, char** argv) {
 		      "?plugin ll:pegName ?pegname. }"));
   if (!results)
     return -1;
-
   map<string, string> plugins;
-  while (!librdf_query_results_finished(results.get())) {
-    plugins[(char*)librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(results.get(), 0)))] = 
-      (char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1));
-    librdf_query_results_next(results.get());
+  while (!results.finished()) {
+    plugins[results.get_uri(0)] = results.get_literal(1);
+    results.next();
   }
   
   // iterate over all plugins
@@ -230,15 +248,14 @@ int main(int argc, char** argv) {
 				   plug_iter->first));
       if (!results)
 	return -1;
-
-      while (!librdf_query_results_finished(results.get())) {
-	int port_index = atoi((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
+      while (!results.finished()) {
+	int port_index = atoi(results.get_literal(0));
 	if (ports.find(port_index) != ports.end()) {
 	  cerr<<"Index "<<port_index<<" is used for more than one port"<<endl;
 	  return -1;
 	}
-	ports[port_index].name = (char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1));
-	librdf_query_results_next(results.get());
+	ports[port_index].name = results.get_literal(1);
+	results.next();
       }
       
       // check that the port indices are OK
@@ -266,11 +283,10 @@ int main(int argc, char** argv) {
 				   plug_iter->first));
       if (!results)
 	return -1;
-      
-      while (!librdf_query_results_finished(results.get())) {
-	int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
-	ports[port_index].min = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1)));
-	librdf_query_results_next(results.get());
+      while (!results.finished()) {
+	int port_index = atoi(results.get_literal(0));
+	ports[port_index].min = atof(results.get_literal(1));
+	results.next();
       }
     }
     
@@ -286,11 +302,10 @@ int main(int argc, char** argv) {
 				   plug_iter->first));
       if (!results)
 	return -1;
-      
-      while (!librdf_query_results_finished(results.get())) {
-	int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
-	ports[port_index].max = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1)));
-	librdf_query_results_next(results.get());
+      while (!results.finished()) {
+	int port_index = atoi(results.get_literal(0));
+	ports[port_index].max = atof(results.get_literal(1));
+	results.next();
       }
     }
     
@@ -306,11 +321,10 @@ int main(int argc, char** argv) {
 				   plug_iter->first));
       if (!results)
 	return -1;
-      
-      while (!librdf_query_results_finished(results.get())) {
-	int port_index = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 0)));
-	ports[port_index].default_value = atof((char*)librdf_node_get_literal_value(librdf_query_results_get_binding_value(results.get(), 1)));
-	librdf_query_results_next(results.get());
+      while (!results.finished()) {
+	int port_index = atoi(results.get_literal(0));
+	ports[port_index].default_value = atof(results.get_literal(1));
+	results.next();
       }
     }
     
@@ -326,18 +340,16 @@ int main(int argc, char** argv) {
 				   plug_iter->first));
       if (!results)
 	return -1;
-      
-      while (!librdf_query_results_finished(results.get())) {
-	librdf_node* n = librdf_query_results_get_binding_value(results.get(), 0);
-	int port_index = atof((char*)librdf_node_get_literal_value(n));
-	string hint = (char*)librdf_uri_as_string(librdf_node_get_uri(librdf_query_results_get_binding_value(results.get(), 1)));
+      while (!results.finished()) {
+	int port_index = atoi(results.get_literal(0));
+	string hint = results.get_literal(1);
 	if (hint == "<http://lv2plug.in/ns#toggled")
 	  ports[port_index].toggled = true;
 	if (hint == "<http://lv2plug.in/ns#integer")
 	  ports[port_index].integer = true;
 	if (hint == "<http://lv2plug.in/ns#logarithmic")
 	  ports[port_index].logarithmic = true;
-	librdf_query_results_next(results.get());
+	results.next();
       }
     }
     
