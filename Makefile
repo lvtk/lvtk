@@ -4,8 +4,7 @@ PKG_DEPS = \
 	gtkmm-2.4>=2.8.8 \
 	redland>=1.0.9
 
-ARCHIVES = liblv2-plugin.a liblv2-gui.a libpaq.a
-LIBRARIES = libpaq.so
+ARCHIVES = liblv2-plugin.a liblv2-gui.a
 PROGRAMS = lv2peg
 DATAPACKS = lv2soname
 
@@ -36,17 +35,6 @@ liblv2-gui_a_CFLAGS = `pkg-config --cflags gtkmm-2.4` -Iheaders
 liblv2-gui_a_SOURCEDIR = libraries/lv2gui
 liblv2-gui_a_INSTALLDIR = $(libdir)
 
-# The static version of PAQ
-libpaq_a_SOURCES = turtleparser.cpp rdf.cpp query.cpp
-libpaq_a_SOURCEDIR = libraries/paq
-libpaq_a_INSTALLDIR = $(libdir)
-
-# The shared version of PAQ
-libpaq_so_ABI = 0
-libpaq_so_ARCHIVES = libraries/paq/libpaq.a
-libpaq_so_HEADERS = turtleparser.hpp rdf.hpp query.hpp unicode.hpp namespaces.hpp
-libpaq_so_SOURCEDIR = libraries/paq
-
 # lv2peg
 lv2peg_SOURCES = lv2peg.cpp
 lv2peg_CFLAGS = -DVERSION=\"$(PACKAGE_VERSION)\" `pkg-config --cflags redland`
@@ -60,7 +48,7 @@ lv2soname_INSTALLDIR = $(bindir)
 
 # extra files
 DOCS = COPYING AUTHORS README ChangeLog
-PCFILES = lv2-plugin.pc lv2-gui.pc paq.pc
+PCFILES = lv2-plugin.pc lv2-gui.pc
 EXTRA_DIST = Doxyfile
 
 
