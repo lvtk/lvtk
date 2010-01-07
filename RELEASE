@@ -6,11 +6,17 @@
 
 4. git tag -s Release_X.Y.Z
 
-5. Sign (gpg -b) and upload dist tarball 
+5. Git commit (git status, git add all modified files, git commit)
+
+6. git tag -s Release_X.Y.Z
+
+7. git push, git push --tags
+
+8. Sign (gpg -b) and upload dist tarball 
    (sftp larsl@dl.sv.nongnu.org:/releases/ll-plugins).
 
-6. Generate new API documentation, upload it, update the redirect page.
+9. Generate new API documentation, upload it, update the redirect page.
 
-7. Update webpages.
+10. Update webpages.
 
-8. Announce on http://freshmeat.net and any relevant mailing lists.
+11. Announce on http://freshmeat.net and any relevant mailing lists.
