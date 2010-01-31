@@ -1,10 +1,10 @@
-1. Write ChangeLog entry.
+1. Update PACKAGE_VERSION in Makefile.
 
-2. make dist, check that it builds and installs correctly.
+2. Write ChangeLog entry.
 
-3. git commit
+3. Update PROJECT_NUMBER in Doxyfile (yes, PROJECT_NAME isn't used).
 
-4. git tag -s Release_X.Y.Z
+4. make dist, check that it builds and installs correctly.
 
 5. Git commit (git status, git add all modified files, git commit)
 
