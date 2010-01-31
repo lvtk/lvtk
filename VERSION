@@ -1,0 +1,59 @@
+#!/bin/bash
+
+################################################################################
+#                                                                              #
+# This script generates a version number from the latest Version_* tag in the  #
+# history of the last commit and the number of commits since that tag. For     #
+# example, if the last Version_* tag was three commits ago and was named       #
+# 'Version_0.5.0', this script will print '0.5.3'. You can also generate a     #
+# version for a commit other than the most recent one by passing a committish  #
+# name as parameter, e.g. './VERSION 0.3_branch' or './VERSION HEAD' (the      #
+# second example is equivalent to no parameter).                               #
+#                                                                              #
+# To keep this version numbering consistent you need to tag every merge and    #
+# the first commit in every new branch. For branches the tag should be         #
+# 'Version_<version right before branch>.<branchname>.0', and for merges it    #
+# should be the version that would have been generated for the commit if the   #
+# 'main' parent (whichever that is, usually the master branch) had been the    #
+# only parent - e.g. if you are merging '0.5.356' and '0.5.339.osc.6', you     #
+# should tag the merge as 'Version_0.5.357', using the command                 #
+# 'git tag -a Version_0.5.357'.                                                #
+#                                                                              #
+# Feel free to use or modify this script for any purpose.                      #
+#                                                                              #
+#                                       Lars Luthman <lars.luthman@gmail.com>  #
+#                                                                              #
+################################################################################
+
+
+# Prints the last annotated tag beginning with Version_ , the number
+# of commits since then and the abbreviated object name of the current commit
+git describe --match 'Version_*' $1         |
+
+# Strips off the Version_ prefix
+    sed 's/Version_//'                      |
+
+# Changes - to spaces, making the tag version, the commit number and
+# the object name separate words
+    sed 's/-/ /g'                           |
+
+# Strips off the object name
+    awk '{ print $1 " " $2}'                |
+
+# Changes the last .number in the tag version to a separate word
+    sed -r 's/\.([0-9]+) / \1 /'            |
+
+# Prints the tag version with the commit number added to the last .number
+    awk '{ print $1 "." $2+$3 }'            |
+
+# Strips off the linebreak
+    xargs echo -n
+
+
+# Add .EDITED to the version number if any files have been modified since
+# the last commit
+if test \( $(git ls-files --modified | wc -l) -gt 0 \) -a \( -z "$1" \) ; then
+    echo .EDITED
+else
+    echo
+fi

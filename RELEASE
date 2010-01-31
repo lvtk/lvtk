@@ -1,22 +1,18 @@
-1. Update PACKAGE_VERSION in Makefile.
+1. Write ChangeLog entry.
 
-2. Write ChangeLog entry.
+2. make dist, check that it builds and installs correctly.
 
-3. Update PROJECT_NUMBER in Doxyfile (yes, PROJECT_NAME isn't used).
+3. Git commit (git status, git add all modified files, git commit)
 
-4. make dist, check that it builds and installs correctly.
+4. git tag -s Release_X.Y.Z
 
-5. Git commit (git status, git add all modified files, git commit)
+5. git push, git push --tags
 
-6. git tag -s Release_X.Y.Z
-
-7. git push, git push --tags
-
-8. Sign (gpg -b) and upload dist tarball 
+6. Sign (gpg -b) and upload dist tarball 
    (sftp larsl@dl.sv.nongnu.org:/releases/ll-plugins).
 
-9. Generate new API documentation, upload it, update the redirect page.
+7. Generate new API documentation, upload it, update the redirect page.
 
-10. Update webpages.
+8. Update webpages.
 
-11. Announce on http://freshmeat.net and any relevant mailing lists.
+9. Announce on http://freshmeat.net and any relevant mailing lists.

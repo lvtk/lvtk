@@ -1,5 +1,5 @@
 PACKAGE_NAME = lv2-c++-tools
-PACKAGE_VERSION = 1.0.2
+PACKAGE_VERSION = $(shell ./VERSION)
 PKG_DEPS = \
 	gtkmm-2.4>=2.8.8 \
 	redland>=1.0.9
@@ -55,3 +55,8 @@ EXTRA_DIST = Doxyfile
 # Do the magic
 include Makefile.template
 
+# Generate Doxygen documentation with the right version number
+dox:
+	cat Doxyfile | sed s@VERSION_SUBST@$(PACKAGE_VERSION)@ > Doxyfile.subst
+	doxygen Doxyfile.subst
+	rm Doxyfile.subst
