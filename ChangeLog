@@ -1,3 +1,7 @@
+Version 1.0.3 (2010-01-07):
+	* Fixed build system bug that added $(LDFLAGS) to the static linker 
+	  (reported by Philipp Überbacher)
+
 Version 1.0.2 (2008-04-25):
 	* Run pre_process() and post_process() every cycle even if there are 
 	  no voices
