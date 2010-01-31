@@ -1,4 +1,4 @@
-Before 1.1:
+Before 1.2:
 
  [X] Make lv2peg use Redland tools instead of PAQ
  [X] Move PAQ to its own package, or one shared with Elven
@@ -6,7 +6,7 @@ Before 1.1:
      whether they can be unloaded or not
  [ ] Deprecate the old GUI extension
 
-Possibly before 1.1:
+Possibly before 1.2:
 
  [ ] Add support for an LV2r3-conforming GUI extension
 
