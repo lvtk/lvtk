@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+#include "debug.hpp"
 #include <lv2.h>
 #include <lv2_uri_map.h>
 #include <lv2_saverestore.h>
@@ -145,7 +146,7 @@ namespace LV2 {
     */
     Plugin(uint32_t ports) 
       : m_ports(ports, 0),
-	m_ok(true) {
+        m_ok(true) {
       m_features = s_features;
       m_bundle_path = s_bundle_path;
       s_features = 0;
@@ -335,9 +336,31 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       s_features = features;
       s_bundle_path = bundle_path;
 
+      if (LV2CPP_DEBUG) {
+	std::clog<<"[LV2::Plugin] Instantiating plugin...\n"
+		 <<"  Bundle path: "<<bundle_path<<"\n"
+		 <<"  Features: \n";
+	for (Feature const* const* f = features; *f != 0; ++f)
+	  std::clog<<"    "<<(*f)->URI<<"\n";
+	
+	std::clog<<"  Creating plugin object...\n";
+      }
+
       Derived* t = new Derived(sample_rate);
-      if (t->check_ok())
+      
+      if (LV2CPP_DEBUG)
+	std::clog<<"  Validating...\n";
+      
+      if (t->check_ok()) {
+	if (LV2CPP_DEBUG)
+	  std::clog<<"  Done!"<<std::endl;
 	return reinterpret_cast<LV2_Handle>(t);
+      }
+      
+      if (LV2CPP_DEBUG) {
+	std::clog<<"  Failed!\n"
+		 <<"  Deleting object."<<std::endl;
+      }
       delete t;
       return 0;
     }
@@ -449,7 +472,19 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::FixedBufSize] Host set buffer size to "
+		   <<fe->m_buffer_size<<std::endl;
+	}
 	fe->m_ok = true;
+      }
+
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::FixedBufSize] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
       }
       
     protected:
@@ -496,9 +531,21 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::FixedP2BufSize] Host set buffer size to "
+		   <<fe->m_buffer_size<<std::endl;
+	}
 	fe->m_ok = true;
       }
       
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::FixedP2BufSize] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
+
     protected:
       
       /** This returns the buffer size that the host has promised to use.
@@ -543,6 +590,14 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	fe->m_ok = true;
       }
       
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::SaveRestore] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
+
       /** @internal */
       static const void* extension_data(const char* uri) { 
 	if (!std::strcmp(uri, LV2_SAVERESTORE_URI)) {
@@ -581,12 +636,23 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	  Static callback wrapper. */
       static char* _save(LV2_Handle h, 
 			 const char* directory, LV2SR_File*** files) {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"[LV2::SaveRestore] Host called save().\n"
+		   <<"  directory: \""<<directory<<"\""<<std::endl;
+	}
 	return reinterpret_cast<Derived*>(h)->save(directory, files);
       }
       
       /** @internal
 	  Static callback wrapper. */
       static char* _restore(LV2_Handle h, const LV2SR_File** files) {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"[LV2::SaveRestore] Host called restore().\n"
+		   <<"  Files:\n";
+	  for (LV2SR_File const** f = files; (*f) != 0; ++f)
+	    std::clog<<"  \""<<(*f)->name<<"\" -> \""<<(*f)->path<<"\"\n";
+	  std::clog<<std::flush;
+	}
 	return reinterpret_cast<Derived*>(h)->restore(files);
       }
       
@@ -628,6 +694,14 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
         fe->m_ok = true;
       }
       
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::EventRef] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
+
     protected:
       
       /** This should be called by the plugin for any event of type 0 if it
@@ -691,6 +765,14 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
         fe->m_ok = true;
       }
       
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::MsgContext] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
+
       /** @internal */
       static const void* extension_data(const char* uri) { 
 	if (!std::strcmp(uri, LV2_CONTEXT_MESSAGE)) {
@@ -712,6 +794,8 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       /** @internal
 	  Static callback wrapper. */
       static bool _blocking_run(LV2_Handle h, uint8_t* outputs_written) {
+	if (LV2CPP_DEBUG)
+	  std::clog<<"[LV2::MsgContext] Host called blocking_run()."<<std::endl;
 	return reinterpret_cast<Derived*>(h)->blocking_run(outputs_written);
       }
       

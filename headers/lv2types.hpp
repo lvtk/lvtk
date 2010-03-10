@@ -29,6 +29,8 @@
 #include <map>
 #include <string>
 
+#include "debug.hpp"
+
 
 namespace LV2 {
   
@@ -179,6 +181,14 @@ namespace LV2 {
         fe->m_func = umf->uri_to_id;
         fe->m_ok = (fe->m_func != 0);
       }
+
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::URIMap] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
       
     protected:
       
@@ -190,6 +200,12 @@ namespace LV2 {
 	  @param uri The URI that you want to map to a numeric ID.
       */
       uint32_t uri_to_id(const char* map, const char* uri) const {
+	if (LV2CPP_DEBUG) {
+	  uint32_t result = m_func(m_callback_data, map, uri);
+	  std::clog<<"[LV2::URIMap] uri_to_id(\""<<uri<<"\") -> "
+		   <<result<<std::endl;
+	  return result;
+	}
 	return m_func(m_callback_data, map, uri);
       }
     

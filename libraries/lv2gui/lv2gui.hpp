@@ -40,6 +40,8 @@
 #include <lv2_osc.h>
 #include <lv2types.hpp>
 
+#include <debug.hpp>
+
 
 namespace LV2 {
 
@@ -122,7 +124,14 @@ protected:
 	I<Derived>* e = static_cast<I<Derived>*>(d);
 	e->m_ok = true;
       }
-      
+
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::NoUserResize] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
     };
     
   };
@@ -159,6 +168,14 @@ protected:
 	e->m_ok = true;
       }
     
+      bool check_ok() {
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"    [LV2::FixedSize] Validation "
+		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	}
+	return this->m_ok;
+      }
+      
     };
     
   };
@@ -198,6 +215,13 @@ protected:
 	  e->m_host_support = (e->m_hdesc != 0);
 	}
 	
+        bool check_ok() {
+	  if (LV2CPP_DEBUG) {
+	    std::clog<<"    [LV2::Presets] Validation "
+		     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+	  }
+	  return this->m_ok;
+	}
 	
 	/** This is called by the host to let the GUI know that a new 
 	    preset has been added or renamed.
@@ -252,18 +276,37 @@ protected:
 	/** You can call this to request that the host changes the current 
 	    preset to @c preset. */
 	void change_preset(uint32_t preset) {
-	  if (m_hdesc)
+	  if (m_hdesc) {
+	    if (LV2CPP_DEBUG) {
+	      std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
+		       <<std::endl;
+	    }
 	    m_hdesc->change_preset(static_cast<Derived*>(this)->controller(), 
 				   preset);
+	  }
+	  else if (LV2CPP_DEBUG) {
+	    std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
+		     <<" --- Function not provided by host!"<<std::endl;
+	  }
 	}
 	
 	/** You can call this to request that the host saves the current state
 	    of the plugin instance to a preset with the given number and name.
 	*/
 	void save_preset(uint32_t preset, char const* name) {
-	  if (m_hdesc)
+	  if (m_hdesc) {
+	    if (LV2CPP_DEBUG) {
+	      std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
+		       <<name<<"\")"<<std::endl;
+	    }
 	    m_hdesc->save_preset(static_cast<Derived*>(this)->controller(), 
 				 preset, name);
+	  }
+	  else if (LV2CPP_DEBUG) {
+	    std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
+		     <<name<<"\")"
+		     <<" --- Function not provided by host!"<<std::endl;
+	  }
 	}
       
         /** Returns @c true if the host supports the Preset feature, @c false
@@ -277,20 +320,36 @@ protected:
 	static void _preset_added(LV2UI_Handle gui, 
 				   uint32_t     number, 
 				   char const*  name) {
+	  if (LV2CPP_DEBUG) {
+	    std::clog<<"[LV2::Presets] Host called preset_added("
+		     <<number<<", \""<<name<<"\")."<<std::endl;
+	  }
 	  static_cast<Derived*>(gui)->preset_added(number, name);
 	}
 	
 	static void _preset_removed(LV2UI_Handle gui, 
 				     uint32_t     number) {
+	  if (LV2CPP_DEBUG) {
+	    std::clog<<"[LV2::Presets] Host called preset_removed("
+		     <<number<<")."<<std::endl;
+	  }
 	  static_cast<Derived*>(gui)->preset_removed(number);
 	}
 	
 	static void _presets_cleared(LV2UI_Handle gui) {
+	  if (LV2CPP_DEBUG) {
+	    std::clog<<"[LV2::Presets] Host called presets_cleared()."
+		     <<std::endl;
+	  }
 	  static_cast<Derived*>(gui)->presets_cleared();
 	}
 	
 	static void _current_preset_changed(LV2UI_Handle gui, 
 					     uint32_t     number) {
+	  if (LV2CPP_DEBUG) {
+	    std::clog<<"[LV2::Presets] Host called current_preset_changed("
+		     <<number<<")."<<std::endl;
+	  }
 	  static_cast<Derived*>(gui)->current_preset_changed(number);
 	}
 	
@@ -335,6 +394,24 @@ protected:
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 	m_event_buffer_format = d->
 	  uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
+	if (LV2CPP_DEBUG) {
+	  if (m_midi_type != 0) {
+	    std::clog<<"    [LV2::WriteMIDI] Host does not map (\""
+		     <<LV2_EVENT_URI
+		     <<"\", \"http://lv2plug.in/ns/ext/midi#MidiEvent\") "
+		     <<"to any valid ID.\n";
+	  }
+	  if (m_event_buffer_format != 0) {
+	    std::clog<<"    [LV2::WriteMIDI] Host does not map (\""
+		     <<LV2_UI_URI
+		     <<"\", \"http://lv2plug.in/ns/extensions/ui#Events\") "
+		     <<"to any valid ID.\n";
+	  }
+	  if (!Required || (m_midi_type && m_event_buffer_format))
+	    std::clog<<"    [LV2::WriteMIDI] Validation succeeded."<<std::endl;
+	  else
+	    std::clog<<"    [LV2::WriteMIDI] Validation failed."<<std::endl;
+	}
 	return !Required || (m_midi_type && m_event_buffer_format);
       }
       
@@ -351,8 +428,25 @@ protected:
 		     support MIDI events).
       */
       bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
-	if (m_midi_type == 0)
+	
+	if (LV2CPP_DEBUG) {
+	  std::clog<<"[LV2::WriteMIDI] write_midi("<<port<<", "<<size
+		   <<", \"";
+	  for (uint32_t i = 0; i < size; ++i) {
+	    if (i != 0)
+	      std::clog<<' ';
+	    std::clog<<std::hex<<std::setw(2)<<std::setfill('0')
+		     <<static_cast<unsigned>(data[i]);
+	  }
+	  std::clog<<"\") -> ";
+	}
+	
+	if (m_midi_type == 0) {
+	  if (LV2CPP_DEBUG)
+	    std::clog<<"false (Host does not support MIDI writing)"<<std::endl;
 	  return false;
+	}
+	
 	LV2_Event_Buffer* buffer;
 	if (size <= 4)
 	  buffer = m_buffer;
@@ -367,6 +461,9 @@ protected:
 		m_event_buffer_format, m_buffer);
 	if (size > 4)
 	  std::free(buffer);
+	
+	if (LV2CPP_DEBUG)
+	  std::clog<<"true"<<std::endl;
 	return true;
       }
       
@@ -579,17 +676,37 @@ protected:
       s_features = features;
       s_bundle_path = bundle_path;
       
+      // write some debug information
+      if (LV2CPP_DEBUG) {
+	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n"
+		 <<"  Plugin URI:      \""<<plugin_uri<<"\"\n"
+		 <<"  Bundle path:     \""<<bundle_path<<"\"\n"
+		 <<"  UI Features:\n";
+	Feature const* const* iter;
+	for (iter = features; *iter; ++iter)
+	  std::clog<<"    \""<<(*iter)->URI<<"\"\n";
+      }
+      
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
+      if (LV2CPP_DEBUG)
+	std::clog<<"  Initialising Gtkmm internals...\n";
       Gtk::Main::init_gtkmm_internals();
       
       // create the GUI object
+      if (LV2CPP_DEBUG)
+	std::clog<<"  Creating widget..."<<std::endl;
       Derived* t = new Derived(plugin_uri);
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
       
       // check that everything is OK
-      if (t->check_ok())
+      std::clog<<"  Validating...\n";
+      if (t->check_ok()) {
+	std::clog<<"  Done!"<<std::endl;
 	return reinterpret_cast<LV2UI_Handle>(t);
+      }
+      
+      std::clog<<"  Validation failed!"<<std::endl;
       delete t;
       return 0;
     }

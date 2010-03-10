@@ -13,6 +13,7 @@ liblv2-plugin_a_SOURCES = lv2plugin.cpp
 liblv2-plugin_a_HEADERS = \
 	lv2plugin.hpp \
 	lv2synth.hpp \
+	../../headers/debug.hpp \
 	../../headers/lv2.h \
 	../../headers/lv2_event.h \
 	../../headers/lv2_event_helpers.h \
