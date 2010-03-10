@@ -29,7 +29,7 @@
 #include <map>
 #include <string>
 
-#include "debug.hpp"
+#include <lv2cxx_common/debug.hpp>
 
 
 namespace LV2 {

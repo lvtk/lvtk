@@ -2,7 +2,7 @@
  *
  * Preset management extension for LV2 UIs
  *
- * Copyright (C) 2007-2008 Lars Luthman <lars.luthman@gmail.com>
+ * Copyright (C) 2007-2010 Lars Luthman <lars.luthman@gmail.com>
  * 
  * This header is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,7 +24,11 @@
 #ifndef LV2_UI_PRESETS_H
 #define LV2_UI_PRESETS_H
 
-#include <lv2_ui.h>
+/* Modification for lv2-c++-tools - make sure our version of lv2_ui.h
+   is included. 
+     -- Lars Luthman <lars.luthman@gmail.com> */
+#include <lv2cxx_common/lv2_ui.h>
+//#include <lv2_ui.h>
 
 /** This is a LV2 UI Feature (not a LV2 Feature) that allows a LV2 UI
     host to tell a plugin UI about existing presets for the plugin, and

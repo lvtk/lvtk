@@ -161,7 +161,12 @@
 #ifndef LV2_UI_H
 #define LV2_UI_H
 
-#include <lv2.h>
+
+/* Modification for lv2-c++-tools - make sure our version of lv2.h
+   is included. 
+     -- Lars Luthman <lars.luthman@gmail.com> */
+#include <lv2cxx_common/lv2.h>
+//#include <lv2.h>
 
 #define LV2_UI_URI "http://lv2plug.in/ns/extensions/ui"
 

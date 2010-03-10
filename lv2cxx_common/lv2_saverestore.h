@@ -24,7 +24,11 @@
 #ifndef LV2_SAVERESTORE
 #define LV2_SAVERESTORE
 
-#include <lv2.h>
+/* Modification for lv2-c++-tools - make sure our version of lv2_event.h
+   is included. 
+     -- Lars Luthman <lars.luthman@gmail.com> */
+#include <lv2cxx_common/lv2.h>
+//#include <lv2.h>
 
 #define LV2_SAVERESTORE_URI "http://ll-plugins.nongnu.org/lv2/ext/saverestore"
 

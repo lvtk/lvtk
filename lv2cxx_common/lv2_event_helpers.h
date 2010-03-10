@@ -2,6 +2,8 @@
  *
  * Copyright (C) 2008 Dave Robillard <dave@drobilla.net>
  *
+ * Very small modifications by Lars Luthman 2010 for lv2-c++-tools.
+ *
  * This header is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation; either version 2 of the License, or
@@ -26,7 +28,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <lv2_event.h>
+/* Modification for lv2-c++-tools - make sure our version of lv2_event.h
+   is included. 
+     -- Lars Luthman <lars.luthman@gmail.com> */
+#include <lv2cxx_common/lv2_event.h>
+//#include <lv2_event.h>
 
 /** @file
  * This header defines some helper functions for the the LV2 events extension

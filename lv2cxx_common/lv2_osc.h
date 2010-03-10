@@ -1,7 +1,7 @@
 /* LV2 OSC Messages Extension
  * Copyright (C) 2007 Dave Robillard <dave@drobilla.net>
  * 
- * Modified 2008 by Lars Luthman
+ * Modified 2008-2010 by Lars Luthman
  * 
  * This header is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,7 +23,12 @@
 
 #include <stdarg.h>
 #include <stdint.h>
-#include <lv2_event_helpers.h>
+
+/* Modification for lv2-c++-tools - make sure our version of lv2_event_helpers.h
+   is included. 
+     -- Lars Luthman <lars.luthman@gmail.com> */
+#include <lv2cxx_common/lv2_event_helpers.h>
+//#include <lv2_event_helpers.h>
 
 /** @file
  * This is an LV2 event type specification for OSC events.

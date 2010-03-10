@@ -677,7 +677,11 @@ protected:
       
       // write some debug information
       if (LV2CXX_DEBUG) {
-	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n"
+	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n\n"
+		 <<"  Note that this GUI is using a deprecated LV2 extension\n"
+		 <<"  that may not work correctly. If you are the author of\n"
+		 <<"  this GUI, please see the webpage\n"
+		 <<"  http://ll-plugins.nongnu.org/lv2/ext/redirect/ui/ .\n\n"
 		 <<"  Plugin URI:      \""<<plugin_uri<<"\"\n"
 		 <<"  Bundle path:     \""<<bundle_path<<"\"\n"
 		 <<"  UI Features:\n";
