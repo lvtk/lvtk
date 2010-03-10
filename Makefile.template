@@ -359,13 +359,13 @@ install-manuals: $(MANUALS)
 install-pcfiles: $(PCFILES)
 	$(if $(PCFILES),mkdir -p $(DESTDIR)/$(libdir)/pkgconfig)
 	$(if $(PCFILES),@echo Installing pkg-config-files...)
-	@$(foreach pcf,$(PCFILES),echo PACKAGE_NAME = $(PACKAGE_NAME) > $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
-	@$(foreach pcf,$(PCFILES),echo PACKAGE_VERSION = $(PACKAGE_VERSION) >> $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
-	@$(foreach pcf,$(PCFILES),echo libdir = $(libdir) >> $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
-	@$(foreach pcf,$(PCFILES),echo pkglibdir = $(pkglibdir) >> $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
-	@$(foreach pcf,$(PCFILES),echo includedir = $(includedir) >> $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
-	@$(foreach pcf,$(PCFILES),echo pkgincludedir = $(pkgincludedir) >> $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
-	@$(foreach pcf,$(PCFILES),cat $(pcf) >> $(DESTDIR)/$(libdir)/pkgconfig/$(pcf) &&) true
+	@$(foreach pcf,$(PCFILES),echo PACKAGE_NAME = $(PACKAGE_NAME) > $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
+	@$(foreach pcf,$(PCFILES),echo PACKAGE_VERSION = $(PACKAGE_VERSION) >> $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
+	@$(foreach pcf,$(PCFILES),echo libdir = $(libdir) >> $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
+	@$(foreach pcf,$(PCFILES),echo pkglibdir = $(pkglibdir) >> $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
+	@$(foreach pcf,$(PCFILES),echo includedir = $(includedir) >> $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
+	@$(foreach pcf,$(PCFILES),echo pkgincludedir = $(pkgincludedir) >> $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
+	@$(foreach pcf,$(PCFILES),cat $(pcf) >> $(DESTDIR)/$(libdir)/pkgconfig/`basename $(pcf)` &&) true
 
 install-datapacks: $(patsubst %,install-%,$(subst .,_,$(DATAPACKS)))
 
