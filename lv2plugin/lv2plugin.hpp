@@ -30,13 +30,13 @@
 #include <string>
 #include <vector>
 
-#include "debug.hpp"
-#include <lv2.h>
-#include <lv2_uri_map.h>
-#include <lv2_saverestore.h>
-#include <lv2_event.h>
-#include <lv2_contexts.h>
-#include <lv2types.hpp>
+#include <lv2cxx_common/debug.hpp>
+#include <lv2cxx_common/lv2.h>
+#include <lv2cxx_common/lv2_uri_map.h>
+#include <lv2cxx_common/lv2_saverestore.h>
+#include <lv2cxx_common/lv2_event.h>
+#include <lv2cxx_common/lv2_contexts.h>
+#include <lv2cxx_common/lv2types.hpp>
 
 
 /** @mainpage liblv2-plugin and liblv2-gui - API documentation

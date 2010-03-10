@@ -6,50 +6,55 @@ PKG_DEPS = \
 
 ARCHIVES = liblv2-plugin.a liblv2-gui.a
 PROGRAMS = lv2peg
-DATAPACKS = lv2soname
+DATAPACKS = lv2soname common_headers
+
+# Internal headers that should not be included by user code.
+common_headers_FILES = \
+	debug.hpp \
+	lv2.h \
+	lv2_event.h \
+	lv2_event_helpers.h \
+	lv2_osc.h \
+	lv2_uri_map.h \
+	lv2_saverestore.h \
+	lv2_contexts.h \
+	lv2types.hpp \
+	lv2_ui.h \
+	lv2_ui_presets.h
+common_headers_SOURCEDIR = lv2cxx_common
+common_headers_INSTALLDIR = $(pkgincludedir)/lv2cxx_common
 
 # The static plugin library with headers
 liblv2-plugin_a_SOURCES = lv2plugin.cpp
 liblv2-plugin_a_HEADERS = \
 	lv2plugin.hpp \
-	lv2synth.hpp \
-	../../headers/debug.hpp \
-	../../headers/lv2.h \
-	../../headers/lv2_event.h \
-	../../headers/lv2_event_helpers.h \
-	../../headers/lv2_osc.h \
-	../../headers/lv2_uri_map.h \
-	../../headers/lv2_saverestore.h \
-	../../headers/lv2_contexts.h \
-	../../headers/lv2types.hpp
-liblv2-plugin_a_CFLAGS = -Iheaders -Ilibraries/lv2plugin
-liblv2-plugin_a_SOURCEDIR = libraries/lv2plugin
+	lv2synth.hpp
+liblv2-plugin_a_CFLAGS = -Ilibraries/lv2plugin -I. -Ilv2cxx_common
+liblv2-plugin_a_SOURCEDIR = lv2plugin
 liblv2-plugin_a_INSTALLDIR = $(libdir)
 
 # The static GUI library with headers
 liblv2-gui_a_SOURCES = lv2gui.cpp
 liblv2-gui_a_HEADERS = \
-	lv2gui.hpp \
-	../../headers/lv2_ui.h \
-	../../headers/lv2_ui_presets.h
-liblv2-gui_a_CFLAGS = `pkg-config --cflags gtkmm-2.4` -Iheaders
-liblv2-gui_a_SOURCEDIR = libraries/lv2gui
+	lv2gui.hpp
+liblv2-gui_a_CFLAGS = `pkg-config --cflags gtkmm-2.4` -I. -Ilv2cxx_common
+liblv2-gui_a_SOURCEDIR = lv2gui
 liblv2-gui_a_INSTALLDIR = $(libdir)
 
 # lv2peg
 lv2peg_SOURCES = lv2peg.cpp
 lv2peg_CFLAGS = -DVERSION=\"$(PACKAGE_VERSION)\" `pkg-config --cflags redland`
 lv2peg_LDFLAGS = `pkg-config --libs redland`
-lv2peg_SOURCEDIR = programs/lv2peg
+lv2peg_SOURCEDIR = lv2peg
 
 # lv2soname
 lv2soname_FILES = lv2soname
-lv2soname_SOURCEDIR = programs/lv2soname
+lv2soname_SOURCEDIR = lv2soname
 lv2soname_INSTALLDIR = $(bindir)
 
 # extra files
 DOCS = COPYING AUTHORS README ChangeLog
-PCFILES = lv2-plugin.pc lv2-gui.pc
+PCFILES = lv2plugin/lv2-plugin.pc lv2gui/lv2-gui.pc
 EXTRA_DIST = Doxyfile
 
 

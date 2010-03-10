@@ -33,14 +33,13 @@
 #include <gtkmm/main.h>
 #include <gtkmm/widget.h>
 
-#include <lv2_ui.h>
-#include <lv2_ui_presets.h>
-#include <lv2_uri_map.h>
-#include <lv2_event_helpers.h>
-#include <lv2_osc.h>
-#include <lv2types.hpp>
-
-#include <debug.hpp>
+#include <lv2cxx_common/lv2_ui.h>
+#include <lv2cxx_common/lv2_ui_presets.h>
+#include <lv2cxx_common/lv2_uri_map.h>
+#include <lv2cxx_common/lv2_event_helpers.h>
+#include <lv2cxx_common/lv2_osc.h>
+#include <lv2cxx_common/lv2types.hpp>
+#include <lv2cxx_common/debug.hpp>
 
 
 namespace LV2 {

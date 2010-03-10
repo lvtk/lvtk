@@ -28,7 +28,7 @@
 #include <vector>
 
 #include <lv2plugin.hpp>
-#include <lv2_event_helpers.h>
+#include <lv2cxx_common/lv2_event_helpers.h>
 
 
 namespace LV2 {
