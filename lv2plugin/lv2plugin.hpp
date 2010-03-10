@@ -336,7 +336,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       s_features = features;
       s_bundle_path = bundle_path;
 
-      if (LV2CPP_DEBUG) {
+      if (LV2CXX_DEBUG) {
 	std::clog<<"[LV2::Plugin] Instantiating plugin...\n"
 		 <<"  Bundle path: "<<bundle_path<<"\n"
 		 <<"  Features: \n";
@@ -348,16 +348,16 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 
       Derived* t = new Derived(sample_rate);
       
-      if (LV2CPP_DEBUG)
+      if (LV2CXX_DEBUG)
 	std::clog<<"  Validating...\n";
       
       if (t->check_ok()) {
-	if (LV2CPP_DEBUG)
+	if (LV2CXX_DEBUG)
 	  std::clog<<"  Done!"<<std::endl;
 	return reinterpret_cast<LV2_Handle>(t);
       }
       
-      if (LV2CPP_DEBUG) {
+      if (LV2CXX_DEBUG) {
 	std::clog<<"  Failed!\n"
 		 <<"  Deleting object."<<std::endl;
       }
@@ -472,7 +472,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::FixedBufSize] Host set buffer size to "
 		   <<fe->m_buffer_size<<std::endl;
 	}
@@ -480,7 +480,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
 
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::FixedBufSize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -531,7 +531,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::FixedP2BufSize] Host set buffer size to "
 		   <<fe->m_buffer_size<<std::endl;
 	}
@@ -539,7 +539,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::FixedP2BufSize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -591,7 +591,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::SaveRestore] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -636,7 +636,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	  Static callback wrapper. */
       static char* _save(LV2_Handle h, 
 			 const char* directory, LV2SR_File*** files) {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"[LV2::SaveRestore] Host called save().\n"
 		   <<"  directory: \""<<directory<<"\""<<std::endl;
 	}
@@ -646,7 +646,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       /** @internal
 	  Static callback wrapper. */
       static char* _restore(LV2_Handle h, const LV2SR_File** files) {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"[LV2::SaveRestore] Host called restore().\n"
 		   <<"  Files:\n";
 	  for (LV2SR_File const** f = files; (*f) != 0; ++f)
@@ -695,7 +695,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::EventRef] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -766,7 +766,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::MsgContext] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -794,7 +794,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       /** @internal
 	  Static callback wrapper. */
       static bool _blocking_run(LV2_Handle h, uint8_t* outputs_written) {
-	if (LV2CPP_DEBUG)
+	if (LV2CXX_DEBUG)
 	  std::clog<<"[LV2::MsgContext] Host called blocking_run()."<<std::endl;
 	return reinterpret_cast<Derived*>(h)->blocking_run(outputs_written);
       }

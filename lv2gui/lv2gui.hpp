@@ -125,7 +125,7 @@ protected:
       }
 
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::NoUserResize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -168,7 +168,7 @@ protected:
       }
     
       bool check_ok() {
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"    [LV2::FixedSize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -215,7 +215,7 @@ protected:
 	}
 	
         bool check_ok() {
-	  if (LV2CPP_DEBUG) {
+	  if (LV2CXX_DEBUG) {
 	    std::clog<<"    [LV2::Presets] Validation "
 		     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	  }
@@ -276,14 +276,14 @@ protected:
 	    preset to @c preset. */
 	void change_preset(uint32_t preset) {
 	  if (m_hdesc) {
-	    if (LV2CPP_DEBUG) {
+	    if (LV2CXX_DEBUG) {
 	      std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
 		       <<std::endl;
 	    }
 	    m_hdesc->change_preset(static_cast<Derived*>(this)->controller(), 
 				   preset);
 	  }
-	  else if (LV2CPP_DEBUG) {
+	  else if (LV2CXX_DEBUG) {
 	    std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
 		     <<" --- Function not provided by host!"<<std::endl;
 	  }
@@ -294,14 +294,14 @@ protected:
 	*/
 	void save_preset(uint32_t preset, char const* name) {
 	  if (m_hdesc) {
-	    if (LV2CPP_DEBUG) {
+	    if (LV2CXX_DEBUG) {
 	      std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
 		       <<name<<"\")"<<std::endl;
 	    }
 	    m_hdesc->save_preset(static_cast<Derived*>(this)->controller(), 
 				 preset, name);
 	  }
-	  else if (LV2CPP_DEBUG) {
+	  else if (LV2CXX_DEBUG) {
 	    std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
 		     <<name<<"\")"
 		     <<" --- Function not provided by host!"<<std::endl;
@@ -319,7 +319,7 @@ protected:
 	static void _preset_added(LV2UI_Handle gui, 
 				   uint32_t     number, 
 				   char const*  name) {
-	  if (LV2CPP_DEBUG) {
+	  if (LV2CXX_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called preset_added("
 		     <<number<<", \""<<name<<"\")."<<std::endl;
 	  }
@@ -328,7 +328,7 @@ protected:
 	
 	static void _preset_removed(LV2UI_Handle gui, 
 				     uint32_t     number) {
-	  if (LV2CPP_DEBUG) {
+	  if (LV2CXX_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called preset_removed("
 		     <<number<<")."<<std::endl;
 	  }
@@ -336,7 +336,7 @@ protected:
 	}
 	
 	static void _presets_cleared(LV2UI_Handle gui) {
-	  if (LV2CPP_DEBUG) {
+	  if (LV2CXX_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called presets_cleared()."
 		     <<std::endl;
 	  }
@@ -345,7 +345,7 @@ protected:
 	
 	static void _current_preset_changed(LV2UI_Handle gui, 
 					     uint32_t     number) {
-	  if (LV2CPP_DEBUG) {
+	  if (LV2CXX_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called current_preset_changed("
 		     <<number<<")."<<std::endl;
 	  }
@@ -393,7 +393,7 @@ protected:
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 	m_event_buffer_format = d->
 	  uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  if (m_midi_type != 0) {
 	    std::clog<<"    [LV2::WriteMIDI] Host does not map (\""
 		     <<LV2_EVENT_URI
@@ -428,7 +428,7 @@ protected:
       */
       bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
 	
-	if (LV2CPP_DEBUG) {
+	if (LV2CXX_DEBUG) {
 	  std::clog<<"[LV2::WriteMIDI] write_midi("<<port<<", "<<size
 		   <<", \"";
 	  for (uint32_t i = 0; i < size; ++i) {
@@ -441,7 +441,7 @@ protected:
 	}
 	
 	if (m_midi_type == 0) {
-	  if (LV2CPP_DEBUG)
+	  if (LV2CXX_DEBUG)
 	    std::clog<<"false (Host does not support MIDI writing)"<<std::endl;
 	  return false;
 	}
@@ -461,7 +461,7 @@ protected:
 	if (size > 4)
 	  std::free(buffer);
 	
-	if (LV2CPP_DEBUG)
+	if (LV2CXX_DEBUG)
 	  std::clog<<"true"<<std::endl;
 	return true;
       }
@@ -676,7 +676,7 @@ protected:
       s_bundle_path = bundle_path;
       
       // write some debug information
-      if (LV2CPP_DEBUG) {
+      if (LV2CXX_DEBUG) {
 	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n"
 		 <<"  Plugin URI:      \""<<plugin_uri<<"\"\n"
 		 <<"  Bundle path:     \""<<bundle_path<<"\"\n"
@@ -688,12 +688,12 @@ protected:
       
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
-      if (LV2CPP_DEBUG)
+      if (LV2CXX_DEBUG)
 	std::clog<<"  Initialising Gtkmm internals...\n";
       Gtk::Main::init_gtkmm_internals();
       
       // create the GUI object
-      if (LV2CPP_DEBUG)
+      if (LV2CXX_DEBUG)
 	std::clog<<"  Creating widget..."<<std::endl;
       Derived* t = new Derived(plugin_uri);
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
