@@ -5,6 +5,7 @@ Before 1.2:
  [X] Deprecate lv2soname, ELF libraries can say themselves
      whether they can be unloaded or not
  [ ] Deprecate the old GUI extension
+ [ ] Add man pages for lv2peg and lv2soname
 
 Possibly before 1.2:
 
