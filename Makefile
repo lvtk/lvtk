@@ -19,7 +19,7 @@ common_headers_FILES = \
 	lv2_saverestore.h \
 	lv2_contexts.h \
 	lv2types.hpp \
-	lv2_ui.h \
+	lv2_ui_old.h \
 	lv2_ui_presets.h
 common_headers_SOURCEDIR = lv2cxx_common
 common_headers_INSTALLDIR = $(pkgincludedir)/lv2cxx_common

@@ -33,7 +33,7 @@
 #include <gtkmm/main.h>
 #include <gtkmm/widget.h>
 
-#include <lv2cxx_common/lv2_ui.h>
+#include <lv2cxx_common/lv2_ui_old.h>
 #include <lv2cxx_common/lv2_ui_presets.h>
 #include <lv2cxx_common/lv2_uri_map.h>
 #include <lv2cxx_common/lv2_event_helpers.h>

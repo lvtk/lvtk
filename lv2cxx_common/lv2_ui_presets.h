@@ -27,7 +27,7 @@
 /* Modification for lv2-c++-tools - make sure our version of lv2_ui.h
    is included. 
      -- Lars Luthman <lars.luthman@gmail.com> */
-#include <lv2cxx_common/lv2_ui.h>
+#include <lv2cxx_common/lv2_ui_old.h>
 //#include <lv2_ui.h>
 
 /** This is a LV2 UI Feature (not a LV2 Feature) that allows a LV2 UI
