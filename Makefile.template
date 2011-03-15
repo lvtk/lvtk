@@ -58,7 +58,7 @@ $$($(2)_CXXOBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)
 	$(CXX) -c -o $$@ -fPIC -DPIC $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.cpp,$$@))
 
 $$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
-	ar rcs $$@ $$^ $(LDFLAGS) $$($(2)_LDFLAGS)
+	ar rcs $$@ $$^
 
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
 	mkdir -p $(DESTDIR)/$(pkgincludedir)
