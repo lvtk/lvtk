@@ -480,3 +480,21 @@ internal-test-report:
 	  status=$$?; \
 	  echo $$status > $(TESTREPORT)/$$test/exit_status; \
 	done
+
+
+# RELEASE ANNOUNCEMENT
+export PACKAGE_DESCRIPTION
+release-mail:
+	@echo "$(PACKAGE_DISPLAY_NAME) $(PACKAGE_VERSION) has been released."
+	@echo ""
+	@echo "$$PACKAGE_DESCRIPTION"
+	@echo ""
+	@echo "Changes:"
+	@end=`grep -n -m 1 '^$$' ChangeLog | sed 's/:.*//'`; head -n $$(($$end - 1)) ChangeLog | tail -n +2 | sed 's/\t/ /g'
+	@echo ""
+	@echo "Tarball:"
+	@echo "GPG signature file:"
+	@echo ""
+	@echo "Webpage: $(PACKAGE_WEBPAGE)"
+	@echo "Bug tracker: $(PACKAGE_BUGTRACKER)"
+	@echo "Version control: $(PACKAGE_VC)"
