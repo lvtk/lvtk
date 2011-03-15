@@ -11,16 +11,18 @@ pkgdocdir = $(docdir)/$(PACKAGE_NAME)
 includedir = $(prefix)/include
 pkgincludedir = $(includedir)/$(PACKAGE_NAME)
 lv2plugindir = $(libdir)/lv2
+mandir = $(datadir)/man
 LV2PEG = lv2peg
 
 # Don't modify any variables below this line
+SHELL := /bin/bash
 UNAME = $(shell uname)
 
 
 all: really-all
 
 
-include Makefile.config
+include $(BUILDPREFIX)Makefile.config
 
 -include Makefile.deps
 
@@ -31,12 +33,13 @@ define ARCHIVE_template
 
 # variables
 $(2)_SRCPRF = $$(if $$($(2)_SOURCEDIR),$$($(2)_SOURCEDIR),.)
-$(2)_BLDPRF = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF1 = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF = $(BUILDPREFIX)$$($(2)_BLDPRF1)
 $(2)_FULLSOURCES = $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_SOURCES) $$($(2)_HEADERS))
 $(2)_CSOURCES = $$(filter %.c,$$($(2)_FULLSOURCES))
 $(2)_CXXSOURCES = $$(filter %.cpp,$$($(2)_FULLSOURCES))
-$(2)_COBJECTS = $$(subst .c,.o,$$($(2)_CSOURCES))
-$(2)_CXXOBJECTS = $$(subst .cpp,.o,$$($(2)_CXXSOURCES))
+$(2)_COBJECTS = $$(patsubst $$($(2)_SRCPRF)%,$$($(2)_BLDPRF)%,$$(subst .c,.o,$$($(2)_CSOURCES)))
+$(2)_CXXOBJECTS = $$(patsubst $$($(2)_SRCPRF)%,$$($(2)_BLDPRF)%,$$(subst .cpp,.o,$$($(2)_CXXSOURCES)))
 $(2)_OBJECTS = $$($(2)_COBJECTS) $$($(2)_CXXOBJECTS)
 ALL_OBJECTS += $$($(2)_OBJECTS)
 ALL_SOURCES += $$($(2)_FULLSOURCES)
@@ -46,14 +49,17 @@ $(2)_INSTDIR = $$(if $$($(2)_INSTALLDIR),$$($(2)_INSTALLDIR),$(libdir))
 ARCHIVES_NOINST += $$(if $$($(2)_INSTALLDIR),,$(1))
 
 # targets
-$$($(2)_COBJECTS): Makefile.config
-	$(CC) -c -o $$@ -fPIC -DPIC $(CFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_c_CFLAGS,$$(notdir $$@))) $$(subst .o,.c,$$@)
+$$($(2)_BUILDDIR):
+	mkdir -p "$$($(2)_BLDPRF)"
 
-$$($(2)_CXXOBJECTS): Makefile.config
-	$(CXX) -c -o $$@ -fPIC -DPIC $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$(subst .o,.cpp,$$@)
+$$($(2)_COBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	$(CC) -c -o $$@ -fPIC -DPIC $(CFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_c_CFLAGS,$$(notdir $$@))) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.c,$$@))
 
-$$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS)
-	ar rcs $$@ $$^ $$($(2)_LDFLAGS)
+$$($(2)_CXXOBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	$(CXX) -c -o $$@ -fPIC -DPIC $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.cpp,$$@))
+
+$$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	ar rcs $$@ $$^
 
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
 	mkdir -p $(DESTDIR)/$(pkgincludedir)
@@ -86,12 +92,13 @@ define LIBRARY_template
 $(2)_IFACE = $$(if $$($(2)_ABI),$$($(2)_ABI),0)
 $(2)_IFSFX = $$($(2)_IFACE).0.0
 $(2)_SRCPRF = $$(if $$($(2)_SOURCEDIR),$$($(2)_SOURCEDIR),.)
-$(2)_BLDPRF = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF1 = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF = $(BUILDPREFIX)$$($(2)_BLDPRF1)
 $(2)_FULLSOURCES = $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_SOURCES) $$($(2)_HEADERS))
 $(2)_CSOURCES = $$(filter %.c,$$($(2)_FULLSOURCES))
 $(2)_CXXSOURCES = $$(filter %.cpp,$$($(2)_FULLSOURCES))
-$(2)_COBJECTS = $$(subst .c,.o,$$($(2)_CSOURCES))
-$(2)_CXXOBJECTS = $$(subst .cpp,.o,$$($(2)_CXXSOURCES))
+$(2)_COBJECTS = $$(patsubst $$($(2)_SRCPRF)%,$$($(2)_BLDPRF)%,$$(subst .c,.o,$$($(2)_CSOURCES)))
+$(2)_CXXOBJECTS = $$(patsubst $$($(2)_SRCPRF)%,$$($(2)_BLDPRF)%,$$(subst .cpp,.o,$$($(2)_CXXSOURCES)))
 $(2)_OBJECTS = $$($(2)_COBJECTS) $$($(2)_CXXOBJECTS)
 $(2)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(notdir $$($(2)_LIBRARIES)))
 $(2)_LOCALLDFLAGS = $$(patsubst %,-L%,$$(sort $$(dir $$($(2)_LIBRARIES))))
@@ -99,18 +106,19 @@ ALL_OBJECTS += $$($(2)_OBJECTS)
 ALL_SOURCES += $$($(2)_FULLSOURCES)
 LIBRARIES_REAL += $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX)
 LIBRARIES_NOINST += $$(if $$($(2)_NOINST),$(2),)
+LIBRARY_DIRS := $$(LIBRARY_DIRS):$$($(2)_BLDPRF)
 ALL_LIBHEADER_INSTALLS += $$(if $$($(2)_HEADERS),install-$(2)-headers)
 $(2)_INSTDIR = $$(if $$($(2)_INSTALLDIR),$$($(2)_INSTALLDIR),$(libdir))
 
 # targets
-$$($(2)_COBJECTS): Makefile.config
-	$(CC) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $$($(2)_CFLAGS) $$(subst .o,.c,$$@)
+$$($(2)_BUILDDIR):
+	mkdir -p "$$($(2)_BLDPRF)"
 
-$$($(2)_CXXOBJECTS): Makefile.config
-	$(CXX) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$(subst .o,.cpp,$$@)
+$$($(2)_COBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	$(CC) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $$($(2)_CFLAGS) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.c,$$@))
 
-$$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
-	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).$$($(2)_IFACE)
+$$($(2)_CXXOBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	$(CXX) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.cpp,$$@))
 
 $$($(2)_BLDPRF)/$(1): $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX)
 	cd $$($(2)_BLDPRF) && ln -f -s $(1).$$($(2)_IFSFX) $(1)
@@ -130,14 +138,24 @@ $(foreach badlib, $(bad_libraries), $(eval \
 $(foreach lib,$(LIBRARIES),$(eval $(call LIBRARY_template,$(lib),$(subst .,_,$(lib)))))
 #END OF LIBRARIES
 
+$$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
+	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).$$($(2)_IFACE)
 
 # LV2 PLUGINS
+ifeq ($(UNAME),Darwin)
+LV2PLUGIN_LDFLAGS = -bundle
+LV2PLUGIN_CFLAGS = -fno-common
+else
+LV2PLUGIN_LDFLAGS = -shared -fPIC
+LV2PLUGIN_CFLAGS = -fPIC -DPIC
+endif
 
 define LV2_BUNDLE_template
 
 # variables
 $(2)_SRCPRF = $$(if $$($(2)_SOURCEDIR),$$($(2)_SOURCEDIR),.)
-$(2)_BLDPRF = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF1 = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF = $(BUILDPREFIX)$$($(2)_BLDPRF1)
 $(2)_FULLPEGFILES = $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_PEGFILES))
 $(2)_FULLDATA = $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_DATA))
 PROGRAMS += $$($(2)_PROGRAMS)
@@ -180,12 +198,13 @@ define PROGRAM_template
 
 # variables
 $(1)_SRCPRF = $$(if $$($(1)_SOURCEDIR),$$($(1)_SOURCEDIR),.)
-$(1)_BLDPRF = $$(if $$($(1)_BUILDDIR),$$($(1)_BUILDDIR),$$($(1)_SRCPRF))
+$(1)_BLDPRF1 = $$(if $$($(1)_BUILDDIR),$$($(1)_BUILDDIR),$$($(1)_SRCPRF))
+$(1)_BLDPRF = $(BUILDPREFIX)$$($(1)_BLDPRF1)
 $(1)_FULLSOURCES = $$(patsubst %,$$($(1)_SRCPRF)/%,$$($(1)_SOURCES) $$($(1)_HEADERS))
 $(1)_CSOURCES = $$(filter %.c,$$($(1)_FULLSOURCES))
 $(1)_CXXSOURCES = $$(filter %.cpp,$$($(1)_FULLSOURCES))
-$(1)_COBJECTS = $$(subst .c,.o,$$($(1)_CSOURCES))
-$(1)_CXXOBJECTS = $$(subst .cpp,.o,$$($(1)_CXXSOURCES))
+$(1)_COBJECTS = $$(patsubst $$($(1)_SRCPRF)%,$$($(1)_BLDPRF)%,$$(subst .c,.o,$$($(1)_CSOURCES)))
+$(1)_CXXOBJECTS = $$(patsubst $$($(1)_SRCPRF)%,$$($(1)_BLDPRF)%,$$(subst .cpp,.o,$$($(1)_CXXSOURCES)))
 $(1)_OBJECTS = $$($(1)_COBJECTS) $$($(1)_CXXOBJECTS)
 $(1)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(notdir $$($(1)_LIBRARIES)))
 $(1)_LOCALLDFLAGS = $$(patsubst %,-L%,$$(sort $$(dir $$($(1)_LIBRARIES)))) 
@@ -195,13 +214,16 @@ PROGRAMS_REAL += $$($(1)_BLDPRF)/$(1)
 PROGRAMS_NOINST += $$(if $$($(1)_NOINST),$(1),)
 
 # targets
-$$($(1)_COBJECTS): Makefile.config
-	$(CC) -c -o $$@ $(CFLAGS) $$($(1)_CFLAGS) $$($$(patsubst %.o,%_c_CFLAGS,$$(notdir $$@))) $$(subst .o,.c,$$@)
+$$($(1)_BUILDDIR):
+	mkdir -p "$$($(1)_BLDPRF)"
 
-$$($(1)_CXXOBJECTS): Makefile.config
-	$(CXX) -c -o $$@ $(CFLAGS) $(CXXFLAGS) $$($(1)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$(subst .o,.cpp,$$@)
+$$($(1)_COBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(1)_BUILDDIR)), $$($(1)_BUILDDIR))
+	$(CC) -c -o $$@ $(CFLAGS) $$($(1)_CFLAGS) $$($$(patsubst %.o,%_c_CFLAGS,$$(notdir $$@))) $$($(1)_CFLAGS) $$(patsubst $$($(1)_BLDPRF)%,$$($(1)_SRCPRF)%,$$(subst .o,.c,$$@))
 
-$$($(1)_BLDPRF)/$(1): $$($(1)_OBJECTS) $$($(1)_LIBRARIES) $$($(1)_ARCHIVES)
+$$($(1)_CXXOBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(1)_BUILDDIR)), $$($(1)_BUILDDIR))
+	$(CXX) -c -o $$@ $(CFLAGS) $(CXXFLAGS) $$($(1)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$($(1)_CFLAGS) $$(patsubst $$($(1)_BLDPRF)%,$$($(1)_SRCPRF)%,$$(subst .o,.cpp,$$@))
+
+$$($(1)_BLDPRF)/$(1): $$($(1)_OBJECTS) $$($(1)_LIBRARIES) $$($(1)_ARCHIVES) $$(filter-out $$(wildcard $$($(1)_BUILDDIR)), $$($(1)_BUILDDIR))
 	$(CXX) $$($(1)_OBJECTS) $$($(1)_ARCHIVES) $$($(1)_LOCALLDFLAGS) $$($(1)_LOCALLIBRARIES) $$($(1)_LDFLAGS) $(LDFLAGS) -o $$@
 
 install-$(1)-headers: $$(patsubst %,$$($(1)_SRCPRF)/%,$$($(1)_HEADERS))
@@ -228,12 +250,13 @@ define MODULE_template
 
 # variables
 $(2)_SRCPRF = $$(if $$($(2)_SOURCEDIR),$$($(2)_SOURCEDIR),.)
-$(2)_BLDPRF = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF1 = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
+$(2)_BLDPRF = $(BUILDPREFIX)$$($(2)_BLDPRF1)
 $(2)_FULLSOURCES = $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_SOURCES) $$($(2)_HEADERS))
 $(2)_CSOURCES = $$(filter %.c,$$($(2)_FULLSOURCES))
 $(2)_CXXSOURCES = $$(filter %.cpp,$$($(2)_FULLSOURCES))
-$(2)_COBJECTS = $$(subst .c,.o,$$($(2)_CSOURCES))
-$(2)_CXXOBJECTS = $$(subst .cpp,.o,$$($(2)_CXXSOURCES))
+$(2)_COBJECTS = $$(patsubst $$($(2)_SRCPRF)%,$$($(2)_BLDPRF)%,$$(subst .c,.o,$$($(2)_CSOURCES)))
+$(2)_CXXOBJECTS = $$(patsubst $$($(2)_SRCPRF)%,$$($(2)_BLDPRF)%,$$(subst .cpp,.o,$$($(2)_CXXSOURCES)))
 $(2)_OBJECTS = $$($(2)_COBJECTS) $$($(2)_CXXOBJECTS)
 $(2)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(notdir $$($(2)_LIBRARIES)))
 $(2)_LOCALLDFLAGS = $$(patsubst %,-L%,$$(sort $$(dir $$($(2)_LIBRARIES))))
@@ -244,13 +267,16 @@ MODULES_REAL += $$($(2)_BLDPRF)/$(1)
 MODULES_NOINST += $$(if $$($(2)_NOINST),$(2),)
 
 # targets
-$$($(2)_COBJECTS): Makefile.config
-	$(CC) -c -o $$@ $(MODULE_CFLAGS) $(CFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_c_CFLAGS,$$(notdir $$@))) $$(subst .o,.c,$$@)
+$$($(2)_BUILDDIR):
+	mkdir -p "$$($(2)_BLDPRF)"
 
-$$($(2)_CXXOBJECTS): Makefile.config
-	$(CXX) -c -o $$@ $(MODULE_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$(subst .o,.cpp,$$@)
+$$($(2)_COBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	$(CC) -c -o $$@ $(MODULE_CFLAGS) $(CFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_c_CFLAGS,$$(notdir $$@))) $$($(2)_CFLAGS) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.c,$$@))
 
-$$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$($(2)_LIBRARIES) $$($(2)_ARCHIVES)
+$$($(2)_CXXOBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
+	$(CXX) -c -o $$@ $(MODULE_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$($$(patsubst %.o,%_cpp_CFLAGS,$$(notdir $$@))) $$($(2)_CFLAGS) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.cpp,$$@))
+
+$$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$($(2)_LIBRARIES) $$($(2)_ARCHIVES) $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
 	$(CXX) $(MODULE_LDFLAGS) $$($(2)_OBJECTS) $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $$($(2)_ARCHIVES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@
 
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
@@ -289,14 +315,14 @@ really-all: $(if $(PKG_DEPS),check-pkg-deps) $(ARCHIVES_REAL) $(LIBRARIES_REAL) 
 
 
 # DEPENDENCY COMPUTATION
-DEP_SOURCES = $(filter %.c,$(ALL_SOURCES)) $(filter %.cpp,$(ALL_SOURCES))
-DEP_FILES = $(patsubst %,%.dep,$(DEP_SOURCES))
-DEPDIRS = $(shell for i in . */ */*/ */*/*/ */*/*/*/; do echo -n " -I$$i"; done)
+DEP_SOURCES := $(filter %.c,$(ALL_SOURCES)) $(filter %.cpp,$(ALL_SOURCES))
+DEP_FILES := $(patsubst %,%.dep,$(DEP_SOURCES))
+DEPDIRS := $(shell for i in . */ */*/ */*/*/ */*/*/*/; do echo -n " -I\"$$i\""; done)
 %.dep: %
 	@echo -n Generating dependencies for $<...
 	@echo -n .
-	@$(CC) -MM $(DEPDIRS) $(PKG_DEPDIRS) -MT $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$<)) -o $@ $<
-	@$(CC) -MM $(DEPDIRS) $(PKG_DEPDIRS) -MT $@ -o $@.dep $<
+	@$(CXX) $(CXXFLAGS) -MM $(DEPDIRS) $(PKG_DEPDIRS) -MT $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$<)) -o $@ $<
+	@$(CXX) $(CXXFLAGS) -MM $(DEPDIRS) $(PKG_DEPDIRS) -MT $@ -o $@.dep $<
 	@cat $@.dep >> $@
 	@rm -f $@.dep
 	@cat $@ | sed -e 's/ *\\$$//' -e 's/^[^:]*: *//' -e 's/^ *//' -e 's/ /\n/' | sed -e 's/[^ ]$$/&:/' > $@.alltgts
@@ -316,20 +342,20 @@ clean:
 
 
 # GLOBAL INSTALL
-ARCHIVES_INST = $(filter-out $(ARCHIVES_NOINST),$(ARCHIVES))
+ARCHIVES_INST := $(filter-out $(ARCHIVES_NOINST),$(ARCHIVES))
 install-archives: $(patsubst %,install-%,$(subst .,_,$(ARCHIVES_INST)))
 
-PROGRAMS_INST = $(filter-out $(PROGRAMS_NOINST),$(PROGRAMS))
+PROGRAMS_INST := $(filter-out $(PROGRAMS_NOINST),$(PROGRAMS))
 install-programs: $(patsubst %,install-%,$(subst .,_,$(PROGRAMS_INST)))
 
-MODULES_INST = $(filter-out $(MODULES_NOINST),$(MODULES))
+MODULES_INST := $(filter-out $(MODULES_NOINST),$(MODULES))
 install-modules: $(patsubst %,install-%,$(subst .,_,$(MODULES_INST)))
 
-LIBRARIES_INST = $(filter-out $(LIBRARIES_NOINST),$(LIBRARIES))
+LIBRARIES_INST := $(filter-out $(LIBRARIES_NOINST),$(LIBRARIES))
 install-libraries: $(patsubst %,install-%,$(subst .,_,$(LIBRARIES_INST)))
 	$(if $(LIBRARIES),/sbin/ldconfig -n $(libdir))
 
-LV2_BUNDLES_INST = $(filter-out $(LV2_BUNDLES_NOINST),$(LV2_BUNDLES))
+LV2_BUNDLES_INST := $(filter-out $(LV2_BUNDLES_NOINST),$(LV2_BUNDLES))
 install-lv2-plugins: $(patsubst %,install-%,$(subst .,_,$(LV2_BUNDLES_INST)))
 
 install-data: $(DATA)
@@ -339,6 +365,9 @@ install-data: $(DATA)
 install-docs: $(DOCS)
 	$(if $(DOCS),mkdir -p $(DESTDIR)/$(pkgdocdir))
 	$(if $(DOCS),cp $(DOCS) $(DESTDIR)/$(pkgdocdir))
+
+install-manuals: $(MANUALS)
+	$(foreach manpage,$(MANUALS),man_section=`echo $(manpage) | sed 's/.*\.\([0-9]\)/\1/'`; mkdir -p $(DESTDIR)/$(mandir)/man$$man_section; gzip -c $(manpage) > $(DESTDIR)/$(mandir)/man$$man_section/`basename $(manpage)`.gz)
 
 install-pcfiles: $(PCFILES)
 	$(if $(PCFILES),mkdir -p $(DESTDIR)/$(libdir)/pkgconfig)
@@ -353,13 +382,13 @@ install-pcfiles: $(PCFILES)
 
 install-datapacks: $(patsubst %,install-%,$(subst .,_,$(DATAPACKS)))
 
-install: install-archives install-libraries install-modules install-programs install-lv2-plugins install-data install-docs install-pcfiles install-datapacks
+install: install-archives install-libraries install-modules install-programs install-lv2-plugins install-data install-docs install-manuals install-pcfiles install-datapacks
 
 
 # DISTRIBUTION
 THIS_FILE = $(patsubst ./%,%,$(firstword $(filter %/Makefile.template,$(patsubst %,./%,$(MAKEFILE_LIST)))))
 CONFIGURE_SCRIPT = $(if $(__path_to_configure),$(__path_to_configure),configure)
-ALL_DIST_FILES = $(sort $(ALL_SOURCES) $(DATA) $(DOCS) $(PCFILES) $(EXTRA_DIST) $(ALL_DATA))
+ALL_DIST_FILES = $(sort $(ALL_SOURCES) $(DATA) $(DOCS) $(PCFILES) $(MANUALS) $(EXTRA_DIST) $(ALL_DATA))
 dist: 
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
@@ -382,11 +411,6 @@ dist-test: dist
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	@echo Distribution test succeded!
 
-# PKG-CONFIG DEPENDENCY CHECK
-PKG_DEPDIRS = `pkg-config --cflags $(filter-out =%,$(subst >, ,$(PKG_DEPS))) 2> /dev/null`
-check-pkg-deps:
-	@$(foreach pkg, $(PKG_DEPS), if pkg-config --atleast-version $(sort $(subst >=, ,$(pkg))) ; then true; else echo "*** You don't have $(pkg), which you need in order to build this software."; false; fi && ) true
-
 
 # DEBIAN PACKAGES
 deb-dir: debian dist
@@ -404,3 +428,80 @@ deb-dir: debian dist
 deb: deb-dir
 	mv -f deb/*.deb .
 	rm -rf deb
+
+
+# PKG-CONFIG DEPENDENCY CHECK
+PKG_NAMES = $(filter-out =%,$(subst >, ,$(PKG_DEPS))) 
+PKG_DEPDIRS = `pkg-config --cflags $(PKG_NAMES) 2> /dev/null`
+check-pkg-deps:
+	@$(foreach pkg, $(PKG_DEPS), if pkg-config --atleast-version $(sort $(subst >=, ,$(pkg))) ; then true; else echo "*** You don't have $(pkg), which you need in order to build this software."; false; fi && ) true
+
+
+# TEST REPORT GENERATION
+# We want a report of the clean test builds as well, so tests are built
+# and run in a separate dist directory.
+KERNEL_NAME := $(shell uname -s | sed 's/"/\\"/g')
+KERNEL_RELEASE := $(shell uname -r | sed 's/"/\\"/g')
+MACHINE := $(shell uname -m | sed 's/"/\\"/g')
+OPERATING_SYSTEM := $(shell uname -o | sed 's/"/\\"/g')
+UNIQUE_TOKEN := $(shell for i in 1 2 3 4; do printf '%04x' $$RANDOM; done)
+TESTREPORT := $(PACKAGE_NAME)-$(PACKAGE_VERSION)-test-$(UNIQUE_TOKEN)
+
+test-report:
+	rm -rf $(TESTREPORT)
+	rm -rf tmp-test-dist
+	$(MAKE) DIST_NAME=tmp-test-dist dist-dir
+	cp Makefile.config tmp-test-dist
+	@echo " + Compiling tests..."
+	@cd tmp-test-dist; $(MAKE) -k all-tests > build.stdout 2> >(tee build.stderr >&2); status=$$?; echo $$status > build.status; if [ $$status != 0 ]; then echo " *** Failed to compile some tests, will continue anyway."; else echo " + Done compiling."; fi
+	@echo " + Running tests..."
+	@cd tmp-test-dist; $(MAKE) UNIQUE_TOKEN=$(UNIQUE_TOKEN) internal-test-report
+	@echo " + Done testing."
+	cd tmp-test-dist; cp build.stdout build.stderr build.status $(TESTREPORT)
+	mv tmp-test-dist/$(TESTREPORT) $(TESTREPORT)
+	tar cj $(TESTREPORT) > $(TESTREPORT).tar.bz2
+	rm -rf tmp-test-dist
+	rm -rf $(TESTREPORT)
+
+all-tests: $(TESTS)
+
+internal-test-report:
+	@rm -f $(TESTREPORT)
+	@mkdir $(TESTREPORT)
+	@echo "package = \"$(PACKAGE_NAME)\"" > $(TESTREPORT)/info
+	@echo "version = \"$(PACKAGE_VERSION)\"" >> $(TESTREPORT)/info
+	@echo "unique_token = \"$(UNIQUE_TOKEN)\"" >> $(TESTREPORT)/info
+	@echo >> $(TESTREPORT)/info
+	@echo "kernel = \"$(KERNEL_NAME)\"" >> $(TESTREPORT)/info
+	@echo "kernel_release = \"$(KERNEL_RELEASE)\"" >> $(TESTREPORT)/info
+	@echo "machine = \"$(MACHINE)\"" >> $(TESTREPORT)/info
+	@echo "operating_system = \"$(OPERATING_SYSTEM)\"" >> $(TESTREPORT)/info
+	@echo "c_compiler = \"$(shell $(CC) --version | head -n 1)\"" >> $(TESTREPORT)/info
+	@echo "cxx_compiler = \"$(shell $(CXX) --version | head -n 1)\"" >> $(TESTREPORT)/info
+	@echo >> $(TESTREPORT)/info
+	@$(foreach pkgname, $(PKG_NAMES), echo "dependency.$(pkgname) = \""`pkg-config --modversion $(pkgname)`"\"" >> $(TESTREPORT)/info;)
+	export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}$(LIBRARY_DIRS); \
+	for test in $(TESTS); do \
+	  mkdir -p $(TESTREPORT)/$$test; \
+	  ./$$test $(TESTFLAGS) > $(TESTREPORT)/$$test/stdout 2> $(TESTREPORT)/$$test/stderr; \
+	  status=$$?; \
+	  echo $$status > $(TESTREPORT)/$$test/exit_status; \
+	done
+
+
+# RELEASE ANNOUNCEMENT
+export PACKAGE_DESCRIPTION
+release-mail:
+	@echo "$(PACKAGE_DISPLAY_NAME) $(PACKAGE_VERSION) has been released."
+	@echo ""
+	@echo "$$PACKAGE_DESCRIPTION"
+	@echo ""
+	@echo "Changes:"
+	@end=`grep -n -m 1 '^$$' ChangeLog | sed 's/:.*//'`; head -n $$(($$end - 1)) ChangeLog | tail -n +2 | sed 's/\t/ /g'
+	@echo ""
+	@echo "Tarball:"
+	@echo "GPG signature file:"
+	@echo ""
+	@echo "Webpage: $(PACKAGE_WEBPAGE)"
+	@echo "Bug tracker: $(PACKAGE_BUGTRACKER)"
+	@echo "Version control: $(PACKAGE_VC)"
