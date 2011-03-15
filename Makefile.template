@@ -142,6 +142,13 @@ $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_
 	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).$$($(2)_IFACE)
 
 # LV2 PLUGINS
+ifeq ($(UNAME),Darwin)
+LV2PLUGIN_LDFLAGS = -bundle
+LV2PLUGIN_CFLAGS = -fno-common
+else
+LV2PLUGIN_LDFLAGS = -shared -fPIC
+LV2PLUGIN_CFLAGS = -fPIC -DPIC
+endif
 
 define LV2_BUNDLE_template
 
