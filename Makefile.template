@@ -89,6 +89,8 @@ endif
 define LIBRARY_template
 
 # variables
+$(2)_IFACE = $$(if $$($(2)_ABI),$$($(2)_ABI),0)
+$(2)_IFSFX = $$($(2)_IFACE).0.0
 $(2)_SRCPRF = $$(if $$($(2)_SOURCEDIR),$$($(2)_SOURCEDIR),.)
 $(2)_BLDPRF1 = $$(if $$($(2)_BUILDDIR),$$($(2)_BUILDDIR),$$($(2)_SRCPRF))
 $(2)_BLDPRF = $(BUILDPREFIX)$$($(2)_BLDPRF1)
@@ -102,7 +104,7 @@ $(2)_LOCALLIBRARIES = $$(patsubst lib%.so,-l%,$$(notdir $$($(2)_LIBRARIES)))
 $(2)_LOCALLDFLAGS = $$(patsubst %,-L%,$$(sort $$(dir $$($(2)_LIBRARIES))))
 ALL_OBJECTS += $$($(2)_OBJECTS)
 ALL_SOURCES += $$($(2)_FULLSOURCES)
-LIBRARIES_REAL += $$($(2)_BLDPRF)/$(1)
+LIBRARIES_REAL += $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX)
 LIBRARIES_NOINST += $$(if $$($(2)_NOINST),$(2),)
 LIBRARY_DIRS := $$(LIBRARY_DIRS):$$($(2)_BLDPRF)
 ALL_LIBHEADER_INSTALLS += $$(if $$($(2)_HEADERS),install-$(2)-headers)
@@ -118,16 +120,16 @@ $$($(2)_COBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)),
 $$($(2)_CXXOBJECTS): Makefile.config $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
 	$(CXX) -c -o $$@ $(SHARED_LIBRARY_CFLAGS) $(CFLAGS) $(CXXFLAGS) $$($(2)_CFLAGS) $$(patsubst $$($(2)_BLDPRF)%,$$($(2)_SRCPRF)%,$$(subst .o,.cpp,$$@))
 
-$$($(2)_BLDPRF)/$(1): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES) $$(filter-out $$(wildcard $$($(2)_BUILDDIR)), $$($(2)_BUILDDIR))
-	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).0
-	/sbin/ldconfig -n $$($(2)_BLDPRF)
+$$($(2)_BLDPRF)/$(1): $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX)
+	cd $$($(2)_BLDPRF) && ln -f -s $(1).$$($(2)_IFSFX) $(1)
 
 install-$(2)-headers: $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS))
 	mkdir -p $(DESTDIR)/$(pkgincludedir)
 	cp $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_HEADERS)) $(DESTDIR)/$(pkgincludedir)
 
-install-$(2): $$($(2)_BLDPRF)/$(1) $$(if $$($(2)_HEADERS),install-$(2)-headers)
-	mkdir -p $(DESTDIR)/$$($(2)_INSTDIR) && cp $$($(2)_BLDPRF)/$(1) $(DESTDIR)/$$($(2)_INSTDIR)
+install-$(2): $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX) $$(if $$($(2)_HEADERS),install-$(2)-headers)
+	mkdir -p $(DESTDIR)/$$($(2)_INSTDIR) && cp $$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX) $(DESTDIR)/$$($(2)_INSTDIR)
+	cd $(DESTDIR)/$$($(2)_INSTDIR) && ln -f -s $(1).$$($(2)_IFSFX) $(1)
 
 endef
 bad_libraries = $(filter-out lib%.so,$(LIBRARIES))
@@ -136,6 +138,8 @@ $(foreach badlib, $(bad_libraries), $(eval \
 $(foreach lib,$(LIBRARIES),$(eval $(call LIBRARY_template,$(lib),$(subst .,_,$(lib)))))
 #END OF LIBRARIES
 
+$$($(2)_BLDPRF)/$(1).$$($(2)_IFSFX): $$($(2)_OBJECTS) $$($(2)_ARCHIVES) $$($(2)_LIBRARIES)
+	$(CXX) $(SHARED_LIBRARY_LDFLAGS) $$($(2)_OBJECTS) -Wl,--whole-archive $$($(2)_ARCHIVES) -Wl,--no-whole-archive $$($(2)_LOCALLDFLAGS) $$($(2)_LOCALLIBRARIES) $(LDFLAGS) $$($(2)_LDFLAGS) -o $$@ -Wl,-soname=$(1).$$($(2)_IFACE)
 
 # LV2 PLUGINS
 
@@ -170,6 +174,7 @@ $$($(2)_BLDPRF)/$(1): $$($(2)_FULLDATA) $$(patsubst %,$$($(2)_SRCPRF)/%,$$($(2)_
 install-$(2): $$($(2)_BLDPRF)/$(1) $$(if $$($(2)_HEADERS),install-$(2)-headers)
 	rm -rf $(DESTDIR)/$$($(2)_INSTDIR)/$(1)
 	mkdir -p $(DESTDIR)/$$($(2)_INSTDIR) && cp -R $$($(2)_BLDPRF)/$(1) $(DESTDIR)/$$($(2)_INSTDIR)
+	$$(if $$($(2)_POSTINSTALL),cd $(DESTDIR)/$$($(2)_INSTDIR) && $$($(2)_POSTINSTALL))
 
 endef
 $(foreach lv2,$(LV2_BUNDLES),$(eval $(call LV2_BUNDLE_template,$(lv2),$(subst .,_,$(lv2)))))
@@ -392,6 +397,12 @@ dist:
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	bzip2 $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
 
+dist-test: dist
+	tar xjvf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
+	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && ./configure --prefix=`pwd`/installation
+	cd $(PACKAGE_NAME)-$(PACKAGE_VERSION) && make && make install
+	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	@echo Distribution test succeded!
 
 # PKG-CONFIG DEPENDENCY CHECK
 PKG_NAMES = $(filter-out =%,$(subst >, ,$(PKG_DEPS))) 
