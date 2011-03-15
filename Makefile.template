@@ -381,7 +381,7 @@ install: install-archives install-libraries install-modules install-programs ins
 # DISTRIBUTION
 THIS_FILE = $(patsubst ./%,%,$(firstword $(filter %/Makefile.template,$(patsubst %,./%,$(MAKEFILE_LIST)))))
 CONFIGURE_SCRIPT = $(if $(__path_to_configure),$(__path_to_configure),configure)
-ALL_DIST_FILES = $(sort $(ALL_SOURCES) $(DATA) $(DOCS) $(MANUALS) $(EXTRA_DIST) $(ALL_DATA))
+ALL_DIST_FILES = $(sort $(ALL_SOURCES) $(DATA) $(DOCS) $(PCFILES) $(MANUALS) $(EXTRA_DIST) $(ALL_DATA))
 dist: 
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2
