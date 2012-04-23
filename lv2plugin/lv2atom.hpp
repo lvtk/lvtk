@@ -1,27 +1,24 @@
-/*
-  atom.hpp  -  Definition of the Class
+/****************************************************************************
 
-    2012             Michael Fisher <mfisher31@gmail.com>
+    lv2atom.hpp - support file for writing LV2 plugins in C++
 
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License as
-  published by the Free Software Foundation; either version 2 of
-  the License, or (at your option) any later version.
+    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-*/
-/** 
- * @file atom.hpp
- * This file contains definition of the Class
- */
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
+
+****************************************************************************/
 
 #ifndef LV2_ATOM_HPP
 #define LV2_ATOM_HPP
