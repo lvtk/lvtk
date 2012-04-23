@@ -40,6 +40,7 @@
 #include <lv2cxx_common/lv2types.hpp>
 
 #include "lv2atom.hpp"
+#include "lv2urid.hpp"
 #include "lv2worker.hpp"
 
 

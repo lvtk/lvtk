@@ -47,7 +47,7 @@ namespace LV2 {
 
        /** @internal */
        static void map_feature_handlers(FeatureHandlerMap& hmap) {
-         hmap[LV2_WORKER_URI] = &I<Derived>::handle_feature;
+         hmap[LV2_WORKER__schedule] = &I<Derived>::handle_feature;
        }
 
        /** @internal */
@@ -73,7 +73,7 @@ namespace LV2 {
 
        /** @internal */
        static const void* extension_data (const char* uri) {
-         if (!std::strcmp (uri, LV2_WORKER_URI)) {
+         if (!std::strcmp (uri, LV2_WORKER__interface)) {
            static LV2_Worker_Interface worker = { &I<Derived>::_work,
                                                   &I<Derived>::_work_response,
                                                   &I<Derived>::_end_run };
@@ -82,6 +82,10 @@ namespace LV2 {
          return 0;
        }
 
+       LV2_Worker_Status schedule_work (uint32_t size, void *data)
+       {
+         return m_schedule_work_func (m_worker_schedule_handle, size, data);
+       }
 
        LV2_Worker_Status work(LV2_Worker_Respond_Function respond,
                               LV2_Worker_Respond_Handle   handle,

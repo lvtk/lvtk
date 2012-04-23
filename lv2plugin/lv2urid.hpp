@@ -1,6 +1,6 @@
 /****************************************************************************
 
-    lv2urid-map.hpp - support file for writing LV2 plugins in C++
+    lv2urid.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -22,6 +22,8 @@
 
 #ifndef LV2_URID_HPP
 #define LV2_URID_HPP
+
+#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
 namespace LV2 {
 
@@ -45,15 +47,32 @@ namespace LV2 {
 
        /** @internal */
        static void map_feature_handlers(FeatureHandlerMap& hmap) {
-         hmap[LV2_URID_URI] = &I<Derived>::handle_feature;
+         hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
+         hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
        }
 
        /** @internal */
-       static void handle_feature(void* instance, void* data) {
+       static void handle_map_feature(void* instance, void* data) {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
+
+         LV2_URID_Map *p_map = reinterpret_cast<LV2_URID_Map*>(data);
+         fe->m_map_handle = p_map->handle;
+         fe->p_map_func = p_map->map;
          fe->m_ok = true;
        }
+
+       /** @internal */
+       static void handle_unmap_feature(void* instance, void* data) {
+         Derived* d = reinterpret_cast<Derived*>(instance);
+         I<Derived>* fe = static_cast<I<Derived>*>(d);
+
+         LV2_URID_Unmap *p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
+         fe->m_unmap_handle = p_unmap->handle;
+         fe->m_unmap_func = p_unmap->unmap;
+         fe->m_ok = true;
+       }
+
 
        bool check_ok() {
          if (LV2CXX_DEBUG) {
@@ -62,6 +81,25 @@ namespace LV2 {
          }
          return this->m_ok;
        }
+
+
+     protected:
+       LV2_URID_Map_Handle m_map_handle;
+       LV2_URID_Unmap_Handle m_unmap_handle;
+       const char* unmap (LV2_URID urid)
+           { return m_unmap_func (m_unmap_handle, urid); }
+
+       LV2_URID  map (const char* uri)
+           { return m_map_func (m_map_handle, uri); }
+
+
+       const char* (*m_unmap_func)(LV2_URID_Unmap_Handle handle,
+                                   LV2_URID              urid);
+
+       LV2_URID (*m_map_func)(LV2_URID_Map_Handle handle,
+                              const char*         uri);
+
+
      };
    };
 }
