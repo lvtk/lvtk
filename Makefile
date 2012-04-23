@@ -11,7 +11,7 @@ DATAPACKS = lv2soname common_headers
 # Internal headers that should not be included by user code.
 common_headers_FILES = \
 	debug.hpp \
-	lv2.h \
+	lv2_old.h \
 	lv2_event.h \
 	lv2_event_helpers.h \
 	lv2_osc.h \

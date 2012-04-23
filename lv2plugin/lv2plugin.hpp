@@ -30,11 +30,16 @@
 #include <string>
 #include <vector>
 
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
+
 #include <lv2cxx_common/debug.hpp>
-#include <lv2cxx_common/lv2.h>
-#include <lv2cxx_common/lv2_uri_map.h>
+#include <lv2cxx_common/atom.hpp>
+#include <lv2cxx_common/worker.hpp>
+
+#include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
+#include <lv2/lv2plug.in/ns/ext/event/event.h>
+
 #include <lv2cxx_common/lv2_saverestore.h>
-#include <lv2cxx_common/lv2_event.h>
 #include <lv2cxx_common/lv2_contexts.h>
 #include <lv2cxx_common/lv2types.hpp>
 

@@ -29,14 +29,14 @@
 #include <cstring>
 #include <map>
 
-#include <gtkmm/box.h>
-#include <gtkmm/main.h>
-#include <gtkmm/widget.h>
+#include <gtkmm.h>
 
-#include <lv2cxx_common/lv2_ui_old.h>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/lv2plug.in/ns/ext/presets/presets.h>
+#include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
+#include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
+
 #include <lv2cxx_common/lv2_ui_presets.h>
-#include <lv2cxx_common/lv2_uri_map.h>
-#include <lv2cxx_common/lv2_event_helpers.h>
 #include <lv2cxx_common/lv2_osc.h>
 #include <lv2cxx_common/lv2types.hpp>
 #include <lv2cxx_common/debug.hpp>
