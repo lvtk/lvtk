@@ -25,23 +25,21 @@
 #define LV2PLUGIN_HPP
 
 #include <cstdarg>
-
 #include <cstring>
 #include <string>
 #include <vector>
 
 #include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-
-#include <lv2cxx_common/debug.hpp>
-#include <lv2cxx_common/atom.hpp>
-#include <lv2cxx_common/worker.hpp>
-
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 
+#include <lv2cxx_common/debug.hpp>
 #include <lv2cxx_common/lv2_saverestore.h>
 #include <lv2cxx_common/lv2_contexts.h>
 #include <lv2cxx_common/lv2types.hpp>
+
+#include "lv2atom.hpp"
+#include "lv2worker.hpp"
 
 
 /** @mainpage liblv2-plugin and liblv2-gui - API documentation

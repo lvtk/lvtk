@@ -50,7 +50,7 @@ namespace LV2 {
       template <class Derived> struct I : Extension<Required> {
 
         /** @internal */
-        I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
+        I() { }
 
         /** @internal */
         static void map_feature_handlers(FeatureHandlerMap& hmap) {

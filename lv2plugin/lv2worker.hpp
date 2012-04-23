@@ -27,7 +27,6 @@
 #ifndef LV2_WORKER_HPP
 #define LV2_WORKER_HPP
 
-#include "lv2plugin.hpp"
 #include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 
 namespace LV2 {

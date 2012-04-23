@@ -28,7 +28,9 @@ common_headers_INSTALLDIR = $(pkgincludedir)/lv2cxx_common
 liblv2-plugin_a_SOURCES = lv2plugin.cpp
 liblv2-plugin_a_HEADERS = \
 	lv2plugin.hpp \
-	lv2synth.hpp
+	lv2synth.hpp \
+	lv2atom.hpp \
+	lv2worker.hpp
 liblv2-plugin_a_CFLAGS = -Ilibraries/lv2plugin -I. -Ilv2cxx_common
 liblv2-plugin_a_SOURCEDIR = lv2plugin
 liblv2-plugin_a_INSTALLDIR = $(libdir)
