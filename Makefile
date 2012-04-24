@@ -30,6 +30,7 @@ liblv2-plugin_a_HEADERS = \
 	lv2plugin.hpp \
 	lv2synth.hpp \
 	lv2atom.hpp \
+	lv2urid.hpp \
 	lv2worker.hpp
 liblv2-plugin_a_CFLAGS = -Ilibraries/lv2plugin -I. -Ilv2cxx_common
 liblv2-plugin_a_SOURCEDIR = lv2plugin

@@ -55,7 +55,8 @@ namespace LV2 {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
 
-         if (!data) { fe->m_ok = false; return; }
+         std::clog<<"  [LV2::Worker] handle_feature\n";
+         //if (!data) { fe->m_ok = false; return; }
 
          LV2_Worker_Schedule *ws = reinterpret_cast<LV2_Worker_Schedule*>(data);
          fe->m_worker_schedule_handle = ws->handle;
@@ -110,6 +111,10 @@ namespace LV2 {
                                             uint32_t                   size,
                                             const void*                data);
 
+       /**
+        * @internal
+        * called from host
+        */
        static LV2_Worker_Status _work(LV2_Handle                  instance,
                                       LV2_Worker_Respond_Function respond,
                                       LV2_Worker_Respond_Handle   handle,
@@ -119,6 +124,10 @@ namespace LV2 {
          return reinterpret_cast<Derived*>(instance)->work (respond,handle,size,data);
        }
 
+       /**
+        * @internal
+        * called from host
+        */
        static LV2_Worker_Status _work_response (LV2_Handle  instance,
                                                 uint32_t    size,
                                                 const void* body)
@@ -126,6 +135,10 @@ namespace LV2 {
          return reinterpret_cast<Derived*>(instance)->work_response (size, body);
        }
 
+       /**
+        * @internal
+        * called from host
+        */
        static LV2_Worker_Status _end_run (LV2_Handle instance)
        {
          return reinterpret_cast<Derived*>(instance)->end_run ();

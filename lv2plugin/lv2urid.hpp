@@ -28,7 +28,7 @@
 namespace LV2 {
 
   /**
-   * The URID Feature.
+   * The URID Extension.
    * The actual type that your plugin class will inherit when you use
    * this mixin is the internal struct template I.
    * @ingroup pluginmixins
@@ -56,9 +56,8 @@ namespace LV2 {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
 
-         LV2_URID_Map *p_map = reinterpret_cast<LV2_URID_Map*>(data);
-         fe->m_map_handle = p_map->handle;
-         fe->p_map_func = p_map->map;
+         fe->p_map = reinterpret_cast<LV2_URID_Map*>(data);
+
          fe->m_ok = true;
        }
 
@@ -67,9 +66,8 @@ namespace LV2 {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
 
-         LV2_URID_Unmap *p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
-         fe->m_unmap_handle = p_unmap->handle;
-         fe->m_unmap_func = p_unmap->unmap;
+         fe->p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
+
          fe->m_ok = true;
        }
 
@@ -84,20 +82,14 @@ namespace LV2 {
 
 
      protected:
-       LV2_URID_Map_Handle m_map_handle;
-       LV2_URID_Unmap_Handle m_unmap_handle;
+       LV2_URID_Map   *p_map;
+       LV2_URID_Unmap *p_unmap;
+
        const char* unmap (LV2_URID urid)
-           { return m_unmap_func (m_unmap_handle, urid); }
+           { return p_unmap->unmap (p_unmap->handle, urid); }
 
        LV2_URID  map (const char* uri)
-           { return m_map_func (m_map_handle, uri); }
-
-
-       const char* (*m_unmap_func)(LV2_URID_Unmap_Handle handle,
-                                   LV2_URID              urid);
-
-       LV2_URID (*m_map_func)(LV2_URID_Map_Handle handle,
-                              const char*         uri);
+           { return p_map->map (p_map->handle, uri); }
 
 
      };

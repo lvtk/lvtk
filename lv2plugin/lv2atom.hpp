@@ -23,53 +23,12 @@
 #ifndef LV2_ATOM_HPP
 #define LV2_ATOM_HPP
 
-
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
-#include <lv2/lv2plug.in/ns/ext/atom/util.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
-
+#include <lv2/lv2plug.in/ns/ext/atom/util.h>
 
 namespace LV2 {
 
-   /**
-    * The Atom Feature.
-    * The actual type that your plugin class will inherit when you use
-    * this mixin is the internal struct template I.
-    * @ingroup pluginmixins
-    */
-    template <bool Required = true>
-    struct Atom {
-
-      /** This is the type that your plugin class will inherit when you use the
-          EventRef mixin. The public and protected members defined here
-          will be available in your plugin class.
-      */
-      template <class Derived> struct I : Extension<Required> {
-
-        /** @internal */
-        I() { }
-
-        /** @internal */
-        static void map_feature_handlers(FeatureHandlerMap& hmap) {
-          hmap[LV2_ATOM_URI] = &I<Derived>::handle_feature;
-        }
-
-        /** @internal */
-        static void handle_feature(void* instance, void* data) {
-          Derived* d = reinterpret_cast<Derived*>(instance);
-          I<Derived>* fe = static_cast<I<Derived>*>(d);
-          fe->m_ok = true;
-        }
-
-        bool check_ok() {
-          if (LV2CXX_DEBUG) {
-            std::clog<<"    [LV2::EventRef] Validation "
-                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-          }
-          return this->m_ok;
-        }
-      };
-    };
 }
 
 #endif /* LV2_ATOM_HPP */
