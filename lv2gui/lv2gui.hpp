@@ -28,6 +28,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <iomanip>
 #include <map>
 
 #include <gtkmm.h>

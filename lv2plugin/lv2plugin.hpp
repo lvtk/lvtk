@@ -25,6 +25,7 @@
 #ifndef LV2PLUGIN_HPP
 #define LV2PLUGIN_HPP
 
+#include <iostream>
 #include <cstdarg>
 #include <cstring>
 #include <string>
@@ -216,12 +217,10 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
 	The return value is not important, it's just there so you can use that
 	trick.
     */
-    static unsigned register_class(const std::string& uri) {
+    static unsigned register_class(const char* uri) {
       LV2_Descriptor desc;
       std::memset(&desc, 0, sizeof(LV2_Descriptor));
-      char* c_uri = new char[uri.size() + 1];
-      std::memcpy(c_uri, uri.c_str(), uri.size() + 1);
-      desc.URI = c_uri;
+      desc.URI = strdup (uri);
       desc.instantiate = &Derived::_create_plugin_instance;
       desc.connect_port = &Derived::_connect_port;
       desc.activate = &Derived::_activate;
@@ -229,7 +228,8 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
       desc.deactivate = &Derived::_deactivate;
       desc.cleanup = &Derived::_delete_plugin_instance;
       desc.extension_data = &Derived::extension_data;
-      get_lv2_descriptors().push_back(desc);
+      get_lv2_descriptors().push_back (desc);
+
       return get_lv2_descriptors().size() - 1;
     }
     

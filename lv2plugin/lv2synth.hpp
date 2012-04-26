@@ -182,14 +182,12 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
 	    class Ext4 = End, class Ext5 = End, class Ext6 = End,
 	    class Ext7 = End>
-  class Synth : public Plugin<D, URIMap<true>, EventRef<true>,
-			      Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
+  class Synth : public Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, URIMap<true>, EventRef<true>, 
-		   Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
+    typedef Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
     Parent;
     
 
@@ -201,10 +199,9 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     */
     Synth(uint32_t ports, uint32_t midi_input) 
       : Parent(ports),
-	m_midi_input(midi_input) {
-      m_midi_type = 
-	Parent::uri_to_id(LV2_EVENT_URI,
-			  "http://lv2plug.in/ns/ext/midi#MidiEvent"); 
+	m_midi_input(midi_input)
+    {
+
     }
     
     
@@ -340,10 +337,11 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	if (ev) {
 	  if (ev->type == m_midi_type)
 	    static_cast<D*>(this)->handle_midi(ev->size, event_data);
-	  else if (ev->type == 0)
+	  else if (ev->type == 0) {
 	    /* We need to qualify this so the compiler knows that there is an
 	       event_unref() function */
-	    Parent::event_unref(ev);
+	   // Parent::event_unref(ev);
+	  }
 	}
       }
       
