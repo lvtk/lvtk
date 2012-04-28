@@ -31,6 +31,7 @@
 #include <lv2cxx_common/lv2_event_helpers.h>
 
 
+
 namespace LV2 {
   
   /** This is used as an "invalid" MIDI key number, meaning "no key". */
@@ -199,9 +200,9 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     */
     Synth(uint32_t ports, uint32_t midi_input) 
       : Parent(ports),
-	m_midi_input(midi_input)
+	m_midi_input (midi_input)
     {
-
+        m_midi_type = Parent::map("http://lv2plug.in/ns/ext/midi#MidiEvent");
     }
     
     
@@ -307,20 +308,26 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       for (unsigned i = 0; i < m_voices.size(); ++i)
 	m_voices[i]->set_port_buffers(Parent::m_ports);
       
+#if 0
       LV2_Event_Iterator iter;
       lv2_event_begin(&iter, p<LV2_Event_Buffer>(m_midi_input));
       
       uint8_t* event_data;
+#endif
+
       uint32_t samples_done = 0;
       
       while (samples_done < sample_count) {
 	uint32_t to = sample_count;
+#if 0
 	LV2_Event* ev = 0;
 	if (lv2_event_is_valid(&iter)) {
 	  ev = lv2_event_get(&iter, &event_data);
 	  to = ev->frames;
 	  lv2_event_increment(&iter);
 	}
+#endif
+
 	if (to > samples_done) {
 	  static_cast<D*>(this)->pre_process(samples_done, to);
 	  for (unsigned i = 0; i < m_voices.size(); ++i)
@@ -328,12 +335,24 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	  static_cast<D*>(this)->post_process(samples_done, to);
 	  samples_done = to;
 	}
-	
+
+       const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence>(m_midi_input);
+       LV2_ATOM_SEQUENCE_FOREACH(midiseq, ev)
+       {
+          uint32_t frame_offset = ev->time.frames;
+          if (ev->body.type == m_midi_type)
+            {
+              uint8_t* const data = (uint8_t* const)(ev + 1);
+              handle_midi (3, data);
+            }
+       }
+#if 0
 	/* This is what we do with events:
 	   - if it's a MIDI event, pass it to handle_midi()
 	   - if it's a reference counted event, decrease the count and ignore it
 	   - if it's something else, just ignore it (it's safe)
 	*/
+
 	if (ev) {
 	  if (ev->type == m_midi_type)
 	    static_cast<D*>(this)->handle_midi(ev->size, event_data);
@@ -343,6 +362,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	   // Parent::event_unref(ev);
 	  }
 	}
+#endif
       }
       
     }
@@ -487,7 +507,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     
     /** @internal
 	The numerical ID for the MIDI event type. */
-    uint32_t m_midi_type;
+    LV2_URID m_midi_type;
     
   };
   

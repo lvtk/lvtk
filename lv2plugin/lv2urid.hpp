@@ -82,8 +82,6 @@ namespace LV2 {
 
 
      protected:
-       LV2_URID_Map   *p_map;
-       LV2_URID_Unmap *p_unmap;
 
        const char* unmap (LV2_URID urid)
            { return p_unmap->unmap (p_unmap->handle, urid); }
@@ -91,6 +89,8 @@ namespace LV2 {
        LV2_URID  map (const char* uri)
            { return p_map->map (p_map->handle, uri); }
 
+       LV2_URID_Map   *p_map;
+       LV2_URID_Unmap *p_unmap;
 
      };
    };
