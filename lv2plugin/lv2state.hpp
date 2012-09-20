@@ -1,6 +1,6 @@
 /****************************************************************************
 
-    lv2worker.hpp - support file for writing LV2 plugins in C++
+    lv2state.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
