@@ -29,16 +29,17 @@
 #include <cstdlib>
 
 #include <lv2mm/plugin.hpp>
+#include <lv2mm/state.hpp>
 
 using namespace LV2;
 using std::vector;
 
-class Workhorse : public Plugin<Workhorse, Worker<true> >
+class Workhorse : public Plugin<Workhorse, Worker<true>, State<true> >
 {
    public:
 
     Workhorse (double rate)
-    : LV2::Plugin<Workhorse, Worker<true> > (3)
+    : LV2::Plugin<Workhorse, Worker<true>, State<true> > (3)
     {
 
     }
