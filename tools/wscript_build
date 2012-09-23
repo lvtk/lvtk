@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+bld.program(
+	source = "ttl2peg.cpp",
+	target = "ttl2peg",
+	name   = "ttl2peg",
+	use    = "redland"
+)
