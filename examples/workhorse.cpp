@@ -19,7 +19,7 @@
 
 */
 /**
- * @file drumbot.cpp
+ * @file workhorse.cpp
  * This file contains implementation of the main LV2 Plugin
  * object
  */
