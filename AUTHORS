@@ -1,4 +1,4 @@
-The files in the directory headers/ are written by
+Most headers in lv2mm/private are written by
 
  * Paul Davis
  * Richard W.E. Furse
@@ -6,9 +6,14 @@ The files in the directory headers/ are written by
  * Lars Luthman
  * Dave Robillard
  * Stefan Westerfeld
+ * Lars Luthman
 
-See the comments in those files for details on who wrote what.
+See the comments in those files for details.
 
-The first version of the URIMap mixin was written by Dave Robillard.
+The first version of the URIMap mixin is:
+Dave Robillard.
 
-Everything else is written by Lars Luthman <lars.luthman@gmail.com>.
+The original lv2plugin.* and lv2gui.* are:
+Lars Luthman <lars.luthman@gmail.com>
+
+All else is Michael Fisher <mfisher31@gmail.com>
