@@ -1,5 +1,5 @@
-LV2 C++ Libs (liblv2mm)
-=======================
+LV2 C++ Libs
+============
 
 The name of this package is subject to change. Awaiting approval from
 [LAD] that lv2mm is appropriate.
@@ -24,7 +24,7 @@ To build documentation, run
 
 $ ./waf configure --docs build
 
-HTML documentation gets placed in docs/html
+HTML documentation gets placed in build/doc/html
 
 LICENSE
 -------

@@ -2,8 +2,15 @@
 # encoding: utf-8
 # Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
-'''
-'''
+''' This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public Licence as published by
+the Free Software Foundation, either version 3 of the Licence, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+file COPYING for more details. '''
 
 import sys
 from subprocess import call
@@ -20,7 +27,7 @@ LIB_LV2MM       ="lv2mm-plugin"
 LIB_LV2MM_GTKUI ="lv2mm-gtkui"
 
 # Anything appended to version number goes here
-LV2MM_EXTRA_VERSION=""
+LV2MM_EXTRA_VERSION="-rc1"
 
 # For waf dist
 APPNAME = 'lv2mm'
@@ -33,9 +40,13 @@ out = 'build'
 def options(opts):
 	opts.load("cross compiler_c compiler_cxx")
 	autowaf.set_options(opts)
+	
 	opts.add_option('--disable-ui', default=False, \
 		dest="disable_ui", action='store_true', \
 		help="Disable Building UI libraries")
+	opts.add_option('--ziptype', default='gz', \
+		dest='ziptype', type='string', \
+		help="Zip type for waf dist (gz/bz2/zip) [ Default: gz ]")
 
 
 def configure(conf):
@@ -88,8 +99,13 @@ def build(bld):
 	bld.install_files(header_base+"/lv2mm/private", \
 					  bld.path.ant_glob("lv2mm/private/*.*"))
 
-def docs(ctx):
-	call(["sh","tools/gendocs.sh"])
-
-def release(ctx):
+def release_tag(ctx):
 	git.tag_version(VERSION, "Release: " + APPNAME + "-" + VERSION)
+
+def dist(ctx):
+    z=ctx.options.ziptype
+    if 'zip' in z:
+        ziptype = z
+    else:
+        ziptype = "tar." + z
+    ctx.algo       = ziptype
