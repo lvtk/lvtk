@@ -18,7 +18,7 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-LV2MM_VERSION="0.0.1"
+LV2MM_VERSION="0.1.0"
 LV2MM_MAJOR_VERSION=LV2MM_VERSION[0]
 LV2MM_MINOR_VERSION=LV2MM_VERSION[2]
 LV2MM_MICRO_VERSION=LV2MM_VERSION[4]
