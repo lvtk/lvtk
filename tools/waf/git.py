@@ -3,6 +3,10 @@
 
 from subprocess import call
 
-def tag_version(version, msg, prefix="v", suffix="",editor="nano"):
-    version_string = prefix + version + suffix
-    call(["git","tag","-a",version_string,"-m",msg])
+def tag_version(version, msg, prefix="", suffix="", editor="nano"):
+	tag_string = prefix + "-" + version
+
+	if suffix : tag_string += "-" + suffix
+
+	call(["git","tag","-a",tag_string,"-m",msg])
+	return tag_string

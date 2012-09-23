@@ -24,7 +24,7 @@ LV2MM_MINOR_VERSION=LV2MM_VERSION[2]
 LV2MM_MICRO_VERSION=LV2MM_VERSION[4]
 
 # Anything appended to version number goes here
-LV2MM_EXTRA_VERSION="-rc1"
+LV2MM_EXTRA_VERSION=""
 
 # For waf dist
 APPNAME = 'lv2mm'
@@ -101,7 +101,8 @@ def build(bld):
 					  bld.path.ant_glob("lv2mm/private/*.*"))
 
 def release_tag(ctx):
-	git.tag_version(VERSION, "Release: " + APPNAME + "-" + VERSION)
+	tag = git.tag_version(VERSION, "Release: v" + VERSION , APPNAME)
+	print "Git Tag Created: " + tag
 
 def dist(ctx):
     z=ctx.options.ziptype
