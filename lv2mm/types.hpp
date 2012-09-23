@@ -23,13 +23,18 @@
 
 ****************************************************************************/
 
-#ifndef LV2TYPES_HPP
-#define LV2TYPES_HPP
+#ifndef LV2_TYPES_HPP
+#define LV2_TYPES_HPP
 
 #include <map>
 #include <string>
 
 #include "private/debug.hpp"
+
+#define LV2MM_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
+
+#define LV2MM_MIXIN_CLASS      template <bool Required = true> struct
+#define LV2MM_MIXIN_DERIVED    template <class Derived> struct I : Extension<Required>
 
 namespace LV2 {
   
@@ -83,18 +88,21 @@ namespace LV2 {
     
     /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
-    static void map_feature_handlers(FeatureHandlerMap& hmap) {
+    static void
+    map_feature_handlers(FeatureHandlerMap& hmap) {
       E1::template I<A>::map_feature_handlers(hmap);
       Parent::map_feature_handlers(hmap);
     }
     
     /** Check if the features are OK with the plugin initialisation. */
-    bool check_ok() { 
+    bool
+    check_ok() {
       return E1::template I<A>::check_ok() && Parent::check_ok();
     }
     
     /** Return any extension data. */
-    static const void* extension_data(const char* uri) {
+    static const void*
+    extension_data(const char* uri) {
       const void* result = E1::template I<A>::extension_data(uri);
       if (result)
 	return result;
@@ -156,17 +164,15 @@ namespace LV2 {
       @ingroup pluginmixins
       @ingroup guimixins
   */
-  template <bool Required = true>
-  struct URIMap {
+  LV2MM_MIXIN_CLASS URIMap {
     
     /** This is the type that your plugin or GUI class will inherit when you 
 	use the	FixedBufSize mixin. The public and protected members defined 
 	here will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal */
-      I() : m_callback_data(0), m_func(0) { }
+    LV2MM_MIXIN_DERIVED {
+
+       I() : m_callback_data(0), m_func(0) { }
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -184,7 +190,7 @@ namespace LV2 {
       }
 
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::URIMap] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -201,7 +207,7 @@ namespace LV2 {
 	  @param uri The URI that you want to map to a numeric ID.
       */
       uint32_t uri_to_id(const char* map, const char* uri) const {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  uint32_t result = m_func(m_callback_data, map, uri);
 	  std::clog<<"[LV2::URIMap] uri_to_id(\""<<uri<<"\") -> "
 		   <<result<<std::endl;

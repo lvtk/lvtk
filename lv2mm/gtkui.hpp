@@ -104,15 +104,14 @@ protected:
       this mixin is the internal struct template I.
       @ingroup guimixins
    */
-   template <bool Required = true>
-   struct NoUserResize {
+   LV2MM_MIXIN_CLASS NoUserResize {
     
       /** This is the type that your plugin or GUI class will inherit when you
         use the	NoUserResize mixin. The public and protected members defined
         here will be available in your plugin class.
       */
-      template <class Derived> struct I : public Extension<Required> {
-      
+      LV2MM_MIXIN_DERIVED {
+
          /** @internal */
          static void map_feature_handlers(FeatureHandlerMap& hmap) {
            hmap["http://ll-plugins.nongnu.org/lv2/dev/ui#noUserResize"] =
@@ -127,7 +126,7 @@ protected:
          }
 
          bool check_ok() {
-           if (LV2CXX_DEBUG) {
+           if (LV2MM_DEBUG) {
              std::clog<<"    [LV2::NoUserResize] Validation "
                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
            }
@@ -147,14 +146,13 @@ protected:
       this mixin is the internal struct template I.
       @ingroup guimixins
    */
-   template <bool Required = true>
-   struct FixedSize {
+   LV2MM_MIXIN_CLASS FixedSize {
     
     /** This is the type that your plugin or GUI class will inherit when you 
 	use the	FixedSize mixin. The public and protected members defined 
 	here will be available in your plugin class.
     */
-    template <class Derived> struct I : public Extension<Required> {
+   LV2MM_MIXIN_DERIVED {
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -170,7 +168,7 @@ protected:
       }
     
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::FixedSize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -190,17 +188,15 @@ protected:
       this mixin is the internal struct template I.
       @ingroup guimixins
   */
-  template <bool Required = true>
-  struct Presets {
+   LV2MM_MIXIN_CLASS Presets {
     
     /** This is the type that your plugin or GUI class will inherit when you 
 	use the	Presets mixin. The public and protected members defined 
 	here will be available in your plugin class.
     */
-    template <class Derived> struct I : public Extension<Required> {
-      
-      /** @internal */
-      I() : m_hdesc(0), m_host_support(false) { }
+    LV2MM_MIXIN_DERIVED {
+
+        I() : m_hdesc(0), m_host_support(false) { }
 	
 	/** @internal */
 	static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -217,7 +213,7 @@ protected:
 	}
 	
         bool check_ok() {
-	  if (LV2CXX_DEBUG) {
+	  if (LV2MM_DEBUG) {
 	    std::clog<<"    [LV2::Presets] Validation "
 		     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	  }
@@ -278,14 +274,14 @@ protected:
 	    preset to @c preset. */
 	void change_preset(uint32_t preset) {
 	  if (m_hdesc) {
-	    if (LV2CXX_DEBUG) {
+	    if (LV2MM_DEBUG) {
 	      std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
 		       <<std::endl;
 	    }
 	    m_hdesc->change_preset(static_cast<Derived*>(this)->controller(), 
 				   preset);
 	  }
-	  else if (LV2CXX_DEBUG) {
+	  else if (LV2MM_DEBUG) {
 	    std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
 		     <<" --- Function not provided by host!"<<std::endl;
 	  }
@@ -296,14 +292,14 @@ protected:
 	*/
 	void save_preset(uint32_t preset, char const* name) {
 	  if (m_hdesc) {
-	    if (LV2CXX_DEBUG) {
+	    if (LV2MM_DEBUG) {
 	      std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
 		       <<name<<"\")"<<std::endl;
 	    }
 	    m_hdesc->save_preset(static_cast<Derived*>(this)->controller(), 
 				 preset, name);
 	  }
-	  else if (LV2CXX_DEBUG) {
+	  else if (LV2MM_DEBUG) {
 	    std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
 		     <<name<<"\")"
 		     <<" --- Function not provided by host!"<<std::endl;
@@ -321,7 +317,7 @@ protected:
 	static void _preset_added(LV2UI_Handle gui, 
 				   uint32_t     number, 
 				   char const*  name) {
-	  if (LV2CXX_DEBUG) {
+	  if (LV2MM_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called preset_added("
 		     <<number<<", \""<<name<<"\")."<<std::endl;
 	  }
@@ -330,7 +326,7 @@ protected:
 	
 	static void _preset_removed(LV2UI_Handle gui, 
 				     uint32_t     number) {
-	  if (LV2CXX_DEBUG) {
+	  if (LV2MM_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called preset_removed("
 		     <<number<<")."<<std::endl;
 	  }
@@ -338,7 +334,7 @@ protected:
 	}
 	
 	static void _presets_cleared(LV2UI_Handle gui) {
-	  if (LV2CXX_DEBUG) {
+	  if (LV2MM_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called presets_cleared()."
 		     <<std::endl;
 	  }
@@ -347,7 +343,7 @@ protected:
 	
 	static void _current_preset_changed(LV2UI_Handle gui, 
 					     uint32_t     number) {
-	  if (LV2CXX_DEBUG) {
+	  if (LV2MM_DEBUG) {
 	    std::clog<<"[LV2::Presets] Host called current_preset_changed("
 		     <<number<<")."<<std::endl;
 	  }
@@ -368,8 +364,7 @@ protected:
       this mixin is the internal struct template I.
       @ingroup guimixins
   */
-  template <bool Required = true>
-  struct WriteMIDI {
+   LV2MM_MIXIN_CLASS WriteMIDI {
     
     enum {
       EVENT_BUFFER_SIZE = 4
@@ -379,10 +374,9 @@ protected:
 	use the	WriteMIDI mixin. The public and protected members defined 
 	here will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
+    LV2MM_MIXIN_DERIVED {
 
-      /** @internal */
-      I() : m_midi_type(0) {
+       I() : m_midi_type(0) {
 	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE, 
 					0);
       }
@@ -394,7 +388,7 @@ protected:
 	  uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 	m_event_buffer_format = d->
 	  uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  if (m_midi_type != 0) {
 	    std::clog<<"    [LV2::WriteMIDI] Host does not map (\""
 		     <<LV2_EVENT_URI
@@ -429,7 +423,7 @@ protected:
       */
       bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
 	
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"[LV2::WriteMIDI] write_midi("<<port<<", "<<size
 		   <<", \"";
 	  for (uint32_t i = 0; i < size; ++i) {
@@ -442,7 +436,7 @@ protected:
 	}
 	
 	if (m_midi_type == 0) {
-	  if (LV2CXX_DEBUG)
+	  if (LV2MM_DEBUG)
 	    std::clog<<"false (Host does not support MIDI writing)"<<std::endl;
 	  return false;
 	}
@@ -462,7 +456,7 @@ protected:
 	if (size > 4)
 	  std::free(buffer);
 	
-	if (LV2CXX_DEBUG)
+	if (LV2MM_DEBUG)
 	  std::clog<<"true"<<std::endl;
 	return true;
       }
@@ -485,16 +479,15 @@ protected:
       Do NOT use this. It may change in the future.
       @ingroup guimixins
   */
-  template <bool Required = true>
-  struct WriteOSC {
+   LV2MM_MIXIN_CLASS WriteOSC {
     
     /** This is the type that your plugin or GUI class will inherit when you 
 	use the	WriteOSC mixin. The public and protected members defined 
 	here will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      I() : m_osc_type(0) {
+    LV2MM_MIXIN_DERIVED {
+
+       I() : m_osc_type(0) {
 	m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + 256, 0);
       }
       
@@ -677,7 +670,7 @@ protected:
       s_bundle_path = bundle_path;
       
       // write some debug information
-      if (LV2CXX_DEBUG) {
+      if (LV2MM_DEBUG) {
 	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n\n"
 		 <<"  Note that this GUI is using a deprecated LV2 extension\n"
 		 <<"  that may not work correctly. If you are the author of\n"
@@ -693,12 +686,12 @@ protected:
       
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
-      if (LV2CXX_DEBUG)
+      if (LV2MM_DEBUG)
 	std::clog<<"  Initialising Gtkmm internals...\n";
       Gtk::Main::init_gtkmm_internals();
       
       // create the GUI object
-      if (LV2CXX_DEBUG)
+      if (LV2MM_DEBUG)
 	std::clog<<"  Creating widget..."<<std::endl;
       Derived* t = new Derived(plugin_uri);
       *widget = static_cast<Gtk::Widget*>(t)->gobj();

@@ -34,24 +34,51 @@ namespace LV2 {
       WORKER_ERR_NO_SPACE = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
    } WorkerStatus;
 
-   typedef LV2_Worker_Schedule WorkerSchedule;
+   typedef LV2_Worker_Respond_Handle    WorkerRespondHandle;
+   typedef LV2_Worker_Respond_Function  WorkerRespondFunction;
+   typedef LV2_Worker_Schedule          WorkerSchedule;
+
+   /**
+       Wrapper struct for state retrieval. This wraps an
+       LV2_State_Retrieve_Function and exeucutes via operator ()
+    */
+   struct WorkerRespond {
+      WorkerRespond(LV2_Handle instance,
+                    WorkerRespondFunction wrfunc,
+                    WorkerRespondHandle handle)
+      : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
+
+      /**
+          Execute the retrieve functor.
+          @param key
+          @param size
+          @param type
+          @param flags
+          @return Associate 'value' data for the given key
+       */
+      WorkerStatus operator () (uint32_t size, const void* data)
+      {
+         return (WorkerStatus) p_wrfunc (p_handle, size, data);
+      }
+
+   private:
+      LV2_Handle                p_instance;
+      WorkerRespondHandle       p_handle;
+      WorkerRespondFunction     p_wrfunc;
+   };
 
    /** The LV2 Worker Feature.
        The actual type that your plugin class will inherit when you use
        this mixin is the internal struct template I.
        @ingroup pluginmixins
     */
-   template <bool Required = true>
-   struct Worker {
+   LV2MM_MIXIN_CLASS Worker {
 
       /** This is the type that your plugin class will inherit when you use the
           Worker mixin. The public and protected members defined here
           will be available in your plugin class.
       */
-      template <class Derived> struct I : Extension<Required> {
-
-         /** @internal */
-         I() { }
+      LV2MM_MIXIN_DERIVED {
 
          /** @internal */
          static void map_feature_handlers(FeatureHandlerMap& hmap)
@@ -65,7 +92,7 @@ namespace LV2 {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
 
-            if (LV2CXX_DEBUG) {
+            if (LV2MM_DEBUG) {
                std::clog<<"  [LV2::Worker] handle_feature\n";
             }
 
@@ -78,7 +105,7 @@ namespace LV2 {
          /** @internal */
          bool check_ok()
          {
-            if (LV2CXX_DEBUG) {
+            if (LV2MM_DEBUG) {
               std::clog<<"    [LV2::Worker] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -136,15 +163,13 @@ namespace LV2 {
             about which thread calls this method, other than the fact that there
             are no real-time requirements.
 
-            @param respond  A function for sending a response to run().
-            @param handle   Must be passed to @p respond if it is called.
+            @param respond  A functor for sending a response to run().
             @param size     The size of @p data.
             @param data     Data from run(), or NULL.
          */
-          WorkerStatus work(LV2_Worker_Respond_Function respond,
-                            LV2_Worker_Respond_Handle   handle,
-                            uint32_t                    size,
-                            const void*                 data)
+          WorkerStatus work(WorkerRespond        &respond,
+                            uint32_t             size,
+                            const void*          data)
           {
              return WORKER_SUCCESS;
           }
@@ -198,13 +223,14 @@ namespace LV2 {
                                         const void*                 data)
          {
             Derived* plugin = reinterpret_cast<Derived*>(instance);
-            return (LV2_Worker_Status)plugin->work(respond, handle, size, data);
+            WorkerRespond wrsp (instance, respond, handle);
+            return (LV2_Worker_Status)plugin->work(wrsp, size, data);
          }
 
          /** @internal */
          static LV2_Worker_Status _work_response (LV2_Handle  instance,
-                                                uint32_t    size,
-                                                const void* body)
+                                                  uint32_t    size,
+                                                  const void* body)
          {
             Derived* plugin = reinterpret_cast<Derived*>(instance);
             return (LV2_Worker_Status)plugin->work_response (size, body);

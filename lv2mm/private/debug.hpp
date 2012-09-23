@@ -23,15 +23,15 @@
 #ifndef DEBUG_HPP
 #define DEBUG_HPP
 
-#ifndef LV2CXX_DEBUG
+#ifndef LV2MM_DEBUG
 #  ifdef NDEBUG
-#    define LV2CXX_DEBUG false
+#    define LV2MM_DEBUG false
 #  else
-#    define LV2CXX_DEBUG true
+#    define LV2MM_DEBUG true
 #  endif
 #endif
 
-#if LV2CXX_DEBUG
+#if LV2MM_DEBUG
 #include <iomanip>
 #include <iostream>
 #endif
