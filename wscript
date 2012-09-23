@@ -23,15 +23,15 @@ LV2MM_MAJOR_VERSION=LV2MM_VERSION[0]
 LV2MM_MINOR_VERSION=LV2MM_VERSION[2]
 LV2MM_MICRO_VERSION=LV2MM_VERSION[4]
 
-LIB_LV2MM       ="lv2mm-plugin"
-LIB_LV2MM_GTKUI ="lv2mm-gtkui"
-
 # Anything appended to version number goes here
 LV2MM_EXTRA_VERSION="-rc1"
 
 # For waf dist
 APPNAME = 'lv2mm'
 VERSION = LV2MM_VERSION + LV2MM_EXTRA_VERSION
+
+LIB_LV2MM       = APPNAME+"-plugin"+LV2MM_MAJOR_VERSION
+LIB_LV2MM_GTKUI = APPNAME+"-gtkui"+LV2MM_MAJOR_VERSION
 
 # Required by waf
 top = '.'
@@ -64,8 +64,8 @@ def configure(conf):
 	conf.env.UI_DISABLED         = conf.options.disable_ui	
 	conf.env.LV2MM_MAJOR_VERSION = LV2MM_MAJOR_VERSION
 	conf.env.LV2MM_MINOR_VERSION = LV2MM_MINOR_VERSION
-	conf.env.LIB_LV2MM           = APPNAME+"-plugin"
-	conf.env.LIB_LV2MM_GTKUI     = APPNAME+"-gtkui"
+	conf.env.LIB_LV2MM           = LIB_LV2MM
+	conf.env.LIB_LV2MM_GTKUI     = LIB_LV2MM_GTKUI
 	conf.env.APPNAME			 = APPNAME
 	
 	autowaf.configure(conf)

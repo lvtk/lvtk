@@ -19,8 +19,8 @@ bld.stlib(
 	source   = plugin_code,
 	includes = ["../lv2mm", "include"],
 	cxxflags = ["-fPIC"],
-	target   = "%s-plugin" % pkg,
-	name     = "%s-plugin" % pkg
+	target   = bld.env.LIB_LV2MM,
+	name     = bld.env.LIB_LV2MM
 )
 
 if not bld.env.UI_DISABLED:
@@ -28,8 +28,8 @@ if not bld.env.UI_DISABLED:
 		source   = gtkui_code,
 		includes = ["../lv2mm", "include"],
 		cxxflags = ["-fPIC"],
-		target   = "%s-gtkui" % pkg,
-		name     = "%s-gtkui" % pkg,
+		target   = bld.env.LIB_LV2MM_GTKUI,
+		name     = bld.env.LIB_LV2MM_GTKUI,
 		use      = "gtkmm"
 	)
 
