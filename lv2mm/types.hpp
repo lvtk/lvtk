@@ -36,6 +36,8 @@ namespace LV2 {
   /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
   typedef LV2_Feature Feature;
   
+  typedef std::vector<const Feature*> FeatureSet;
+
   /** Convenient typedef for the feature handler function type. */
   typedef void(*FeatureHandler)(void*, void*);
   
