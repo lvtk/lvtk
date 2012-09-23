@@ -4,7 +4,7 @@ libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
 Name: lv2mm-gtkui
-Version: @LV2MM_VERSION@
+Version: @VERSION@
 Description: A C++ library for writing LV2 Gtkmm UIs
 Requires: @LV2MM_PKG_DEPS@
 Libs: -L${libdir} -l@THELIB@

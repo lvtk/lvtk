@@ -82,6 +82,7 @@ def build(bld):
 						'LV2MM_PKG_DEPS'       : 'lv2'})
 	autowaf.build_pc(bld, 'LV2MM-GTKUI', LV2MM_VERSION, LV2MM_MAJOR_VERSION, [],
 						{'LV2MM_MAJOR_VERSION' : LV2MM_MAJOR_VERSION,
+						'VERSION'              : LV2MM_VERSION,
 						'THELIB'		       : LIB_LV2MM_GTKUI,
 						'LV2MM_PKG_DEPS'       : 'lv2'})
 	
