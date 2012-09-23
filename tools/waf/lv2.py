@@ -3,10 +3,12 @@
 # Michael Fisher 2012
 
 """
-LV2 Bundle Related
-----------------------
+LV2 Bundle Related Tools
+------------------------
 WARNING: At the time of writing, this file assumes you have called
 autowaf.configure(conf)  in your configure target. TODO: Fix That
+
+Written for waf-1.7.x . Have not tested previous versions.
 """
 
 import os, shutil, sys, platform
@@ -64,10 +66,7 @@ def create_task_lv2plugin(self):
 	'''  Handle LV2 Resources: 
 	Files with pattern *manifest.ttl get copied as manifest.ttl. 
 	Files with pattern *manifest.ttl.in* get processed as a 'subst' feature
-	
-	WIP: TODO: This is a quicky to get this kind of functionality. Clean Up before
-	trying to make better. Segment into methods and make less repetitive.
-	'''
+	WIP: TODO: Clean it up'''
 	if getattr(self, 'lv2_resources', False):
 		res_dir = plugin.parent
 		# LV2 Bundle Resources
