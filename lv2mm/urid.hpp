@@ -33,17 +33,13 @@ namespace LV2 {
    * this mixin is the internal struct template I.
    * @ingroup pluginmixins
    */
-   template <bool Required = true>
-   struct URID {
+   LV2MM_MIXIN_CLASS URID {
 
      /** This is the type that your plugin class will inherit when you use the
          EventRef mixin. The public and protected members defined here
          will be available in your plugin class.
      */
-     template <class Derived> struct I : Extension<Required> {
-
-       /** @internal */
-       I() { }
+     LV2MM_MIXIN_DERIVED {
 
        /** @internal */
        static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -73,7 +69,7 @@ namespace LV2 {
 
 
        bool check_ok() {
-         if (LV2CXX_DEBUG) {
+         if (LV2MM_DEBUG) {
            std::clog<<"    [LV2::URID] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }

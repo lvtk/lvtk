@@ -143,42 +143,46 @@ namespace LV2 {
       StateStoreFunction       p_ssfunc;
    };
 
-
   /**
    * The State Feature.
    * The actual type that your plugin class will inherit when you use
    * this mixin is the internal struct template I.
    * @ingroup pluginmixins
    */
-   template <bool Required = true>
-   struct State {
+   LV2MM_MIXIN_CLASS State {
 
      /** This is the type that your plugin class will inherit when you use the
          EventRef mixin. The public and protected members defined here
          will be available in your plugin class.
      */
-     template <class Derived> struct I : Extension<Required> {
+      LV2MM_MIXIN_DERIVED {
 
        /** @internal */
-       I() { }
-
-       /** @internal */
-       static void map_feature_handlers(FeatureHandlerMap& hmap) {
+       static void
+       map_feature_handlers(FeatureHandlerMap& hmap) {
 
        }
 
        /** @internal */
-       static void handle_feature(void* instance, void* data) {
+       static void
+       handle_feature(void* instance, void* data) {
 
        }
 
-       bool check_ok() {
-         if (LV2CXX_DEBUG) {
-           std::clog<<"    [LV2::State] Validation "
-                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+      bool
+      check_ok() {
+
+      /** Since we're not yet incorporating the other state features,
+      * and this is the only 'instantiate setup' we have, just set
+      * m_ok to true.
+      */
+      this->m_ok = true; /* Workaround */
+      if (LV2MM_DEBUG) {
+         std::clog<<"    [LV2::State] Validation "
+                                 <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
          return this->m_ok;
-       }
+      }
 
        /** @internal */
        static const void* extension_data (const char* uri) {
@@ -189,6 +193,9 @@ namespace LV2 {
          }
          return 0;
        }
+
+
+       /* ===============  State C++ Interface ==========================  */
 
        StateStatus save(const StateStore &store, uint32_t flags,
                         const FeatureSet &features)
@@ -204,7 +211,7 @@ namespace LV2 {
 
      protected:
 
-       /** LV2 Api Implementation */
+       /* ==============  LV2 Boiler Plate Implementation ================= */
 
        /** @internal - called from host */
        static LV2_State_Status _save(LV2_Handle                 instance,
@@ -214,9 +221,10 @@ namespace LV2 {
                                      const LV2_Feature *const * features)
        {
          Derived* plugin = reinterpret_cast<Derived*>(instance);
-         StateStore ss (store, handle);
-         FeatureSet feature_set;
 
+         StateStore ss (store, handle);
+
+         FeatureSet feature_set;
          for (int i = 0; features[i]; ++i) {
             feature_set.push_back (features[i]);
          }

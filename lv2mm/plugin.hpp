@@ -341,7 +341,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       s_features = features;
       s_bundle_path = bundle_path;
 
-      if (LV2CXX_DEBUG) {
+      if (LV2MM_DEBUG) {
 	std::clog<<"[LV2::Plugin] Instantiating plugin...\n"
 		 <<"  Bundle path: "<<bundle_path<<"\n"
 		 <<"  Features: \n";
@@ -353,16 +353,16 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 
       Derived* t = new Derived(sample_rate);
       
-      if (LV2CXX_DEBUG)
+      if (LV2MM_DEBUG)
 	std::clog<<"  Validating...\n";
       
       if (t->check_ok()) {
-	if (LV2CXX_DEBUG)
+	if (LV2MM_DEBUG)
 	  std::clog<<"  Done!"<<std::endl;
 	return reinterpret_cast<LV2_Handle>(t);
       }
       
-      if (LV2CXX_DEBUG) {
+      if (LV2MM_DEBUG) {
 	std::clog<<"  Failed!\n"
 		 <<"  Deleting object."<<std::endl;
       }
@@ -454,17 +454,15 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required = true>
-  struct FixedBufSize {
+  LV2MM_MIXIN_CLASS FixedBufSize {
     
     /** This is the type that your plugin class will inherit when you use the
 	FixedBufSize mixin. The public and protected members defined here
 	will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal */
-      I() : m_buffer_size(0) { }
+    LV2MM_MIXIN_DERIVED {
+
+       I() : m_buffer_size(0) { }
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -477,7 +475,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::FixedBufSize] Host set buffer size to "
 		   <<fe->m_buffer_size<<std::endl;
 	}
@@ -485,7 +483,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
 
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::FixedBufSize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -513,17 +511,15 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required = true>
-  struct FixedP2BufSize {
+  LV2MM_MIXIN_CLASS FixedP2BufSize {
     
     /** This is the type that your plugin class will inherit when you use the
 	FixedP2BufSize mixin. The public and protected members defined here
 	will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal */
-      I() : m_buffer_size(0) { }
+    LV2MM_MIXIN_DERIVED {
+
+       I() : m_buffer_size(0) { }
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -536,7 +532,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Derived* d = reinterpret_cast<Derived*>(instance);
 	I<Derived>* fe = static_cast<I<Derived>*>(d);
 	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::FixedP2BufSize] Host set buffer size to "
 		   <<fe->m_buffer_size<<std::endl;
 	}
@@ -544,7 +540,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::FixedP2BufSize] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -571,17 +567,13 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       inherit when you use this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required = true>
-  struct SaveRestore {
+  LV2MM_MIXIN_CLASS SaveRestore {
     
     /** This is the type that your plugin class will inherit when you use the
 	SaveRestore mixin. The public and protected members defined here
 	will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal */
-      I() { }
+    LV2MM_MIXIN_DERIVED {
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -596,7 +588,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::SaveRestore] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -641,7 +633,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	  Static callback wrapper. */
       static char* _save(LV2_Handle h, 
 			 const char* directory, LV2SR_File*** files) {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"[LV2::SaveRestore] Host called save().\n"
 		   <<"  directory: \""<<directory<<"\""<<std::endl;
 	}
@@ -651,7 +643,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       /** @internal
 	  Static callback wrapper. */
       static char* _restore(LV2_Handle h, const LV2SR_File** files) {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"[LV2::SaveRestore] Host called restore().\n"
 		   <<"  Files:\n";
 	  for (LV2SR_File const** f = files; (*f) != 0; ++f)
@@ -671,17 +663,15 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required = true>
-  struct EventRef {
+  LV2MM_MIXIN_CLASS EventRef {
     
     /** This is the type that your plugin class will inherit when you use the
 	EventRef mixin. The public and protected members defined here
 	will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal */
-      I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
+    LV2MM_MIXIN_DERIVED {
+
+       I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -700,7 +690,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::EventRef] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -746,17 +736,13 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       this mixin is the internal struct template I.
       @ingroup pluginmixins
   */
-  template <bool Required = true>
-  struct MsgContext {
+  LV2MM_MIXIN_CLASS MsgContext {
     
     /** This is the type that your plugin class will inherit when you use the
 	MsgContext mixin. The public and protected members defined here
 	will be available in your plugin class.
     */
-    template <class Derived> struct I : Extension<Required> {
-      
-      /** @internal */
-      I() { }
+    LV2MM_MIXIN_DERIVED {
       
       /** @internal */
       static void map_feature_handlers(FeatureHandlerMap& hmap) {
@@ -771,7 +757,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       }
       
       bool check_ok() {
-	if (LV2CXX_DEBUG) {
+	if (LV2MM_DEBUG) {
 	  std::clog<<"    [LV2::MsgContext] Validation "
 		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
 	}
@@ -799,7 +785,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       /** @internal
 	  Static callback wrapper. */
       static bool _blocking_run(LV2_Handle h, uint8_t* outputs_written) {
-	if (LV2CXX_DEBUG)
+	if (LV2MM_DEBUG)
 	  std::clog<<"[LV2::MsgContext] Host called blocking_run()."<<std::endl;
 	return reinterpret_cast<Derived*>(h)->blocking_run(outputs_written);
       }
@@ -814,6 +800,5 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   };
 
 } /* namespace LV2 */
-
 
 #endif /* LV2_PLUGIN_HPP */

@@ -52,21 +52,20 @@ class Workhorse : public Plugin<Workhorse, Worker<true>, State<true> >
 
    /* ============================= Worker ============================ */
 
-    WorkerStatus work_response (uint32_t size, const void* body)
+    WorkerStatus
+    work_response (uint32_t size, const void* body)
     {
        std::clog << "workhorse: wake up!\n";
        std::clog << "workhorse: msg was '" << (const char*)body << "'\n";
        return WORKER_SUCCESS;
     }
 
-    WorkerStatus work (LV2_Worker_Respond_Function respond,
-                            LV2_Worker_Respond_Handle   handle,
-                            uint32_t                    size,
-                            const void*                 data)
+    WorkerStatus
+    work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
        std::clog << "workhorse: taking a nap now\n";
        sleep (3);
-       respond (handle, size, data);
+       respond (size, data);
        return WORKER_SUCCESS;
     }
 
