@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+pkg=bld.env.APPNAME
+
+plugin_code = bld.path.ant_glob("*plugin*.cpp")
+gtkui_code  = bld.path.ant_glob("*gtkui*.cpp")
+
+bld.stlib(
+	source   = plugin_code,
+	includes = ["../lv2mm", "include"],
+	cxxflags = ["-fPIC"],
+	target   = "%s-plugin" % pkg,
+	name     = "%s-plugin" % pkg
+)
+
+if not bld.env.UI_DISABLED:
+	bld.stlib(
+		source   = gtkui_code,
+		includes = ["../lv2mm", "include"],
+		cxxflags = ["-fPIC"],
+		target   = "%s-gtkui" % pkg,
+		name     = "%s-gtkui" % pkg,
+		use      = "gtkmm"
+	)
+
