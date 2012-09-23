@@ -76,10 +76,10 @@ namespace LV2 {
          STATE_ERR_NO_FEATURE  = LV2_STATE_ERR_NO_FEATURE,   /**< Failed due to missing features. */
          STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
       } StateStatus;
+
    typedef LV2_State_Retrieve_Function         StateRetrieveFunction;
    typedef LV2_State_Store_Function            StateStoreFunction;
    typedef LV2_State_Handle                    StateHandle;
-
 
    /**
        Wrapper struct for state retrieval. This wraps an
