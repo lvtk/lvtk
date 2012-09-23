@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+''' This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public Licence as published by
+the Free Software Foundation, either version 3 of the Licence, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+file COPYING for more details. '''
+
+import lv2
+
+examples = ["workhorse"]
+
+bld.add_group()
+	
+for slug in examples:
+	plugin = bld.shlib(
+		lv2_bundle	  =	 True,
+		lv2_resources = ["%s.manifest.ttl.in" % slug,"%s.ttl" % slug],
+		name          = slug,
+		target        = slug,
+		source        = "%s.cpp" % slug,
+		use           = bld.env.LIB_LV2MM,
+		LIB_EXT		  = bld.env.pluginlib_EXT
+	)

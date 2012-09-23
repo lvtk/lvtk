@@ -16,7 +16,7 @@ import sys
 from subprocess import call
 
 sys.path.insert(0, "tools/waf")
-import autowaf, cross, git
+import autowaf, cross, lv2, git
 
 LV2MM_VERSION="0.0.1"
 LV2MM_MAJOR_VERSION=LV2MM_VERSION[0]
@@ -38,7 +38,7 @@ top = '.'
 out = 'build'
 
 def options(opts):
-	opts.load("cross compiler_c compiler_cxx")
+	opts.load("cross compiler_c compiler_cxx lv2")
 	autowaf.set_options(opts)
 	
 	opts.add_option('--disable-ui', default=False, \
@@ -50,7 +50,7 @@ def options(opts):
 
 
 def configure(conf):
-	conf.load("cross compiler_c compiler_cxx")
+	conf.load("cross compiler_c compiler_cxx lv2")
 
 	# Check for required packages
 	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
@@ -72,7 +72,7 @@ def configure(conf):
 	
 
 def build(bld):
-	subdirs = ['src','tools']
+	subdirs = ['src','tools','examples']
 	for subdir in subdirs: bld.recurse(subdir)
 	
 	# Build PC Files
