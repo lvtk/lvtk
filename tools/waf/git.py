@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-# C
-# D
+# Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
 from subprocess import call
 
