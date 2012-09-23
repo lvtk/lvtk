@@ -101,8 +101,8 @@ def build(bld):
 					  bld.path.ant_glob("lv2mm/private/*.*"))
 
 def release_tag(ctx):
-	tag = git.tag_version(VERSION, "Release: v" + VERSION , APPNAME)
-	print "Git Tag Created: " + tag
+	tag = git.tag_version(VERSION, "Release: v" + VERSION , "v")
+	if tag : print "Git Tag Created: " + tag
 
 def dist(ctx):
     z=ctx.options.ziptype
