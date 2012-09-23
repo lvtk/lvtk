@@ -1,5 +1,0 @@
-Name: liblv2-plugin
-Description: A support library for writing LV2 plugins in C++
-Version: ${PACKAGE_VERSION}
-Libs: -L${libdir} -llv2-plugin
-Cflags: -I${pkgincludedir} -I${pkgincludedir}/lv2cxx_common

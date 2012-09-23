@@ -1,19 +1,33 @@
-LV2-C++-TOOLS
-=============
-This software package contains libraries and programs that should make 
-it easier to write LV2 plugins. You can generate HTML API 
-documentation by running 'doxygen' in the top level of the source 
-tree.
+LV2 C++ Libs (liblv2mm)
+=======================
 
+The name of this package is subject to change. Awaiting approval from
+[LAD] that lv2mm is appropriate.
+
+This software package contains libraries that wrap the LV2 C API and
+extensions into easy to use C++ classes. The original work for this
+was mostly done by Lars Luthman in lv2-c++-tools.
+
+BUILDING
+--------
 To build and install, run
 
- ./configure
- make
- su -c 'make install'
+$ ./waf conifugre
+$ ./waf build
+$ sudo ./waf install
 
-You can pass some options to configure, e.g. --prefix=/usr to install
-everything in /usr (the default is /usr/local).
+To build without the UI libraries, run
 
+$ ./waf conifigure --disable-ui build
+
+To build documentation, run
+
+$ ./waf configure --docs build
+
+HTML documentation gets placed in docs/html
+
+LICENSE
+-------
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public Licence as published by
 the Free Software Foundation, either version 3 of the Licence, or
@@ -25,9 +39,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details.
 
 Note that this licence requires that any plugin that uses the 
-liblv2-plugin and liblv2-gui frameworks is also licensed under GPL
-version 3 or later.
+liblv2mm-* frameworks is also licensed under GPL version 3 or later.
 
-For a tutorial, see http://ll-plugins.nongnu.org/lv2pftci
-
-Send bug reports, postcards and pancakes to lars.luthman@gmail.com.
+Send bug reports to mfisher31@gmail.com
