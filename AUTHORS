@@ -6,12 +6,11 @@ Most headers in lv2mm/private are written by
  * Lars Luthman
  * Dave Robillard
  * Stefan Westerfeld
- * Lars Luthman
 
 See the comments in those files for details.
 
 The first version of the URIMap mixin is:
-Dave Robillard.
+Dave Robillard
 
 The original lv2plugin.* and lv2gui.* are:
 Lars Luthman <lars.luthman@gmail.com>
