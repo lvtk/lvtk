@@ -1,2 +1,9 @@
 *.pyc
 build/
+.cproject
+.lock-waf*
+lock-waf*
+.project
+.settings/
+.waf-*/
+waf-*/
