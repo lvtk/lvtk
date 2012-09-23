@@ -2,7 +2,7 @@ LV2 C++ Libs
 ============
 
 The name of this package is subject to change. Awaiting approval from
-[LAD] that lv2mm is appropriate.
+[LV2] that lv2mm is appropriate.
 
 This software package contains libraries that wrap the LV2 C API and
 extensions into easy to use C++ classes. The original work for this
