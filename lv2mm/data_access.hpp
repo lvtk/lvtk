@@ -46,8 +46,6 @@ namespace LV2 {
    LV2MM_MIXIN_CLASS DataAccess {
       LV2MM_MIXIN_DERIVED {
 
-         typedef I<Derived> Mixin;
-
          I() : p_da (NULL) { }
 
 
@@ -114,6 +112,7 @@ namespace LV2 {
          LV2_Extension_Data_Feature   *p_da;
      };
    };
-}
+
+} /* namespace LV2 */
 
 #endif /* LV2_DATA_ACCESS_HPP */
