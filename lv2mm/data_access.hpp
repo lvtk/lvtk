@@ -42,7 +42,7 @@ namespace LV2 {
 
          typedef I<Derived> Mixin;
 
-         I() { }
+         I() : p_da (NULL) { }
 
 
          /* ================= Mixin API ========================= */
@@ -81,7 +81,10 @@ namespace LV2 {
          const void*
          data_access(const char *uri)
          {
-            return p_da->data_access(uri);
+            if (NULL != p_da) {
+               return p_da->data_access(uri);
+            }
+            return NULL;
          }
 
      protected:
