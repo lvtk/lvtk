@@ -33,6 +33,92 @@
 
 namespace LV2 {
 
+
+   /** This extension provides no extra functions or data, it just makes sure
+      that the GUI will not instantiate unless the host passes a Feature
+      for the noUserResize GUI feature defined in the GUI extension (if
+      @c Required is @c true).
+
+      The actual type that your plugin class will inherit when you use
+      this mixin is the internal struct template I.
+      @ingroup guimixins
+   */
+   LV2MM_MIXIN_CLASS NoUserResize {
+
+      /** This is the type that your plugin or GUI class will inherit when you
+        use the NoUserResize mixin. The public and protected members defined
+        here will be available in your plugin class.
+      */
+      LV2MM_MIXIN_DERIVED {
+
+         /** @internal */
+         static void map_feature_handlers(FeatureHandlerMap& hmap) {
+           hmap["http://ll-plugins.nongnu.org/lv2/dev/ui#noUserResize"] =
+             &I<Derived>::handle_feature;
+         }
+
+         /** @internal */
+         static void handle_feature(void* instance, void* data) {
+           Derived* d = reinterpret_cast<Derived*>(instance);
+           I<Derived>* e = static_cast<I<Derived>*>(d);
+           e->m_ok = true;
+         }
+
+         bool check_ok() {
+           if (LV2MM_DEBUG) {
+             std::clog<<"    [LV2::NoUserResize] Validation "
+                      <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+           }
+           return this->m_ok;
+         }
+      };
+
+   };
+
+
+   /** This extension provides no extra functions or data, it just makes sure
+      that the GUI will not instantiate unless the host passes a Feature
+      for the fixedSize GUI feature defined in the GUI extension (if
+      @c Required is @c true).
+
+      The actual type that your plugin class will inherit when you use
+      this mixin is the internal struct template I.
+      @ingroup guimixins
+   */
+   LV2MM_MIXIN_CLASS FixedSize {
+
+    /** This is the type that your plugin or GUI class will inherit when you
+        use the FixedSize mixin. The public and protected members defined
+        here will be available in your plugin class.
+    */
+   LV2MM_MIXIN_DERIVED {
+
+      /** @internal */
+      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+        hmap["http://ll-plugins.nongnu.org/lv2/dev/ui#fixedSize"] =
+          &I<Derived>::handle_feature;
+      }
+
+      /** @internal */
+      static void handle_feature(void* instance, void* data) {
+        Derived* d = reinterpret_cast<Derived*>(instance);
+        I<Derived>* e = static_cast<I<Derived>*>(d);
+        e->m_ok = true;
+      }
+
+      bool check_ok() {
+        if (LV2MM_DEBUG) {
+          std::clog<<"    [LV2::FixedSize] Validation "
+                   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+        }
+        return this->m_ok;
+      }
+
+    };
+
+  };
+
+
    /** @internal
        A mixin that allows easy sending of OSC from GUI to plugin.
 
