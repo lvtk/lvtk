@@ -89,7 +89,7 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature(void* instance, void* data)
+         handle_feature(LV2::Handle instance, FeatureData data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
