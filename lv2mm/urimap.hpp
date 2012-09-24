@@ -18,9 +18,19 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 /**
-   @urimap.hpp
+   @file urimap.hpp
    C++ convenience header for the LV2 URIMap extension.
    LV2 C Version: 1.6 (2012-04-17) DEPRECATED
+
+   This extension is deprecated. New implementations should use LV2 URID instead.
+
+   This extension defines a simple mechanism for plugins to map URIs to integers,
+   usually for performance reasons (e.g. processing events typed by URIs in
+   real time). The expected use case is for plugins to map URIs to integers
+   for things they 'understand' at instantiation time, and store those values
+   for use in the audio thread without doing any string comparison. This allows
+   the extensibility of RDF with the performance of integers (or centrally defined
+   enumerations).
 */
 
 #ifndef LV2_URIMAP_HPP
@@ -30,7 +40,6 @@
 #include <lv2mm/types.hpp>
 
 namespace LV2 {
-
 
    /** The URI map mixin. This can be used by both plugins and GUIs.
 
