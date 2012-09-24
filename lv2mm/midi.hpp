@@ -1,5 +1,4 @@
-/****************************************************************************
-
+/**
     urid.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
@@ -17,16 +16,21 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
-****************************************************************************/
+*/
+/**
+   @file midi.hpp
+   C++ convenience header for the LV2 midi Extension.
+*/
 
 #ifndef LV2_MIDI_HPP
 #define LV2_MIDI_HPP
+
+#include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
 namespace LV2 {
 
 
 
-}
+} /* namespace LV2 */
 
 #endif /* LV2_MIDI_HPP */
