@@ -42,7 +42,7 @@
 
 #include "private/debug.hpp"
 
-/** @mainpage D.A.P.S - Digital Audio plugins Streamlined
+/** @mainpage D.A.P.S - Digital Audio Plugins Streamlined
 
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
@@ -108,7 +108,7 @@ namespace daps {
       #include <cstring>
       #include <daps/plugin.hpp>
       
-      class TestLV2 : public plugin<TestLV2> {
+      class TestLV2 : public Plugin<TestLV2> {
       public:
         TestLV2(double) : plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
@@ -116,7 +116,7 @@ namespace daps {
         }
       };
       
-      static unsigned _ = Testregister_class("http://ll-plugins.sf.net/plugins/TestLV2");
+      static unsigned _ = TestLV2::register_class("http://ll-plugins.sf.net/plugins/TestLV2");
       @endcode
       
       If the above code is compiled and linked with @c -llv2_plugin into a 
