@@ -41,9 +41,6 @@
 #include <lv2mm/worker.hpp>
 
 #include "private/debug.hpp"
-#include "private/lv2_saverestore.h"
-#include "private/lv2_contexts.h"
-
 
 /** @mainpage LV2 C++ - API documentation
     These documents describe some C++ classes that may be of use if you want
@@ -74,19 +71,21 @@
     LV2 programming for the complete idiot</a>.
     
     @author Lars Luthman <lars.luthman@gmail.com>
+    @author Michael FIsher <mfisher31@gmail.com>
 */
 
 
 namespace LV2 {
   
+   using std::vector;
 
-  /** @internal
+   /** @internal
       A thin wrapper around std::vector<LV2_Descriptor> that frees the URI
       members of the descriptors. */
-  class DescList : public std::vector<LV2_Descriptor> {
-  public:
+   class DescList : public vector<LV2_Descriptor> {
+   public:
     ~DescList();
-  };
+   };
 
 
   /** @internal
@@ -351,10 +350,11 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	std::clog<<"  Creating plugin object...\n";
       }
 
-      Derived* t = new Derived(sample_rate);
+      Derived* t = new Derived (sample_rate);
       
-      if (LV2MM_DEBUG)
+      if (LV2MM_DEBUG) {
 	std::clog<<"  Validating...\n";
+      }
       
       if (t->check_ok()) {
 	if (LV2MM_DEBUG)
@@ -375,7 +375,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	cleanup() callback in the LV2 descriptor. You should not use it
 	directly. */
     static void _delete_plugin_instance(LV2_Handle instance) {
-      delete reinterpret_cast<Derived*>(instance);
+      delete reinterpret_cast<Derived*> (instance);
     }
 
 
@@ -445,360 +445,6 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       way with LV2::GUI.
   */
   
-
-  /** The fixed buffer size extension. A host that supports this will always
-      call the plugin's run() function with the same @c sample_count parameter,
-      which will be equal to the value returned by I::get_buffer_size(). 
-
-      The actual type that your plugin class will inherit when you use 
-      this mixin is the internal struct template I.
-      @ingroup pluginmixins
-  */
-  LV2MM_MIXIN_CLASS FixedBufSize {
-    
-    /** This is the type that your plugin class will inherit when you use the
-	FixedBufSize mixin. The public and protected members defined here
-	will be available in your plugin class.
-    */
-    LV2MM_MIXIN_DERIVED {
-
-       I() : m_buffer_size(0) { }
-      
-      /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap["http://tapas.affenbande.org/lv2/ext/fixed-buffersize"] = 
-	  &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::FixedBufSize] Host set buffer size to "
-		   <<fe->m_buffer_size<<std::endl;
-	}
-	fe->m_ok = true;
-      }
-
-      bool check_ok() {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::FixedBufSize] Validation "
-		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-	}
-	return this->m_ok;
-      }
-      
-    protected:
-      
-      /** This returns the buffer size that the host has promised to use.
-	  If the host does not support this extension this function will
-	  return 0. */
-      uint32_t get_buffer_size() const { return m_buffer_size; }
-      
-      uint32_t m_buffer_size;
-      
-    };
-    
-  };
-  
-  /** The fixed power-of-2 buffer size extension. This works just like 
-      FixedBufSize with the additional requirement that the buffer size must
-      be a power of 2. 
-
-      The actual type that your plugin class will inherit when you use 
-      this mixin is the internal struct template I.
-      @ingroup pluginmixins
-  */
-  LV2MM_MIXIN_CLASS FixedP2BufSize {
-    
-    /** This is the type that your plugin class will inherit when you use the
-	FixedP2BufSize mixin. The public and protected members defined here
-	will be available in your plugin class.
-    */
-    LV2MM_MIXIN_DERIVED {
-
-       I() : m_buffer_size(0) { }
-      
-      /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap["http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize"] = 
-	  &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-	fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::FixedP2BufSize] Host set buffer size to "
-		   <<fe->m_buffer_size<<std::endl;
-	}
-	fe->m_ok = true;
-      }
-      
-      bool check_ok() {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::FixedP2BufSize] Validation "
-		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-	}
-	return this->m_ok;
-      }
-
-    protected:
-      
-      /** This returns the buffer size that the host has promised to use.
-	  If the host does not support this extension this function will
-	  return 0. */
-      uint32_t get_buffer_size() const { return m_buffer_size; }
-      
-      uint32_t m_buffer_size;
-      
-    };
-  
-  };
-
-
-  /** The save/restore extension. 
-      
-      The actual type that your plugin class will
-      inherit when you use this mixin is the internal struct template I.
-      @ingroup pluginmixins
-  */
-  LV2MM_MIXIN_CLASS SaveRestore {
-    
-    /** This is the type that your plugin class will inherit when you use the
-	SaveRestore mixin. The public and protected members defined here
-	will be available in your plugin class.
-    */
-    LV2MM_MIXIN_DERIVED {
-      
-      /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_SAVERESTORE_URI] = &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-	fe->m_ok = true;
-      }
-      
-      bool check_ok() {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::SaveRestore] Validation "
-		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-	}
-	return this->m_ok;
-      }
-
-      /** @internal */
-      static const void* extension_data(const char* uri) { 
-	if (!std::strcmp(uri, LV2_SAVERESTORE_URI)) {
-	  static LV2SR_Descriptor srdesc = { &I<Derived>::_save,
-					     &I<Derived>::_restore };
-	  return &srdesc;
-	}
-	return 0;
-      }
-      
-      /** This function is called by the host when it wants to save the 
-	  current state of the plugin. You should override it. 
-	  @param directory A filesystem path to a directory where the plugin
-	                   should write any files it creates while saving.
-	  @param files A pointer to a NULL-terminated array of @c LV2SR_File 
-	               pointers. The plugin should set @c *files to point to 
-		       the first element in a dynamically allocated array of 
-		       @c LV2SR_File pointers to (also dynamically allocated) 
-		       @c LV2SR_File objects, listing the files to which the 
-		       internal state of the plugin instance has been saved. 
-		       These objects, and the array, will be freed by the host.
-      */
-      char* save(const char* directory, LV2SR_File*** files) { return 0; }
-      
-      /** This function is called by the host when it wants to restore
-	  the plugin to a previous state. You should override it.
-	  @param files An array of pointers to @c LV2SR_File objects, listing
-	               the files from which the internal state of the plugin 
-		       instance should be restored.
-      */
-      char* restore(const LV2SR_File** files) { return 0; }
-      
-    protected:
-      
-      /** @internal
-	  Static callback wrapper. */
-      static char* _save(LV2_Handle h, 
-			 const char* directory, LV2SR_File*** files) {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"[LV2::SaveRestore] Host called save().\n"
-		   <<"  directory: \""<<directory<<"\""<<std::endl;
-	}
-	return reinterpret_cast<Derived*>(h)->save(directory, files);
-      }
-      
-      /** @internal
-	  Static callback wrapper. */
-      static char* _restore(LV2_Handle h, const LV2SR_File** files) {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"[LV2::SaveRestore] Host called restore().\n"
-		   <<"  Files:\n";
-	  for (LV2SR_File const** f = files; (*f) != 0; ++f)
-	    std::clog<<"  \""<<(*f)->name<<"\" -> \""<<(*f)->path<<"\"\n";
-	  std::clog<<std::flush;
-	}
-	return reinterpret_cast<Derived*>(h)->restore(files);
-      }
-      
-    };
-  };
-  
-  
-  /** The event ref/unref function, required for plugins with event ports. 
-
-      The actual type that your plugin class will inherit when you use 
-      this mixin is the internal struct template I.
-      @ingroup pluginmixins
-  */
-  LV2MM_MIXIN_CLASS EventRef {
-    
-    /** This is the type that your plugin class will inherit when you use the
-	EventRef mixin. The public and protected members defined here
-	will be available in your plugin class.
-    */
-    LV2MM_MIXIN_DERIVED {
-
-       I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
-      
-      /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_EVENT_URI] = &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-        LV2_Event_Feature* ef = reinterpret_cast<LV2_Event_Feature*>(data);
-        fe->m_callback_data = ef->callback_data;
-        fe->m_ref_func = ef->lv2_event_ref;
-        fe->m_unref_func = ef->lv2_event_unref;
-        fe->m_ok = true;
-      }
-      
-      bool check_ok() {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::EventRef] Validation "
-		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-	}
-	return this->m_ok;
-      }
-
-    protected:
-      
-      /** This should be called by the plugin for any event of type 0 if it
-	  creates an additional copy of it, either by saving more than one copy
-	  internally, passing more than one copy through to an output port,
-	  or a combination of those. It must be called once for each additional
-	  copy of the event.
-	  Note that you must not call this function if you just save one copy
-	  of the event, or just passes one copy through to an output port.
-	  @c param event The event, as returned by @c lv2_event_get().
-      */
-      uint32_t event_ref(LV2_Event* event) {
-	return m_ref_func(m_callback_data, event);
-      }
-    
-      /** This should be called by the plugin for any event of type 0, unless
-	  it keeps a copy of it or passes it through to an event output port.
-	  @c param event The event, as returned by @c lv2_event_get().
-      */
-      uint32_t event_unref(LV2_Event* event) {
-	return m_unref_func(m_callback_data, event);
-      }
-    
-      LV2_Event_Callback_Data m_callback_data;
-      uint32_t (*m_ref_func)(LV2_Event_Callback_Data, LV2_Event*);
-      uint32_t (*m_unref_func)(LV2_Event_Callback_Data, LV2_Event*);
-      
-    };
-    
-  };
-
-
-  /** @internal
-      The message context extension. Experimental and unsupported. Don't use it.
-
-      The actual type that your plugin class will inherit when you use 
-      this mixin is the internal struct template I.
-      @ingroup pluginmixins
-  */
-  LV2MM_MIXIN_CLASS MsgContext {
-    
-    /** This is the type that your plugin class will inherit when you use the
-	MsgContext mixin. The public and protected members defined here
-	will be available in your plugin class.
-    */
-    LV2MM_MIXIN_DERIVED {
-      
-      /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
-	hmap[LV2_CONTEXT_MESSAGE] = &I<Derived>::handle_feature;
-      }
-      
-      /** @internal */
-      static void handle_feature(void* instance, void* data) { 
-	Derived* d = reinterpret_cast<Derived*>(instance);
-	I<Derived>* fe = static_cast<I<Derived>*>(d);
-        fe->m_ok = true;
-      }
-      
-      bool check_ok() {
-	if (LV2MM_DEBUG) {
-	  std::clog<<"    [LV2::MsgContext] Validation "
-		   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-	}
-	return this->m_ok;
-      }
-
-      /** @internal */
-      static const void* extension_data(const char* uri) { 
-	if (!std::strcmp(uri, LV2_CONTEXT_MESSAGE)) {
-	  static LV2_Blocking_Context desc = { &I<Derived>::_blocking_run,
-					       &I<Derived>::_connect_port };
-	  return &desc;
-	}
-	return 0;
-      }
-      
-      /** @internal
-	  This is called by the host when the plugin's message context is
-	  executed. Experimental and unsupported. Don't use it.
-      */
-      bool blocking_run(uint8_t* outputs_written) { return false; }
-      
-    protected:
-      
-      /** @internal
-	  Static callback wrapper. */
-      static bool _blocking_run(LV2_Handle h, uint8_t* outputs_written) {
-	if (LV2MM_DEBUG)
-	  std::clog<<"[LV2::MsgContext] Host called blocking_run()."<<std::endl;
-	return reinterpret_cast<Derived*>(h)->blocking_run(outputs_written);
-      }
-      
-      /** @internal
-	  Static callback wrapper. */
-      static void _connect_port(LV2_Handle h, uint32_t port, void* buffer) {
-	reinterpret_cast<Derived*>(h)->connect_port(port, buffer);
-      }
-      
-    };
-  };
-
 } /* namespace LV2 */
 
 #endif /* LV2_PLUGIN_HPP */
