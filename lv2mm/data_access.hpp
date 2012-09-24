@@ -56,7 +56,7 @@ namespace LV2 {
          static void
          map_feature_handlers(FeatureHandlerMap& hmap)
          {
-           hmap[LV2_DATA_ACCESS_URI] = &Mixin::handle_feature;
+           hmap[LV2_DATA_ACCESS_URI] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
