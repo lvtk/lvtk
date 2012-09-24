@@ -18,13 +18,13 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-DAPS_VERSION="0.1.0"
+DAPS_VERSION="1.0.0"
 DAPS_MAJOR_VERSION=DAPS_VERSION[0]
 DAPS_MINOR_VERSION=DAPS_VERSION[2]
 DAPS_MICRO_VERSION=DAPS_VERSION[4]
 
 # Anything appended to version number goes here
-DAPS_EXTRA_VERSION=""
+DAPS_EXTRA_VERSION="-rc0"
 
 # For waf dist
 APPNAME = 'daps'
@@ -52,6 +52,13 @@ def options(opts):
 def configure(conf):
 	conf.load("cross compiler_c compiler_cxx lv2")
 
+	conf.define ("DAPS_VERSION", VERSION)
+	conf.define ("DAPS_MAJOR_VERSION",DAPS_MAJOR_VERSION)
+	conf.define ("DAPS_MINOR_VERSION",DAPS_MINOR_VERSION)
+	conf.define ("DAPS_MICRO_VERSION",DAPS_MICRO_VERSION)
+	conf.define ("DAPS_EXTRA_VERSION",DAPS_EXTRA_VERSION)
+	conf.write_config_header("daps.hpp")
+
 	# Check for required packages
 	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
 				atleast_version="1.0.0")
@@ -76,11 +83,12 @@ def build(bld):
 	for subdir in subdirs: bld.recurse(subdir)
 	
 	# Build PC Files
-	autowaf.build_pc(bld, 'DAPS', DAPS_VERSION, DAPS_MAJOR_VERSION, [],
+	autowaf.build_pc(bld, 'DAPS-PLUGIN', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
 						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
+						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS,
 						'DAPS_PKG_DEPS'       : 'lv2'})
-	autowaf.build_pc(bld, 'DAPS-GTKUI', DAPS_VERSION, DAPS_MAJOR_VERSION, [],
+	autowaf.build_pc(bld, 'DAPS-GTKUI', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
 						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
 						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS_GTKUI,
@@ -94,11 +102,12 @@ def build(bld):
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
-				+ APPNAME + "-" + DAPS_MAJOR_VERSION	
-	bld.install_files(header_base+"/lv2mm", \
-					  bld.path.ant_glob("lv2mm/*.*"))
-	bld.install_files(header_base+"/lv2mm/private", \
-					  bld.path.ant_glob("lv2mm/private/*.*"))
+				+ APPNAME + "-" + DAPS_MAJOR_VERSION
+	bld.install_files(header_base, "build/daps.hpp")
+	bld.install_files(header_base+"/daps", \
+					  bld.path.ant_glob("daps/*.*"))
+	bld.install_files(header_base+"/daps/private", \
+					  bld.path.ant_glob("daps/private/*.*"))
 
 def release_tag(ctx):
 	tag = git.tag_version(VERSION, "Release: v" + VERSION , "v")

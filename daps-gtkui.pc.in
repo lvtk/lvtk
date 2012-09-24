@@ -3,9 +3,9 @@ exec_prefix=@EXEC_PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: lv2mm-gtkui
+Name: DAPS LV2 Gtkmm UI
 Version: @VERSION@
-Description: A C++ library for writing LV2 Gtkmm UIs
-Requires: @LV2MM_PKG_DEPS@
+Description: Digital Audio Plugins Streamlined (gtkui)
+Requires: @DAPS_PKG_DEPS@
 Libs: -L${libdir} -l@THELIB@
-Cflags: -I${includedir}/lv2mm-@LV2MM_MAJOR_VERSION@
+Cflags: -I${includedir}/daps-@DAPS_MAJOR_VERSION@
