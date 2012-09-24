@@ -23,8 +23,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_GTKUI_HPP
-#define DAPS_GTKUI_HPP
+#ifndef DAPS_LV2_GTKUI_HPP
+#define DAPS_LV2_GTKUI_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -108,10 +108,10 @@ protected:
       GUI extensions, by passing @ref guimixins "GUI mixin classes" as template
       parameters to GUI (second template parameter and onwards).
   */
-  template<class Derived, class Ext1 = End, class Ext2 = End, class Ext3 = End,
-           class Ext4 = End, class Ext5 = End, class Ext6 = End,
-	   class Ext7 = End, class Ext8 = End, class Ext9 = End>
-  class GUI : public Gtk::HBox, public MixinTree<Derived, 
+  template<class Derived, class Ext1 = end, class Ext2 = end, class Ext3 = end,
+           class Ext4 = end, class Ext5 = end, class Ext6 = end,
+	   class Ext7 = end, class Ext8 = end, class Ext9 = end>
+  class GUI : public Gtk::HBox, public mixin_tree<Derived,
 						 Ext1, Ext2, Ext3, Ext4, 
 						 Ext5, Ext6, Ext7, Ext8, Ext9> {
   public:
@@ -129,10 +129,10 @@ protected:
       s_features = 0;
       s_bundle_path = 0;
       if (m_features) {
-	FeatureHandlerMap hmap;
+	feature_handler_map hmap;
 	Derived::map_feature_handlers(hmap);
-	for (const Feature* const* iter = m_features; *iter != 0; ++iter) {
-	  FeatureHandlerMap::iterator miter;
+	for (const daps::feature* const* iter = m_features; *iter != 0; ++iter) {
+	  feature_handler_map::iterator miter;
 	  miter = hmap.find((*iter)->URI);
 	  if (miter != hmap.end())
 	    miter->second(static_cast<Derived*>(this), (*iter)->data);
@@ -176,7 +176,7 @@ protected:
     
     /** Get the feature array that was passed by the host. This may only
 	be valid while the constructor is running. */
-    inline Feature const* const* features() {
+    inline daps::feature const* const* features() {
       return m_features;
     }
     
@@ -218,7 +218,7 @@ protected:
 					   LV2UI_Write_Function write_func,
 					   LV2UI_Controller ctrl,
 					   LV2UI_Widget* widget,
-					   Feature const* const* features) {
+					   LV2_Feature const* const* features) {
       
       // copy some data to static variables so the subclasses don't have to
       // bother with it - this is threadsafe since hosts are not allowed
@@ -238,7 +238,7 @@ protected:
 		 <<"  Plugin URI:      \""<<plugin_uri<<"\"\n"
 		 <<"  Bundle path:     \""<<bundle_path<<"\"\n"
 		 <<"  UI Features:\n";
-	Feature const* const* iter;
+	daps::feature const* const* iter;
 	for (iter = features; *iter; ++iter)
 	  std::clog<<"    \""<<(*iter)->URI<<"\"\n";
       }
@@ -290,12 +290,12 @@ protected:
 
     void* m_ctrl;
     LV2UI_Write_Function m_wfunc;
-    Feature const* const* m_features;
+    daps::feature const* const* m_features;
     char const* m_bundle_path;
     
     static void* s_ctrl;
     static LV2UI_Write_Function s_wfunc;
-    static Feature const* const* s_features;
+    static daps::feature const* const* s_features;
     static char const* s_bundle_path;
     
   };
@@ -314,7 +314,7 @@ protected:
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  Feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
+  daps::feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
 				 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
@@ -326,4 +326,4 @@ protected:
 }
 
 
-#endif /* DAPS_GTKUI_HPP */
+#endif /* DAPS_LV2_GTKUI_HPP */

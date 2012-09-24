@@ -54,14 +54,14 @@ namespace daps {
 
          /** @internal */
          static void
-         map_feature_handlers(FeatureHandlerMap& hmap)
+         map_feature_handlers(feature_handler_map& hmap)
          {
            hmap[LV2_DATA_ACCESS_URI] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
          static void
-         handle_feature (Handle instance, FeatureData data)
+         handle_feature (daps::handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);

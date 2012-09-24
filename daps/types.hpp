@@ -34,25 +34,29 @@
 /** TODO: Put macros somewhere else that make sense */
 #define DAPS_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
 #define DAPS_MIXIN_CLASS      template <bool Required = true> struct
-#define DAPS_MIXIN_DERIVED    template <class Derived> struct I : Extension<Required>
+#define DAPS_MIXIN_DERIVED    template <class Derived> struct I : extension<Required>
 
 namespace daps {
    /** Convenience typedef */
-   typedef LV2_Handle Handle;
+   typedef LV2_Handle handle;
 }
 
+/** Tricky include, for the moment this needs ensured to be included
+ * after LV2_Handle's typdedef
+ */
 #include <daps/feature.hpp>
+
 
 namespace daps {
 
-   /** @internal This class is used by the End class */
-   struct Empty {};
+   /** @internal This class is used by the end class */
+   struct empty {};
   
    /** @internal
       This class is used to terminate the recursive inheritance trees
-      created by MixinTree. */
-   struct End {
-    typedef Empty C;
+      created by mixin_tree. */
+   struct end {
+    typedef empty C;
    };
   
 
@@ -65,32 +69,32 @@ namespace daps {
       next level of the inheritance tree. Each @c bool parameter will be used
       as the second parameter to the template directly preceding it. */
   template <class A,
-	    class E1 = End, 
-	    class E2 = End, 
-	    class E3 = End, 
-	    class E4 = End, 
-	    class E5 = End, 
-	    class E6 = End, 
-	    class E7 = End, 
-	    class E8 = End, 
-	    class E9 = End>
-  struct MixinTree 
-    : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
+	    class E1 = end,
+	    class E2 = end,
+	    class E3 = end,
+	    class E4 = end,
+	    class E5 = end,
+	    class E6 = end,
+	    class E7 = end,
+	    class E8 = end,
+	    class E9 = end>
+  struct mixin_tree
+    : E1::template I<A>, mixin_tree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
     
-    typedef MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> Parent;
+    typedef mixin_tree<A, E2, E3, E4, E5, E6, E7, E8, E9> parent;
     
     /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
     static void
-    map_feature_handlers(FeatureHandlerMap& hmap) {
+    map_feature_handlers(feature_handler_map& hmap) {
       E1::template I<A>::map_feature_handlers(hmap);
-      Parent::map_feature_handlers(hmap);
+      parent::map_feature_handlers(hmap);
     }
     
     /** Check if the features are OK with the plugin initialisation. */
     bool
     check_ok() {
-      return E1::template I<A>::check_ok() && Parent::check_ok();
+      return E1::template I<A>::check_ok() && parent::check_ok();
     }
     
     /** Return any extension data. */
@@ -99,7 +103,7 @@ namespace daps {
       const void* result = E1::template I<A>::extension_data(uri);
       if (result)
 	return result;
-      return Parent::extension_data(uri);
+      return parent::extension_data(uri);
     }
     
   };
@@ -109,28 +113,29 @@ namespace daps {
       This is a specialisation of the inheritance tree template that terminates
       the recursion. */
   template <class A>
-  struct MixinTree<A, End, End, End, End, End, End, End, End, End> {
-    static void map_feature_handlers(FeatureHandlerMap& hmap) { }
+  struct mixin_tree<A, end, end, end, end, end, end, end, end, end> {
+    static void map_feature_handlers(feature_handler_map& hmap) { }
     bool check_ok() const { return true; }
     static const void* extension_data(const char* uri) { return 0; }
   };
 
 
   /** @internal
-      Base class for extensions. Extension mixin classes don't have to 
+      Base class for extensions. extension mixin classes don't have to
       inherit from this class, but it's convenient.
   */
   template <bool Required>
-  struct Extension {
+  struct extension {
     
     /** @internal 
      */
-    Extension() : m_ok(!Required) { }
+    extension() : m_ok(!Required) { }
     
     /** @internal
 	Default implementation does nothing - no handlers added. 
     */
-    static void map_feature_handlers(FeatureHandlerMap& hmap) { }
+    static void
+    map_feature_handlers(feature_handler_map& hmap) { }
     
     /** @internal
 	Return @c true if the plugin instance is OK, @c false if it isn't. 
@@ -141,7 +146,8 @@ namespace daps {
 	Return a data pointer corresponding to the URI if this extension 
 	has one. 
     */
-    static const void* extension_data(const char* uri) { return 0; }
+    static const void*
+    extension_data(const char* uri) { return 0; }
   
   protected:
   

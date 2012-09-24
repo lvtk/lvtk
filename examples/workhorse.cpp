@@ -1,5 +1,5 @@
 /*
-  workhorse.cpp  -  DAPS LV2 Worker Demonstration
+  workhorse.cpp  -  DAPS LV2++ Worker Demonstration
 
   Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
@@ -26,19 +26,19 @@
 #include <vector>
 #include <cstdlib>
 
-#include <daps/plugin.hpp>
+#include <daps/synth.hpp>
 #include <daps/data_access.hpp>
 #include <daps/state.hpp>
 
 using namespace daps;
 using std::vector;
 
-class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> >
+class workhorse : public Plugin<workhorse, DataAccess<false>, Worker<true>, State<true> >
 {
    public:
 
-    Workhorse (double rate)
-    : Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> > (3)
+    workhorse (double rate)
+    : Plugin<workhorse, DataAccess<false>, Worker<true>, State<true> > (3)
     {
 
     }
@@ -52,7 +52,7 @@ class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, Stat
 
    /* ============================= Worker ============================ */
 
-    WorkerStatus
+    worker_status_t
     work_response (uint32_t size, const void* body)
     {
        std::clog << "workhorse: wake up!\n";
@@ -60,8 +60,8 @@ class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, Stat
        return WORKER_SUCCESS;
     }
 
-    WorkerStatus
-    work (WorkerRespond &respond, uint32_t  size, const void*  data)
+    worker_status_t
+    work (worker_respond &respond, uint32_t  size, const void*  data)
     {
        std::clog << "workhorse: taking a nap now\n";
        sleep (3);
@@ -71,4 +71,4 @@ class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, Stat
 
 };
 
-static int _ = Workhorse::register_class ("http://daps-project.org/plugins/workhorse");
+static int _ = workhorse::register_class ("http://daps-project.org/plugins/workhorse");

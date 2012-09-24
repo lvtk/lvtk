@@ -42,7 +42,7 @@
 
 #include "private/debug.hpp"
 
-/** @mainpage D.A.P.S - Digital Audio Plugins Streamlined
+/** @mainpage D.A.P.S - Digital Audio plugins Streamlined
 
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
@@ -50,13 +50,13 @@
     C API.
     
     The classes are separated into two libraries. One, called daps-plugin,
-    contains the classes Plugin and Synth, defined in the files
+    contains the classes plugin and Synth, defined in the files
     <daps/plugin.hpp> and <daps/synth.hpp>. They are base classes that you 
     can inherit in order to create new LV2 plugins. The other library, called 
     libdaps-gtkui, contains the class GUI, defined in the file <daps/gtkui.hpp>
     which you can use in a similar way to create new LV2 plugin GUIs.
     
-    For both the Plugin and the GUI class there are other helper classes called
+    For both the plugin and the GUI class there are other helper classes called
     @ref pluginmixins "mixins" that you can use to add extra functionality to 
     your plugins, for example support for LV2 extensions.
 
@@ -108,9 +108,9 @@ namespace daps {
       #include <cstring>
       #include <daps/plugin.hpp>
       
-      class TestLV2 : public Plugin<TestLV2> {
+      class TestLV2 : public plugin<TestLV2> {
       public:
-        TestLV2(double) : Plugin<TestLV2>(2) { }
+        TestLV2(double) : plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
           std::memcpy(p(1), p(0), sample_count * sizeof(float));
         }
@@ -126,16 +126,16 @@ namespace daps {
       
       You can extend your plugin classes, for example adding support for
       LV2 extensions, by passing @ref pluginmixins "mixin classes" as template
-      parameters to Plugin (second template parameter and onwards). 
+      parameters to plugin (second template parameter and onwards).
       
       If you want to write a synth plugin you should probably inherit the 
       Synth class instead of this one.
   */
   template <class Derived, 
-	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
-	    class Ext4 = End, class Ext5 = End, class Ext6 = End, 
-	    class Ext7 = End, class Ext8 = End, class Ext9 = End>
-  class Plugin : public MixinTree<Derived, 
+	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
+	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
+	    class Ext7 = end, class Ext8 = end, class Ext9 = end>
+  class Plugin : public mixin_tree<Derived,
 				  Ext1, Ext2, Ext3, Ext4, Ext5, 
 				  Ext6, Ext7, Ext8, Ext9> {
   public:
@@ -146,7 +146,7 @@ namespace daps {
 	initialiser list for your plugin class.
 	@param ports The number of ports in this plugin.
     */
-    Plugin(uint32_t ports) 
+    Plugin(uint32_t ports)
       : m_ports(ports, 0),
         m_ok(true) {
       m_features = s_features;
@@ -154,10 +154,10 @@ namespace daps {
       s_features = 0;
       s_bundle_path = 0;
       if (m_features) {
-	FeatureHandlerMap hmap;
+	feature_handler_map hmap;
 	Derived::map_feature_handlers(hmap);
-	for (const Feature* const* iter = m_features; *iter != 0; ++iter) {
-	  FeatureHandlerMap::iterator miter;
+	for (const feature* const* iter = m_features; *iter != 0; ++iter) {
+	  feature_handler_map::iterator miter;
 	  miter = hmap.find((*iter)->URI);
 	  if (miter != hmap.end())
 	    miter->second(static_cast<Derived*>(this), (*iter)->data);
@@ -207,7 +207,7 @@ namespace daps {
 	call in the initialiser for a global variable, like this:
 	
 	@code
-unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
+unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
         @endcode
 	
 	The return value is not important, it's just there so you can use that
@@ -238,9 +238,9 @@ unsigned _ =  MyPluginClass::register_class("http://my.plugin.class");
 	calls to any inherited @ref pluginmixins "mixins".
      */
     bool check_ok() {
-      return m_ok && MixinTree<Derived, 
-	                       Ext1, Ext2, Ext3, Ext4, Ext5, 
-	                       Ext6, Ext7, Ext8, Ext9>::check_ok();
+      return m_ok && mixin_tree<Derived,
+	                        Ext1, Ext2, Ext3, Ext4, Ext5,
+	                        Ext6, Ext7, Ext8, Ext9>::check_ok();
     }
 
   protected:
@@ -256,21 +256,25 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	or control port) you can use the non-template version instead.
 	@param port The index of the port whose buffer you want to access.
     */
-    template <typename T> T*& p(uint32_t port) {
+    template <typename T> T*&
+    p(uint32_t port)
+    {
       return reinterpret_cast<T*&>(m_ports[port]);
     }
   
     /** Use this function to access data buffers for control or audio ports.
 	@param port The index of the port whose buffer you want to access.
     */
-    float*& p(uint32_t port) {
+    float*&
+    p(uint32_t port) {
       return reinterpret_cast<float*&>(m_ports[port]);
     }
     
     /** Returns the filesystem path to the bundle that contains this plugin. 
-	This may only be called after the Plugin constructor is done executing.
+	This may only be called after the plugin constructor is done executing.
     */
-    const char* bundle_path() const {
+    const char*
+    bundle_path() const {
       return m_bundle_path;
     }
     
@@ -282,7 +286,8 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	@param ok True if the plugin instance is OK and can be used, false if
                   it should be discarded.
     */
-    void set_ok(bool ok) {
+    void
+    set_ok(bool ok) {
       m_ok = ok;
     }
     
@@ -329,7 +334,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
     static LV2_Handle _create_plugin_instance(const LV2_Descriptor* descriptor,
 					      double sample_rate,
 					      const char* bundle_path,
-					      const Feature* const* 
+					      const feature* const*
 					      features) {
 
       // copy some data to static variables so the subclasses don't have to
@@ -338,10 +343,10 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       s_bundle_path = bundle_path;
 
       if (DAPS_DEBUG) {
-	std::clog<<"[Plugin] Instantiating plugin...\n"
+	std::clog<<"[plugin] Instantiating plugin...\n"
 		 <<"  Bundle path: "<<bundle_path<<"\n"
-		 <<"  Features: \n";
-	for (Feature const* const* f = features; *f != 0; ++f)
+		 <<"  features: \n";
+	for (feature const* const* f = features; *f != 0; ++f)
 	  std::clog<<"    "<<(*f)->URI<<"\n";
 	
 	std::clog<<"  Creating plugin object...\n";
@@ -379,10 +384,10 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   private:
     
     /** @internal
-	The Feature array passed to this plugin instance. May not be valid
+	The feature array passed to this plugin instance. May not be valid
 	after the constructor has returned.
     */
-    Feature const* const* m_features;
+    feature const* const* m_features;
     
     /** @internal
 	The bundle path passed to this plugin instance. May not be valid
@@ -391,10 +396,10 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
     char const* m_bundle_path;
     
     /** @internal
-	Used to pass the Feature array to the plugin without having to pass
+	Used to pass the feature array to the plugin without having to pass
 	it through the constructor of the plugin class.
     */
-    static Feature const* const* s_features;
+    static feature const* const* s_features;
 
     /** @internal
 	Used to pass the bundle path to the plugin without having to pass
@@ -415,21 +420,21 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   // The static variables need to be initialised. 
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
 	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  Feature const* const*
-  Plugin<Derived, Ext1, Ext2, Ext3, Ext4, 
+  feature const* const*
+  Plugin<Derived, Ext1, Ext2, Ext3, Ext4,
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
 	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
   char const* 
-  Plugin<Derived, Ext1, Ext2, Ext3, Ext4, 
+  Plugin<Derived, Ext1, Ext2, Ext3, Ext4,
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_bundle_path = 0;
 
   
-  /** @defgroup pluginmixins Plugin mixins
+  /** @defgroup pluginmixins plugin mixins
       These template classes implement extra functionality that you may
-      want to have in your plugin class, usually Features. You add them
-      to your class by passing them as template parameters to Plugin
+      want to have in your plugin class, usually features. You add them
+      to your class by passing them as template parameters to plugin
       when inheriting it. The internal structs of the mixin template classes,
       named @c I, will then be inherited by your plugin class, so that any 
       public and protected members they have will be available to your 

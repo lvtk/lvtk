@@ -28,8 +28,8 @@
    by a port is defined in the data file for a plugin.
 */
 
-#ifndef LV2_EVENT_HPP
-#define LV2_EVENT_HPP
+#ifndef DAPS_LV2_EVENT_HPP
+#define DAPS_LV2_EVENT_HPP
 
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 #include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
@@ -54,14 +54,14 @@ namespace daps {
 
          /** @internal */
          static void
-         map_feature_handlers(FeatureHandlerMap& hmap)
+         map_feature_handlers(feature_handler_map& hmap)
          {
             hmap[LV2_EVENT_URI] = &Mixin::handle_feature;
          }
 
          /** @internal */
          static void
-         handle_feature(Handle instance, FeatureData data)
+         handle_feature(daps::handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>(instance);
             I<Derived>* mixin = static_cast<I<Derived>*>(derived);
@@ -76,7 +76,8 @@ namespace daps {
             mixin->m_ok = true;
          }
 
-       bool check_ok() {
+       bool
+       check_ok() {
          if (DAPS_DEBUG) {
            std::clog<<"    [LV2::EventRef] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
@@ -119,4 +120,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* LV2_EVENT_HPP */
+#endif /* DAPS_LV2_EVENT_HPP */

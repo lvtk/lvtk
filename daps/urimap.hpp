@@ -55,7 +55,7 @@ namespace daps {
 
        /** @internal */
        static void
-       map_feature_handlers(FeatureHandlerMap& hmap) {
+       map_feature_handlers(feature_handler_map& hmap) {
          hmap[DAPS_URI_MAP_URI] = &I<Derived>::handle_feature;
        }
 

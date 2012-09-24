@@ -30,63 +30,63 @@
 namespace daps {
 
    typedef enum {
-         /**
-            Plain Old Data.
+      /**
+         Plain Old Data.
 
-            Values with this flag contain no pointers or references to other areas
-            of memory.  It is safe to copy POD values with a simple memcpy and store
-            them for the duration of the process.  A POD value is not necessarily
-            safe to trasmit between processes or machines (e.g. filenames are POD),
-            see LV2_STATE_IS_PORTABLE for details.
+         Values with this flag contain no pointers or references to other areas
+         of memory.  It is safe to copy POD values with a simple memcpy and store
+         them for the duration of the process.  A POD value is not necessarily
+         safe to trasmit between processes or machines (e.g. filenames are POD),
+         see LV2_STATE_IS_PORTABLE for details.
 
-            Implementations MUST NOT attempt to copy or serialise a non-POD value if
-            they do not understand its type (and thus know how to correctly do so).
-         */
+         Implementations MUST NOT attempt to copy or serialise a non-POD value if
+         they do not understand its type (and thus know how to correctly do so).
+      */
 
-         STATE_IS_POD = LV2_STATE_IS_POD,
+      STATE_IS_POD = LV2_STATE_IS_POD,
 
-         /**
-            Portable (architecture independent) data.
+      /**
+         Portable (architecture independent) data.
 
-            Values with this flag are in a format that is usable on any
-            architecture.  A portable value saved on one machine can be restored on
-            another machine regardless of architecture.  The format of portable
-            values MUST NOT depend on architecture-specific properties like
-            endianness or alignment.  Portable values MUST NOT contain filenames.
-         */
-         STATE_IS_PORTABLE = LV2_STATE_IS_PORTABLE,
+         Values with this flag are in a format that is usable on any
+         architecture.  A portable value saved on one machine can be restored on
+         another machine regardless of architecture.  The format of portable
+         values MUST NOT depend on architecture-specific properties like
+         endianness or alignment.  Portable values MUST NOT contain filenames.
+      */
+      STATE_IS_PORTABLE = LV2_STATE_IS_PORTABLE,
 
-         /**
-            Native data.
+      /**
+         Native data.
 
-            This flag is used by the host to indicate that the saved data is only
-            going to be used locally in the currently running process (e.g. for
-            instance duplication or snapshots), so the plugin should use the most
-            efficient representation possible and not worry about serialisation
-            and portability.
-         */
-         STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
-      } StateFlags;
+         This flag is used by the host to indicate that the saved data is only
+         going to be used locally in the currently running process (e.g. for
+         instance duplication or snapshots), so the plugin should use the most
+         efficient representation possible and not worry about serialisation
+         and portability.
+      */
+      STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
+   } state_flags_t;
 
-      typedef enum {
-         STATE_SUCCESS         = LV2_STATE_SUCCESS,          /**< Completed successfully. */
-         STATE_ERR_UNKNOWN     = LV2_STATE_ERR_UNKNOWN,      /**< Unknown error. */
-         STATE_ERR_BAD_TYPE    = LV2_STATE_ERR_BAD_TYPE,     /**< Failed due to unsupported type. */
-         STATE_ERR_BAD_FLAGS   = LV2_STATE_ERR_BAD_FLAGS,    /**< Failed due to unsupported flags. */
-         STATE_ERR_NO_FEATURE  = LV2_STATE_ERR_NO_FEATURE,   /**< Failed due to missing features. */
-         STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
-      } StateStatus;
+   typedef enum {
+      STATE_SUCCESS         = LV2_STATE_SUCCESS,          /**< Completed successfully. */
+      STATE_ERR_UNKNOWN     = LV2_STATE_ERR_UNKNOWN,      /**< Unknown error. */
+      STATE_ERR_BAD_TYPE    = LV2_STATE_ERR_BAD_TYPE,     /**< Failed due to unsupported type. */
+      STATE_ERR_BAD_FLAGS   = LV2_STATE_ERR_BAD_FLAGS,    /**< Failed due to unsupported flags. */
+      STATE_ERR_NO_FEATURE  = LV2_STATE_ERR_NO_FEATURE,   /**< Failed due to missing features. */
+      STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
+   } state_status_t;
 
-   typedef LV2_State_Retrieve_Function         StateRetrieveFunction;
-   typedef LV2_State_Store_Function            StateStoreFunction;
-   typedef LV2_State_Handle                    StateHandle;
+   typedef LV2_State_Retrieve_Function         state_retrieve_func;
+   typedef LV2_State_Store_Function            state_store_func;
+   typedef LV2_State_Handle                    state_handle;
 
    /**
        Wrapper struct for state retrieval. This wraps an
        LV2_State_Retrieve_Function and exeucutes via operator ()
     */
-   struct StateRetrieve {
-      StateRetrieve(StateRetrieveFunction srfunc, StateHandle handle)
+   struct state_retrieve {
+      state_retrieve(state_retrieve_func srfunc, state_handle handle)
       : p_handle(handle), p_srfunc(srfunc) { }
 
       /**
@@ -105,8 +105,8 @@ namespace daps {
       }
 
    private:
-      StateHandle              p_handle;
-      StateRetrieveFunction    p_srfunc;
+      state_handle              p_handle;
+      state_retrieve_func        p_srfunc;
    };
 
    /* A little redundant */
@@ -115,8 +115,8 @@ namespace daps {
       Wrapper struct for state storage. This wraps an
       LV2_State_Store_Function and exeucutes via operator ()
    */
-   struct StateStore {
-      StateStore(StateStoreFunction ssfunc, StateHandle handle)
+   struct state_store {
+      state_store (state_store_func ssfunc, state_handle handle)
       : p_handle(handle), p_ssfunc(ssfunc) { }
 
       /**
@@ -128,19 +128,19 @@ namespace daps {
           @param flags
           @return STATE_SUCCESS on Success
        */
-      StateStatus operator () (uint32_t key, const void* value,
+      state_status_t operator () (uint32_t key, const void* value,
                                              size_t   size,
                                              uint32_t type,
                                              uint32_t flags = 0)
       {
-         return (StateStatus) p_ssfunc(
+         return (state_status_t) p_ssfunc(
                       p_handle, key, value, size, type, flags
                 );
       }
 
    private:
-      StateHandle              p_handle;
-      StateStoreFunction       p_ssfunc;
+      state_handle              p_handle;
+      state_store_func          p_ssfunc;
    };
 
   /**
@@ -159,17 +159,13 @@ namespace daps {
 
          /** @internal */
          static void
-         map_feature_handlers(FeatureHandlerMap& hmap)
-         {
-
-         }
+         map_feature_handlers(feature_handler_map& hmap)
+         { }
 
          /** @internal */
          static void
-         handle_feature(Handle instance, FeatureData data)
-         {
-
-         }
+         handle_feature(daps::handle instance, feature_data data)
+         { }
 
          bool
          check_ok() {
@@ -201,42 +197,42 @@ namespace daps {
        /* ===============  State C++ Interface ==========================  */
 
 
-       StateStatus
-       save(StateStore &store, uint32_t flags,
-                        FeatureSet &features)
+       state_status_t
+       save(state_store &store, uint32_t flags,
+                        feature_vec &features)
        {
           return STATE_SUCCESS;
        }
 
-       StateStatus
-       restore(StateRetrieve &retrieve, uint32_t flags,
-                           const FeatureSet &features)
+       state_status_t
+       restore(state_retrieve &retrieve, uint32_t flags,
+                           const feature_vec &features)
        {
           return STATE_SUCCESS;
        }
 
      protected:
 
-       /* ==============  LV2 Boiler Plate Implementation ================= */
+      /* ==============  LV2 Boiler Plate Implementation ================= */
 
-       /** @internal - called from host */
-       static LV2_State_Status _save(LV2_Handle                 instance,
-                                     LV2_State_Store_Function   store,
-                                     LV2_State_Handle           handle,
-                                     uint32_t                   flags,
-                                     const LV2_Feature *const * features)
-       {
+      /** @internal - called from host */
+      static LV2_State_Status _save(LV2_Handle                 instance,
+                                  LV2_State_Store_Function   store,
+                                  LV2_State_Handle           handle,
+                                  uint32_t                   flags,
+                                  const LV2_Feature *const * features)
+      {
          Derived* plugin = reinterpret_cast<Derived*>(instance);
 
-         StateStore ss (store, handle);
+         state_store ss (store, handle);
 
-         FeatureSet feature_set;
+         feature_vec feature_set;
          for (int i = 0; features[i]; ++i) {
             feature_set.push_back (features[i]);
          }
 
          return (LV2_State_Status)plugin->save(ss, flags, feature_set);
-       }
+      }
 
       /** @internal - called from host */
       static LV2_State_Status _restore(LV2_Handle                  instance,
@@ -245,15 +241,18 @@ namespace daps {
                                        uint32_t                    flags,
                                        const LV2_Feature *const *  features)
       {
-       Derived* plugin = reinterpret_cast<Derived*>(instance);
-       StateRetrieve sr (retrieve, handle);
-       FeatureSet feature_set;
+         Derived* plugin = reinterpret_cast<Derived*>(instance);
 
-       for (int i = 0; features[i]; ++i) {
+         /** Initialize a state retrieval callable */
+         state_retrieve sr (retrieve, handle);
+
+         /** Populate a feature vector */
+         feature_vec feature_set;
+         for (int i = 0; features[i]; ++i) {
           feature_set.push_back (features[i]);
-       }
+         }
 
-       return (LV2_State_Status)plugin->restore(sr, flags, feature_set);
+         return (LV2_State_Status)plugin->restore(sr, flags, feature_set);
       }
      };
    };

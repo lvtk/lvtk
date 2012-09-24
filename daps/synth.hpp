@@ -28,81 +28,82 @@
 #include <vector>
 
 #include <daps/plugin.hpp>
-
-#include "private/lv2_event_helpers.h"
+#include <daps/event.hpp>
 
 namespace daps {
   
-  /** This is used as an "invalid" MIDI key number, meaning "no key". */
-  static const unsigned char INVALID_KEY = 255;
-  
-  
-  /** A simple function that translates a MIDI key number to a fundamental
+   using std::vector;
+
+   /** This is used as an "invalid" MIDI key number, meaning "no key". */
+   static const unsigned char INVALID_KEY = 255;
+
+
+   /** A simple function that translates a MIDI key number to a fundamental
       frequency in Hz. */
-  static inline float key2hz(unsigned char key) {
+   static inline float key2hz(unsigned char key) {
     return 8.1758 * std::pow(1.0594, key);
-  }
-  
-  
-  /** A base class for synth voices, to be used with the Synth template class.
+   }
+
+
+   /** A base class for synth voices, to be used with the Synth template class.
       You don't have to make your voice classes inherit this one, but it
       makes some things easier. */
-  class Voice {
-  public:
+   class Voice {
+   public:
     
-    /** Turn the voice on. This default implementation does nothing, you 
-	probably want to override it.
-	
-	If @c key is LV2::INVALID_KEY the voice should go silent as fast at
-	possible (the synth may use this when it receives an All Sound Off
-	event).
-	@param key The MIDI key for the note that the voice should play.
-	@param velocity The MIDI velocity for the Note On event.
-    */
-    void on(unsigned char key, unsigned char velocity) { }
-    
-    /** Turn the voice off. This default implementation does nothing, you
-	probably want to override it.
-	@param velocity The MIDI velocity for the Note Off event.
-    */
-    void off(unsigned char velocity) { }
-    
-    /** Return the MIDI key that the voice is currently playing. 
-	LV2::INVALID_KEY means that the voice is not active and could be used
-	to play a new note. */
-    unsigned char get_key() const { return LV2::INVALID_KEY; }
-    
-    /** Render audio for this voice to the output buffers, from sample
-	@c from to sample @c to. The buffers may already contain audio from
-	other voices, so use += instead of = when writing to it. This default
-	implementation does nothing, you probably want to override it. 
-    */
-    void render(uint32_t from, uint32_t to) { }
-    
-    /** @internal
-	Set the port buffer vector. The Synth class always calls this before 
-	it calls render(). 
-    */
-    void set_port_buffers(std::vector<void*>& ports) { m_ports = &ports; }
+      /** Turn the voice on. This default implementation does nothing, you
+        probably want to override it.
 
-  protected:
+        If @c key is LV2::INVALID_KEY the voice should go silent as fast at
+        possible (the synth may use this when it receives an All Sound Off
+        event).
+        @param key The MIDI key for the note that the voice should play.
+        @param velocity The MIDI velocity for the Note On event.
+      */
+      void on(unsigned char key, unsigned char velocity) { }
     
-    /** Same as Plugin::p() - returns the buffer for the given port. 
-     */
-    template <typename T> inline T*& p(uint32_t port) {
+      /** Turn the voice off. This default implementation does nothing, you
+        probably want to override it.
+        @param velocity The MIDI velocity for the Note Off event.
+      */
+      void off(unsigned char velocity) { }
+    
+      /** Return the MIDI key that the voice is currently playing.
+        LV2::INVALID_KEY means that the voice is not active and could be used
+        to play a new note. */
+      unsigned char get_key() const { return daps::INVALID_KEY; }
+    
+      /** Render audio for this voice to the output buffers, from sample
+        @c from to sample @c to. The buffers may already contain audio from
+        other voices, so use += instead of = when writing to it. This default
+        implementation does nothing, you probably want to override it.
+      */
+      void render(uint32_t from, uint32_t to) { }
+    
+      /** @internal
+        Set the port buffer vector. The Synth class always calls this before
+        it calls render().
+      */
+      void set_port_buffers(vector<void*>& ports) { m_ports = &ports; }
+
+   protected:
+    
+      /** Same as Plugin::p() - returns the buffer for the given port.
+      */
+      template <typename T> inline T*& p(uint32_t port) {
       return reinterpret_cast<T*&>((*m_ports)[port]);
-    }
-    
-    /** Same as Plugin::p() - returns the buffer for the given port.
-     */
-    float*& p(uint32_t port) {
+      }
+
+      /** Same as Plugin::p() - returns the buffer for the given port.
+      */
+      float*& p(uint32_t port) {
       return reinterpret_cast<float*&>((*m_ports)[port]);
-    }
-    
-    /** @internal
-	The current port buffer vector. */
-    std::vector<void*>* m_ports;
-  };
+      }
+
+      /** @internal
+        The current port buffer vector. */
+      vector<void*>* m_ports;
+   };
   
   
   /** This is a base class template for LV2 synth plugins. Its parameters
@@ -179,9 +180,9 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
       @endcode
   */
   template <class V, class D,
-	    class Ext1 = End, class Ext2 = End, class Ext3 = End,
-	    class Ext4 = End, class Ext5 = End, class Ext6 = End,
-	    class Ext7 = End>
+	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
+	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
+	    class Ext7 = end>
   class Synth : public Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
   public:
     
@@ -222,9 +223,11 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	this class will still use that implementation thanks to the second
 	template class parameter. This means that you can override this function
 	if you want to implement your own voice stealing algorithm. */
-    unsigned find_free_voice(unsigned char key, unsigned char velocity) {
+    unsigned
+    find_free_voice(unsigned char key, unsigned char velocity)
+    {
       for (unsigned i = 0; i < m_voices.size(); ++i) {
-	if (m_voices[i]->get_key() == INVALID_KEY)
+	if (m_voices[i]->get_key() == daps::INVALID_KEY)
 	  return i;
       }
       return 0;
@@ -241,7 +244,9 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	if you want to respond to other MIDI events - just be sure to either
 	call this function for note on and note off events or turn on and off
 	the voices yourself. */
-    void handle_midi(uint32_t size, unsigned char* data) {
+    void
+    handle_midi (uint32_t size, unsigned char* data)
+    {
       if (size != 3)
 	return;
       if (data[0] == 0x90) {
@@ -272,9 +277,9 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	template class parameter. This means that you can override this function
 	if you want to implement your own pre-processing. 
     */
-    void pre_process(uint32_t from, uint32_t to) {
-
-    }
+    void
+    pre_process(uint32_t from, uint32_t to)
+    { }
     
     
     /** This function is called after the synth renders a chunk of audio from
@@ -287,16 +292,18 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	template class parameter. This means that you can override this function
 	if you want to implement your own post-processing. 
     */
-    void post_process(uint32_t from, uint32_t to) {
-
-    }
+    void
+    post_process(uint32_t from, uint32_t to)
+    {  }
     
     
     /** This is the main run function. It handles incoming MIDI events and 
 	mixes the voices to the output buffers with pre and post-processing
 	applied. Don't override it unless you really know what you're doing. 
     */
-    void run(uint32_t sample_count) {
+    void
+    run(uint32_t sample_count)
+    {
       
       // Zero output buffers so voices can add to them
       for (unsigned i = 0; i < m_audio_ports.size(); ++i)
@@ -335,8 +342,8 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	  samples_done = to;
 	}
 
-       const DAPS_Atom_Sequence* midiseq = p<DAPS_Atom_Sequence>(m_midi_input);
-       DAPS_ATOM_SEQUENCE_FOREACH(midiseq, ev)
+       const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence>(m_midi_input);
+       LV2_ATOM_SEQUENCE_FOREACH(midiseq, ev)
        {
           uint32_t frame_offset = ev->time.frames;
           if (ev->body.type == m_midi_type)
@@ -378,9 +385,11 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	but then you MUST take care of initialising the buffers yourself in
 	every cycle.
     */
-    void add_audio_outputs(uint32_t p1 = -1, uint32_t p2 = -1, 
-			   uint32_t p3 = -1, uint32_t p4 = -1, 
-			   uint32_t p5 = -1, uint32_t p6 = -1) {
+    void
+    add_audio_outputs(uint32_t p1 = -1, uint32_t p2 = -1,
+                      uint32_t p3 = -1, uint32_t p4 = -1,
+                      uint32_t p5 = -1, uint32_t p6 = -1)
+    {
       if (p1 == uint32_t(-1))
 	return;
       m_audio_ports.push_back(p1);
@@ -414,7 +423,8 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     void add_voices(V* v01 = 0, V* v02 = 0, V* v03 = 0, V* v04 = 0, V* v05 = 0,
 		    V* v06 = 0, V* v07 = 0, V* v08 = 0, V* v09 = 0, V* v10 = 0,
 		    V* v11 = 0, V* v12 = 0, V* v13 = 0, V* v14 = 0, V* v15 = 0,
-		    V* v16 = 0, V* v17 = 0, V* v18 = 0, V* v19 = 0, V* v20 = 0){
+		    V* v16 = 0, V* v17 = 0, V* v18 = 0, V* v19 = 0, V* v20 = 0)
+    {
       if (v01 == 0)
 	return;
       m_voices.push_back(v01);
@@ -481,24 +491,26 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     /** Use this function to access data buffers for ports. They will be
 	casted to pointers to the template parameter @c T.
     */
-    template <typename T> T*& p(uint32_t port) {
+    template <typename T> T*&
+    p(uint32_t port) {
       return reinterpret_cast<T*&>(Parent::m_ports[port]);
     }
   
     /** Use this function to access data buffers for control or audio ports. 
      */
-    float*& p(uint32_t port) {
+    float*&
+    p(uint32_t port) {
       return reinterpret_cast<float*&>(Parent::m_ports[port]);
     }
 
 
     /** @internal
 	The voice objects that render the audio. */
-    std::vector<V*> m_voices;
+    vector<V*> m_voices;
     
     /** @internal 
 	The indices of all audio output ports. */
-    std::vector<uint32_t> m_audio_ports;
+    vector<uint32_t> m_audio_ports;
     
     /** @internal
 	The index of the main MIDI input port. */
@@ -506,7 +518,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     
     /** @internal
 	The numerical ID for the MIDI event type. */
-    DAPS_URID m_midi_type;
+    LV2_URID m_midi_type;
     
   };
   

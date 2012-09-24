@@ -52,7 +52,7 @@ namespace DAPS {
       DAPS_MIXIN_DERIVED {
 
          /** @internal */
-         static void map_feature_handlers(FeatureHandlerMap& hmap) {
+         static void map_feature_handlers(feature_handler_map& hmap) {
            hmap["http://ll-plugins.nongnu.org/lv2/dev/ui#noUserResize"] =
              &I<Derived>::handle_feature;
          }
@@ -94,7 +94,7 @@ namespace DAPS {
    DAPS_MIXIN_DERIVED {
 
       /** @internal */
-      static void map_feature_handlers(FeatureHandlerMap& hmap) {
+      static void map_feature_handlers(feature_handler_map& hmap) {
         hmap["http://ll-plugins.nongnu.org/lv2/dev/ui#fixedSize"] =
           &I<Derived>::handle_feature;
       }
@@ -204,7 +204,7 @@ namespace DAPS {
          I() : m_hdesc(0), m_host_support(false) { }
 
          /** @internal */
-         static void map_feature_handlers(FeatureHandlerMap& hmap) {
+         static void map_feature_handlers(feature_handler_map& hmap) {
            hmap[DAPS_UI_PRESETS_URI] = &I<Derived>::handle_feature;
          }
 
@@ -381,7 +381,7 @@ namespace DAPS {
         I() : m_buffer_size(0) { }
 
        /** @internal */
-       static void map_feature_handlers(FeatureHandlerMap& hmap) {
+       static void map_feature_handlers(feature_handler_map& hmap) {
          hmap["http://tapas.affenbande.org/lv2/ext/fixed-buffersize"] =
            &I<Derived>::handle_feature;
        }
@@ -437,7 +437,7 @@ namespace DAPS {
         I() : m_buffer_size(0) { }
 
        /** @internal */
-       static void map_feature_handlers(FeatureHandlerMap& hmap) {
+       static void map_feature_handlers(feature_handler_map& hmap) {
          hmap["http://tapas.affenbande.org/lv2/ext/power-of-two-buffersize"] =
            &I<Derived>::handle_feature;
        }
@@ -491,7 +491,7 @@ namespace DAPS {
      DAPS_MIXIN_DERIVED {
 
        /** @internal */
-       static void map_feature_handlers(FeatureHandlerMap& hmap) {
+       static void map_feature_handlers(feature_handler_map& hmap) {
          hmap[DAPS_SAVERESTORE_URI] = &I<Derived>::handle_feature;
        }
 
@@ -588,7 +588,7 @@ namespace DAPS {
      DAPS_MIXIN_DERIVED {
 
        /** @internal */
-       static void map_feature_handlers(FeatureHandlerMap& hmap) {
+       static void map_feature_handlers(feature_handler_map& hmap) {
          hmap[DAPS_CONTEXT_MESSAGE] = &I<Derived>::handle_feature;
        }
 

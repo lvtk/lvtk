@@ -36,24 +36,24 @@ namespace daps {
    using std::string;
    using std::vector;
 
-   /** Typedef for the DAPS_Feature type so we get it into the LV2 namespace. */
-   typedef LV2_Feature Feature;
+   /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
+   typedef LV2_Feature feature;
 
    /** Convenient typedef for a vector of Features. */
-   typedef vector<const Feature*> FeatureSet;
+   typedef vector<const feature*> feature_vec;
 
    /** Convenient typdef for Feature data */
-   typedef void* FeatureData;
+   typedef void* feature_data;
 
    /**
       Convenient typedef for the feature handler function type.
       @param instance The plugin instance
       @param data Feature Data passed from host
     */
-   typedef void(*FeatureHandler)(Handle instance, FeatureData data);
+   typedef void(*feature_handler)(handle instance, feature_data data);
 
    /** Convenient typedef for the feature handler map type. */
-   typedef map<string, FeatureHandler> FeatureHandlerMap;
+   typedef map<string, feature_handler> feature_handler_map;
 
 } /* namespace daps */
 

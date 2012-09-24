@@ -32,39 +32,38 @@ namespace daps {
       WORKER_SUCCESS      = LV2_WORKER_SUCCESS,      /**< Work Completed. */
       WORKER_ERR_UNKNOWN  = LV2_WORKER_ERR_UNKNOWN,  /**< Unknown error. */
       WORKER_ERR_NO_SPACE = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
-   } WorkerStatus;
+   } worker_status_t;
 
-   typedef LV2_Worker_Respond_Handle    WorkerRespondHandle;
-   typedef LV2_Worker_Respond_Function  WorkerRespondFunction;
-   typedef LV2_Worker_Schedule          WorkerSchedule;
+
+   typedef LV2_Worker_Respond_Handle    worker_respond_handle;
+   typedef LV2_Worker_Respond_Function  worker_respond_func;
+   typedef LV2_Worker_Schedule          worker_schedule;
 
    /**
-       Wrapper struct for state retrieval. This wraps an
-       DAPS_State_Retrieve_Function and exeucutes via operator ()
+       Worker reponse. This wraps an LV2_Worker_Respond_Function
+       and exeucutes via operator ()
     */
-   struct WorkerRespond {
-      WorkerRespond(LV2_Handle instance,
-                    WorkerRespondFunction wrfunc,
-                    WorkerRespondHandle handle)
+   struct worker_respond {
+      worker_respond(daps::handle instance,
+                     worker_respond_func wrfunc,
+                     worker_respond_handle   handle)
       : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
 
       /**
-          Execute the retrieve functor.
-          @param key
+          Execute the worker retrieval functor.
           @param size
-          @param type
-          @param flags
-          @return Associate 'value' data for the given key
+          @param data
+          @return WORKER_SUCCESS on success
        */
-      WorkerStatus operator () (uint32_t size, const void* data)
+      worker_status_t operator () (uint32_t size, const void* data)
       {
-         return (WorkerStatus) p_wrfunc (p_handle, size, data);
+         return (worker_status_t) p_wrfunc (p_handle, size, data);
       }
 
    private:
-      LV2_Handle                p_instance;
-      WorkerRespondHandle       p_handle;
-      WorkerRespondFunction     p_wrfunc;
+      daps::handle                p_instance;
+      worker_respond_handle       p_handle;
+      worker_respond_func         p_wrfunc;
    };
 
    /** The LV2 Worker Feature.
@@ -82,14 +81,14 @@ namespace daps {
 
          /** @internal */
          static void
-         map_feature_handlers(FeatureHandlerMap& hmap)
+         map_feature_handlers(feature_handler_map& hmap)
          {
             hmap[LV2_WORKER__schedule] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
          static void
-         handle_feature(Handle instance, FeatureData data)
+         handle_feature(handle instance, feature_data data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
@@ -98,7 +97,7 @@ namespace daps {
                std::clog<<"  [Worker] handle_feature\n";
             }
 
-            WorkerSchedule *ws = reinterpret_cast<WorkerSchedule*>(data);
+            worker_schedule *ws = reinterpret_cast<worker_schedule*>(data);
             fe->m_worker_schedule_handle = ws->handle;
             fe->m_schedule_work_func = ws->schedule_work;
             fe->m_ok = true;
@@ -109,7 +108,7 @@ namespace daps {
          check_ok()
          {
             if (DAPS_DEBUG) {
-              std::clog<<"    [Worker] Validation "
+              std::clog<<"    [worker] validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;
@@ -128,6 +127,9 @@ namespace daps {
 
             return 0;
          }
+
+         /* =============== LV2 Worker C++ Interface =============== */
+
 
          /**
             Request from run() that the host call the worker.
@@ -154,10 +156,10 @@ namespace daps {
             @param size   The size of @p data.
             @param data   Message to pass to work(), or NULL.
          */
-          WorkerStatus
+          worker_status_t
           schedule_work (uint32_t size, void *data)
           {
-            return (WorkerStatus)m_schedule_work_func(
+            return (worker_status_t)m_schedule_work_func(
                                     m_worker_schedule_handle, size, data);
           }
 
@@ -172,10 +174,8 @@ namespace daps {
             @param size     The size of @p data.
             @param data     Data from run(), or NULL.
          */
-          WorkerStatus
-          work(WorkerRespond        &respond,
-                            uint32_t             size,
-                            const void*          data)
+          worker_status_t
+          work (worker_respond &respond, uint32_t size, const void* data)
           {
              return WORKER_SUCCESS;
           }
@@ -188,7 +188,7 @@ namespace daps {
               @param size     The size of @p body.
               @param body     Message body, or NULL.
            */
-          WorkerStatus
+          worker_status_t
           work_response
           (uint32_t size, const void* body)
           {
@@ -206,7 +206,7 @@ namespace daps {
             host MUST call it after every run(), regardless of whether or not any
             responses were sent that cycle.
          */
-          WorkerStatus
+          worker_status_t
           end_run()
           {
              return WORKER_SUCCESS;
@@ -214,7 +214,7 @@ namespace daps {
 
         protected:
 
-         /* LV2 Worker C API Implementation */
+         /* LV2 Worker Implementation */
 
          /** @internal */
          LV2_Worker_Schedule_Handle m_worker_schedule_handle;
@@ -232,7 +232,7 @@ namespace daps {
                                         const void*                 data)
          {
             Derived* plugin = reinterpret_cast<Derived*>(instance);
-            WorkerRespond wrsp (instance, respond, handle);
+            worker_respond wrsp (instance, respond, handle);
             return (LV2_Worker_Status)plugin->work(wrsp, size, data);
          }
 
@@ -253,6 +253,7 @@ namespace daps {
          }
       };
    };
+
 } /* namespace daps */
 
 #endif /* DAPS_LV2_WORKER_HPP */

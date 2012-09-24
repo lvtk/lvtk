@@ -33,7 +33,9 @@
  */
 
 namespace daps {
+   namespace lv2 {
 
-} /* namespace daps */
+   }
+} /* namespace daps::lv2 */
 
 #endif /* DAPS_LV2_ATOM_HPP */

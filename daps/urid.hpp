@@ -35,40 +35,43 @@ namespace daps {
    */
 
    DAPS_MIXIN_CLASS URID {
-   
      DAPS_MIXIN_DERIVED {
      
          I() { }
 
          /** @internal */
-         static void map_feature_handlers(FeatureHandlerMap& hmap)
+         static void
+         map_feature_handlers(feature_handler_map& hmap)
          {
             hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
             hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
          }
 
          /** @internal */
-         static void handle_map_feature(void* instance, void* data)
+         static void
+         handle_map_feature(void* instance, void* data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
-            I<Derived>* fe = static_cast<I<Derived>*>(d);
+            I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
-            fe->p_map = reinterpret_cast<LV2_URID_Map*>(data);
-            fe->m_ok = true;
+            mixin->p_map = reinterpret_cast<LV2_URID_Map*>(data);
+            mixin->m_ok = true;
          }
 
          /** @internal */
-         static void handle_unmap_feature(void* instance, void* data)
+         static void
+         handle_unmap_feature(void* instance, void* data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
-            I<Derived>* fe = static_cast<I<Derived>*>(d);
+            I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
-            fe->p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
-            fe->m_ok = true;
+            mixin->p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
+            mixin->m_ok = true;
          }
 
 
-         bool check_ok()
+         bool
+         check_ok()
          {
             if (DAPS_DEBUG) {
               std::clog<<"    [LV2::URID] Validation "
@@ -93,7 +96,8 @@ namespace daps {
 
             @param urid The ID to be mapped back to the URI string.
          */
-         const char* unmap (LV2_URID urid)
+         const char*
+         unmap (LV2_URID urid)
          {
             return p_unmap->unmap (p_unmap->handle, urid);
          }
@@ -118,17 +122,14 @@ namespace daps {
 
             @param uri The URI to be mapped to an integer ID.
          */
-         LV2_URID map (const char* uri)
+         LV2_URID
+         map (const char* uri)
          {
             return p_map->map (p_map->handle, uri);
          }
 
          LV2_URID_Map   *p_map;
          LV2_URID_Unmap *p_unmap;
-
-     private:
-
-
 
      };
    };
