@@ -190,13 +190,15 @@ namespace LV2 {
          return 0;
        }
 
-       StateStatus save(const StateStore &store, uint32_t flags,
-                        const FeatureSet &features)
+       /* ===============  State C++ Interface ==========================  */
+
+       StateStatus save(StateStore &store, uint32_t flags,
+                        FeatureSet &features)
        {
           return STATE_SUCCESS;
        }
 
-       StateStatus restore(const StateRetrieve &retrieve, uint32_t flags,
+       StateStatus restore(StateRetrieve &retrieve, uint32_t flags,
                            const FeatureSet &features)
        {
           return STATE_SUCCESS;
