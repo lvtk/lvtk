@@ -29,38 +29,27 @@
 #include <map>
 #include <string>
 
+#include <lv2mm/feature.hpp>
+
 #include "private/debug.hpp"
 
+/** TODO: Put macros somewhere else that make sense */
 #define LV2MM_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
-
 #define LV2MM_MIXIN_CLASS      template <bool Required = true> struct
 #define LV2MM_MIXIN_DERIVED    template <class Derived> struct I : Extension<Required>
 
 namespace LV2 {
-  
-  /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
-  typedef LV2_Feature Feature;
-  
-  typedef std::vector<const Feature*> FeatureSet;
 
-  /** Convenient typedef for the feature handler function type. */
-  typedef void(*FeatureHandler)(void*, void*);
+   /** @internal
+       This class is used by the End class */
+   struct Empty {};
   
-  /** Convenient typedef for the feature handler map type. */
-  typedef std::map<std::string, FeatureHandler> FeatureHandlerMap;
-  
-  
-  struct Empty {
-
-  };
-  
-  
-  /** @internal
+   /** @internal
       This class is used to terminate the recursive inheritance trees
       created by MixinTree. */
-  struct End {
+   struct End {
     typedef Empty C;
-  };
+   };
   
 
   /** @internal
