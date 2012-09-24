@@ -20,12 +20,15 @@
 /**
    @file event.hpp
    C++ convenience header for the LV2 Event extension.
+   LV2 C Version Support: 1.6 (2012-04-17) DEPRECATED
 */
 
 #ifndef LV2_EVENT_HPP
 #define LV2_EVENT_HPP
 
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
+
+#include <lv2mm/types.hpp>
 
 namespace LV2 {
 
