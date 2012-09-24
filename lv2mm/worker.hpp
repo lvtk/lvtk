@@ -81,13 +81,15 @@ namespace LV2 {
       LV2MM_MIXIN_DERIVED {
 
          /** @internal */
-         static void map_feature_handlers(FeatureHandlerMap& hmap)
+         static void
+         map_feature_handlers(FeatureHandlerMap& hmap)
          {
             hmap[LV2_WORKER__schedule] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
-         static void handle_feature(void* instance, void* data)
+         static void
+         handle_feature(void* instance, void* data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
@@ -103,7 +105,8 @@ namespace LV2 {
          }
 
          /** @internal */
-         bool check_ok()
+         bool
+         check_ok()
          {
             if (LV2MM_DEBUG) {
               std::clog<<"    [LV2::Worker] Validation "
@@ -113,7 +116,8 @@ namespace LV2 {
          }
 
          /** @internal */
-         static const void* extension_data (const char* uri)
+         static const void*
+         extension_data (const char* uri)
          {
             if (!std::strcmp (uri, LV2_WORKER__interface)) {
                static LV2_Worker_Interface worker = { &I<Derived>::_work,
@@ -150,7 +154,8 @@ namespace LV2 {
             @param size   The size of @p data.
             @param data   Message to pass to work(), or NULL.
          */
-          WorkerStatus schedule_work (uint32_t size, void *data)
+          WorkerStatus
+          schedule_work (uint32_t size, void *data)
           {
             return (WorkerStatus)m_schedule_work_func(
                                     m_worker_schedule_handle, size, data);
@@ -167,7 +172,8 @@ namespace LV2 {
             @param size     The size of @p data.
             @param data     Data from run(), or NULL.
          */
-          WorkerStatus work(WorkerRespond        &respond,
+          WorkerStatus
+          work(WorkerRespond        &respond,
                             uint32_t             size,
                             const void*          data)
           {
@@ -182,7 +188,9 @@ namespace LV2 {
               @param size     The size of @p body.
               @param body     Message body, or NULL.
            */
-          WorkerStatus work_response (uint32_t size, const void* body)
+          WorkerStatus
+          work_response
+          (uint32_t size, const void* body)
           {
              return WORKER_SUCCESS;
           }
@@ -198,7 +206,8 @@ namespace LV2 {
             host MUST call it after every run(), regardless of whether or not any
             responses were sent that cycle.
          */
-          WorkerStatus end_run()
+          WorkerStatus
+          end_run()
           {
              return WORKER_SUCCESS;
           }
@@ -216,7 +225,7 @@ namespace LV2 {
                                                    const void*                data);
 
          /** @internal */
-         static LV2_Worker_Status _work(LV2_Handle                  instance,
+         static LV2_Worker_Status _work(LV2_Handle               instance,
                                         LV2_Worker_Respond_Function respond,
                                         LV2_Worker_Respond_Handle   handle,
                                         uint32_t                    size,
@@ -239,12 +248,11 @@ namespace LV2 {
          /** @internal */
          static LV2_Worker_Status _end_run (LV2_Handle instance)
          {
-          Derived* plugin = reinterpret_cast<Derived*>(instance);
-          return (LV2_Worker_Status)plugin->end_run();
+            Derived* plugin = reinterpret_cast<Derived*>(instance);
+            return (LV2_Worker_Status)plugin->end_run();
          }
       };
    };
-
 } /* namespace LV2 */
 
 #endif /* LV2_WORKER_HPP */

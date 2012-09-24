@@ -29,22 +29,24 @@
 #include <cstdlib>
 
 #include <lv2mm/plugin.hpp>
+#include <lv2mm/data_access.hpp>
 #include <lv2mm/state.hpp>
 
 using namespace LV2;
 using std::vector;
 
-class Workhorse : public Plugin<Workhorse, Worker<true>, State<true> >
+class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> >
 {
    public:
 
     Workhorse (double rate)
-    : LV2::Plugin<Workhorse, Worker<true>, State<true> > (3)
+    : LV2::Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> > (3)
     {
 
     }
 
-    void run(uint32_t nframes)
+    void
+    run(uint32_t nframes)
     {
        const char* msg = "go to sleep";
        this->schedule_work(strlen(msg), (void*)msg);
