@@ -151,59 +151,63 @@ namespace LV2 {
    */
    LV2MM_MIXIN_CLASS State {
 
-     /** This is the type that your plugin class will inherit when you use the
+      /** This is the type that your plugin class will inherit when you use the
          EventRef mixin. The public and protected members defined here
          will be available in your plugin class.
-     */
+      */
       LV2MM_MIXIN_DERIVED {
 
-       /** @internal */
-       static void
-       map_feature_handlers(FeatureHandlerMap& hmap) {
+         /** @internal */
+         static void
+         map_feature_handlers(FeatureHandlerMap& hmap) {
 
-       }
-
-       /** @internal */
-       static void
-       handle_feature(void* instance, void* data) {
-
-       }
-
-      bool
-      check_ok() {
-
-      /** Since we're not yet incorporating the other state features,
-      * and this is the only 'instantiate setup' we have, just set
-      * m_ok to true.
-      */
-      this->m_ok = true; /* Workaround */
-      if (LV2MM_DEBUG) {
-         std::clog<<"    [LV2::State] Validation "
-                                 <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
-         return this->m_ok;
-      }
 
-       /** @internal */
-       static const void* extension_data (const char* uri) {
-         if (!std::strcmp (uri, LV2_STATE__interface)) {
-           static LV2_State_Interface state = { &I<Derived>::_save,
-                                                &I<Derived>::_restore };
-           return &state;
+         /** @internal */
+         static void
+         handle_feature(void* instance, void* data) {
+
          }
-         return 0;
-       }
+
+         bool
+         check_ok() {
+
+         /** Since we're not yet incorporating the other state features,
+         * and this is the only 'instantiate setup' we have, just set
+         * m_ok to true.
+         */
+         this->m_ok = true; /* Workaround */
+         if (LV2MM_DEBUG) {
+            std::clog<<"    [LV2::State] Validation "
+                                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+            }
+            return this->m_ok;
+         }
+
+         /** @internal */
+         static const void*
+         extension_data (const char* uri) {
+            if (!std::strcmp (uri, LV2_STATE__interface)) {
+              static LV2_State_Interface state = { &I<Derived>::_save,
+                                                   &I<Derived>::_restore };
+              return &state;
+            }
+            return 0;
+         }
 
 
        /* ===============  State C++ Interface ==========================  */
 
-       StateStatus save(const StateStore &store, uint32_t flags,
-                        const FeatureSet &features)
+
+       StateStatus
+       save(StateStore &store, uint32_t flags,
+                        FeatureSet &features)
        {
           return STATE_SUCCESS;
        }
 
-       StateStatus restore(const StateRetrieve &retrieve, uint32_t flags,
+       StateStatus
+       restore(StateRetrieve &retrieve, uint32_t flags,
                            const FeatureSet &features)
        {
           return STATE_SUCCESS;
