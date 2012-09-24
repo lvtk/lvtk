@@ -18,20 +18,20 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-LV2MM_VERSION="0.1.0"
-LV2MM_MAJOR_VERSION=LV2MM_VERSION[0]
-LV2MM_MINOR_VERSION=LV2MM_VERSION[2]
-LV2MM_MICRO_VERSION=LV2MM_VERSION[4]
+DAPS_VERSION="0.1.0"
+DAPS_MAJOR_VERSION=DAPS_VERSION[0]
+DAPS_MINOR_VERSION=DAPS_VERSION[2]
+DAPS_MICRO_VERSION=DAPS_VERSION[4]
 
 # Anything appended to version number goes here
-LV2MM_EXTRA_VERSION=""
+DAPS_EXTRA_VERSION=""
 
 # For waf dist
-APPNAME = 'lv2mm'
-VERSION = LV2MM_VERSION + LV2MM_EXTRA_VERSION
+APPNAME = 'daps'
+VERSION = DAPS_VERSION + DAPS_EXTRA_VERSION
 
-LIB_LV2MM       = APPNAME+"-plugin"+LV2MM_MAJOR_VERSION
-LIB_LV2MM_GTKUI = APPNAME+"-gtkui"+LV2MM_MAJOR_VERSION
+LIB_DAPS       = APPNAME+"-plugin"+DAPS_MAJOR_VERSION
+LIB_DAPS_GTKUI = APPNAME+"-gtkui"+DAPS_MAJOR_VERSION
 
 # Required by waf
 top = '.'
@@ -62,10 +62,10 @@ def configure(conf):
 
 	# Setup the Environment
 	conf.env.UI_DISABLED         = conf.options.disable_ui	
-	conf.env.LV2MM_MAJOR_VERSION = LV2MM_MAJOR_VERSION
-	conf.env.LV2MM_MINOR_VERSION = LV2MM_MINOR_VERSION
-	conf.env.LIB_LV2MM           = LIB_LV2MM
-	conf.env.LIB_LV2MM_GTKUI     = LIB_LV2MM_GTKUI
+	conf.env.DAPS_MAJOR_VERSION = DAPS_MAJOR_VERSION
+	conf.env.DAPS_MINOR_VERSION = DAPS_MINOR_VERSION
+	conf.env.LIB_DAPS           = LIB_DAPS
+	conf.env.LIB_DAPS_GTKUI     = LIB_DAPS_GTKUI
 	conf.env.APPNAME			 = APPNAME
 	
 	autowaf.configure(conf)
@@ -76,25 +76,25 @@ def build(bld):
 	for subdir in subdirs: bld.recurse(subdir)
 	
 	# Build PC Files
-	autowaf.build_pc(bld, 'LV2MM', LV2MM_VERSION, LV2MM_MAJOR_VERSION, [],
-						{'LV2MM_MAJOR_VERSION' : LV2MM_MAJOR_VERSION,
-						'THELIB'		       : LIB_LV2MM,
-						'LV2MM_PKG_DEPS'       : 'lv2'})
-	autowaf.build_pc(bld, 'LV2MM-GTKUI', LV2MM_VERSION, LV2MM_MAJOR_VERSION, [],
-						{'LV2MM_MAJOR_VERSION' : LV2MM_MAJOR_VERSION,
-						'VERSION'              : LV2MM_VERSION,
-						'THELIB'		       : LIB_LV2MM_GTKUI,
-						'LV2MM_PKG_DEPS'       : 'lv2'})
+	autowaf.build_pc(bld, 'DAPS', DAPS_VERSION, DAPS_MAJOR_VERSION, [],
+						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
+						'THELIB'		       : LIB_DAPS,
+						'DAPS_PKG_DEPS'       : 'lv2'})
+	autowaf.build_pc(bld, 'DAPS-GTKUI', DAPS_VERSION, DAPS_MAJOR_VERSION, [],
+						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
+						'VERSION'              : DAPS_VERSION,
+						'THELIB'		       : LIB_DAPS_GTKUI,
+						'DAPS_PKG_DEPS'       : 'lv2'})
 	
 	# Install Static Libraries
 	bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 	
 	# Documentation
-	autowaf.build_dox(bld, 'LV2MM', LV2MM_VERSION, top, out)
+	autowaf.build_dox(bld, 'DAPS', DAPS_VERSION, top, out)
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
-				+ APPNAME + "-" + LV2MM_MAJOR_VERSION	
+				+ APPNAME + "-" + DAPS_MAJOR_VERSION	
 	bld.install_files(header_base+"/lv2mm", \
 					  bld.path.ant_glob("lv2mm/*.*"))
 	bld.install_files(header_base+"/lv2mm/private", \

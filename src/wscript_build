@@ -17,19 +17,19 @@ gtkui_code  = bld.path.ant_glob("*gtkui*.cpp")
 
 bld.stlib(
 	source   = plugin_code,
-	includes = ["../lv2mm", "include"],
+	includes = ["../daps", "include"],
 	cxxflags = ["-fPIC"],
-	target   = bld.env.LIB_LV2MM,
-	name     = bld.env.LIB_LV2MM
+	target   = bld.env.LIB_DAPS,
+	name     = bld.env.LIB_DAPS
 )
 
 if not bld.env.UI_DISABLED:
 	bld.stlib(
 		source   = gtkui_code,
-		includes = ["../lv2mm", "include"],
+		includes = ["../daps", "include"],
 		cxxflags = ["-fPIC"],
-		target   = bld.env.LIB_LV2MM_GTKUI,
-		name     = bld.env.LIB_LV2MM_GTKUI,
+		target   = bld.env.LIB_DAPS_GTKUI,
+		name     = bld.env.LIB_DAPS_GTKUI,
 		use      = "gtkmm"
 	)
 

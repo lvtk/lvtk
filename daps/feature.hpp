@@ -23,20 +23,20 @@
    LV2 Version Support: lv2core 8.0 (2012-04-17) STABLE
 */
 
-#ifndef LV2_FEATURE_HPP
-#define LV2_FEATURE_HPP
+#ifndef DAPS_FEATURE_HPP
+#define DAPS_FEATURE_HPP
 
 #include <map>
 #include <string>
 #include <vector>
 
-namespace LV2 {
+namespace daps {
 
    using std::map;
    using std::string;
    using std::vector;
 
-   /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
+   /** Typedef for the DAPS_Feature type so we get it into the LV2 namespace. */
    typedef LV2_Feature Feature;
 
    /** Convenient typedef for a vector of Features. */
@@ -50,11 +50,11 @@ namespace LV2 {
       @param instance The plugin instance
       @param data Feature Data passed from host
     */
-   typedef void(*FeatureHandler)(LV2::Handle instance, FeatureData data);
+   typedef void(*FeatureHandler)(Handle instance, FeatureData data);
 
    /** Convenient typedef for the feature handler map type. */
    typedef map<string, FeatureHandler> FeatureHandlerMap;
 
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_FEATURE_HPP */
+#endif /* DAPS_FEATURE_HPP */

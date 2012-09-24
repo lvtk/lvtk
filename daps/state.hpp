@@ -27,7 +27,7 @@
 
 #include <lv2/lv2plug.in/ns/ext/state/state.h>
 
-namespace LV2 {
+namespace daps {
 
    typedef enum {
          /**
@@ -149,13 +149,13 @@ namespace LV2 {
    * this mixin is the internal struct template I.
    * @ingroup pluginmixins
    */
-   LV2MM_MIXIN_CLASS State {
+   DAPS_MIXIN_CLASS State {
 
       /** This is the type that your plugin class will inherit when you use the
          EventRef mixin. The public and protected members defined here
          will be available in your plugin class.
       */
-      LV2MM_MIXIN_DERIVED {
+      DAPS_MIXIN_DERIVED {
 
          /** @internal */
          static void
@@ -166,7 +166,7 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature(LV2::Handle instance, FeatureData data)
+         handle_feature(Handle instance, FeatureData data)
          {
 
          }
@@ -179,7 +179,7 @@ namespace LV2 {
             * m_ok to true.
             */
             this->m_ok = true; /* Workaround */
-            if (LV2MM_DEBUG) {
+            if (DAPS_DEBUG) {
                std::clog<<"    [LV2::State] Validation "
                                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -258,6 +258,6 @@ namespace LV2 {
      };
    };
 
-} /* namespace LV2 */
+} /* namespace daps */
 
 #endif /* LV2_STATE_HPP */

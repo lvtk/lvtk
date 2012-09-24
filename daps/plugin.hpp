@@ -22,8 +22,8 @@
 
 ****************************************************************************/
 
-#ifndef LV2_PLUGIN_HPP
-#define LV2_PLUGIN_HPP
+#ifndef DAPS_LV2_PLUGIN_HPP
+#define DAPS_LV2_PLUGIN_HPP
 
 #include <iostream>
 #include <cstdarg>
@@ -35,25 +35,26 @@
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 
-#include <lv2mm/types.hpp>
-#include <lv2mm/atom.hpp>
-#include <lv2mm/urid.hpp>
-#include <lv2mm/worker.hpp>
+#include <daps/types.hpp>
+#include <daps/atom.hpp>
+#include <daps/urid.hpp>
+#include <daps/worker.hpp>
 
 #include "private/debug.hpp"
 
-/** @mainpage LV2 C++ - API documentation
+/** @mainpage D.A.P.S - Digital Audio Plugins Streamlined
+
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
     so you only have to write the parts that matter, and hide the low-level
     C API.
     
-    The classes are separated into two libraries. One, called liblv2-plugin,
-    contains the classes LV2::Plugin and LV2::Synth, defined in the files 
-    lv2plugin.hpp and lv2synth.hpp. They are base classes that you can inherit
-    in order to create new LV2 plugins. The other library, called liblv2-gui, 
-    contains the class LV2::GUI, defined in the file lv2gui.hpp, which you can
-    use in a similar way to create new LV2 plugin GUIs.
+    The classes are separated into two libraries. One, called daps-plugin,
+    contains the classes Plugin and Synth, defined in the files
+    <daps/plugin.hpp> and <daps/synth.hpp>. They are base classes that you 
+    can inherit in order to create new LV2 plugins. The other library, called 
+    libdaps-gtkui, contains the class GUI, defined in the file <daps/gtkui.hpp>
+    which you can use in a similar way to create new LV2 plugin GUIs.
     
     For both the Plugin and the GUI class there are other helper classes called
     @ref pluginmixins "mixins" that you can use to add extra functionality to 
@@ -66,16 +67,12 @@
     incompatible version, but if you were to modify the build system to create
     shared libraries and link against those you are on your own.
     
-    This is reference documentation, if you want a more tutorial-type document
-    you can have a look at <a href="http://ll-plugins.nongnu.org/lv2pftci">
-    LV2 programming for the complete idiot</a>.
-    
     @author Lars Luthman <lars.luthman@gmail.com>
     @author Michael FIsher <mfisher31@gmail.com>
 */
 
 
-namespace LV2 {
+namespace daps {
   
    using std::vector;
 
@@ -109,17 +106,17 @@ namespace LV2 {
       binding would.
       @code
       #include <cstring>
-      #include <lv2mm/plugin.hpp>
+      #include <daps/plugin.hpp>
       
-      class TestLV2 : public LV2::Plugin<TestLV2> {
+      class TestLV2 : public Plugin<TestLV2> {
       public:
-        TestLV2(double) : LV2::Plugin<TestLV2>(2) { }
+        TestLV2(double) : Plugin<TestLV2>(2) { }
         void run(uint32_t sample_count) {
           std::memcpy(p(1), p(0), sample_count * sizeof(float));
         }
       };
       
-      static unsigned _ = TestLV2::register_class("http://ll-plugins.sf.net/plugins/TestLV2");
+      static unsigned _ = Testregister_class("http://ll-plugins.sf.net/plugins/TestLV2");
       @endcode
       
       If the above code is compiled and linked with @c -llv2_plugin into a 
@@ -340,8 +337,8 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       s_features = features;
       s_bundle_path = bundle_path;
 
-      if (LV2MM_DEBUG) {
-	std::clog<<"[LV2::Plugin] Instantiating plugin...\n"
+      if (DAPS_DEBUG) {
+	std::clog<<"[Plugin] Instantiating plugin...\n"
 		 <<"  Bundle path: "<<bundle_path<<"\n"
 		 <<"  Features: \n";
 	for (Feature const* const* f = features; *f != 0; ++f)
@@ -352,17 +349,17 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 
       Derived* t = new Derived (sample_rate);
       
-      if (LV2MM_DEBUG) {
+      if (DAPS_DEBUG) {
 	std::clog<<"  Validating...\n";
       }
       
       if (t->check_ok()) {
-	if (LV2MM_DEBUG)
+	if (DAPS_DEBUG)
 	  std::clog<<"  Done!"<<std::endl;
 	return reinterpret_cast<LV2_Handle>(t);
       }
       
-      if (LV2MM_DEBUG) {
+      if (DAPS_DEBUG) {
 	std::clog<<"  Failed!\n"
 		 <<"  Deleting object."<<std::endl;
       }
@@ -385,7 +382,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	The Feature array passed to this plugin instance. May not be valid
 	after the constructor has returned.
     */
-    LV2::Feature const* const* m_features;
+    Feature const* const* m_features;
     
     /** @internal
 	The bundle path passed to this plugin instance. May not be valid
@@ -397,7 +394,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	Used to pass the Feature array to the plugin without having to pass
 	it through the constructor of the plugin class.
     */
-    static LV2::Feature const* const* s_features;
+    static Feature const* const* s_features;
 
     /** @internal
 	Used to pass the bundle path to the plugin without having to pass
@@ -418,7 +415,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   // The static variables need to be initialised. 
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
 	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  LV2::Feature const* const* 
+  Feature const* const*
   Plugin<Derived, Ext1, Ext2, Ext3, Ext4, 
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
@@ -432,7 +429,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
   /** @defgroup pluginmixins Plugin mixins
       These template classes implement extra functionality that you may
       want to have in your plugin class, usually Features. You add them
-      to your class by passing them as template parameters to LV2::Plugin
+      to your class by passing them as template parameters to Plugin
       when inheriting it. The internal structs of the mixin template classes,
       named @c I, will then be inherited by your plugin class, so that any 
       public and protected members they have will be available to your 
@@ -442,9 +439,9 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       code size of your plugin if you don't need them. 
       
       There are also @ref guimixins "GUI mixins" that you can use in the same
-      way with LV2::GUI.
+      way with GUI.
   */
   
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_PLUGIN_HPP */
+#endif /* DAPS_LV2_PLUGIN_HPP */

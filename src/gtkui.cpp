@@ -24,13 +24,13 @@
 #include <cstring>
 #include <iostream>
 
-#include <lv2mm/gtkui.hpp>
+#include <daps/gtkui.hpp>
 
 
 using namespace std;
 
 
-namespace LV2 {
+namespace daps {
 
 
   GUIDescList& get_lv2g2g_descriptors() {
@@ -46,7 +46,7 @@ extern "C" {
   
 
   const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index) {
-    LV2::GUIDescList& descs = LV2::get_lv2g2g_descriptors();
+    daps::GUIDescList& descs = daps::get_lv2g2g_descriptors();
     if (index >= descs.size())
       return 0;
     return descs[index];

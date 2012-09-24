@@ -27,15 +27,15 @@
    potentially remote users of a plugin via a data_access() method.
 */
 
-#ifndef LV2_DATA_ACCESS_HPP
-#define LV2_DATA_ACCESS_HPP
+#ifndef DAPS_DATA_ACCESS_HPP
+#define DAPS_DATA_ACCESS_HPP
 
 #include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
-#include <lv2mm/types.hpp>
-#include <lv2mm/util.hpp>
+#include <daps/types.hpp>
+#include <daps/util.hpp>
 
-namespace LV2 {
+namespace daps {
 
    /**
       The Data Access Extension.
@@ -43,8 +43,8 @@ namespace LV2 {
       this mixin is the internal struct template I.
       @ingroup pluginmixins
    */
-   LV2MM_MIXIN_CLASS DataAccess {
-      LV2MM_MIXIN_DERIVED {
+   DAPS_MIXIN_CLASS DataAccess {
+      DAPS_MIXIN_DERIVED {
 
          I() : p_da (NULL) { }
 
@@ -61,7 +61,7 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature (LV2::Handle instance, FeatureData data)
+         handle_feature (Handle instance, FeatureData data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
@@ -73,7 +73,7 @@ namespace LV2 {
          bool
          check_ok()
          {
-            if (LV2MM_DEBUG) {
+            if (DAPS_DEBUG) {
               std::clog<<"    [UI::DataAccess] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -113,6 +113,6 @@ namespace LV2 {
      };
    };
 
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_DATA_ACCESS_HPP */
+#endif /* DAPS_DATA_ACCESS_HPP */

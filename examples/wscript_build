@@ -23,6 +23,6 @@ for slug in examples:
 		name          = slug,
 		target        = slug,
 		source        = "%s.cpp" % slug,
-		use           = bld.env.LIB_LV2MM,
+		use           = bld.env.LIB_DAPS,
 		LIB_EXT		  = bld.env.pluginlib_EXT
 	)

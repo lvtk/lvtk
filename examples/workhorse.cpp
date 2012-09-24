@@ -1,5 +1,5 @@
 /*
-  workhorse.cpp  -  LV2 C++ Worker Demonstration
+  workhorse.cpp  -  DAPS LV2 Worker Demonstration
 
   Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
@@ -20,19 +20,17 @@
 */
 /**
  * @file workhorse.cpp
- * This file contains implementation of the main LV2 Plugin
- * object
  */
 
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 
-#include <lv2mm/plugin.hpp>
-#include <lv2mm/data_access.hpp>
-#include <lv2mm/state.hpp>
+#include <daps/plugin.hpp>
+#include <daps/data_access.hpp>
+#include <daps/state.hpp>
 
-using namespace LV2;
+using namespace daps;
 using std::vector;
 
 class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> >
@@ -40,7 +38,7 @@ class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, Stat
    public:
 
     Workhorse (double rate)
-    : LV2::Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> > (3)
+    : Plugin<Workhorse, DataAccess<false>, Worker<true>, State<true> > (3)
     {
 
     }
@@ -73,4 +71,4 @@ class Workhorse : public Plugin<Workhorse, DataAccess<false>, Worker<true>, Stat
 
 };
 
-static int _ = Workhorse::register_class ("http://lv2mm.org/plugins/workhorse");
+static int _ = Workhorse::register_class ("http://daps-project.org/plugins/workhorse");

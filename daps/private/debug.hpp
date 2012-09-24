@@ -1,8 +1,8 @@
 /****************************************************************************
 
-    atom.hpp - support file for writing LV2 plugins in C++
+    debug.hpp - Support file for writing LV2 plugins in C++
 
-    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
+    Copyright (C) Lars Luthman <lars.luthman@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,20 +20,20 @@
 
 ****************************************************************************/
 
-#ifndef LV2_ATOM_HPP
-#define LV2_ATOM_HPP
+#ifndef DEBUG_HPP
+#define DEBUG_HPP
 
-#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
-#include <lv2/lv2plug.in/ns/ext/atom/forge.h>
-#include <lv2/lv2plug.in/ns/ext/atom/util.h>
+#ifndef DAPS_DEBUG
+#  ifdef NDEBUG
+#    define DAPS_DEBUG false
+#  else
+#    define DAPS_DEBUG true
+#  endif
+#endif
 
-/** 
-   WIP-WIP-WIP - still not exatly sure what the purpose of this header will be.
-   For now it is an easy way to bulk include the above lv2 headers
- */
+#if DAPS_DEBUG
+#include <iomanip>
+#include <iostream>
+#endif
 
-namespace LV2 {
-
-} /* namespace LV2 */
-
-#endif /* LV2_ATOM_HPP */
+#endif

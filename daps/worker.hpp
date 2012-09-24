@@ -20,12 +20,12 @@
 
 ****************************************************************************/
 
-#ifndef LV2_WORKER_HPP
-#define LV2_WORKER_HPP
+#ifndef DAPS_LV2_WORKER_HPP
+#define DAPS_LV2_WORKER_HPP
 
 #include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 
-namespace LV2 {
+namespace daps {
 
    /** Convenience enum to get LV2_Worker_Status into a C++ namespace */
    typedef enum {
@@ -40,7 +40,7 @@ namespace LV2 {
 
    /**
        Wrapper struct for state retrieval. This wraps an
-       LV2_State_Retrieve_Function and exeucutes via operator ()
+       DAPS_State_Retrieve_Function and exeucutes via operator ()
     */
    struct WorkerRespond {
       WorkerRespond(LV2_Handle instance,
@@ -72,13 +72,13 @@ namespace LV2 {
        this mixin is the internal struct template I.
        @ingroup pluginmixins
     */
-   LV2MM_MIXIN_CLASS Worker {
+   DAPS_MIXIN_CLASS Worker {
 
       /** This is the type that your plugin class will inherit when you use the
           Worker mixin. The public and protected members defined here
           will be available in your plugin class.
       */
-      LV2MM_MIXIN_DERIVED {
+      DAPS_MIXIN_DERIVED {
 
          /** @internal */
          static void
@@ -89,13 +89,13 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature(LV2::Handle instance, FeatureData data)
+         handle_feature(Handle instance, FeatureData data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
 
-            if (LV2MM_DEBUG) {
-               std::clog<<"  [LV2::Worker] handle_feature\n";
+            if (DAPS_DEBUG) {
+               std::clog<<"  [Worker] handle_feature\n";
             }
 
             WorkerSchedule *ws = reinterpret_cast<WorkerSchedule*>(data);
@@ -108,8 +108,8 @@ namespace LV2 {
          bool
          check_ok()
          {
-            if (LV2MM_DEBUG) {
-              std::clog<<"    [LV2::Worker] Validation "
+            if (DAPS_DEBUG) {
+              std::clog<<"    [Worker] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;
@@ -149,7 +149,7 @@ namespace LV2 {
 
             The @p data MUST be safe for the host to copy and later pass to work(),
             and the host MUST guarantee that it will be eventually passed to work()
-            if this function returns LV2::WORKER_SUCCESS.
+            if this function returns WORKER_SUCCESS.
 
             @param size   The size of @p data.
             @param data   Message to pass to work(), or NULL.
@@ -253,6 +253,6 @@ namespace LV2 {
          }
       };
    };
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_WORKER_HPP */
+#endif /* DAPS_LV2_WORKER_HPP */

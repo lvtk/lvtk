@@ -27,11 +27,11 @@
 #include <cstring>
 #include <vector>
 
-#include <lv2mm/plugin.hpp>
+#include <daps/plugin.hpp>
 
 #include "private/lv2_event_helpers.h"
 
-namespace LV2 {
+namespace daps {
   
   /** This is used as an "invalid" MIDI key number, meaning "no key". */
   static const unsigned char INVALID_KEY = 255;
@@ -335,8 +335,8 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	  samples_done = to;
 	}
 
-       const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence>(m_midi_input);
-       LV2_ATOM_SEQUENCE_FOREACH(midiseq, ev)
+       const DAPS_Atom_Sequence* midiseq = p<DAPS_Atom_Sequence>(m_midi_input);
+       DAPS_ATOM_SEQUENCE_FOREACH(midiseq, ev)
        {
           uint32_t frame_offset = ev->time.frames;
           if (ev->body.type == m_midi_type)
@@ -506,7 +506,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
     
     /** @internal
 	The numerical ID for the MIDI event type. */
-    LV2_URID m_midi_type;
+    DAPS_URID m_midi_type;
     
   };
   

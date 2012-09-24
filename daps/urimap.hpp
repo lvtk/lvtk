@@ -33,13 +33,13 @@
    enumerations).
 */
 
-#ifndef LV2_URIMAP_HPP
-#define LV2_URIMAP_HPP
+#ifndef DAPS_URIMAP_HPP
+#define DAPS_URIMAP_HPP
 
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
-#include <lv2mm/types.hpp>
+#include <daps/types.hpp>
 
-namespace LV2 {
+namespace daps {
 
    /** The URI map mixin. This can be used by both plugins and GUIs.
 
@@ -48,15 +48,15 @@ namespace LV2 {
        @ingroup pluginmixins
        @ingroup guimixins
    */
-   LV2MM_MIXIN_CLASS URIMap {
-     LV2MM_MIXIN_DERIVED {
+   DAPS_MIXIN_CLASS URIMap {
+     DAPS_MIXIN_DERIVED {
 
         I() : m_callback_data(0), m_func(0) { }
 
        /** @internal */
        static void
        map_feature_handlers(FeatureHandlerMap& hmap) {
-         hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
+         hmap[DAPS_URI_MAP_URI] = &I<Derived>::handle_feature;
        }
 
        /** @internal */
@@ -64,14 +64,14 @@ namespace LV2 {
        handle_feature(void* instance, void* data) {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
-         LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
+         DAPS_URI_Map_Feature* umf = reinterpret_cast<DAPS_URI_Map_Feature*>(data);
          fe->m_callback_data = umf->callback_data;
          fe->m_func = umf->uri_to_id;
          fe->m_ok = (fe->m_func != 0);
        }
 
        bool check_ok() {
-         if (LV2MM_DEBUG) {
+         if (DAPS_DEBUG) {
            std::clog<<"    [LV2::URIMap] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
@@ -89,7 +89,7 @@ namespace LV2 {
        */
        uint32_t
        uri_to_id(const char* map, const char* uri) const {
-         if (LV2MM_DEBUG) {
+         if (DAPS_DEBUG) {
            uint32_t result = m_func(m_callback_data, map, uri);
            std::clog<<"[LV2::URIMap] uri_to_id(\""<<uri<<"\") -> "
                     <<result<<std::endl;
@@ -98,13 +98,13 @@ namespace LV2 {
          return m_func(m_callback_data, map, uri);
        }
 
-       LV2_URI_Map_Callback_Data m_callback_data;
-       uint32_t (*m_func)(LV2_URI_Map_Callback_Data, const char*, const char*);
+       DAPS_URI_Map_Callback_Data m_callback_data;
+       uint32_t (*m_func)(DAPS_URI_Map_Callback_Data, const char*, const char*);
 
      };
 
    };
 
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_URIMAP_HPP */
+#endif /* DAPS_URIMAP_HPP */

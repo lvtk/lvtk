@@ -39,13 +39,13 @@
    @url http://lv2plug.in/ns/ext/time/
 */
 
-#ifndef LV2_TIME_HPP
-#define LV2_TIME_HPP
+#ifndef DAPS_TIME_HPP
+#define DAPS_TIME_HPP
 
 #include <lv2/lv2plug.in/ns/ext/time/time.h>
 
-namespace LV2 {
+namespace daps {
 
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_TIME_HPP */
+#endif /* DAPS_TIME_HPP */

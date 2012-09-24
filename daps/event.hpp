@@ -34,10 +34,10 @@
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 #include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
 
-#include <lv2mm/types.hpp>
-#include <lv2mm/util.hpp>
+#include <daps/types.hpp>
+#include <daps/util.hpp>
 
-namespace LV2 {
+namespace daps {
 
    /** The event ref/unref function, required for plugins with event ports.
 
@@ -45,8 +45,8 @@ namespace LV2 {
        this mixin is the internal struct template I.
        @ingroup pluginmixins
    */
-   LV2MM_MIXIN_CLASS EventRef {
-      LV2MM_MIXIN_DERIVED {
+   DAPS_MIXIN_CLASS EventRef {
+      DAPS_MIXIN_DERIVED {
 
          typedef I<Derived> Mixin;
 
@@ -61,7 +61,7 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature(LV2::Handle instance, FeatureData data)
+         handle_feature(Handle instance, FeatureData data)
          {
             Derived* derived = reinterpret_cast<Derived*>(instance);
             I<Derived>* mixin = static_cast<I<Derived>*>(derived);
@@ -77,7 +77,7 @@ namespace LV2 {
          }
 
        bool check_ok() {
-         if (LV2MM_DEBUG) {
+         if (DAPS_DEBUG) {
            std::clog<<"    [LV2::EventRef] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
@@ -117,6 +117,6 @@ namespace LV2 {
 
    };
 
-} /* namespace LV2 */
+} /* namespace daps */
 
 #endif /* LV2_EVENT_HPP */

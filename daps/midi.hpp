@@ -22,14 +22,14 @@
    C++ convenience header for the LV2 midi extension.
 */
 
-#ifndef LV2_MIDI_HPP
-#define LV2_MIDI_HPP
+#ifndef DAPS_MIDI_HPP
+#define DAPS_MIDI_HPP
 
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
-#include <lv2mm/types.hpp>
+#include <daps/types.hpp>
 
-namespace LV2 {
+namespace daps {
 
    /** A mixin that allows easy sending of MIDI from GUI to plugin.
 
@@ -37,7 +37,7 @@ namespace LV2 {
        this mixin is the internal struct template I.
        @ingroup guimixins
    */
-    LV2MM_MIXIN_CLASS WriteMIDI {
+    DAPS_MIXIN_CLASS WriteMIDI {
 
      enum {
        EVENT_BUFFER_SIZE = 4
@@ -47,7 +47,7 @@ namespace LV2 {
          use the WriteMIDI mixin. The public and protected members defined
          here will be available in your plugin class.
      */
-     LV2MM_MIXIN_DERIVED {
+     DAPS_MIXIN_DERIVED {
 
         I() : m_midi_type(0) {
          m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE,
@@ -61,7 +61,7 @@ namespace LV2 {
            uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
          m_event_buffer_format = d->
            uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
-         if (LV2MM_DEBUG) {
+         if (DAPS_DEBUG) {
            if (m_midi_type != 0) {
              std::clog<<"    [LV2::WriteMIDI] Host does not map (\""
                       <<LV2_EVENT_URI
@@ -96,7 +96,7 @@ namespace LV2 {
        */
        bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
 
-         if (LV2MM_DEBUG) {
+         if (DAPS_DEBUG) {
            std::clog<<"[LV2::WriteMIDI] write_midi("<<port<<", "<<size
                     <<", \"";
            for (uint32_t i = 0; i < size; ++i) {
@@ -109,7 +109,7 @@ namespace LV2 {
          }
 
          if (m_midi_type == 0) {
-           if (LV2MM_DEBUG)
+           if (DAPS_DEBUG)
              std::clog<<"false (Host does not support MIDI writing)"<<std::endl;
            return false;
          }
@@ -129,7 +129,7 @@ namespace LV2 {
          if (size > 4)
            std::free(buffer);
 
-         if (LV2MM_DEBUG)
+         if (DAPS_DEBUG)
            std::clog<<"true"<<std::endl;
          return true;
        }
@@ -142,6 +142,6 @@ namespace LV2 {
 
    };
 
-} /* namespace LV2 */
+} /* namespace daps */
 
-#endif /* LV2_MIDI_HPP */
+#endif /* DAPS_MIDI_HPP */

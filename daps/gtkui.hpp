@@ -23,8 +23,8 @@
 
 ****************************************************************************/
 
-#ifndef LV2_GTKUI_HPP
-#define LV2_GTKUI_HPP
+#ifndef DAPS_GTKUI_HPP
+#define DAPS_GTKUI_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -35,13 +35,14 @@
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
-#include <lv2mm/event.hpp>
-#include <lv2mm/midi.hpp>
+#include <daps/event.hpp>
+#include <daps/midi.hpp>
 
-#include <lv2mm/types.hpp>
+#include <daps/types.hpp>
+
 #include "private/debug.hpp"
 
-namespace LV2 {
+namespace daps {
 
   
   /** @internal
@@ -175,7 +176,7 @@ protected:
     
     /** Get the feature array that was passed by the host. This may only
 	be valid while the constructor is running. */
-    inline LV2::Feature const* const* features() {
+    inline Feature const* const* features() {
       return m_features;
     }
     
@@ -200,7 +201,7 @@ protected:
     friend class WriteMIDI<true>::I<Derived>;
     friend class WriteMIDI<false>::I<Derived>;
     
-#if defined (LV2MM_EXTRA_ENABLED) && \
+#if defined (DAPS_EXTRA_ENABLED) && \
          defined (USE)
     friend class WriteOSC<true>::I<Derived>;
     friend class WriteOSC<false>::I<Derived>;
@@ -228,7 +229,7 @@ protected:
       s_bundle_path = bundle_path;
       
       // write some debug information
-      if (LV2MM_DEBUG) {
+      if (DAPS_DEBUG) {
 	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n\n"
 		 <<"  Note that this GUI is using a deprecated LV2 extension\n"
 		 <<"  that may not work correctly. If you are the author of\n"
@@ -244,12 +245,12 @@ protected:
       
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
-      if (LV2MM_DEBUG)
+      if (DAPS_DEBUG)
 	std::clog<<"  Initialising Gtkmm internals...\n";
       Gtk::Main::init_gtkmm_internals();
       
       // create the GUI object
-      if (LV2MM_DEBUG)
+      if (DAPS_DEBUG)
 	std::clog<<"  Creating widget..."<<std::endl;
       Derived* t = new Derived(plugin_uri);
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
@@ -289,12 +290,12 @@ protected:
 
     void* m_ctrl;
     LV2UI_Write_Function m_wfunc;
-    LV2::Feature const* const* m_features;
+    Feature const* const* m_features;
     char const* m_bundle_path;
     
     static void* s_ctrl;
     static LV2UI_Write_Function s_wfunc;
-    static LV2::Feature const* const* s_features;
+    static Feature const* const* s_features;
     static char const* s_bundle_path;
     
   };
@@ -313,7 +314,7 @@ protected:
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  LV2::Feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4, 
+  Feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
 				 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
@@ -325,4 +326,4 @@ protected:
 }
 
 
-#endif /* LV2_GTKUI_HPP */
+#endif /* DAPS_GTKUI_HPP */
