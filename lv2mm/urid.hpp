@@ -33,13 +33,7 @@ namespace LV2 {
       this mixin is the internal struct template I.
       @ingroup pluginmixins
    */
-   
-   #define LV2MM_EXTENSION (slug) \
-   LV2MM_MIXIN_CLASS $slug { \
-      LV2MM_MIXIN_DERIVED {
-   
-   #define LV2MM_EXTENSION_END }; };
-    
+
    LV2MM_MIXIN_CLASS URID {
    
      LV2MM_MIXIN_DERIVED {
