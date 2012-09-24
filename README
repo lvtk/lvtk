@@ -38,4 +38,7 @@ file COPYING for more details.
 Note that this licence requires that any plugin that uses the 
 liblv2mm-* frameworks is also licensed under GPL version 3 or later.
 
-Send bug reports to mfisher31@gmail.com
+Issue Tracking
+--------------
+Please report bugs and feature requests here.
+https://github.com/mfisher31/daps/issues
