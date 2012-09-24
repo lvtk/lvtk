@@ -19,7 +19,7 @@
 */
 /**
    @file midi.hpp
-   C++ convenience header for the LV2 midi Extension.
+   C++ convenience header for the LV2 midi extension.
 */
 
 #ifndef LV2_MIDI_HPP
