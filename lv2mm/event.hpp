@@ -32,6 +32,7 @@
 #define LV2_EVENT_HPP
 
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
+#include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
 
 #include <lv2mm/types.hpp>
 #include <lv2mm/util.hpp>
