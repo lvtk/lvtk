@@ -25,6 +25,7 @@
 #ifndef DAPS_UTIL_HPP
 #define DAPS_UTIL_HPP
 
+namespace daps {
 namespace util {
 
 #if 0
@@ -44,6 +45,6 @@ namespace util {
    }
 #endif
 
-} /* namespace util */
+}} /* namespace daps::util */
 
 #endif /* DAPS_UTIL_HPP */

@@ -23,8 +23,8 @@
    LV2 Version Support: lv2core 8.0 (2012-04-17) STABLE
 */
 
-#ifndef DAPS_FEATURE_HPP
-#define DAPS_FEATURE_HPP
+#ifndef DAPS_LV2_FEATURE_HPP
+#define DAPS_LV2_FEATURE_HPP
 
 #include <map>
 #include <string>
@@ -57,4 +57,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* DAPS_FEATURE_HPP */
+#endif /* DAPS_LV2_FEATURE_HPP */

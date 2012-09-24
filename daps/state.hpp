@@ -20,8 +20,8 @@
 
 ****************************************************************************/
 
-#ifndef LV2_STATE_HPP
-#define LV2_STATE_HPP
+#ifndef DAPS_LV2_STATE_HPP
+#define DAPS_LV2_STATE_HPP
 
 /** TODO: Add map and make path */
 
@@ -259,4 +259,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* LV2_STATE_HPP */
+#endif /* DAPS_LV2_STATE_HPP */

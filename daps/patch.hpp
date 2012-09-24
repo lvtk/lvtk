@@ -35,8 +35,8 @@
    @url http://lv2plug.in/ns/ext/patch
 */
 
-#ifndef DAPS_PATCH_HPP
-#define DAPS_PATCH_HPP
+#ifndef DAPS_LV2_PATCH_HPP
+#define DAPS_LV2_PATCH_HPP
 
 #include <lv2/lv2plug.in/ns/ext/patch/patch.h>
 
@@ -44,4 +44,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* DAPS_PATCH_HPP */
+#endif /* DAPS_LV2_PATCH_HPP */

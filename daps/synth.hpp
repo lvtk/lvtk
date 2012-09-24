@@ -20,8 +20,8 @@
 
 ****************************************************************************/
 
-#ifndef LV2SYNTH_HPP
-#define LV2SYNTH_HPP
+#ifndef DAPS_LV2_SYNTH_HPP
+#define DAPS_LV2_SYNTH_HPP
 
 #include <cmath>
 #include <cstring>

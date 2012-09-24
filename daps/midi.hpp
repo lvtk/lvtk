@@ -22,8 +22,8 @@
    C++ convenience header for the LV2 midi extension.
 */
 
-#ifndef DAPS_MIDI_HPP
-#define DAPS_MIDI_HPP
+#ifndef DAPS_LV2_MIDI_HPP
+#define DAPS_LV2_MIDI_HPP
 
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
@@ -144,4 +144,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* DAPS_MIDI_HPP */
+#endif /* DAPS_LV2_MIDI_HPP */

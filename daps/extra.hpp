@@ -24,8 +24,8 @@
    Many of these are more than likely broken.
 */
 
-#ifndef DAPS_EXTRA_HPP
-#define DAPS_EXTRA_HPP
+#ifndef DAPS_LV2_EXTRA_HPP
+#define DAPS_LV2_EXTRA_HPP
 
 #if defined (DAPS_EXTRA_ENABLED)
 
@@ -647,4 +647,4 @@ namespace DAPS {
 
 #endif
 
-#endif /* DAPS_EXTRA_HPP */
+#endif /* DAPS_LV2_EXTRA_HPP */

@@ -23,8 +23,10 @@
    LV2 Version: 1.4 (2012-04-17)
 */
 
-#ifndef DAPS_DYNMANIFEST_HPP
-#define DAPS_DYNMANIFEST_HPP
+/** WIP: Not currently implemented */
+
+#ifndef DAPS_LV2_DYNMANIFEST_HPP
+#define DAPS_LV2_DYNMANIFEST_HPP
 
 #include <lv2/lv2plug.in/ns/ext/dynmanifest/dynmanifest.h>
 #include <daps/types.hpp>
@@ -32,8 +34,8 @@
 namespace daps {
 
    /** Convenience typedef for DAPS_Dyn_Manifest_Handle */
-   typedef DAPS_Dyn_Manifest_Handle DynManifestHandle;
+   typedef LV2_Dyn_Manifest_Handle DynManifestHandle;
 
 }
 
-#endif /* DAPS_DYNMANIFEST_HPP */
+#endif /* DAPS_LV2_DYNMANIFEST_HPP */

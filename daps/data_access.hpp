@@ -27,8 +27,8 @@
    potentially remote users of a plugin via a data_access() method.
 */
 
-#ifndef DAPS_DATA_ACCESS_HPP
-#define DAPS_DATA_ACCESS_HPP
+#ifndef DAPS_LV2_DATA_ACCESS_HPP
+#define DAPS_LV2_DATA_ACCESS_HPP
 
 #include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
@@ -115,4 +115,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* DAPS_DATA_ACCESS_HPP */
+#endif /* DAPS_LV2_DATA_ACCESS_HPP */

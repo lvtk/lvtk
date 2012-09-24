@@ -20,8 +20,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_URID_HPP
-#define DAPS_URID_HPP
+#ifndef DAPS_LV2_URID_HPP
+#define DAPS_LV2_URID_HPP
 
 #include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
@@ -135,4 +135,4 @@ namespace daps {
    };
 }
 
-#endif /* DAPS_URID_HPP */
+#endif /* DAPS_LV2_URID_HPP */

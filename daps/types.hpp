@@ -23,8 +23,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_TYPES_HPP
-#define DAPS_TYPES_HPP
+#ifndef DAPS_LV2_TYPES_HPP
+#define DAPS_LV2_TYPES_HPP
 
 #include <map>
 #include <string>

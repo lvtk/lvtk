@@ -33,8 +33,8 @@
    enumerations).
 */
 
-#ifndef DAPS_URIMAP_HPP
-#define DAPS_URIMAP_HPP
+#ifndef DAPS_LV2_URIMAP_HPP
+#define DAPS_LV2_URIMAP_HPP
 
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 #include <daps/types.hpp>
@@ -107,4 +107,4 @@ namespace daps {
 
 } /* namespace daps */
 
-#endif /* DAPS_URIMAP_HPP */
+#endif /* DAPS_LV2_URIMAP_HPP */
