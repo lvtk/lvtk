@@ -21,6 +21,11 @@
    @file event.hpp
    C++ convenience header for the LV2 Event extension.
    LV2 C Version Support: 1.6 (2012-04-17) DEPRECATED
+
+   This extension defines a generic time-stamped event port type, which can
+   be used to create plugins that read and write real-time events, such as
+   MIDI, OSC, or any other type of event payload. The type(s) of event supported
+   by a port is defined in the data file for a plugin.
 */
 
 #ifndef LV2_EVENT_HPP
@@ -29,11 +34,86 @@
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 
 #include <lv2mm/types.hpp>
+#include <lv2mm/util.hpp>
 
 namespace LV2 {
 
+   /** The event ref/unref function, required for plugins with event ports.
 
+       The actual type that your plugin class will inherit when you use
+       this mixin is the internal struct template I.
+       @ingroup pluginmixins
+   */
+   LV2MM_MIXIN_CLASS EventRef {
+      LV2MM_MIXIN_DERIVED {
 
-}
+         typedef I<Derived> Mixin;
+
+         I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }
+
+         /** @internal */
+         static void
+         map_feature_handlers(FeatureHandlerMap& hmap)
+         {
+            hmap[LV2_EVENT_URI] = &Mixin::handle_feature;
+         }
+
+         /** @internal */
+         static void
+         handle_feature(LV2::Handle, FeatureData data)
+         {
+            Mixin* mixin = util::mixin_cast<Derived, I> (instance);
+            LV2_Event_Feature* edata =
+                        reinterpret_cast<LV2_Event_Feature*>(data);
+
+            mixin->m_callback_data = edata->callback_data;
+            mixin->m_ref_func      = edata->lv2_event_ref;
+            mixin->m_unref_func    = edata->lv2_event_unref;
+
+            mixin->m_ok = true;
+         }
+
+       bool check_ok() {
+         if (LV2MM_DEBUG) {
+           std::clog<<"    [LV2::EventRef] Validation "
+                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+         }
+         return this->m_ok;
+       }
+
+     protected:
+
+       /** This should be called by the plugin for any event of type 0 if it
+           creates an additional copy of it, either by saving more than one copy
+           internally, passing more than one copy through to an output port,
+           or a combination of those. It must be called once for each additional
+           copy of the event.
+           Note that you must not call this function if you just save one copy
+           of the event, or just passes one copy through to an output port.
+           @c param event The event, as returned by @c lv2_event_get().
+       */
+       uint32_t
+       event_ref(LV2_Event* event) {
+         return m_ref_func(m_callback_data, event);
+       }
+
+       /** This should be called by the plugin for any event of type 0, unless
+           it keeps a copy of it or passes it through to an event output port.
+           @c param event The event, as returned by @c lv2_event_get().
+       */
+       uint32_t
+       event_unref(LV2_Event* event) {
+         return m_unref_func(m_callback_data, event);
+       }
+
+       LV2_Event_Callback_Data m_callback_data;
+       uint32_t (*m_ref_func)(LV2_Event_Callback_Data, LV2_Event*);
+       uint32_t (*m_unref_func)(LV2_Event_Callback_Data, LV2_Event*);
+
+     };
+
+   };
+
+} /* namespace LV2 */
 
 #endif /* LV2_EVENT_HPP */

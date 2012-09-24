@@ -159,27 +159,29 @@ namespace LV2 {
 
          /** @internal */
          static void
-         map_feature_handlers(FeatureHandlerMap& hmap) {
+         map_feature_handlers(FeatureHandlerMap& hmap)
+         {
 
          }
 
          /** @internal */
          static void
-         handle_feature(void* instance, void* data) {
+         handle_feature(LV2::Handle instance, FeatureData data)
+         {
 
          }
 
          bool
          check_ok() {
 
-         /** Since we're not yet incorporating the other state features,
-         * and this is the only 'instantiate setup' we have, just set
-         * m_ok to true.
-         */
-         this->m_ok = true; /* Workaround */
-         if (LV2MM_DEBUG) {
-            std::clog<<"    [LV2::State] Validation "
-                                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+            /** Since we're not yet incorporating the other state features,
+            * and this is the only 'instantiate setup' we have, just set
+            * m_ok to true.
+            */
+            this->m_ok = true; /* Workaround */
+            if (LV2MM_DEBUG) {
+               std::clog<<"    [LV2::State] Validation "
+                                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;
          }

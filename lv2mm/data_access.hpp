@@ -1,6 +1,5 @@
-/****************************************************************************
-
-    urid.hpp - support file for writing LV2 plugins in C++
+/**
+    data_access.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -17,8 +16,16 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
+*/
+/**
+   @file data_access.hpp
+   C++ convenience header for the LV2 data access extension.
+   LV2 C Version Support: 1.6 (2012-04-17)
 
-****************************************************************************/
+   This mixin implements the LV2_Extension_Data_Feature.  It provides
+   access to LV2_Descriptor::extension_data() for plugin UIs or other
+   potentially remote users of a plugin via a data_access() method.
+*/
 
 #ifndef LV2_DATA_ACCESS_HPP
 #define LV2_DATA_ACCESS_HPP
@@ -26,18 +33,17 @@
 #include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
 #include <lv2mm/types.hpp>
+#include <lv2mm/util.hpp>
 
 namespace LV2 {
 
    /**
-      The URID Extension.
+      The Data Access Extension.
       The actual type that your plugin class will inherit when you use
       this mixin is the internal struct template I.
       @ingroup pluginmixins
    */
-
    LV2MM_MIXIN_CLASS DataAccess {
-
       LV2MM_MIXIN_DERIVED {
 
          typedef I<Derived> Mixin;
@@ -57,12 +63,13 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature (void* instance, void* data)
+         handle_feature (LV2::Handle instance, FeatureData data)
          {
-            Derived* d = reinterpret_cast<Derived*> (instance);
-            Mixin* feature = static_cast<Mixin*> (d);
-            feature->p_da = reinterpret_cast<LV2_Extension_Data_Feature*> (data);
-            feature->m_ok = true;
+            Derived* derived = reinterpret_cast<Derived*>  (instance);
+            I<Derived>* mixin = static_cast<I<Derived>*> (derived);
+
+            mixin->p_da = reinterpret_cast<LV2_Extension_Data_Feature*> (data);
+            mixin->m_ok = (mixin->p_da != NULL);
          }
 
          bool
@@ -78,6 +85,21 @@ namespace LV2 {
          /* ================= Data Access C++ Implementation =============== */
 
 
+         /**
+             A UI can call this to get data (of a type specified by some other
+             extension) from the plugin.
+
+             This call never is never guaranteed to return anything, UIs should
+             degrade gracefully if direct access to the plugin data is not possible
+             (in which case this function will return NULL).
+
+             This is for access to large data that can only possibly work if the UI
+             and plugin are running in the same process.  For all other things, use
+             the normal LV2 UI communication system.
+
+             @param uri The uri string to query
+             @return Not NULL on Success
+          */
          const void*
          data_access(const char *uri)
          {
@@ -88,10 +110,8 @@ namespace LV2 {
          }
 
      protected:
-
          /** @internal Feature Data passed from host */
          LV2_Extension_Data_Feature   *p_da;
-
      };
    };
 }
