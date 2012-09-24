@@ -61,9 +61,11 @@ namespace LV2 {
 
          /** @internal */
          static void
-         handle_feature(LV2::Handle, FeatureData data)
+         handle_feature(LV2::Handle instance, FeatureData data)
          {
-            Mixin* mixin = util::mixin_cast<Derived, I> (instance);
+            Derived* derived = reinterpret_cast<Derived*>(instance);
+            I<Derived>* mixin = static_cast<I<Derived>*>(derived);
+
             LV2_Event_Feature* edata =
                         reinterpret_cast<LV2_Event_Feature*>(data);
 
