@@ -94,7 +94,7 @@ def build(bld):
 						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
 						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS_GTKUI,
-						'DAPS_PKG_DEPS'       : 'lv2'})
+						'DAPS_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
 	bld.add_group()	
 	
 	# Install Static Libraries
