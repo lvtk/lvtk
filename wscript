@@ -41,6 +41,9 @@ def options(opts):
 	opts.load("cross compiler_c compiler_cxx lv2")
 	autowaf.set_options(opts)
 	
+	opts.add_option('--disable-tools', default=False, \
+		dest="disable_tools", action='store_true', \
+		help="Disable Building UI libraries")
 	opts.add_option('--disable-ui', default=False, \
 		dest="disable_ui", action='store_true', \
 		help="Disable Building UI libraries")
@@ -62,18 +65,23 @@ def configure(conf):
 	# Check for required packages
 	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
 				atleast_version="1.0.0")
-	autowaf.check_pkg(conf, "redland", uselib_store="redland", \
+
+	if not conf.options.disable_tools:
+		autowaf.check_pkg(conf, "redland", uselib_store="redland", \
 				atleast_version="1.0.10")
-	autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
+	
+	if not conf.options.disable_ui:
+		autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
 				atleast_version="2.20.0")
 
 	# Setup the Environment
-	conf.env.UI_DISABLED         = conf.options.disable_ui	
+	conf.env.TOOLS_DISABLED	    = conf.options.disable_tools
+	conf.env.UI_DISABLED        = conf.options.disable_ui	
 	conf.env.DAPS_MAJOR_VERSION = DAPS_MAJOR_VERSION
 	conf.env.DAPS_MINOR_VERSION = DAPS_MINOR_VERSION
 	conf.env.LIB_DAPS           = LIB_DAPS
 	conf.env.LIB_DAPS_GTKUI     = LIB_DAPS_GTKUI
-	conf.env.APPNAME			 = APPNAME
+	conf.env.APPNAME	    = APPNAME
 	
 	autowaf.configure(conf)
 	

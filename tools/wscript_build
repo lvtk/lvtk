@@ -10,10 +10,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details. '''
 
-bld.program(
-	source = "ttl2c.cpp",
-	target = "ttl2c",
-	name   = "ttl2c",
-	use    = "redland"
+buildme = not bld.env.TOOLS_DISABLED
+
+if buildme:
+	bld.program(
+		source = "ttl2c.cpp",
+		target = "ttl2c",
+		name   = "ttl2c",
+		use    = "redland"
 )
 bld.add_group()
