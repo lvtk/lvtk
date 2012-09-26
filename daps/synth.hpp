@@ -183,12 +183,12 @@ struct NoiseSynth : public daps::Synth<NoiseVoice, NoiseSynth> {
 	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
 	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
 	    class Ext7 = end>
-  class Synth : public Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
+  class Synth : public Plugin<D, URID<true>, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
+    typedef Plugin<D, URID<true>, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
     Parent;
     
 
