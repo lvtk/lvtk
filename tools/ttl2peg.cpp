@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
     
     // print usage info if the parameters are invalid
     if (argc < 3)
-      throw runtime_error("Usage: ttl2peg <input file> <output file>");
+      throw runtime_error("Usage: ttl2c <input file> <output file>");
     
     // initialise librdf
     RDFWorld world (librdf_new_world());
