@@ -60,7 +60,7 @@ def configure(conf):
 	conf.define ("DAPS_MINOR_VERSION",DAPS_MINOR_VERSION)
 	conf.define ("DAPS_MICRO_VERSION",DAPS_MICRO_VERSION)
 	conf.define ("DAPS_EXTRA_VERSION",DAPS_EXTRA_VERSION)
-	conf.write_config_header("daps.hpp")
+	conf.write_config_header("daps-version.hpp")
 
 	# Check for required packages
 	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
@@ -115,7 +115,7 @@ def build(bld):
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
 				+ APPNAME + "-" + DAPS_MAJOR_VERSION
-	bld.install_files(header_base, "build/daps.hpp")
+	bld.install_files(header_base, "build/daps-version.hpp")
 	bld.install_files(header_base+"/daps", \
 					  bld.path.ant_glob("daps/*.*"))
 	bld.install_files(header_base+"/daps/private", \
