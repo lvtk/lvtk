@@ -179,6 +179,7 @@ struct NoiseSynth : public daps::Synth<NoiseVoice, NoiseSynth> {
 };
       @endcode
   */
+
   template <class V, class D,
 	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
 	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
