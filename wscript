@@ -80,7 +80,9 @@ def configure(conf):
 
 def build(bld):
 	subdirs = ['src','tools','examples']
-	for subdir in subdirs: bld.recurse(subdir)
+	for subdir in subdirs: 
+		bld.recurse(subdir)
+		bld.add_group()
 	
 	# Build PC Files
 	autowaf.build_pc(bld, 'DAPS-PLUGIN', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
@@ -93,12 +95,14 @@ def build(bld):
 						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS_GTKUI,
 						'DAPS_PKG_DEPS'       : 'lv2'})
+	bld.add_group()	
 	
 	# Install Static Libraries
 	bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 	
 	# Documentation
 	autowaf.build_dox(bld, 'DAPS', DAPS_VERSION, top, out)
+	bld.add_group()	
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \

@@ -14,9 +14,13 @@ import lv2
 
 examples = ["workhorse"]
 
-bld.add_group()
-	
 for slug in examples:
+	bld(rule="../build/tools/ttl2c ${SRC} ${TGT}", \
+		source=slug+'.ttl', \
+		target=slug+'.h')
+
+	bld.add_group()
+
 	plugin = bld.shlib(
 		lv2_bundle	  =	 True,
 		lv2_resources = ["%s.manifest.ttl.in" % slug,"%s.ttl" % slug],

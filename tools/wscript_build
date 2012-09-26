@@ -16,3 +16,4 @@ bld.program(
 	name   = "ttl2c",
 	use    = "redland"
 )
+bld.add_group()
