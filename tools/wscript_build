@@ -11,8 +11,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details. '''
 
 bld.program(
-	source = "ttl2peg.cpp",
-	target = "ttl2peg",
-	name   = "ttl2peg",
+	source = "ttl2c.cpp",
+	target = "ttl2c",
+	name   = "ttl2c",
 	use    = "redland"
 )
