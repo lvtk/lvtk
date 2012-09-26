@@ -10,9 +10,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details. '''
 
-bld.program(
-	source = "ttl2peg.cpp",
-	target = "ttl2peg",
-	name   = "ttl2peg",
-	use    = "redland"
+buildme = not bld.env.TOOLS_DISABLED
+
+if buildme:
+	bld.program(
+		source = "ttl2peg.cpp",
+		target = "ttl2peg",
+		name   = "ttl2peg",
+		use    = "redland"
 )
