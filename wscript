@@ -24,7 +24,7 @@ DAPS_MINOR_VERSION=DAPS_VERSION[2]
 DAPS_MICRO_VERSION=DAPS_VERSION[4]
 
 # Anything appended to version number goes here
-DAPS_EXTRA_VERSION="-rc0"
+DAPS_EXTRA_VERSION="-rc1"
 
 # For waf dist
 APPNAME = 'daps'
@@ -41,6 +41,9 @@ def options(opts):
 	opts.load("cross compiler_c compiler_cxx lv2")
 	autowaf.set_options(opts)
 	
+	opts.add_option('--disable-tools', default=False, \
+		dest="disable_tools", action='store_true', \
+		help="Disable Building UI libraries")
 	opts.add_option('--disable-ui', default=False, \
 		dest="disable_ui", action='store_true', \
 		help="Disable Building UI libraries")
@@ -57,30 +60,37 @@ def configure(conf):
 	conf.define ("DAPS_MINOR_VERSION",DAPS_MINOR_VERSION)
 	conf.define ("DAPS_MICRO_VERSION",DAPS_MICRO_VERSION)
 	conf.define ("DAPS_EXTRA_VERSION",DAPS_EXTRA_VERSION)
-	conf.write_config_header("daps.hpp")
+	conf.write_config_header("daps-version.hpp")
 
 	# Check for required packages
 	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
 				atleast_version="1.0.0")
-	autowaf.check_pkg(conf, "redland", uselib_store="redland", \
+
+	if not conf.options.disable_tools:
+		autowaf.check_pkg(conf, "redland", uselib_store="redland", \
 				atleast_version="1.0.10")
-	autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
+	
+	if not conf.options.disable_ui:
+		autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
 				atleast_version="2.20.0")
 
 	# Setup the Environment
-	conf.env.UI_DISABLED         = conf.options.disable_ui	
+	conf.env.TOOLS_DISABLED	    = conf.options.disable_tools
+	conf.env.UI_DISABLED        = conf.options.disable_ui	
 	conf.env.DAPS_MAJOR_VERSION = DAPS_MAJOR_VERSION
 	conf.env.DAPS_MINOR_VERSION = DAPS_MINOR_VERSION
 	conf.env.LIB_DAPS           = LIB_DAPS
 	conf.env.LIB_DAPS_GTKUI     = LIB_DAPS_GTKUI
-	conf.env.APPNAME			 = APPNAME
+	conf.env.APPNAME	    = APPNAME
 	
 	autowaf.configure(conf)
 	
 
 def build(bld):
 	subdirs = ['src','tools','examples']
-	for subdir in subdirs: bld.recurse(subdir)
+	for subdir in subdirs: 
+		bld.recurse(subdir)
+		bld.add_group()
 	
 	# Build PC Files
 	autowaf.build_pc(bld, 'DAPS-PLUGIN', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
@@ -92,18 +102,20 @@ def build(bld):
 						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
 						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS_GTKUI,
-						'DAPS_PKG_DEPS'       : 'lv2'})
+						'DAPS_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
+	bld.add_group()	
 	
 	# Install Static Libraries
 	bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 	
 	# Documentation
 	autowaf.build_dox(bld, 'DAPS', DAPS_VERSION, top, out)
+	bld.add_group()	
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
 				+ APPNAME + "-" + DAPS_MAJOR_VERSION
-	bld.install_files(header_base, "build/daps.hpp")
+	bld.install_files(header_base, "build/daps-version.hpp")
 	bld.install_files(header_base+"/daps", \
 					  bld.path.ant_glob("daps/*.*"))
 	bld.install_files(header_base+"/daps/private", \

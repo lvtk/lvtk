@@ -54,7 +54,7 @@ namespace daps {
       /** Turn the voice on. This default implementation does nothing, you
         probably want to override it.
 
-        If @c key is LV2::INVALID_KEY the voice should go silent as fast at
+        If @c key is daps::INVALID_KEY the voice should go silent as fast at
         possible (the synth may use this when it receives an All Sound Off
         event).
         @param key The MIDI key for the note that the voice should play.
@@ -69,7 +69,7 @@ namespace daps {
       void off(unsigned char velocity) { }
     
       /** Return the MIDI key that the voice is currently playing.
-        LV2::INVALID_KEY means that the voice is not active and could be used
+        daps::INVALID_KEY means that the voice is not active and could be used
         to play a new note. */
       unsigned char get_key() const { return daps::INVALID_KEY; }
     
@@ -114,7 +114,7 @@ namespace daps {
       hard to optimise. 
       
       You can use @ref pluginmixins "mixins" with this class just like with
-      the Plugin class, but don't use EventRef or URIMap - they are already
+      the Plugin class, but don't use URID - they are already
       added automatically.
       
       Here is an example of a complete synth plugin. Granted, not a very
@@ -130,7 +130,7 @@ enum {
   NUM_PORTS
 };
 
-struct NoiseVoice : public LV2::Voice {
+struct NoiseVoice : public daps::Voice {
 
   NoiseVoice() : m_gain(0), m_key(INVALID_KEY) { }
   
@@ -141,7 +141,7 @@ struct NoiseVoice : public LV2::Voice {
 
   void off(unsigned char velocity) { 
     m_gain = 0.0; 
-    m_key = LV2::INVALID_KEY;
+    m_key = daps::INVALID_KEY;
   }
 
   unsigned char get_key() const { 
@@ -160,10 +160,10 @@ struct NoiseVoice : public LV2::Voice {
 };
 
   
-struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
+struct NoiseSynth : public daps::Synth<NoiseVoice, NoiseSynth> {
 
   NoiseSynth(double) 
-    : LV2::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_filterstate(0) {
+    : daps::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_filterstate(0) {
     add_voices(new NoiseVoice, new NoiseVoice, new NoiseVoice);
     add_audio_outputs(AUDIO_PORT);
   }
@@ -179,16 +179,17 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 };
       @endcode
   */
+
   template <class V, class D,
 	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
 	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
 	    class Ext7 = end>
-  class Synth : public Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
+  class Synth : public Plugin<D, URID<true>, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7> {
   public:
     
     /** @internal
 	Convenient typedef for the parent class. */
-    typedef Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
+    typedef Plugin<D, URID<true>, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
     Parent;
     
 
@@ -418,7 +419,7 @@ struct NoiseSynth : public LV2::Synth<NoiseVoice, NoiseSynth> {
 	threadsafe - you have to make sure that the run() callback isn't 
 	executing simultaneously with this function. 
     
-	LV2::Synth will assume ownership of the voices and delete them in its
+	daps::Synth will assume ownership of the voices and delete them in its
 	destructor. */
     void add_voices(V* v01 = 0, V* v02 = 0, V* v03 = 0, V* v04 = 0, V* v05 = 0,
 		    V* v06 = 0, V* v07 = 0, V* v08 = 0, V* v09 = 0, V* v10 = 0,

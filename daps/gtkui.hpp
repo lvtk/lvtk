@@ -67,10 +67,12 @@ namespace daps {
       this:
 
       @code
-#include <lv2gui.hpp>
+#include <daps/gtkui.hpp>
 #include <gtkmm.h>
 
-class MyGUI : public LV2::GUI<MyGUI, LV2::URIMap<true>, LV2::WriteMIDI<true> > {
+using namespace daps;
+
+class MyGUI : public GUI<MyGUI, URID<true> > {
 public:
   MyGUI(const char* plugin_uri)
     : m_button("Click me!") {
@@ -80,16 +82,16 @@ public:
 protected:
   void send_event() {
     uint8_t noteon[] = { 0x90, 0x50, 0x40 };
-    write_midi(3, 3, noteon);
+    //write_midi(3, 3, noteon);
   }
   Gtk::Button m_button;
 };
       @endcode
 
-      The function @c write_midi() is implemented in LV2::WriteMIDI and thus
-      available in @c MyGUI. LV2::WriteMIDI requires that LV2::URIMap is also
+      The function @c write_midi() is implemented in daps::WriteMIDI and thus
+      available in @c MyGUI. daps::WriteMIDI requires that daps::URID is also
       used (because of the way event types work in LV2) - if you don't add
-      LV2::URIMap as well you will get a compilation error.
+      URID as well you will get a compilation error.
   */
 
   /** This is the base class for a plugin GUI. You should inherit it and 
@@ -201,8 +203,7 @@ protected:
     friend class WriteMIDI<true>::I<Derived>;
     friend class WriteMIDI<false>::I<Derived>;
     
-#if defined (DAPS_EXTRA_ENABLED) && \
-         defined (USE)
+#if defined (DAPS_EXTRA_ENABLED)
     friend class WriteOSC<true>::I<Derived>;
     friend class WriteOSC<false>::I<Derived>;
 #endif

@@ -68,7 +68,7 @@
     shared libraries and link against those you are on your own.
     
     @author Lars Luthman <lars.luthman@gmail.com>
-    @author Michael FIsher <mfisher31@gmail.com>
+    @author Michael Fisher <mfisher31@gmail.com>
 */
 
 
@@ -116,10 +116,10 @@ namespace daps {
         }
       };
       
-      static unsigned _ = TestLV2::register_class("http://ll-plugins.sf.net/plugins/TestLV2");
+      static unsigned _ = TestLV2::register_class("http://daps-project.org/plugins/TestLV2");
       @endcode
       
-      If the above code is compiled and linked with @c -llv2_plugin into a 
+      If the above code is compiled and linked with @c -ldaps-plugin0 into a
       shared module, it could form the shared object part of a fully 
       functional (but not very useful) LV2 plugin with one audio input port
       and one audio output port that just copies the input to the output.
@@ -249,7 +249,7 @@ unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
         like this:
     
         @code
-LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
+LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
         @endcode
 	
 	If you want to access a port buffer as a pointer-to-float (i.e. an audio
@@ -274,7 +274,8 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
 	This may only be called after the plugin constructor is done executing.
     */
     const char*
-    bundle_path() const {
+    bundle_path() const
+    {
       return m_bundle_path;
     }
     
@@ -287,7 +288,8 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
                   it should be discarded.
     */
     void
-    set_ok(bool ok) {
+    set_ok(bool ok)
+    {
       m_ok = ok;
     }
     
@@ -443,7 +445,7 @@ LV2_Event_Buffer* midibuffer = p<LV2_Event_Buffer>(midiport_index);
       They are done as separate template classes so they won't add to the
       code size of your plugin if you don't need them. 
       
-      There are also @ref guimixins "GUI mixins" that you can use in the same
+      There are also @ref guimixins "UI mixins" that you can use in the same
       way with GUI.
   */
   

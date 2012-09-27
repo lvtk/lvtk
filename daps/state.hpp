@@ -80,7 +80,8 @@ namespace daps {
    typedef LV2_State_Retrieve_Function         state_retrieve_func;
    typedef LV2_State_Store_Function            state_store_func;
    typedef LV2_State_Handle                    state_handle;
-
+   typedef LV2_State_Map_Path                  state_map_path;
+   typedef LV2_State_Make_Path                 state_make_path;
    /**
        Wrapper struct for state retrieval. This wraps an
        LV2_State_Retrieve_Function and exeucutes via operator ()
@@ -157,27 +158,36 @@ namespace daps {
       */
       DAPS_MIXIN_DERIVED {
 
-         /** @internal */
-         static void
-         map_feature_handlers(feature_handler_map& hmap)
-         { }
+         I() : p_make_path(NULL) {}
 
          /** @internal */
          static void
-         handle_feature(daps::handle instance, feature_data data)
-         { }
+         map_feature_handlers (feature_handler_map& hmap)
+         {
+            /** Setup makePath here. mapPath is intended for
+                use in LV2_State_Interface methods only **/
+            hmap[LV2_STATE__makePath] = &I<Derived>::handle_make_feature;
+         }
+
+         /** @internal */
+         static void
+         handle_make_feature(daps::handle instance, feature_data data)
+         {
+            Derived* d = reinterpret_cast<Derived*>(instance);
+            I<Derived>* mixin = static_cast<I<Derived>*>(d);
+            mixin->p_make_path =
+                  reinterpret_cast<LV2_State_Make_Path*> (data);
+         }
 
          bool
-         check_ok() {
+         check_ok()
+         {
+            this->m_ok = (p_make_path != NULL);
 
-            /** Since we're not yet incorporating the other state features,
-            * and this is the only 'instantiate setup' we have, just set
-            * m_ok to true.
-            */
-            this->m_ok = true; /* Workaround */
             if (DAPS_DEBUG) {
                std::clog<<"    [LV2::State] Validation "
-                                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+                                       <<(this->m_ok ? "succeeded" : "failed")<<"."
+                                       <<std::endl;
             }
             return this->m_ok;
          }
@@ -213,7 +223,50 @@ namespace daps {
 
      protected:
 
+#if 0
+       SAVEME - Map Path is for the State interface methods only.
+
+        char*
+        abstract_path (const char* absolute_path);
+
+        char*
+        absolute_path(const char* abstract_path)
+        {
+           return p_map_path->absolute_path (p_map_path->handle, abstract_path);
+        }
+#endif
+
+       /**
+           Return a path the plugin may use to create a new file.
+           @param path The path of the new file within a namespace unique to this
+           plugin instance.
+           @return The absolute path to use for the new file.
+
+           This function can be used by plugins to create files and directories,
+           either at state saving time (if this feature is passed to
+           LV2_State_Interface.save()) or any time (if this feature is passed to
+           LV2_Descriptor.instantiate()).
+
+           The host MUST do whatever is necessary for the plugin to be able to
+           create a file at the returned path (e.g. using fopen), including
+           creating any leading directories.
+
+           If this function is passed to LV2_Descriptor.instantiate(), it may be
+           called from any non-realtime context.  If it is passed to
+           LV2_State_Interface.save(), it may only be called within the dynamic
+           scope of that function call.
+
+           The caller is responsible for freeing the returned value with free().
+        */
+       char*
+       path (const char* path)
+       {
+          return p_make_path->path (p_make_path->handle, path);
+       }
+
       /* ==============  LV2 Boiler Plate Implementation ================= */
+
+       LV2_State_Make_Path * p_make_path;
 
       /** @internal - called from host */
       static LV2_State_Status _save(LV2_Handle                 instance,
