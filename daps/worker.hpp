@@ -46,7 +46,7 @@ namespace daps {
    struct worker_respond {
       worker_respond(daps::handle instance,
                      worker_respond_func wrfunc,
-                     worker_respond_handle   handle)
+                     worker_respond_handle handle)
       : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
 
       /**
