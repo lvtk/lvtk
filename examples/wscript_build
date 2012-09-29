@@ -12,7 +12,7 @@ file COPYING for more details. '''
 
 import lv2
 
-examples = ["workhorse"]
+examples = ["silence","workhorse"]
 
 for slug in examples:
 	''' examples do not use generated headers yet
