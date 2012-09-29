@@ -22,6 +22,7 @@
  * @file workhorse.cpp
  */
 
+#include <unistd.h>
 #include <iostream>
 #include <vector>
 #include <cstdlib>
