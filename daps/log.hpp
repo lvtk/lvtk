@@ -1,6 +1,6 @@
 /****************************************************************************
 
-    urid.hpp - support file for writing LV2 plugins in C++
+    log.hpp - Support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
