@@ -86,7 +86,7 @@ protected:
   }
   Gtk::Button m_button;
 };
-      @endcode
+      @code
 
       The function @c write_midi() is implemented in lvtk::WriteMIDI and thus
       available in @c MyGUI. lvtk::WriteMIDI requires that lvtk::URID is also

@@ -66,17 +66,12 @@ namespace lvtk {
       worker_respond_func         p_wrfunc;
    };
 
-   /** The LV2 Worker Feature.
-       The actual type that your plugin class will inherit when you use
-       this mixin is the internal struct template I.
+   /** The LV2 Worker Feature Mixin
+       @class lvtk::Worker
        @ingroup pluginmixins
-    */
+   */
    LVTK_MIXIN_CLASS Worker {
 
-      /** This is the type that your plugin class will inherit when you use the
-          Worker mixin. The public and protected members defined here
-          will be available in your plugin class.
-      */
       LVTK_MIXIN_DERIVED {
 
          /** @internal */

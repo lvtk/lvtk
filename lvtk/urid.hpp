@@ -28,16 +28,14 @@
 namespace lvtk {
 
    /**
-      The URID Extension.
-      The actual type that your plugin class will inherit when you use
-      this mixin is the internal struct template I.
+      The URID Mixin.
+      @class lvtk::URID
       @ingroup pluginmixins
    */
-
    LVTK_MIXIN_CLASS URID {
      LVTK_MIXIN_DERIVED {
      
-         I() { }
+         I() : p_unmap(NULL), p_map(NULL) { }
 
          /** @internal */
          static void

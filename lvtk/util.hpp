@@ -30,14 +30,14 @@ namespace util {
 
 #if 0
    /** WIP : Not used yet and does not compile
-      Cast a LV2::Handle in to a feature mixin
-      @param instance The LV2::Handle object
+      Cast a lvtk::handle in to a feature mixin
+      @param instance The lvtk::handle object
       @return The feature's mixin struct
       @ingroup utilities
     */
    template <class Derived, class I>
    I<Derived>*
-   mixin_cast (LV2::Handle instance)
+   mixin_cast (lvtk::handle instance)
    {
       Derived* derived = reinterpret_cast<Derived*>  (instance);
       I<Derived>* mixin = static_cast<I<Derived>*> (derived);

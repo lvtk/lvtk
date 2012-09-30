@@ -122,7 +122,7 @@ namespace lvtk {
       
       @code
 #include <cstdlib>
-#include <lv2synth.hpp>
+#include <lvtk/synth.hpp>
 
 enum {
   MIDI_PORT,

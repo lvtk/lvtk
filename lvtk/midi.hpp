@@ -33,8 +33,7 @@ namespace lvtk {
 
    /** A mixin that allows easy sending of MIDI from GUI to plugin.
 
-       The actual type that your plugin class will inherit when you use
-       this mixin is the internal struct template I.
+       @class lvtk::WriteMIDI
        @ingroup guimixins
    */
     LVTK_MIXIN_CLASS WriteMIDI {
@@ -43,10 +42,6 @@ namespace lvtk {
        EVENT_BUFFER_SIZE = 4
      };
 
-     /** This is the type that your plugin or GUI class will inherit when you
-         use the WriteMIDI mixin. The public and protected members defined
-         here will be available in your plugin class.
-     */
      LVTK_MIXIN_DERIVED {
 
         I() : m_midi_type(0) {

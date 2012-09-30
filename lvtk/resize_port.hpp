@@ -45,9 +45,8 @@ namespace lvtk {
 	} resize_port_status_t;
 
    /**
-      The Data Access Extension.
-      The actual type that your plugin class will inherit when you use
-      this mixin is the internal struct template I.
+      The Resize Port Mixin
+      @class lvtk::ResizePort
       @ingroup pluginmixins
    */
    LVTK_MIXIN_CLASS ResizePort {

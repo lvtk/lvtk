@@ -116,7 +116,7 @@ def build(bld):
 	bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 	
 	# Documentation
-	autowaf.build_dox(bld, 'DAPS', LVTK_VERSION, top, out)
+	autowaf.build_dox(bld, 'LVTK', VERSION, top, out)
 	bld.add_group()
 	
 	# Header Installation

@@ -35,9 +35,8 @@
 namespace lvtk {
 
    /**
-      The Data Access Extension.
-      The actual type that your plugin class will inherit when you use
-      this mixin is the internal struct template I.
+      The Instance Access Mixin
+      @class lvtk::InstanceAccess
       @ingroup guimixins
    */
    LVTK_MIXIN_CLASS InstanceAccess {

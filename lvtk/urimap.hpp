@@ -42,9 +42,7 @@
 namespace lvtk {
 
    /** The URI map mixin. This can be used by both plugins and GUIs.
-
-       The actual type that your plugin class will inherit when you use
-       this mixin is the internal struct template I.
+       @class lvtk::URIMap
        @ingroup pluginmixins
        @ingroup guimixins
    */

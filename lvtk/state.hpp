@@ -145,17 +145,11 @@ namespace lvtk {
    };
 
   /**
-   * The State Feature.
-   * The actual type that your plugin class will inherit when you use
-   * this mixin is the internal struct template I.
+   * The State Mixin
+   * @class lvtk::State
    * @ingroup pluginmixins
    */
    LVTK_MIXIN_CLASS State {
-
-      /** This is the type that your plugin class will inherit when you use the
-         EventRef mixin. The public and protected members defined here
-         will be available in your plugin class.
-      */
       LVTK_MIXIN_DERIVED {
 
          I() : p_make_path(NULL) {}

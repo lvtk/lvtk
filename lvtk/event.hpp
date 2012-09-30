@@ -41,8 +41,7 @@ namespace lvtk {
 
    /** The event ref/unref function, required for plugins with event ports.
 
-       The actual type that your plugin class will inherit when you use
-       this mixin is the internal struct template I.
+       @class lvtk::EventRef
        @ingroup pluginmixins
    */
    LVTK_MIXIN_CLASS EventRef {

@@ -28,9 +28,8 @@
 namespace lvtk {
 
    /**
-      The Log Extension.
-      The actual type that your plugin class will inherit when you use
-      this mixin is the internal struct template I.
+      The Log Mixin
+      @class lvtk::Log
       @ingroup pluginmixins
    */
 

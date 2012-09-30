@@ -42,18 +42,18 @@
 
 #include "private/debug.hpp"
 
-/** @mainpage D.A.P.S - Digital Audio Plugins Streamlined
+/** @mainpage LV2 Toolkit
 
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
     so you only have to write the parts that matter, and hide the low-level
     C API.
     
-    The classes are separated into two libraries. One, called daps-plugin,
+    The classes are separated into two libraries. One, called liblvtk-plugin,
     contains the classes plugin and Synth, defined in the files
-    <daps/plugin.hpp> and <daps/synth.hpp>. They are base classes that you 
+    <lvtk/plugin.hpp> and <lvtk/synth.hpp>. They are base classes that you
     can inherit in order to create new LV2 plugins. The other library, called 
-    libdaps-gtkui, contains the class GUI, defined in the file <daps/gtkui.hpp>
+    liblvtk-gtkui, contains the class GUI, defined in the file <lvtk/gtkui.hpp>
     which you can use in a similar way to create new LV2 plugin GUIs.
     
     For both the plugin and the GUI class there are other helper classes called
