@@ -24,7 +24,7 @@ DAPS_MINOR_VERSION=DAPS_VERSION[2]
 DAPS_MICRO_VERSION=DAPS_VERSION[4]
 
 # Anything appended to version number goes here
-DAPS_EXTRA_VERSION="-rc1"
+DAPS_EXTRA_VERSION=""
 
 # For waf dist
 APPNAME = 'daps'
