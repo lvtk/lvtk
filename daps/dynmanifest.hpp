@@ -23,7 +23,7 @@
    LV2 Version: 1.4 (2012-04-17)
 */
 
-/** WIP: Not currently implemented */
+/** FIXME: Not currently supported implemented */
 
 #ifndef DAPS_LV2_DYNMANIFEST_HPP
 #define DAPS_LV2_DYNMANIFEST_HPP
