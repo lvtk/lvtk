@@ -13,10 +13,12 @@ file COPYING for more details. '''
 buildme = not bld.env.TOOLS_DISABLED
 
 if buildme:
+	paq = bld.path.ant_glob("libpaq/*.cpp")
 	bld.program(
-		source = "ttl2c.cpp",
-		target = "ttl2c",
-		name   = "ttl2c",
-		use    = "redland"
+		source   = ["ttl2c.cpp"] + paq,
+		includes = ["libpaq"],
+		target   = "ttl2c",
+		name     = "ttl2c",
+		use      = "redland"
 )
 bld.add_group()
