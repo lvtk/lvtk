@@ -20,12 +20,12 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_WORKER_HPP
-#define DAPS_LV2_WORKER_HPP
+#ifndef LVTK_LV2_WORKER_HPP
+#define LVTK_LV2_WORKER_HPP
 
 #include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 
-namespace daps {
+namespace lvtk {
 
    /** Convenience enum to get LV2_Worker_Status into a C++ namespace */
    typedef enum {
@@ -44,7 +44,7 @@ namespace daps {
        and exeucutes via operator ()
     */
    struct worker_respond {
-      worker_respond(daps::handle instance,
+      worker_respond(lvtk::handle instance,
                      worker_respond_func wrfunc,
                      worker_respond_handle handle)
       : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
@@ -61,7 +61,7 @@ namespace daps {
       }
 
    private:
-      daps::handle                p_instance;
+      lvtk::handle                p_instance;
       worker_respond_handle       p_handle;
       worker_respond_func         p_wrfunc;
    };
@@ -71,13 +71,13 @@ namespace daps {
        this mixin is the internal struct template I.
        @ingroup pluginmixins
     */
-   DAPS_MIXIN_CLASS Worker {
+   LVTK_MIXIN_CLASS Worker {
 
       /** This is the type that your plugin class will inherit when you use the
           Worker mixin. The public and protected members defined here
           will be available in your plugin class.
       */
-      DAPS_MIXIN_DERIVED {
+      LVTK_MIXIN_DERIVED {
 
          /** @internal */
          static void
@@ -103,7 +103,7 @@ namespace daps {
          bool
          check_ok()
          {
-            if (DAPS_DEBUG) {
+            if (LVTK_DEBUG) {
               std::clog<<"    [worker] validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -250,6 +250,6 @@ namespace daps {
       };
    };
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_WORKER_HPP */
+#endif /* LVTK_LV2_WORKER_HPP */

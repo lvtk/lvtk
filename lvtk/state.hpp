@@ -20,14 +20,14 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_STATE_HPP
-#define DAPS_LV2_STATE_HPP
+#ifndef LVTK_LV2_STATE_HPP
+#define LVTK_LV2_STATE_HPP
 
 /** TODO: Add map and make path */
 
 #include <lv2/lv2plug.in/ns/ext/state/state.h>
 
-namespace daps {
+namespace lvtk {
 
    typedef enum {
       /**
@@ -150,13 +150,13 @@ namespace daps {
    * this mixin is the internal struct template I.
    * @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS State {
+   LVTK_MIXIN_CLASS State {
 
       /** This is the type that your plugin class will inherit when you use the
          EventRef mixin. The public and protected members defined here
          will be available in your plugin class.
       */
-      DAPS_MIXIN_DERIVED {
+      LVTK_MIXIN_DERIVED {
 
          I() : p_make_path(NULL) {}
 
@@ -171,7 +171,7 @@ namespace daps {
 
          /** @internal */
          static void
-         handle_make_feature(daps::handle instance, feature_data data)
+         handle_make_feature(lvtk::handle instance, feature_data data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -184,7 +184,7 @@ namespace daps {
          {
             this->m_ok = (p_make_path != NULL);
 
-            if (DAPS_DEBUG) {
+            if (LVTK_DEBUG) {
                std::clog<<"    [LV2::State] Validation "
                                        <<(this->m_ok ? "succeeded" : "failed")<<"."
                                        <<std::endl;
@@ -310,6 +310,6 @@ namespace daps {
      };
    };
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_STATE_HPP */
+#endif /* LVTK_LV2_STATE_HPP */

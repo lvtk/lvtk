@@ -23,14 +23,14 @@
    LV2 Version Support: lv2core 8.0 (2012-04-17) STABLE
 */
 
-#ifndef DAPS_LV2_FEATURE_HPP
-#define DAPS_LV2_FEATURE_HPP
+#ifndef LVTK_LV2_FEATURE_HPP
+#define LVTK_LV2_FEATURE_HPP
 
 #include <map>
 #include <string>
 #include <vector>
 
-namespace daps {
+namespace lvtk {
 
    using std::map;
    using std::string;
@@ -55,6 +55,6 @@ namespace daps {
    /** Convenient typedef for the feature handler map type. */
    typedef map<string, feature_handler> feature_handler_map;
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_FEATURE_HPP */
+#endif /* LVTK_LV2_FEATURE_HPP */

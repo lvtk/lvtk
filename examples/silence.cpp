@@ -1,5 +1,5 @@
 /*
-  workhorse.cpp  -  DAPS LV2++ Worker Demonstration
+  workhorse.cpp  -  LV2 Toolkit - Worker Demonstration
 
   Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
@@ -20,23 +20,25 @@
 */
 /**
  * @file workhorse.cpp
+ * Demonstrates: LV2 Worker scheduling, working, and responding.
+ * Demonstrates: LV2 URID mapping.
  */
 
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 
-#include <daps/plugin.hpp>
-#include <daps/state.hpp>
+#include <lvtk/plugin.hpp>
+#include <lvtk/state.hpp>
 
 #include "silence.h"
 
-using namespace daps;
+using namespace lvtk;
 using std::vector;
 
-#define DAPS_SILENCE_URI "http://daps-project.org/plugins/silence"
-#define DAPS_SILENCE_PREFIX DAPS_SILENCE_URI "#"
-#define DAPS_SILENCE_MSG DAPS_SILENCE_PREFIX "msg"
+#define LVTK_SILENCE_URI "http://daps-project.org/plugins/silence"
+#define LVTK_SILENCE_PREFIX LVTK_SILENCE_URI "#"
+#define LVTK_SILENCE_MSG LVTK_SILENCE_PREFIX "msg"
 
 class silence : public Plugin<silence, URID<true>, State<true> >
 {
@@ -46,7 +48,7 @@ class silence : public Plugin<silence, URID<true>, State<true> >
     : Plugin<silence, URID<true>, State<true> > (1)
     {
        urids.atom_String = map(LV2_ATOM__String);
-       urids.silence_msg = map(DAPS_SILENCE_MSG);
+       urids.silence_msg = map(LVTK_SILENCE_MSG);
     }
 
     void
@@ -95,4 +97,4 @@ class silence : public Plugin<silence, URID<true>, State<true> >
 
 };
 
-static int _ = silence::register_class (DAPS_SILENCE_URI);
+static int _ = silence::register_class (LVTK_SILENCE_URI);

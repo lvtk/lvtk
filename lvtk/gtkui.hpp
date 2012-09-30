@@ -23,8 +23,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_GTKUI_HPP
-#define DAPS_LV2_GTKUI_HPP
+#ifndef LVTK_LV2_GTKUI_HPP
+#define LVTK_LV2_GTKUI_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -35,14 +35,14 @@
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
-#include <daps/event.hpp>
-#include <daps/midi.hpp>
+#include <lvtk/event.hpp>
+#include <lvtk/midi.hpp>
 
-#include <daps/types.hpp>
+#include <lvtk/types.hpp>
 
 #include "private/debug.hpp"
 
-namespace daps {
+namespace lvtk {
 
   
   /** @internal
@@ -67,10 +67,10 @@ namespace daps {
       this:
 
       @code
-#include <daps/gtkui.hpp>
+#include <lvtk/gtkui.hpp>
 #include <gtkmm.h>
 
-using namespace daps;
+using namespace lvtk;
 
 class MyGUI : public GUI<MyGUI, URID<true> > {
 public:
@@ -88,8 +88,8 @@ protected:
 };
       @endcode
 
-      The function @c write_midi() is implemented in daps::WriteMIDI and thus
-      available in @c MyGUI. daps::WriteMIDI requires that daps::URID is also
+      The function @c write_midi() is implemented in lvtk::WriteMIDI and thus
+      available in @c MyGUI. lvtk::WriteMIDI requires that lvtk::URID is also
       used (because of the way event types work in LV2) - if you don't add
       URID as well you will get a compilation error.
   */
@@ -133,7 +133,7 @@ protected:
       if (m_features) {
 	feature_handler_map hmap;
 	Derived::map_feature_handlers(hmap);
-	for (const daps::feature* const* iter = m_features; *iter != 0; ++iter) {
+	for (const lvtk::feature* const* iter = m_features; *iter != 0; ++iter) {
 	  feature_handler_map::iterator miter;
 	  miter = hmap.find((*iter)->URI);
 	  if (miter != hmap.end())
@@ -178,7 +178,7 @@ protected:
     
     /** Get the feature array that was passed by the host. This may only
 	be valid while the constructor is running. */
-    inline daps::feature const* const* features() {
+    inline lvtk::feature const* const* features() {
       return m_features;
     }
     
@@ -203,7 +203,7 @@ protected:
     friend class WriteMIDI<true>::I<Derived>;
     friend class WriteMIDI<false>::I<Derived>;
     
-#if defined (DAPS_EXTRA_ENABLED)
+#if defined (LVTK_EXTRA_ENABLED)
     friend class WriteOSC<true>::I<Derived>;
     friend class WriteOSC<false>::I<Derived>;
 #endif
@@ -230,7 +230,7 @@ protected:
       s_bundle_path = bundle_path;
       
       // write some debug information
-      if (DAPS_DEBUG) {
+      if (LVTK_DEBUG) {
 	std::clog<<"[LV2::GUI] Creating Gtkmm GUI...\n\n"
 		 <<"  Note that this GUI is using a deprecated LV2 extension\n"
 		 <<"  that may not work correctly. If you are the author of\n"
@@ -239,19 +239,19 @@ protected:
 		 <<"  Plugin URI:      \""<<plugin_uri<<"\"\n"
 		 <<"  Bundle path:     \""<<bundle_path<<"\"\n"
 		 <<"  UI Features:\n";
-	daps::feature const* const* iter;
+	lvtk::feature const* const* iter;
 	for (iter = features; *iter; ++iter)
 	  std::clog<<"    \""<<(*iter)->URI<<"\"\n";
       }
       
       // this is needed to initialise gtkmm stuff in case we're running in
       // a Gtk+ or PyGtk host or some other language
-      if (DAPS_DEBUG)
+      if (LVTK_DEBUG)
 	std::clog<<"  Initialising Gtkmm internals...\n";
       Gtk::Main::init_gtkmm_internals();
       
       // create the GUI object
-      if (DAPS_DEBUG)
+      if (LVTK_DEBUG)
 	std::clog<<"  Creating widget..."<<std::endl;
       Derived* t = new Derived(plugin_uri);
       *widget = static_cast<Gtk::Widget*>(t)->gobj();
@@ -291,12 +291,12 @@ protected:
 
     void* m_ctrl;
     LV2UI_Write_Function m_wfunc;
-    daps::feature const* const* m_features;
+    lvtk::feature const* const* m_features;
     char const* m_bundle_path;
     
     static void* s_ctrl;
     static LV2UI_Write_Function s_wfunc;
-    static daps::feature const* const* s_features;
+    static lvtk::feature const* const* s_features;
     static char const* s_bundle_path;
     
   };
@@ -315,7 +315,7 @@ protected:
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  daps::feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
+  lvtk::feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
 				 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
@@ -327,4 +327,4 @@ protected:
 }
 
 
-#endif /* DAPS_LV2_GTKUI_HPP */
+#endif /* LVTK_LV2_GTKUI_HPP */

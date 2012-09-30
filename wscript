@@ -18,20 +18,21 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-DAPS_VERSION="1.0.0"
-DAPS_MAJOR_VERSION=DAPS_VERSION[0]
-DAPS_MINOR_VERSION=DAPS_VERSION[2]
-DAPS_MICRO_VERSION=DAPS_VERSION[4]
+LVTK_VERSION="1.0.0"
+LVTK_MAJOR_VERSION=LVTK_VERSION[0]
+LVTK_MINOR_VERSION=LVTK_VERSION[2]
+LVTK_MICRO_VERSION=LVTK_VERSION[4]
 
 # Anything appended to version number goes here
-DAPS_EXTRA_VERSION=""
+LVTK_EXTRA_VERSION=""
 
 # For waf dist
-APPNAME = 'daps'
-VERSION = DAPS_VERSION + DAPS_EXTRA_VERSION
+APPNAME = 'lvtk'
+VERSION = LVTK_VERSION + LVTK_EXTRA_VERSION
 
-LIB_DAPS       = APPNAME+"-plugin"+DAPS_MAJOR_VERSION
-LIB_DAPS_GTKUI = APPNAME+"-gtkui"+DAPS_MAJOR_VERSION
+LIB_LVTK        = APPNAME+"-plugin"+LVTK_MAJOR_VERSION
+LIB_LVTK_PLUGIN = LIB_LVTK # TODO: really separate this
+LIB_LVTK_GTKUI  = APPNAME+"-gtkui"+LVTK_MAJOR_VERSION
 
 # Required by waf
 top = '.'
@@ -55,12 +56,12 @@ def options(opts):
 def configure(conf):
 	conf.load("cross compiler_c compiler_cxx lv2")
 
-	conf.define ("DAPS_VERSION", VERSION)
-	conf.define ("DAPS_MAJOR_VERSION",DAPS_MAJOR_VERSION)
-	conf.define ("DAPS_MINOR_VERSION",DAPS_MINOR_VERSION)
-	conf.define ("DAPS_MICRO_VERSION",DAPS_MICRO_VERSION)
-	conf.define ("DAPS_EXTRA_VERSION",DAPS_EXTRA_VERSION)
-	conf.write_config_header("daps-version.hpp")
+	conf.define ("LVTK_VERSION", VERSION)
+	conf.define ("LVTK_MAJOR_VERSION",LVTK_MAJOR_VERSION)
+	conf.define ("LVTK_MINOR_VERSION",LVTK_MINOR_VERSION)
+	conf.define ("LVTK_MICRO_VERSION",LVTK_MICRO_VERSION)
+	conf.define ("LVTK_EXTRA_VERSION",LVTK_EXTRA_VERSION)
+	conf.write_config_header("version.hpp")
 
 	# Check for required packages
 	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
@@ -79,51 +80,54 @@ def configure(conf):
 	# Setup the Environment
 	conf.env.TOOLS_DISABLED	    = conf.options.disable_tools
 	conf.env.UI_DISABLED        = conf.options.disable_ui	
-	conf.env.DAPS_MAJOR_VERSION = DAPS_MAJOR_VERSION
-	conf.env.DAPS_MINOR_VERSION = DAPS_MINOR_VERSION
-	conf.env.LIB_DAPS           = LIB_DAPS
-	conf.env.LIB_DAPS_GTKUI     = LIB_DAPS_GTKUI
-	conf.env.APPNAME	    = APPNAME
+	conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
+	conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
+	conf.env.LIB_LVTK           = LIB_LVTK
+	conf.env.LIB_LVTK_PLUGIN    = LIB_LVTK_PLUGIN
+	conf.env.LIB_LVTK_GTKUI     = LIB_LVTK_GTKUI
+	conf.env.APPNAME	        = APPNAME
 	
 	autowaf.configure(conf)
 	
 
 def build(bld):
+    
 	subdirs = ['src','tools','examples']
 	for subdir in subdirs: 
 		bld.recurse(subdir)
 		bld.add_group()
 	
 	# Build PC Files
-	autowaf.build_pc(bld, 'DAPS-PLUGIN', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
-						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
-						'VERSION'              : DAPS_VERSION,
-						'THELIB'		       : LIB_DAPS,
-						'DAPS_PKG_DEPS'       : 'lv2'})
+	autowaf.build_pc(bld, 'LVTK-PLUGIN', LVTK_VERSION, LVTK_MAJOR_VERSION, [],
+						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
+						'VERSION'              : LVTK_VERSION,
+						'THELIB'		       : LIB_LVTK,
+						'LVTK_PKG_DEPS'       : 'lv2'})
 						
 	if not bld.env.UI_DISABLED:
-		autowaf.build_pc(bld, 'DAPS-GTKUI', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
-						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
-						'VERSION'              : DAPS_VERSION,
-						'THELIB'		       : LIB_DAPS_GTKUI,
-						'DAPS_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
+		autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, LVTK_MAJOR_VERSION, [],
+						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
+						'VERSION'              : LVTK_VERSION,
+						'THELIB'		       : LIB_LVTK_GTKUI,
+						'LVTK_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
 	bld.add_group()	
 	
 	# Install Static Libraries
 	bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 	
 	# Documentation
-	autowaf.build_dox(bld, 'DAPS', DAPS_VERSION, top, out)
+	autowaf.build_dox(bld, 'DAPS', LVTK_VERSION, top, out)
 	bld.add_group()
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
-				+ APPNAME + "-" + DAPS_MAJOR_VERSION
-	bld.install_files(header_base, "build/daps-version.hpp")
-	bld.install_files(header_base+"/daps", \
-					  bld.path.ant_glob("daps/*.*"))
-	bld.install_files(header_base+"/daps/private", \
-					  bld.path.ant_glob("daps/private/*.*"))
+				+ APPNAME + "-" + LVTK_MAJOR_VERSION
+	bld.install_files(header_base, "build/version.hpp")
+	bld.install_files(header_base+"/lvtk", \
+					  bld.path.ant_glob("lvtk/*.*"))
+	bld.install_files(header_base+"/lvtk/private", \
+					  bld.path.ant_glob("lvtk/private/*.*"))
+
 
 def release_tag(ctx):
 	tag = git.tag_version(VERSION, "Release: v" + VERSION , "v")

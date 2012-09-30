@@ -20,20 +20,20 @@
 
 ****************************************************************************/
 
-#ifndef DEBUG_HPP
-#define DEBUG_HPP
+#ifndef LVTK_DEBUG_HPP
+#define LVTK_DEBUG_HPP
 
-#ifndef DAPS_DEBUG
+#ifndef LVTK_DEBUG
 #  ifdef NDEBUG
-#    define DAPS_DEBUG false
+#    define LVTK_DEBUG false
 #  else
-#    define DAPS_DEBUG true
+#    define LVTK_DEBUG true
 #  endif
 #endif
 
-#if DAPS_DEBUG
+#if LVTK_DEBUG
 #include <iomanip>
 #include <iostream>
 #endif
 
-#endif
+#endif /* LVTK_DEBUG_HPP */

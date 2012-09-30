@@ -24,12 +24,12 @@
    Many of these are more than likely broken.
 */
 
-#ifndef DAPS_LV2_EXTRA_HPP
-#define DAPS_LV2_EXTRA_HPP
+#ifndef LVTK_LV2_EXTRA_HPP
+#define LVTK_LV2_EXTRA_HPP
 
-#if defined (DAPS_EXTRA_ENABLED)
+#if defined (LVTK_EXTRA_ENABLED)
 
-#include <daps/types.hpp>
+#include <lvtk/types.hpp>
 
 namespace DAPS {
 
@@ -43,13 +43,13 @@ namespace DAPS {
       this mixin is the internal struct template I.
       @ingroup guimixins
    */
-   DAPS_MIXIN_CLASS NoUserResize {
+   LVTK_MIXIN_CLASS NoUserResize {
 
       /** This is the type that your plugin or GUI class will inherit when you
         use the NoUserResize mixin. The public and protected members defined
         here will be available in your plugin class.
       */
-      DAPS_MIXIN_DERIVED {
+      LVTK_MIXIN_DERIVED {
 
          /** @internal */
          static void map_feature_handlers(feature_handler_map& hmap) {
@@ -65,7 +65,7 @@ namespace DAPS {
          }
 
          bool check_ok() {
-           if (DAPS_DEBUG) {
+           if (LVTK_DEBUG) {
              std::clog<<"    [LV2::NoUserResize] Validation "
                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
            }
@@ -85,13 +85,13 @@ namespace DAPS {
       this mixin is the internal struct template I.
       @ingroup guimixins
    */
-   DAPS_MIXIN_CLASS FixedSize {
+   LVTK_MIXIN_CLASS FixedSize {
 
     /** This is the type that your plugin or GUI class will inherit when you
         use the FixedSize mixin. The public and protected members defined
         here will be available in your plugin class.
     */
-   DAPS_MIXIN_DERIVED {
+   LVTK_MIXIN_DERIVED {
 
       /** @internal */
       static void map_feature_handlers(feature_handler_map& hmap) {
@@ -107,7 +107,7 @@ namespace DAPS {
       }
 
       bool check_ok() {
-        if (DAPS_DEBUG) {
+        if (LVTK_DEBUG) {
           std::clog<<"    [LV2::FixedSize] Validation "
                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
         }
@@ -128,13 +128,13 @@ namespace DAPS {
        Do NOT use this. It may change in the future.
        @ingroup guimixins
    */
-    DAPS_MIXIN_CLASS WriteOSC {
+    LVTK_MIXIN_CLASS WriteOSC {
 
      /** This is the type that your plugin or GUI class will inherit when you
          use the WriteOSC mixin. The public and protected members defined
          here will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
         I() : m_osc_type(0) {
          m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + 256, 0);
@@ -143,9 +143,9 @@ namespace DAPS {
        bool check_ok() {
          Derived* d = static_cast<Derived*>(this);
          m_osc_type = d->
-           uri_to_id(DAPS_EVENT_URI, "http://lv2plug.in/ns/ext/osc#OscEvent");
+           uri_to_id(LVTK_EVENT_URI, "http://lv2plug.in/ns/ext/osc#OscEvent");
          m_event_buffer_format = d->
-           uri_to_id(DAPS_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
+           uri_to_id(LVTK_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
          return !Required || (m_osc_type && m_event_buffer_format);
        }
 
@@ -193,19 +193,19 @@ namespace DAPS {
        this mixin is the internal struct template I.
        @ingroup guimixins
    */
-    DAPS_MIXIN_CLASS Presets {
+    LVTK_MIXIN_CLASS Presets {
 
      /** This is the type that your plugin or GUI class will inherit when you
          use the Presets mixin. The public and protected members defined
          here will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
          I() : m_hdesc(0), m_host_support(false) { }
 
          /** @internal */
          static void map_feature_handlers(feature_handler_map& hmap) {
-           hmap[DAPS_UI_PRESETS_URI] = &I<Derived>::handle_feature;
+           hmap[LVTK_UI_PRESETS_URI] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
@@ -218,7 +218,7 @@ namespace DAPS {
          }
 
          bool check_ok() {
-           if (DAPS_DEBUG) {
+           if (LVTK_DEBUG) {
              std::clog<<"    [LV2::Presets] Validation "
                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
            }
@@ -252,9 +252,9 @@ namespace DAPS {
 
          /** This is called by the host to let the GUI know that the current
              preset has changed. If the number is equal to
-             @c DAPS_UI_PRESETS_NOPRESET there is no current preset.
+             @c LVTK_UI_PRESETS_NOPRESET there is no current preset.
              @param number The number of the active preset, or
-                           DAPS_UI_PRESETS_NOPRESET if there is no active preset.
+                           LVTK_UI_PRESETS_NOPRESET if there is no active preset.
          */
          void current_preset_changed(uint32_t number) {
 
@@ -268,7 +268,7 @@ namespace DAPS {
                                                &_preset_removed,
                                                &_presets_cleared,
                                                &_current_preset_changed };
-           if (!std::strcmp(uri, DAPS_UI_PRESETS_URI))
+           if (!std::strcmp(uri, LVTK_UI_PRESETS_URI))
              return &desc;
            return 0;
          }
@@ -279,14 +279,14 @@ namespace DAPS {
              preset to @c preset. */
          void change_preset(uint32_t preset) {
            if (m_hdesc) {
-             if (DAPS_DEBUG) {
+             if (LVTK_DEBUG) {
                std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
                         <<std::endl;
              }
              m_hdesc->change_preset(static_cast<Derived*>(this)->controller(),
                                     preset);
            }
-           else if (DAPS_DEBUG) {
+           else if (LVTK_DEBUG) {
              std::clog<<"[LV2::Presets] change_preset("<<preset<<")"
                       <<" --- Function not provided by host!"<<std::endl;
            }
@@ -297,14 +297,14 @@ namespace DAPS {
          */
          void save_preset(uint32_t preset, char const* name) {
            if (m_hdesc) {
-             if (DAPS_DEBUG) {
+             if (LVTK_DEBUG) {
                std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
                         <<name<<"\")"<<std::endl;
              }
              m_hdesc->save_preset(static_cast<Derived*>(this)->controller(),
                                   preset, name);
            }
-           else if (DAPS_DEBUG) {
+           else if (LVTK_DEBUG) {
              std::clog<<"[LV2::Presets] save_preset("<<preset<<", \""
                       <<name<<"\")"
                       <<" --- Function not provided by host!"<<std::endl;
@@ -322,7 +322,7 @@ namespace DAPS {
          static void _preset_added(LV2UI_Handle gui,
                                     uint32_t     number,
                                     char const*  name) {
-           if (DAPS_DEBUG) {
+           if (LVTK_DEBUG) {
              std::clog<<"[LV2::Presets] Host called preset_added("
                       <<number<<", \""<<name<<"\")."<<std::endl;
            }
@@ -331,7 +331,7 @@ namespace DAPS {
 
          static void _preset_removed(LV2UI_Handle gui,
                                       uint32_t     number) {
-           if (DAPS_DEBUG) {
+           if (LVTK_DEBUG) {
              std::clog<<"[LV2::Presets] Host called preset_removed("
                       <<number<<")."<<std::endl;
            }
@@ -339,7 +339,7 @@ namespace DAPS {
          }
 
          static void _presets_cleared(LV2UI_Handle gui) {
-           if (DAPS_DEBUG) {
+           if (LVTK_DEBUG) {
              std::clog<<"[LV2::Presets] Host called presets_cleared()."
                       <<std::endl;
            }
@@ -348,7 +348,7 @@ namespace DAPS {
 
          static void _current_preset_changed(LV2UI_Handle gui,
                                               uint32_t     number) {
-           if (DAPS_DEBUG) {
+           if (LVTK_DEBUG) {
              std::clog<<"[LV2::Presets] Host called current_preset_changed("
                       <<number<<")."<<std::endl;
            }
@@ -370,13 +370,13 @@ namespace DAPS {
        this mixin is the internal struct template I.
        @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS FixedBufSize {
+   LVTK_MIXIN_CLASS FixedBufSize {
 
      /** This is the type that your plugin class will inherit when you use the
          FixedBufSize mixin. The public and protected members defined here
          will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
         I() : m_buffer_size(0) { }
 
@@ -391,7 +391,7 @@ namespace DAPS {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
          fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"    [LV2::FixedBufSize] Host set buffer size to "
                     <<fe->m_buffer_size<<std::endl;
          }
@@ -399,7 +399,7 @@ namespace DAPS {
        }
 
        bool check_ok() {
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"    [LV2::FixedBufSize] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
@@ -426,13 +426,13 @@ namespace DAPS {
        this mixin is the internal struct template I.
        @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS FixedP2BufSize {
+   LVTK_MIXIN_CLASS FixedP2BufSize {
 
      /** This is the type that your plugin class will inherit when you use the
          FixedP2BufSize mixin. The public and protected members defined here
          will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
         I() : m_buffer_size(0) { }
 
@@ -447,7 +447,7 @@ namespace DAPS {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
          fe->m_buffer_size = *reinterpret_cast<uint32_t*>(data);
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"    [LV2::FixedP2BufSize] Host set buffer size to "
                     <<fe->m_buffer_size<<std::endl;
          }
@@ -455,7 +455,7 @@ namespace DAPS {
        }
 
        bool check_ok() {
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"    [LV2::FixedP2BufSize] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
@@ -482,17 +482,17 @@ namespace DAPS {
        inherit when you use this mixin is the internal struct template I.
        @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS SaveRestore {
+   LVTK_MIXIN_CLASS SaveRestore {
 
      /** This is the type that your plugin class will inherit when you use the
          SaveRestore mixin. The public and protected members defined here
          will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
        /** @internal */
        static void map_feature_handlers(feature_handler_map& hmap) {
-         hmap[DAPS_SAVERESTORE_URI] = &I<Derived>::handle_feature;
+         hmap[LVTK_SAVERESTORE_URI] = &I<Derived>::handle_feature;
        }
 
        /** @internal */
@@ -503,7 +503,7 @@ namespace DAPS {
        }
 
        bool check_ok() {
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"    [LV2::SaveRestore] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
@@ -512,7 +512,7 @@ namespace DAPS {
 
        /** @internal */
        static const void* extension_data(const char* uri) {
-         if (!std::strcmp(uri, DAPS_SAVERESTORE_URI)) {
+         if (!std::strcmp(uri, LVTK_SAVERESTORE_URI)) {
            static LV2SR_Descriptor srdesc = { &I<Derived>::_save,
                                               &I<Derived>::_restore };
            return &srdesc;
@@ -548,7 +548,7 @@ namespace DAPS {
            Static callback wrapper. */
        static char* _save(LV2_Handle h,
                           const char* directory, LV2SR_File*** files) {
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"[LV2::SaveRestore] Host called save().\n"
                     <<"  directory: \""<<directory<<"\""<<std::endl;
          }
@@ -558,7 +558,7 @@ namespace DAPS {
        /** @internal
            Static callback wrapper. */
        static char* _restore(LV2_Handle h, const LV2SR_File** files) {
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"[LV2::SaveRestore] Host called restore().\n"
                     <<"  Files:\n";
            for (LV2SR_File const** f = files; (*f) != 0; ++f)
@@ -579,17 +579,17 @@ namespace DAPS {
        this mixin is the internal struct template I.
        @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS MsgContext {
+   LVTK_MIXIN_CLASS MsgContext {
 
      /** This is the type that your plugin class will inherit when you use the
          MsgContext mixin. The public and protected members defined here
          will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
        /** @internal */
        static void map_feature_handlers(feature_handler_map& hmap) {
-         hmap[DAPS_CONTEXT_MESSAGE] = &I<Derived>::handle_feature;
+         hmap[LVTK_CONTEXT_MESSAGE] = &I<Derived>::handle_feature;
        }
 
        /** @internal */
@@ -600,7 +600,7 @@ namespace DAPS {
        }
 
        bool check_ok() {
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"    [LV2::MsgContext] Validation "
                     <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
          }
@@ -609,8 +609,8 @@ namespace DAPS {
 
        /** @internal */
        static const void* extension_data(const char* uri) {
-         if (!std::strcmp(uri, DAPS_CONTEXT_MESSAGE)) {
-           static DAPS_Blocking_Context desc = { &I<Derived>::_blocking_run,
+         if (!std::strcmp(uri, LVTK_CONTEXT_MESSAGE)) {
+           static LVTK_Blocking_Context desc = { &I<Derived>::_blocking_run,
                                                 &I<Derived>::_connect_port };
            return &desc;
          }
@@ -628,7 +628,7 @@ namespace DAPS {
        /** @internal
            Static callback wrapper. */
        static bool _blocking_run(LV2_Handle h, uint8_t* outputs_written) {
-         if (DAPS_DEBUG)
+         if (LVTK_DEBUG)
            std::clog<<"[LV2::MsgContext] Host called blocking_run()."<<std::endl;
          return reinterpret_cast<Derived*>(h)->blocking_run(outputs_written);
        }
@@ -642,9 +642,9 @@ namespace DAPS {
      };
    };
 
-} /* namespace daps */
+} /* namespace lvtk */
 
 
 #endif
 
-#endif /* DAPS_LV2_EXTRA_HPP */
+#endif /* LVTK_LV2_EXTRA_HPP */

@@ -23,8 +23,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_TYPES_HPP
-#define DAPS_LV2_TYPES_HPP
+#ifndef LVTK_LV2_TYPES_HPP
+#define LVTK_LV2_TYPES_HPP
 
 #include <map>
 #include <string>
@@ -32,11 +32,11 @@
 #include "private/debug.hpp"
 
 /** TODO: Put macros somewhere else that make sense */
-#define DAPS_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
-#define DAPS_MIXIN_CLASS      template <bool Required = true> struct
-#define DAPS_MIXIN_DERIVED    template <class Derived> struct I : extension<Required>
+#define LVTK_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
+#define LVTK_MIXIN_CLASS      template <bool Required = true> struct
+#define LVTK_MIXIN_DERIVED    template <class Derived> struct I : extension<Required>
 
-namespace daps {
+namespace lvtk {
    /** Convenience typedef */
    typedef LV2_Handle handle;
 }
@@ -44,10 +44,10 @@ namespace daps {
 /** Tricky include, for the moment this needs ensured to be included
  * after LV2_Handle's typdedef
  */
-#include <daps/feature.hpp>
+#include <lvtk/feature.hpp>
 
 
-namespace daps {
+namespace lvtk {
 
    /** @internal This class is used by the end class */
    struct empty {};

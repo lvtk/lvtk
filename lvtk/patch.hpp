@@ -35,13 +35,13 @@
    @url http://lv2plug.in/ns/ext/patch
 */
 
-#ifndef DAPS_LV2_PATCH_HPP
-#define DAPS_LV2_PATCH_HPP
+#ifndef LVTK_LV2_PATCH_HPP
+#define LVTK_LV2_PATCH_HPP
 
 #include <lv2/lv2plug.in/ns/ext/patch/patch.h>
 
-namespace daps {
+namespace lvtk {
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_PATCH_HPP */
+#endif /* LVTK_LV2_PATCH_HPP */

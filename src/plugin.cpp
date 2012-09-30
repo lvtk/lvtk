@@ -20,10 +20,10 @@
 
 ****************************************************************************/
 
-#include <daps/plugin.hpp>
+#include <lvtk/plugin.hpp>
 
 
-namespace daps {
+namespace lvtk {
   
   DescList::~DescList() {
     for (unsigned i = 0; i < size(); ++i)
@@ -41,8 +41,8 @@ namespace daps {
 extern "C" {
   
   const LV2_Descriptor* lv2_descriptor(uint32_t index) {
-    if (index < daps::get_lv2_descriptors().size())
-      return &daps::get_lv2_descriptors()[index];
+    if (index < lvtk::get_lv2_descriptors().size())
+      return &lvtk::get_lv2_descriptors()[index];
     return NULL;
   }
   

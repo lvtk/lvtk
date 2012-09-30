@@ -15,21 +15,24 @@ pkg=bld.env.APPNAME
 plugin_code = bld.path.ant_glob("*plugin*.cpp")
 gtkui_code  = bld.path.ant_glob("*gtkui*.cpp")
 
+# Build the support library - Not Available yet
+
+# Build the plugin library
 bld.stlib(
 	source   = plugin_code,
-	includes = ["../daps", "include"],
+	includes = ["../lvtk", "include"],
 	cxxflags = ["-fPIC"],
-	target   = bld.env.LIB_DAPS,
-	name     = bld.env.LIB_DAPS
+	target   = bld.env.LIB_LVTK_PLUGIN,
+	name     = bld.env.LIB_LVTK_PLUGIN
 )
 
+# Build the GtkUI library
 if not bld.env.UI_DISABLED:
 	bld.stlib(
 		source   = gtkui_code,
-		includes = ["../daps", "include"],
+		includes = ["../lvtk", "include"],
 		cxxflags = ["-fPIC"],
-		target   = bld.env.LIB_DAPS_GTKUI,
-		name     = bld.env.LIB_DAPS_GTKUI,
+		target   = bld.env.LIB_LVTK_GTKUI,
+		name     = bld.env.LIB_LVTK_GTKUI,
 		use      = "gtkmm"
 	)
-

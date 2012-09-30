@@ -22,14 +22,14 @@
    C++ convenience header for the LV2 midi extension.
 */
 
-#ifndef DAPS_LV2_MIDI_HPP
-#define DAPS_LV2_MIDI_HPP
+#ifndef LVTK_LV2_MIDI_HPP
+#define LVTK_LV2_MIDI_HPP
 
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
-#include <daps/types.hpp>
+#include <lvtk/types.hpp>
 
-namespace daps {
+namespace lvtk {
 
    /** A mixin that allows easy sending of MIDI from GUI to plugin.
 
@@ -37,7 +37,7 @@ namespace daps {
        this mixin is the internal struct template I.
        @ingroup guimixins
    */
-    DAPS_MIXIN_CLASS WriteMIDI {
+    LVTK_MIXIN_CLASS WriteMIDI {
 
      enum {
        EVENT_BUFFER_SIZE = 4
@@ -47,7 +47,7 @@ namespace daps {
          use the WriteMIDI mixin. The public and protected members defined
          here will be available in your plugin class.
      */
-     DAPS_MIXIN_DERIVED {
+     LVTK_MIXIN_DERIVED {
 
         I() : m_midi_type(0) {
          m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE,
@@ -61,7 +61,7 @@ namespace daps {
            uri_to_id(LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
          m_event_buffer_format = d->
            uri_to_id(LV2_UI_URI, "http://lv2plug.in/ns/extensions/ui#Events");
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            if (m_midi_type != 0) {
              std::clog<<"    [LV2::WriteMIDI] Host does not map (\""
                       <<LV2_EVENT_URI
@@ -96,7 +96,7 @@ namespace daps {
        */
        bool write_midi(uint32_t port, uint32_t size, const uint8_t* data) {
 
-         if (DAPS_DEBUG) {
+         if (LVTK_DEBUG) {
            std::clog<<"[LV2::WriteMIDI] write_midi("<<port<<", "<<size
                     <<", \"";
            for (uint32_t i = 0; i < size; ++i) {
@@ -109,7 +109,7 @@ namespace daps {
          }
 
          if (m_midi_type == 0) {
-           if (DAPS_DEBUG)
+           if (LVTK_DEBUG)
              std::clog<<"false (Host does not support MIDI writing)"<<std::endl;
            return false;
          }
@@ -129,7 +129,7 @@ namespace daps {
          if (size > 4)
            std::free(buffer);
 
-         if (DAPS_DEBUG)
+         if (LVTK_DEBUG)
            std::clog<<"true"<<std::endl;
          return true;
        }
@@ -142,6 +142,6 @@ namespace daps {
 
    };
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_MIDI_HPP */
+#endif /* LVTK_LV2_MIDI_HPP */

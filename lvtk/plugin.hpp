@@ -22,8 +22,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_PLUGIN_HPP
-#define DAPS_LV2_PLUGIN_HPP
+#ifndef LVTK_LV2_PLUGIN_HPP
+#define LVTK_LV2_PLUGIN_HPP
 
 #include <iostream>
 #include <cstdarg>
@@ -35,10 +35,10 @@
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 
-#include <daps/types.hpp>
-#include <daps/atom.hpp>
-#include <daps/urid.hpp>
-#include <daps/worker.hpp>
+#include <lvtk/types.hpp>
+#include <lvtk/atom.hpp>
+#include <lvtk/urid.hpp>
+#include <lvtk/worker.hpp>
 
 #include "private/debug.hpp"
 
@@ -72,7 +72,7 @@
 */
 
 
-namespace daps {
+namespace lvtk {
   
    using std::vector;
 
@@ -106,7 +106,7 @@ namespace daps {
       binding would.
       @code
       #include <cstring>
-      #include <daps/plugin.hpp>
+      #include <lvtk/plugin.hpp>
       
       class TestLV2 : public Plugin<TestLV2> {
       public:
@@ -344,7 +344,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
       s_features = features;
       s_bundle_path = bundle_path;
 
-      if (DAPS_DEBUG) {
+      if (LVTK_DEBUG) {
 	std::clog<<"[plugin] Instantiating plugin...\n"
 		 <<"  Bundle path: "<<bundle_path<<"\n"
 		 <<"  features: \n";
@@ -356,17 +356,17 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 
       Derived* t = new Derived (sample_rate);
       
-      if (DAPS_DEBUG) {
+      if (LVTK_DEBUG) {
 	std::clog<<"  Validating...\n";
       }
       
       if (t->check_ok()) {
-	if (DAPS_DEBUG)
+	if (LVTK_DEBUG)
 	  std::clog<<"  Done!"<<std::endl;
 	return reinterpret_cast<LV2_Handle>(t);
       }
       
-      if (DAPS_DEBUG) {
+      if (LVTK_DEBUG) {
 	std::clog<<"  Failed!\n"
 		 <<"  Deleting object."<<std::endl;
       }
@@ -449,6 +449,6 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
       way with GUI.
   */
   
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_PLUGIN_HPP */
+#endif /* LVTK_LV2_PLUGIN_HPP */

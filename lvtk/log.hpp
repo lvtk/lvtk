@@ -20,12 +20,12 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_LOG_HPP
-#define DAPS_LV2_LOG_HPP
+#ifndef LVTK_LV2_LOG_HPP
+#define LVTK_LV2_LOG_HPP
 
 #include <lv2/lv2plug.in/ns/ext/log/log.h>
 
-namespace daps {
+namespace lvtk {
 
    /**
       The Log Extension.
@@ -34,8 +34,8 @@ namespace daps {
       @ingroup pluginmixins
    */
 
-   DAPS_MIXIN_CLASS Log {
-     DAPS_MIXIN_DERIVED {
+   LVTK_MIXIN_CLASS Log {
+     LVTK_MIXIN_DERIVED {
      
          I() : p_log (NULL) { }
 
@@ -48,7 +48,7 @@ namespace daps {
 
          /** @internal */
          static void
-         handle_feature(daps::handle instance, feature_data data)
+         handle_feature(lvtk::handle instance, feature_data data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -60,7 +60,7 @@ namespace daps {
          bool
          check_ok()
          {
-            if (DAPS_DEBUG) {
+            if (LVTK_DEBUG) {
               std::clog<<"    [LV2::Log] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -115,4 +115,4 @@ namespace daps {
    };
 }
 
-#endif /* DAPS_LV2_LOG_HPP */
+#endif /* LVTK_LV2_LOG_HPP */

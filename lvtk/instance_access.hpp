@@ -24,15 +24,15 @@
 */
 
 
-#ifndef DAPS_LV2_DATA_ACCESS_HPP
-#define DAPS_LV2_DATA_ACCESS_HPP
+#ifndef LVTK_LV2_DATA_ACCESS_HPP
+#define LVTK_LV2_DATA_ACCESS_HPP
 
 #include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
 
-#include <daps/types.hpp>
-#include <daps/util.hpp>
+#include <lvtk/types.hpp>
+#include <lvtk/util.hpp>
 
-namespace daps {
+namespace lvtk {
 
    /**
       The Data Access Extension.
@@ -40,8 +40,8 @@ namespace daps {
       this mixin is the internal struct template I.
       @ingroup guimixins
    */
-   DAPS_MIXIN_CLASS InstanceAccess {
-      DAPS_MIXIN_DERIVED {
+   LVTK_MIXIN_CLASS InstanceAccess {
+      LVTK_MIXIN_DERIVED {
 
          I() : p_plugin_instance (NULL) { }
 
@@ -57,7 +57,7 @@ namespace daps {
 
          /** @internal */
          static void
-         handle_feature (daps::handle instance, feature_data data)
+         handle_feature (lvtk::handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
@@ -68,7 +68,7 @@ namespace daps {
          bool
          check_ok()
          {
-            if (DAPS_DEBUG) {
+            if (LVTK_DEBUG) {
               std::clog<<"    [UI::DataAccess] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -91,6 +91,6 @@ namespace daps {
      };
    };
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_DATA_ACCESS_HPP */
+#endif /* LVTK_LV2_DATA_ACCESS_HPP */

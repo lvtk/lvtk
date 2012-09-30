@@ -27,15 +27,15 @@
    potentially remote users of a plugin via a data_access() method.
 */
 
-#ifndef DAPS_LV2_RESIZE_PORT_HPP
-#define DAPS_LV2_RESIZE_PORT_HPP
+#ifndef LVTK_LV2_RESIZE_PORT_HPP
+#define LVTK_LV2_RESIZE_PORT_HPP
 
 #include <lv2/lv2plug.in/ns/ext/resize-port/resize-port.h>
 
-#include <daps/types.hpp>
-#include <daps/util.hpp>
+#include <lvtk/types.hpp>
+#include <lvtk/util.hpp>
 
-namespace daps {
+namespace lvtk {
 
 	/** Resize port status codes */
 	typedef enum {
@@ -50,8 +50,8 @@ namespace daps {
       this mixin is the internal struct template I.
       @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS ResizePort {
-      DAPS_MIXIN_DERIVED {
+   LVTK_MIXIN_CLASS ResizePort {
+      LVTK_MIXIN_DERIVED {
 
          I() : p_resize_port_resize (NULL) { }
 
@@ -68,7 +68,7 @@ namespace daps {
 
          /** @internal */
          static void
-         handle_feature (daps::handle instance, feature_data data)
+         handle_feature (lvtk::handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
@@ -82,7 +82,7 @@ namespace daps {
          bool
          check_ok()
          {
-            if (DAPS_DEBUG) {
+            if (LVTK_DEBUG) {
               std::clog<<"    [LV2::ResizePort] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -126,6 +126,6 @@ namespace daps {
       };
    };
 
-} /* namespace daps */
+} /* namespace lvtk */
 
-#endif /* DAPS_LV2_RESIZE_PORT_HPP */
+#endif /* LVTK_LV2_RESIZE_PORT_HPP */

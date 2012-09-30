@@ -28,14 +28,14 @@
 #include <vector>
 #include <cstdlib>
 
-#include <daps/synth.hpp>
-#include <daps/data_access.hpp>
-#include <daps/log.hpp>
-#include <daps/state.hpp>
+#include <lvtk/plugin.hpp>
+#include <lvtk/log.hpp>
+#include <lvtk/state.hpp>
+#include <lvtk/urid.hpp>
 
 #include "workhorse.h"
 
-using namespace daps;
+using namespace lvtk;
 using std::vector;
 
 #define MIXINS URID<true>, Log<true>, Worker<true>

@@ -20,8 +20,8 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_ATOM_HPP
-#define DAPS_LV2_ATOM_HPP
+#ifndef LVTK_LV2_ATOM_HPP
+#define LVTK_LV2_ATOM_HPP
 
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
@@ -32,8 +32,8 @@
    For now it is an easy way to bulk include the above lv2 headers
  */
 
-namespace daps {
+namespace lvtk {
 
-} /* namespace daps::lv2 */
+} /* namespace lvtk::lv2 */
 
-#endif /* DAPS_LV2_ATOM_HPP */
+#endif /* LVTK_LV2_ATOM_HPP */

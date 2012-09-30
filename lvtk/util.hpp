@@ -1,5 +1,5 @@
 /**
-    dynmanifest.hpp - Support file for writing LV2 plugins in C++
+    util.hpp - Support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -18,24 +18,33 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 /**
-   @dynmanifest.hpp
-   C++ convenience wrapper class for the LV2 dynmanifest extension.
-   LV2 Version: 1.4 (2012-04-17)
+   @util.hpp
+   Utilities and helpers for implementing LV2 in C++.
 */
 
-/** FIXME: Not currently supported implemented */
+#ifndef LVTK_UTIL_HPP
+#define LVTK_UTIL_HPP
 
-#ifndef DAPS_LV2_DYNMANIFEST_HPP
-#define DAPS_LV2_DYNMANIFEST_HPP
+namespace lvtk {
+namespace util {
 
-#include <lv2/lv2plug.in/ns/ext/dynmanifest/dynmanifest.h>
-#include <daps/types.hpp>
+#if 0
+   /** WIP : Not used yet and does not compile
+      Cast a LV2::Handle in to a feature mixin
+      @param instance The LV2::Handle object
+      @return The feature's mixin struct
+      @ingroup utilities
+    */
+   template <class Derived, class I>
+   I<Derived>*
+   mixin_cast (LV2::Handle instance)
+   {
+      Derived* derived = reinterpret_cast<Derived*>  (instance);
+      I<Derived>* mixin = static_cast<I<Derived>*> (derived);
+      return mixin;
+   }
+#endif
 
-namespace daps {
+}} /* namespace lvtk::util */
 
-   /** Convenience typedef for DAPS_Dyn_Manifest_Handle */
-   typedef LV2_Dyn_Manifest_Handle DynManifestHandle;
-
-}
-
-#endif /* DAPS_LV2_DYNMANIFEST_HPP */
+#endif /* LVTK_UTIL_HPP */

@@ -20,17 +20,17 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_SYNTH_HPP
-#define DAPS_LV2_SYNTH_HPP
+#ifndef LVTK_LV2_SYNTH_HPP
+#define LVTK_LV2_SYNTH_HPP
 
 #include <cmath>
 #include <cstring>
 #include <vector>
 
-#include <daps/plugin.hpp>
-#include <daps/event.hpp>
+#include <lvtk/plugin.hpp>
+#include <lvtk/event.hpp>
 
-namespace daps {
+namespace lvtk {
   
    using std::vector;
 
@@ -54,7 +54,7 @@ namespace daps {
       /** Turn the voice on. This default implementation does nothing, you
         probably want to override it.
 
-        If @c key is daps::INVALID_KEY the voice should go silent as fast at
+        If @c key is lvtk::INVALID_KEY the voice should go silent as fast at
         possible (the synth may use this when it receives an All Sound Off
         event).
         @param key The MIDI key for the note that the voice should play.
@@ -69,9 +69,9 @@ namespace daps {
       void off(unsigned char velocity) { }
     
       /** Return the MIDI key that the voice is currently playing.
-        daps::INVALID_KEY means that the voice is not active and could be used
+        lvtk::INVALID_KEY means that the voice is not active and could be used
         to play a new note. */
-      unsigned char get_key() const { return daps::INVALID_KEY; }
+      unsigned char get_key() const { return lvtk::INVALID_KEY; }
     
       /** Render audio for this voice to the output buffers, from sample
         @c from to sample @c to. The buffers may already contain audio from
@@ -130,7 +130,7 @@ enum {
   NUM_PORTS
 };
 
-struct NoiseVoice : public daps::Voice {
+struct NoiseVoice : public lvtk::Voice {
 
   NoiseVoice() : m_gain(0), m_key(INVALID_KEY) { }
   
@@ -141,7 +141,7 @@ struct NoiseVoice : public daps::Voice {
 
   void off(unsigned char velocity) { 
     m_gain = 0.0; 
-    m_key = daps::INVALID_KEY;
+    m_key = lvtk::INVALID_KEY;
   }
 
   unsigned char get_key() const { 
@@ -160,10 +160,10 @@ struct NoiseVoice : public daps::Voice {
 };
 
   
-struct NoiseSynth : public daps::Synth<NoiseVoice, NoiseSynth> {
+struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
 
   NoiseSynth(double) 
-    : daps::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_filterstate(0) {
+    : lvtk::Synth<NoiseVoice, NoiseSynth>(NUM_PORTS, MIDI_PORT), m_filterstate(0) {
     add_voices(new NoiseVoice, new NoiseVoice, new NoiseVoice);
     add_audio_outputs(AUDIO_PORT);
   }
@@ -228,7 +228,7 @@ struct NoiseSynth : public daps::Synth<NoiseVoice, NoiseSynth> {
     find_free_voice(unsigned char key, unsigned char velocity)
     {
       for (unsigned i = 0; i < m_voices.size(); ++i) {
-	if (m_voices[i]->get_key() == daps::INVALID_KEY)
+	if (m_voices[i]->get_key() == lvtk::INVALID_KEY)
 	  return i;
       }
       return 0;
@@ -419,7 +419,7 @@ struct NoiseSynth : public daps::Synth<NoiseVoice, NoiseSynth> {
 	threadsafe - you have to make sure that the run() callback isn't 
 	executing simultaneously with this function. 
     
-	daps::Synth will assume ownership of the voices and delete them in its
+	lvtk::Synth will assume ownership of the voices and delete them in its
 	destructor. */
     void add_voices(V* v01 = 0, V* v02 = 0, V* v03 = 0, V* v04 = 0, V* v05 = 0,
 		    V* v06 = 0, V* v07 = 0, V* v08 = 0, V* v09 = 0, V* v10 = 0,

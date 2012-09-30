@@ -20,12 +20,12 @@
 
 ****************************************************************************/
 
-#ifndef DAPS_LV2_URID_HPP
-#define DAPS_LV2_URID_HPP
+#ifndef LVTK_LV2_URID_HPP
+#define LVTK_LV2_URID_HPP
 
 #include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
-namespace daps {
+namespace lvtk {
 
    /**
       The URID Extension.
@@ -34,8 +34,8 @@ namespace daps {
       @ingroup pluginmixins
    */
 
-   DAPS_MIXIN_CLASS URID {
-     DAPS_MIXIN_DERIVED {
+   LVTK_MIXIN_CLASS URID {
+     LVTK_MIXIN_DERIVED {
      
          I() { }
 
@@ -73,7 +73,7 @@ namespace daps {
          bool
          check_ok()
          {
-            if (DAPS_DEBUG) {
+            if (LVTK_DEBUG) {
               std::clog<<"    [LV2::URID] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
@@ -135,4 +135,4 @@ namespace daps {
    };
 }
 
-#endif /* DAPS_LV2_URID_HPP */
+#endif /* LVTK_LV2_URID_HPP */
