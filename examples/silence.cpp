@@ -29,6 +29,8 @@
 #include <daps/plugin.hpp>
 #include <daps/state.hpp>
 
+#include "silence.h"
+
 using namespace daps;
 using std::vector;
 

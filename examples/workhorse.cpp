@@ -33,6 +33,8 @@
 #include <daps/log.hpp>
 #include <daps/state.hpp>
 
+#include "workhorse.h"
+
 using namespace daps;
 using std::vector;
 

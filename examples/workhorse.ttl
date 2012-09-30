@@ -20,6 +20,7 @@
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
+@prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
 
 <http://daps-project.org/plugins/workhorse>
 	a lv2:Plugin ;
@@ -31,6 +32,7 @@
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:extensionData state:interface ,
 		work:interface ;
+	ll:pegName "p" ;
 	lv2:port [
 		a lv2:InputPort ,
 			atom:AtomPort ;
