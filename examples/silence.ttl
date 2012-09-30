@@ -1,4 +1,4 @@
-# DAPS - Worker Example Plugin
+# DAPS - Silence Example Plugin
 # Copyright 2012  Michael Fisher <mfisher31@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
@@ -19,41 +19,20 @@
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
-@prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 @prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
 
-<http://daps-project.org/plugins/workhorse>
+<http://daps-project.org/plugins/silence>
 	a lv2:Plugin ;
-	doap:name "Workhorse" ;
+	doap:name "Silence" ;
 	doap:license <http://opensource.org/licenses/isc> ;
 	lv2:project <http://daps-project.org/ns> ;
-	lv2:requiredFeature urid:map ,
-		work:schedule ;
+	lv2:requiredFeature urid:map ;
 	lv2:optionalFeature lv2:hardRTCapable ;
-	lv2:extensionData state:interface ,
-		work:interface ;
 	ll:pegName "p" ;
 	lv2:port [
-		a lv2:InputPort ,
-			atom:AtomPort ;
-		atom:bufferType atom:Sequence ;
-		atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ,
-			<http://lv2plug.in/ns/ext/patch#Message> ;
-		lv2:index 0 ;
-		lv2:symbol "control" ;
-		lv2:name "Control"
-	] , [
-		a lv2:OutputPort ,
-			atom:AtomPort ;
-		atom:bufferType atom:Sequence ;
-		atom:supports <http://lv2plug.in/ns/ext/patch#Message> ;
-		lv2:index 1 ;
-		lv2:symbol "notify" ;
-		lv2:name "Notify"
-	] , [
 		a lv2:AudioPort ,
 			lv2:OutputPort ;
-		lv2:index 2 ;
-		lv2:symbol "out" ;
-		lv2:name "Out"
+		lv2:index 0 ;
+		lv2:symbol "ouput" ;
+		lv2:name "Output"
 	] .

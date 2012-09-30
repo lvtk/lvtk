@@ -15,4 +15,7 @@ Dave Robillard
 The original lv2plugin.* and lv2gui.* are:
 Lars Luthman <lars.luthman@gmail.com>
 
+Much of the documentation is borrowed from http://lv2plug.in
+and the documentation found in LV2 headers
+
 All else is Michael Fisher <mfisher31@gmail.com>

@@ -36,9 +36,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details.
 
 Note that this licence requires that any plugin that uses the 
-liblv2mm-* frameworks is also licensed under GPL version 3 or later.
+libdaps-* frameworks is also licensed under GPL version 3 or later.
 
-Issue Tracking
---------------
-Please report bugs and feature requests here.
-https://github.com/mfisher31/daps/issues
+Issue Tracking 
+-------------- 
+Please report bugs and feature requests here. 
+http://daps-project.org/issues

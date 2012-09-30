@@ -92,12 +92,8 @@ namespace daps {
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
-
-            if (DAPS_DEBUG) {
-               std::clog<<"  [Worker] handle_feature\n";
-            }
-
             worker_schedule *ws = reinterpret_cast<worker_schedule*>(data);
+
             fe->m_worker_schedule_handle = ws->handle;
             fe->m_schedule_work_func = ws->schedule_work;
             fe->m_ok = true;

@@ -12,22 +12,26 @@ file COPYING for more details. '''
 
 import lv2
 
-examples = ["workhorse"]
+buildme = not bld.env.TOOLS_DISABLED
 
-for slug in examples:
-	''' examples do not use generated headers yet
-	bld(rule="../build/tools/ttl2c ${SRC} ${TGT}", \
-		source=slug+'.ttl', \
-		target=slug+'.h')
-	'''
-	bld.add_group()
+if buildme:
+	examples = ["silence","workhorse"]
 
-	plugin = bld.shlib(
-		lv2_bundle	  =	 True,
-		lv2_resources = ["%s.manifest.ttl.in" % slug,"%s.ttl" % slug],
-		name          = slug,
-		target        = slug,
-		source        = "%s.cpp" % slug,
-		use           = bld.env.LIB_DAPS,
-		LIB_EXT		  = bld.env.pluginlib_EXT
-	)
+	for slug in examples:
+		
+		bld(rule="../build/tools/ttl2c ${SRC} ${TGT}", \
+			source=slug+'.ttl', \
+			target=slug+'.h')
+	
+		bld.add_group()
+	
+		plugin = bld.shlib(
+			lv2_bundle	  =	 True,
+			lv2_resources = ["%s.manifest.ttl.in" % slug,"%s.ttl" % slug],
+			name          = slug,
+			target        = slug,
+			source        = "%s.cpp" % slug,
+			includes      = ["../build/examples"],
+			use           = bld.env.LIB_DAPS,
+			LIB_EXT		  = bld.env.pluginlib_EXT
+		)

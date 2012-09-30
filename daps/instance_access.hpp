@@ -1,5 +1,5 @@
 /**
-    data_access.hpp - support file for writing LV2 plugins in C++
+    instance_access.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -18,19 +18,16 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 /**
-   @file data_access.hpp
-   C++ convenience header for the LV2 data access extension.
-   LV2 C Version Support: 1.6 (2012-04-17)
-
-   This mixin implements the LV2_Extension_Data_Feature.  It provides
-   access to LV2_Descriptor::extension_data() for plugin UIs or other
-   potentially remote users of a plugin via a data_access() method.
+   @file instance_access.hpp
+   C++ convenience header for the LV2 instance access extension.
+   LV2 Support: 1.6 (2012-04-17)
 */
+
 
 #ifndef DAPS_LV2_DATA_ACCESS_HPP
 #define DAPS_LV2_DATA_ACCESS_HPP
 
-#include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
+#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
 
 #include <daps/types.hpp>
 #include <daps/util.hpp>
@@ -41,22 +38,21 @@ namespace daps {
       The Data Access Extension.
       The actual type that your plugin class will inherit when you use
       this mixin is the internal struct template I.
-      @ingroup pluginmixins
+      @ingroup guimixins
    */
-   DAPS_MIXIN_CLASS DataAccess {
+   DAPS_MIXIN_CLASS InstanceAccess {
       DAPS_MIXIN_DERIVED {
 
-         I() : p_da (NULL) { }
+         I() : p_plugin_instance (NULL) { }
 
 
          /* ================= Mixin API ========================= */
-
 
          /** @internal */
          static void
          map_feature_handlers(feature_handler_map& hmap)
          {
-           hmap[LV2_DATA_ACCESS_URI] = &I<Derived>::handle_feature;
+           hmap[LV2_INSTANCE_ACCESS_URI] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
@@ -66,50 +62,32 @@ namespace daps {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
 
-            mixin->p_da = reinterpret_cast<LV2_Extension_Data_Feature*> (data);
-            mixin->m_ok = (mixin->p_da != NULL);
+            mixin->p_plugin_instance = reinterpret_cast<LV2_Handle*> (data);
          }
 
          bool
          check_ok()
          {
             if (DAPS_DEBUG) {
-              std::clog<<"    [LV2::DataAccess] Validation "
+              std::clog<<"    [UI::DataAccess] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;
          }
 
-         /* ================= Data Access C++ Implementation =============== */
-
+     protected:
 
          /**
-             A UI can call this to get data (of a type specified by some other
-             extension) from the plugin.
-
-             This call never is never guaranteed to return anything, UIs should
-             degrade gracefully if direct access to the plugin data is not possible
-             (in which case this function will return NULL).
-
-             This is for access to large data that can only possibly work if the UI
-             and plugin are running in the same process.  For all other things, use
-             the normal LV2 UI communication system.
-
-             @param uri The uri string to query
-             @return Not NULL on Success
+            Get the plugin instance
           */
-         const void*
-         data_access(const char *uri)
+         LV2_Handle
+         get_instance()
          {
-            if (NULL != p_da) {
-               return p_da->data_access(uri);
-            }
-            return NULL;
+        	 return p_plugin_instance;
          }
 
-     protected:
          /** @internal Feature Data passed from host */
-         LV2_Extension_Data_Feature   *p_da;
+         LV2_Handle   *p_plugin_instance;
      };
    };
 

@@ -24,7 +24,7 @@ DAPS_MINOR_VERSION=DAPS_VERSION[2]
 DAPS_MICRO_VERSION=DAPS_VERSION[4]
 
 # Anything appended to version number goes here
-DAPS_EXTRA_VERSION="-rc1"
+DAPS_EXTRA_VERSION=""
 
 # For waf dist
 APPNAME = 'daps'
@@ -43,7 +43,7 @@ def options(opts):
 	
 	opts.add_option('--disable-tools', default=False, \
 		dest="disable_tools", action='store_true', \
-		help="Disable Building UI libraries")
+		help="Disable Building Tools")
 	opts.add_option('--disable-ui', default=False, \
 		dest="disable_ui", action='store_true', \
 		help="Disable Building UI libraries")
@@ -67,9 +67,11 @@ def configure(conf):
 				atleast_version="1.0.0")
 
 	if not conf.options.disable_tools:
-		autowaf.check_pkg(conf, "redland", uselib_store="redland", \
-				atleast_version="1.0.10")
-	
+		conf.check(header_name='boost/spirit/core.hpp')
+		conf.check(header_name='boost/spirit/utility.hpp')
+		conf.check(header_name='boost/spirit/tree/parse_tree.hpp')
+		conf.check(header_name='boost/spirit/tree/ast.hpp')
+		
 	if not conf.options.disable_ui:
 		autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
 				atleast_version="2.20.0")
@@ -98,7 +100,9 @@ def build(bld):
 						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS,
 						'DAPS_PKG_DEPS'       : 'lv2'})
-	autowaf.build_pc(bld, 'DAPS-GTKUI', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
+						
+	if not bld.env.UI_DISABLED:
+		autowaf.build_pc(bld, 'DAPS-GTKUI', DAPS_VERSION, DAPS_MAJOR_VERSION+".0", [],
 						{'DAPS_MAJOR_VERSION' : DAPS_MAJOR_VERSION,
 						'VERSION'              : DAPS_VERSION,
 						'THELIB'		       : LIB_DAPS_GTKUI,
@@ -110,7 +114,7 @@ def build(bld):
 	
 	# Documentation
 	autowaf.build_dox(bld, 'DAPS', DAPS_VERSION, top, out)
-	bld.add_group()	
+	bld.add_group()
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \

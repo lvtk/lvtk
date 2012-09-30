@@ -27,15 +27,22 @@
    potentially remote users of a plugin via a data_access() method.
 */
 
-#ifndef DAPS_LV2_DATA_ACCESS_HPP
-#define DAPS_LV2_DATA_ACCESS_HPP
+#ifndef DAPS_LV2_RESIZE_PORT_HPP
+#define DAPS_LV2_RESIZE_PORT_HPP
 
-#include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
+#include <lv2/lv2plug.in/ns/ext/resize-port/resize-port.h>
 
 #include <daps/types.hpp>
 #include <daps/util.hpp>
 
 namespace daps {
+
+	/** Resize port status codes */
+	typedef enum {
+		RESIZE_PORT_SUCCESS      = LV2_RESIZE_PORT_SUCCESS,		/**< Completed successfully. */
+		RESIZE_PORT_ERR_UNKNOWN  = LV2_RESIZE_PORT_ERR_UNKNOWN, /**< Unknown Error */
+		RESIZE_PORT_ERR_NO_SPACE = LV2_RESIZE_PORT_ERR_NO_SPACE /**< Insufficient space */
+	} resize_port_status_t;
 
    /**
       The Data Access Extension.
@@ -43,10 +50,10 @@ namespace daps {
       this mixin is the internal struct template I.
       @ingroup pluginmixins
    */
-   DAPS_MIXIN_CLASS DataAccess {
+   DAPS_MIXIN_CLASS ResizePort {
       DAPS_MIXIN_DERIVED {
 
-         I() : p_da (NULL) { }
+         I() : p_resize_port_resize (NULL) { }
 
 
          /* ================= Mixin API ========================= */
@@ -56,7 +63,7 @@ namespace daps {
          static void
          map_feature_handlers(feature_handler_map& hmap)
          {
-           hmap[LV2_DATA_ACCESS_URI] = &I<Derived>::handle_feature;
+           hmap[LV2_RESIZE_PORT__resize] = &I<Derived>::handle_feature;
          }
 
          /** @internal */
@@ -66,53 +73,59 @@ namespace daps {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
 
-            mixin->p_da = reinterpret_cast<LV2_Extension_Data_Feature*> (data);
-            mixin->m_ok = (mixin->p_da != NULL);
+            mixin->p_resize_port_resize =
+            		reinterpret_cast<LV2_Resize_Port_Resize*> (data);
+
+            mixin->m_ok = true;
          }
 
          bool
          check_ok()
          {
             if (DAPS_DEBUG) {
-              std::clog<<"    [LV2::DataAccess] Validation "
+              std::clog<<"    [LV2::ResizePort] Validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;
          }
 
-         /* ================= Data Access C++ Implementation =============== */
+      protected:
 
+        /* ================= Resize Port C++ Implementation =============== */
 
-         /**
-             A UI can call this to get data (of a type specified by some other
-             extension) from the plugin.
+        /**
+		   Resize a port buffer to at least @a size bytes.
 
-             This call never is never guaranteed to return anything, UIs should
-             degrade gracefully if direct access to the plugin data is not possible
-             (in which case this function will return NULL).
+		   This function MAY return an error, in which case the port buffer
+		   was not resized and the port is still connected to the same location.  Plugins
+		   MUST gracefully handle this situation.
 
-             This is for access to large data that can only possibly work if the UI
-             and plugin are running in the same process.  For all other things, use
-             the normal LV2 UI communication system.
+		   This function is in the audio threading class.
 
-             @param uri The uri string to query
-             @return Not NULL on Success
-          */
-         const void*
-         data_access(const char *uri)
-         {
-            if (NULL != p_da) {
-               return p_da->data_access(uri);
-            }
-            return NULL;
-         }
+		   The host MUST preserve the contents of the port buffer when resizing.
 
-     protected:
-         /** @internal Feature Data passed from host */
-         LV2_Extension_Data_Feature   *p_da;
-     };
+		   Plugins MAY resize a port many times in a single run callback.  Hosts
+		   SHOULD make this as inexpensive as possible.
+		*/
+		resize_port_status_t
+		resize (uint32_t index, size_t size)
+		{
+			if (NULL == p_resize_port_resize)
+			{
+				return RESIZE_PORT_ERR_UNKNOWN;
+			}
+
+			LV2_Resize_Port_Feature_Data data =
+								p_resize_port_resize->data;
+
+			return (resize_port_status_t)
+					p_resize_port_resize->resize(data, index, size);
+		}
+
+        LV2_Resize_Port_Resize * p_resize_port_resize;
+      };
    };
 
 } /* namespace daps */
 
-#endif /* DAPS_LV2_DATA_ACCESS_HPP */
+#endif /* DAPS_LV2_RESIZE_PORT_HPP */
