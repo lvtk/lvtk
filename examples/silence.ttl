@@ -23,7 +23,7 @@
 
 <http://daps-project.org/plugins/silence>
 	a lv2:Plugin ;
-	doap:name "Workhorse" ;
+	doap:name "Silence" ;
 	doap:license <http://opensource.org/licenses/isc> ;
 	lv2:project <http://daps-project.org/ns> ;
 	lv2:requiredFeature urid:map ;

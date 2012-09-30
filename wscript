@@ -43,7 +43,7 @@ def options(opts):
 	
 	opts.add_option('--disable-tools', default=False, \
 		dest="disable_tools", action='store_true', \
-		help="Disable Building UI libraries")
+		help="Disable Building Tools")
 	opts.add_option('--disable-ui', default=False, \
 		dest="disable_ui", action='store_true', \
 		help="Disable Building UI libraries")
