@@ -47,7 +47,7 @@ class workhorse : public Plugin<workhorse, MIXINS >
     workhorse (double rate)
     : Plugin<workhorse, MIXINS > (3)
     {
-    	msgType = map("http://daps-project.org/plugins/workhorse#logger");
+    	msgType = map("http://lvtoolkit.org/plugins/workhorse#logger");
     }
 
     void
@@ -68,7 +68,7 @@ class workhorse : public Plugin<workhorse, MIXINS >
        This is executed by the host after work executes a respond
        object.
      */
-    worker_status_t
+    WorkerStatus
     work_response (uint32_t size, const void* body)
     {
     	/** Print message with LV2 Log */
@@ -83,8 +83,8 @@ class workhorse : public Plugin<workhorse, MIXINS >
        This gets called from the host after schedule_work
        is called in run
      */
-    worker_status_t
-    work (worker_respond &respond, uint32_t  size, const void*  data)
+    WorkerStatus
+    work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
     	/** Print message with LV2 Log's printf */
         printf (msgType, "[workhorse] taking a nap now\n");
@@ -103,4 +103,4 @@ class workhorse : public Plugin<workhorse, MIXINS >
 
 };
 
-static int _ = workhorse::register_class ("http://daps-project.org/plugins/workhorse");
+static int _ = workhorse::register_class ("http://lvtoolkit.org/plugins/workhorse");

@@ -37,23 +37,23 @@ namespace lvtk {
    using std::vector;
 
    /** Typedef for the LV2_Feature type so we get it into the LV2 namespace. */
-   typedef LV2_Feature feature;
+   typedef LV2_Feature Feature;
 
    /** Convenient typedef for a vector of Features. */
-   typedef vector<const feature*> feature_vec;
+   typedef vector<const Feature*> FeatureVec;
 
    /** Convenient typdef for Feature data */
-   typedef void* feature_data;
+   typedef void* FeatureData;
 
    /**
       Convenient typedef for the feature handler function type.
       @param instance The plugin instance
       @param data Feature Data passed from host
     */
-   typedef void(*feature_handler)(handle instance, feature_data data);
+   typedef void(*FeatureHandler)(void* instance, FeatureData data);
 
    /** Convenient typedef for the feature handler map type. */
-   typedef map<string, feature_handler> feature_handler_map;
+   typedef map<string, FeatureHandler> feature_handler_map;
 
 } /* namespace lvtk */
 

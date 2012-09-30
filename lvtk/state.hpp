@@ -75,19 +75,15 @@ namespace lvtk {
       STATE_ERR_BAD_FLAGS   = LV2_STATE_ERR_BAD_FLAGS,    /**< Failed due to unsupported flags. */
       STATE_ERR_NO_FEATURE  = LV2_STATE_ERR_NO_FEATURE,   /**< Failed due to missing features. */
       STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
-   } state_status_t;
+   } StateStatus;
 
-   typedef LV2_State_Retrieve_Function         state_retrieve_func;
-   typedef LV2_State_Store_Function            state_store_func;
-   typedef LV2_State_Handle                    state_handle;
-   typedef LV2_State_Map_Path                  state_map_path;
-   typedef LV2_State_Make_Path                 state_make_path;
+
    /**
        Wrapper struct for state retrieval. This wraps an
        LV2_State_Retrieve_Function and exeucutes via operator ()
     */
-   struct state_retrieve {
-      state_retrieve(state_retrieve_func srfunc, state_handle handle)
+   struct StateRetrieve {
+      StateRetrieve(LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
       : p_handle(handle), p_srfunc(srfunc) { }
 
       /**
@@ -100,14 +96,14 @@ namespace lvtk {
        */
       const void* operator () (uint32_t key, size_t *size  = NULL,
                                            uint32_t *type  = NULL,
-                                           uint32_t *flags = NULL)
+                                           uint32_t *flags = NULL) const
       {
          return p_srfunc(p_handle, key, size, type, flags);
       }
 
    private:
-      state_handle              p_handle;
-      state_retrieve_func        p_srfunc;
+      LV2_State_Handle              p_handle;
+      LV2_State_Retrieve_Function   p_srfunc;
    };
 
    /* A little redundant */
@@ -116,8 +112,8 @@ namespace lvtk {
       Wrapper struct for state storage. This wraps an
       LV2_State_Store_Function and exeucutes via operator ()
    */
-   struct state_store {
-      state_store (state_store_func ssfunc, state_handle handle)
+   struct StateStore {
+      StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
       : p_handle(handle), p_ssfunc(ssfunc) { }
 
       /**
@@ -129,19 +125,18 @@ namespace lvtk {
           @param flags
           @return STATE_SUCCESS on Success
        */
-      state_status_t operator () (uint32_t key, const void* value,
+      StateStatus operator () (uint32_t key, const void* value,
                                              size_t   size,
                                              uint32_t type,
-                                             uint32_t flags = 0)
+                                             uint32_t flags = 0) const
       {
-         return (state_status_t) p_ssfunc(
-                      p_handle, key, value, size, type, flags
-                );
+         return (StateStatus) p_ssfunc(
+                      p_handle, key, value, size, type, flags);
       }
 
    private:
-      state_handle              p_handle;
-      state_store_func          p_ssfunc;
+      LV2_State_Handle              p_handle;
+      LV2_State_Store_Function      p_ssfunc;
    };
 
   /**
@@ -165,7 +160,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_make_feature(lvtk::handle instance, feature_data data)
+         handle_make_feature(void* instance, FeatureData data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -201,16 +196,16 @@ namespace lvtk {
        /* ===============  State C++ Interface ==========================  */
 
 
-       state_status_t
-       save(state_store &store, uint32_t flags,
-                        feature_vec &features)
+       StateStatus
+       save (StateStore &store, uint32_t flags,
+    		                                   const FeatureVec &features)
        {
           return STATE_SUCCESS;
        }
 
-       state_status_t
-       restore(state_retrieve &retrieve, uint32_t flags,
-                           const feature_vec &features)
+       StateStatus
+       restore (StateRetrieve &retrieve, uint32_t flags,
+    		   	   	   	   	   	   	   	   	   const FeatureVec &features)
        {
           return STATE_SUCCESS;
        }
@@ -258,22 +253,23 @@ namespace lvtk {
           return p_make_path->path (p_make_path->handle, path);
        }
 
+
       /* ==============  LV2 Boiler Plate Implementation ================= */
 
        LV2_State_Make_Path * p_make_path;
 
       /** @internal - called from host */
       static LV2_State_Status _save(LV2_Handle                 instance,
-                                  LV2_State_Store_Function   store,
-                                  LV2_State_Handle           handle,
-                                  uint32_t                   flags,
-                                  const LV2_Feature *const * features)
+                                    LV2_State_Store_Function   store,
+                                    LV2_State_Handle           handle,
+                                    uint32_t                   flags,
+                                    const LV2_Feature *const * features)
       {
          Derived* plugin = reinterpret_cast<Derived*>(instance);
 
-         state_store ss (store, handle);
+         StateStore ss (store, handle);
 
-         feature_vec feature_set;
+         FeatureVec feature_set;
          for (int i = 0; features[i]; ++i) {
             feature_set.push_back (features[i]);
          }
@@ -291,10 +287,10 @@ namespace lvtk {
          Derived* plugin = reinterpret_cast<Derived*>(instance);
 
          /** Initialize a state retrieval callable */
-         state_retrieve sr (retrieve, handle);
+         StateRetrieve sr (retrieve, handle);
 
          /** Populate a feature vector */
-         feature_vec feature_set;
+         FeatureVec feature_set;
          for (int i = 0; features[i]; ++i) {
           feature_set.push_back (features[i]);
          }

@@ -60,7 +60,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature(lvtk::handle instance, feature_data data)
+         handle_feature(void* instance, void* data)
          {
             Derived* derived = reinterpret_cast<Derived*>(instance);
             I<Derived>* mixin = static_cast<I<Derived>*>(derived);

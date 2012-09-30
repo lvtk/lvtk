@@ -36,7 +36,7 @@
 using namespace lvtk;
 using std::vector;
 
-#define LVTK_SILENCE_URI "http://daps-project.org/plugins/silence"
+#define LVTK_SILENCE_URI "http://lvtoolkit.org/plugins/silence"
 #define LVTK_SILENCE_PREFIX LVTK_SILENCE_URI "#"
 #define LVTK_SILENCE_MSG LVTK_SILENCE_PREFIX "msg"
 
@@ -62,35 +62,36 @@ class silence : public Plugin<silence, URID<true>, State<true> >
     }
 
 
-    state_status_t
-    save (state_store &store, uint32_t flags,
-                     feature_vec &features)
+    StateStatus
+    save (StateStore &store, uint32_t flags,
+                     	 	 	 	 const FeatureVec &features)
     {
-       const char* msg = "Sorry I can't hear you. Please speak up.";
-       return store (urids.silence_msg, msg,
+       const char* msg = "Sorry I can't hear you. Please speak up";
+       return store (urids.silence_msg, (void*)msg,
                      strlen(msg), urids.atom_String,
                      STATE_IS_POD | STATE_IS_PORTABLE);
     }
 
 
-    state_status_t
-    restore(state_retrieve &retrieve, uint32_t flags,
-                        const feature_vec &features)
+    StateStatus
+    restore(StateRetrieve &retrieve, uint32_t flags,
+                        		     const FeatureVec &features)
     {
        size_t size;
        uint32_t type,fs;
 
        const void *st = retrieve (urids.silence_msg, &size, &type, &fs);
-       if (!st)
+       if (st)
        {
-         std::cout << (char*)st << std::endl;
+         std::cout << "[silence] " << (char*)st << std::endl;
+         return STATE_SUCCESS;
        }
 
-       return STATE_SUCCESS;
+       return STATE_ERR_UNKNOWN;
     }
 
    private:
-    struct silence_urids {
+    struct SilenceURIs {
        LV2_URID atom_String;
        LV2_URID silence_msg;
     } urids;

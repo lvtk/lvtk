@@ -32,21 +32,17 @@ namespace lvtk {
       WORKER_SUCCESS      = LV2_WORKER_SUCCESS,      /**< Work Completed. */
       WORKER_ERR_UNKNOWN  = LV2_WORKER_ERR_UNKNOWN,  /**< Unknown error. */
       WORKER_ERR_NO_SPACE = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
-   } worker_status_t;
+   } WorkerStatus;
 
-
-   typedef LV2_Worker_Respond_Handle    worker_respond_handle;
-   typedef LV2_Worker_Respond_Function  worker_respond_func;
-   typedef LV2_Worker_Schedule          worker_schedule;
 
    /**
        Worker reponse. This wraps an LV2_Worker_Respond_Function
        and exeucutes via operator ()
     */
-   struct worker_respond {
-      worker_respond(lvtk::handle instance,
-                     worker_respond_func wrfunc,
-                     worker_respond_handle handle)
+   struct WorkerRespond {
+      WorkerRespond(lvtk::handle instance,
+                     LV2_Worker_Respond_Function wrfunc,
+                     LV2_Worker_Respond_Handle handle)
       : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
 
       /**
@@ -55,15 +51,15 @@ namespace lvtk {
           @param data
           @return WORKER_SUCCESS on success
        */
-      worker_status_t operator () (uint32_t size, const void* data)
+      WorkerStatus operator () (uint32_t size, const void* data) const
       {
-         return (worker_status_t) p_wrfunc (p_handle, size, data);
+         return (WorkerStatus) p_wrfunc (p_handle, size, data);
       }
 
    private:
-      lvtk::handle                p_instance;
-      worker_respond_handle       p_handle;
-      worker_respond_func         p_wrfunc;
+      LV2_Handle                        p_instance;
+      LV2_Worker_Respond_Handle         p_handle;
+      LV2_Worker_Respond_Function       p_wrfunc;
    };
 
    /** The LV2 Worker Feature Mixin
@@ -71,7 +67,6 @@ namespace lvtk {
        @ingroup pluginmixins
    */
    LVTK_MIXIN_CLASS Worker {
-
       LVTK_MIXIN_DERIVED {
 
          /** @internal */
@@ -83,13 +78,13 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature(handle instance, feature_data data)
+         handle_feature(void* instance, FeatureData data)
          {
             Derived* d = reinterpret_cast<Derived*>(instance);
             I<Derived>* fe = static_cast<I<Derived>*>(d);
-            worker_schedule *ws = reinterpret_cast<worker_schedule*>(data);
+            LV2_Worker_Schedule *ws = reinterpret_cast<LV2_Worker_Schedule*>(data);
 
-            fe->m_worker_schedule_handle = ws->handle;
+            fe->m_work_schedule_handle = ws->handle;
             fe->m_schedule_work_func = ws->schedule_work;
             fe->m_ok = true;
          }
@@ -147,11 +142,11 @@ namespace lvtk {
             @param size   The size of @p data.
             @param data   Message to pass to work(), or NULL.
          */
-          worker_status_t
+          WorkerStatus
           schedule_work (uint32_t size, void *data)
           {
-            return (worker_status_t)m_schedule_work_func(
-                                    m_worker_schedule_handle, size, data);
+            return (WorkerStatus)m_schedule_work_func(
+                                    m_work_schedule_handle, size, data);
           }
 
          /**
@@ -165,8 +160,8 @@ namespace lvtk {
             @param size     The size of @p data.
             @param data     Data from run(), or NULL.
          */
-          worker_status_t
-          work (worker_respond &respond, uint32_t size, const void* data)
+          WorkerStatus
+          work (WorkerRespond &respond, uint32_t size, const void* data)
           {
              return WORKER_SUCCESS;
           }
@@ -179,9 +174,8 @@ namespace lvtk {
               @param size     The size of @p body.
               @param body     Message body, or NULL.
            */
-          worker_status_t
-          work_response
-          (uint32_t size, const void* body)
+          WorkerStatus
+          work_response (uint32_t size, const void* body)
           {
              return WORKER_SUCCESS;
           }
@@ -197,7 +191,7 @@ namespace lvtk {
             host MUST call it after every run(), regardless of whether or not any
             responses were sent that cycle.
          */
-          worker_status_t
+          WorkerStatus
           end_run()
           {
              return WORKER_SUCCESS;
@@ -208,7 +202,7 @@ namespace lvtk {
          /* LV2 Worker Implementation */
 
          /** @internal */
-         LV2_Worker_Schedule_Handle m_worker_schedule_handle;
+         LV2_Worker_Schedule_Handle m_work_schedule_handle;
 
          /** @internal */
          LV2_Worker_Status (*m_schedule_work_func)(LV2_Worker_Schedule_Handle handle,
@@ -223,7 +217,7 @@ namespace lvtk {
                                         const void*                 data)
          {
             Derived* plugin = reinterpret_cast<Derived*>(instance);
-            worker_respond wrsp (instance, respond, handle);
+            WorkerRespond wrsp (instance, respond, handle);
             return (LV2_Worker_Status)plugin->work(wrsp, size, data);
          }
 

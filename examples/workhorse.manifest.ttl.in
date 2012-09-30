@@ -2,7 +2,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 
-<http://daps-project.org/plugins/workhorse>
+<http://lvtoolkit.org/plugins/workhorse>
 	a lv2:Plugin ;
 	lv2:binary <workhorse@LIB_EXT@> ;
 	rdfs:seeAlso <workhorse.ttl> .

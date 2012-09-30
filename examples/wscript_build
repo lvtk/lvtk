@@ -32,6 +32,6 @@ if buildme:
 			target        = slug,
 			source        = "%s.cpp" % slug,
 			includes      = ["../build/examples"],
-			use           = bld.env.LIB_DAPS,
+			use           = bld.env.LIB_LVTK_PLUGIN,
 			LIB_EXT		  = bld.env.pluginlib_EXT
 		)

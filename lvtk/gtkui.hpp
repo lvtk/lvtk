@@ -133,7 +133,7 @@ protected:
       if (m_features) {
 	feature_handler_map hmap;
 	Derived::map_feature_handlers(hmap);
-	for (const lvtk::feature* const* iter = m_features; *iter != 0; ++iter) {
+	for (const lvtk::Feature* const* iter = m_features; *iter != 0; ++iter) {
 	  feature_handler_map::iterator miter;
 	  miter = hmap.find((*iter)->URI);
 	  if (miter != hmap.end())
@@ -178,7 +178,7 @@ protected:
     
     /** Get the feature array that was passed by the host. This may only
 	be valid while the constructor is running. */
-    inline lvtk::feature const* const* features() {
+    inline Feature const* const* features() {
       return m_features;
     }
     
@@ -239,7 +239,7 @@ protected:
 		 <<"  Plugin URI:      \""<<plugin_uri<<"\"\n"
 		 <<"  Bundle path:     \""<<bundle_path<<"\"\n"
 		 <<"  UI Features:\n";
-	lvtk::feature const* const* iter;
+	lvtk::Feature const* const* iter;
 	for (iter = features; *iter; ++iter)
 	  std::clog<<"    \""<<(*iter)->URI<<"\"\n";
       }
@@ -291,12 +291,12 @@ protected:
 
     void* m_ctrl;
     LV2UI_Write_Function m_wfunc;
-    lvtk::feature const* const* m_features;
+    lvtk::Feature const* const* m_features;
     char const* m_bundle_path;
     
     static void* s_ctrl;
     static LV2UI_Write_Function s_wfunc;
-    static lvtk::feature const* const* s_features;
+    static lvtk::Feature const* const* s_features;
     static char const* s_bundle_path;
     
   };
@@ -315,7 +315,7 @@ protected:
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  lvtk::feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
+  lvtk::Feature const* const* GUI<Derived, Ext1, Ext2, Ext3, Ext4,
 				 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,

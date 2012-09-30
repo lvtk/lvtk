@@ -147,22 +147,29 @@ namespace lvtk {
 	@param ports The number of ports in this plugin.
     */
     Plugin(uint32_t ports)
-      : m_ports(ports, 0),
-        m_ok(true) {
-      m_features = s_features;
-      m_bundle_path = s_bundle_path;
-      s_features = 0;
-      s_bundle_path = 0;
-      if (m_features) {
-	feature_handler_map hmap;
-	Derived::map_feature_handlers(hmap);
-	for (const feature* const* iter = m_features; *iter != 0; ++iter) {
-	  feature_handler_map::iterator miter;
-	  miter = hmap.find((*iter)->URI);
-	  if (miter != hmap.end())
-	    miter->second(static_cast<Derived*>(this), (*iter)->data);
-	}
-      }
+      : m_ports(ports, 0), m_ok(true)
+    {
+		m_features = s_features;
+		m_bundle_path = s_bundle_path;
+		s_features = 0;
+		s_bundle_path = 0;
+
+		if (m_features)
+		{
+			feature_handler_map hmap;
+			Derived::map_feature_handlers (hmap);
+
+			for (const Feature* const* iter = m_features; *iter != 0; ++iter)
+			{
+			  feature_handler_map::iterator miter;
+			  miter = hmap.find((*iter)->URI);
+
+			  if (miter != hmap.end())
+			  {
+				  miter->second(static_cast<Derived*>(this), (*iter)->data);
+			  }
+			}
+		}
     }
     
     /** Connects the ports. You shouldn't have to override this, just use
@@ -213,7 +220,9 @@ unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
 	The return value is not important, it's just there so you can use that
 	trick.
     */
-    static unsigned register_class(const char* uri) {
+    static unsigned
+    register_class(const char* uri)
+    {
       LV2_Descriptor desc;
       std::memset(&desc, 0, sizeof(LV2_Descriptor));
       desc.URI = strdup (uri);
@@ -336,7 +345,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
     static LV2_Handle _create_plugin_instance(const LV2_Descriptor* descriptor,
 					      double sample_rate,
 					      const char* bundle_path,
-					      const feature* const*
+					      const LV2_Feature* const*
 					      features) {
 
       // copy some data to static variables so the subclasses don't have to
@@ -348,7 +357,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 	std::clog<<"[plugin] Instantiating plugin...\n"
 		 <<"  Bundle path: "<<bundle_path<<"\n"
 		 <<"  features: \n";
-	for (feature const* const* f = features; *f != 0; ++f)
+	for (Feature const* const* f = features; *f != 0; ++f)
 	  std::clog<<"    "<<(*f)->URI<<"\n";
 	
 	std::clog<<"  Creating plugin object...\n";
@@ -389,7 +398,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 	The feature array passed to this plugin instance. May not be valid
 	after the constructor has returned.
     */
-    feature const* const* m_features;
+    Feature const* const* m_features;
     
     /** @internal
 	The bundle path passed to this plugin instance. May not be valid
@@ -401,7 +410,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 	Used to pass the feature array to the plugin without having to pass
 	it through the constructor of the plugin class.
     */
-    static feature const* const* s_features;
+    static Feature const* const* s_features;
 
     /** @internal
 	Used to pass the bundle path to the plugin without having to pass
@@ -422,7 +431,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
   // The static variables need to be initialised. 
   template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
 	   class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-  feature const* const*
+  Feature const* const*
   Plugin<Derived, Ext1, Ext2, Ext3, Ext4,
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_features = 0;
   

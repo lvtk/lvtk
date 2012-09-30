@@ -2,7 +2,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 
-<http://daps-project.org/plugins/silence>
+<http://lvtoolkit.org/plugins/silence>
 	a lv2:Plugin ;
 	lv2:binary <silence@LIB_EXT@> ;
 	rdfs:seeAlso <silence.ttl> .
