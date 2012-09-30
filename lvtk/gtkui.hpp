@@ -113,7 +113,7 @@ protected:
   template<class Derived, class Ext1 = end, class Ext2 = end, class Ext3 = end,
            class Ext4 = end, class Ext5 = end, class Ext6 = end,
 	   class Ext7 = end, class Ext8 = end, class Ext9 = end>
-  class GUI : public Gtk::HBox, public mixin_tree<Derived,
+  class GUI : public Gtk::HBox, public MixinTree<Derived,
 						 Ext1, Ext2, Ext3, Ext4, 
 						 Ext5, Ext6, Ext7, Ext8, Ext9> {
   public:

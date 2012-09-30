@@ -19,12 +19,9 @@
 */
 /**
    @file data_access.hpp
-   C++ convenience header for the LV2 data access extension.
-   LV2 C Version Support: 1.6 (2012-04-17)
+   C++ convenience header for the LV2 resize_port extension.
 
-   This mixin implements the LV2_Extension_Data_Feature.  It provides
-   access to LV2_Descriptor::extension_data() for plugin UIs or other
-   potentially remote users of a plugin via a data_access() method.
+   This mixin implements the resize port extension.
 */
 
 #ifndef LVTK_LV2_RESIZE_PORT_HPP
@@ -42,7 +39,7 @@ namespace lvtk {
 		RESIZE_PORT_SUCCESS      = LV2_RESIZE_PORT_SUCCESS,		/**< Completed successfully. */
 		RESIZE_PORT_ERR_UNKNOWN  = LV2_RESIZE_PORT_ERR_UNKNOWN, /**< Unknown Error */
 		RESIZE_PORT_ERR_NO_SPACE = LV2_RESIZE_PORT_ERR_NO_SPACE /**< Insufficient space */
-	} resize_port_status_t;
+	} ResizePortStatus;
 
    /**
       The Resize Port Mixin
@@ -106,7 +103,7 @@ namespace lvtk {
 		   Plugins MAY resize a port many times in a single run callback.  Hosts
 		   SHOULD make this as inexpensive as possible.
 		*/
-		resize_port_status_t
+		ResizePortStatus
 		resize (uint32_t index, size_t size)
 		{
 			if (NULL == p_resize_port_resize)
@@ -117,7 +114,7 @@ namespace lvtk {
 			LV2_Resize_Port_Feature_Data data =
 								p_resize_port_resize->data;
 
-			return (resize_port_status_t)
+			return (ResizePortStatus)
 					p_resize_port_resize->resize(data, index, size);
 		}
 

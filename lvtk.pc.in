@@ -3,9 +3,9 @@ exec_prefix=@EXEC_PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: DAPS Support Library
-Version: @DAPS_VERSION@
-Description: Digital Audio Plugins Streamlined (library)
-Requires: @DAPS_PKG_DEPS@
+Name: lvtk
+Version: @LVTK_VERSION@
+Description: LV2 Toolkit Support Library
+Requires: @LVTK_PKG_DEPS@
 Libs: -L${libdir} -l@THELIB@
-Cflags: -I${includedir}/daps-@DAPS_MAJOR_VERSION@
+Cflags: -I${includedir}/lvtk-@DAPS_MAJOR_VERSION@

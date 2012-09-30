@@ -34,7 +34,7 @@
 /** TODO: Put macros somewhere else that make sense */
 #define LVTK_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
 #define LVTK_MIXIN_CLASS      template <bool Required = true> struct
-#define LVTK_MIXIN_DERIVED    template <class Derived> struct I : extension<Required>
+#define LVTK_MIXIN_DERIVED    template <class Derived> struct I : Extension<Required>
 
 namespace lvtk {
    /** Convenience typedef */
@@ -54,7 +54,7 @@ namespace lvtk {
   
    /** @internal
       This class is used to terminate the recursive inheritance trees
-      created by mixin_tree. */
+      created by MixinTree. */
    struct end {
     typedef empty C;
    };
@@ -78,23 +78,23 @@ namespace lvtk {
 	    class E7 = end,
 	    class E8 = end,
 	    class E9 = end>
-  struct mixin_tree
-    : E1::template I<A>, mixin_tree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
+  struct MixinTree
+    : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
     
-    typedef mixin_tree<A, E2, E3, E4, E5, E6, E7, E8, E9> parent;
+    typedef MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> Parent;
     
     /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
     static void
     map_feature_handlers(feature_handler_map& hmap) {
       E1::template I<A>::map_feature_handlers(hmap);
-      parent::map_feature_handlers(hmap);
+      Parent::map_feature_handlers(hmap);
     }
     
     /** Check if the features are OK with the plugin initialisation. */
     bool
     check_ok() {
-      return E1::template I<A>::check_ok() && parent::check_ok();
+      return E1::template I<A>::check_ok() && Parent::check_ok();
     }
     
     /** Return any extension data. */
@@ -103,7 +103,7 @@ namespace lvtk {
       const void* result = E1::template I<A>::extension_data(uri);
       if (result)
 	return result;
-      return parent::extension_data(uri);
+      return Parent::extension_data(uri);
     }
     
   };
@@ -113,7 +113,7 @@ namespace lvtk {
       This is a specialisation of the inheritance tree template that terminates
       the recursion. */
   template <class A>
-  struct mixin_tree<A, end, end, end, end, end, end, end, end, end> {
+  struct MixinTree<A, end, end, end, end, end, end, end, end, end> {
     static void map_feature_handlers(feature_handler_map& hmap) { }
     bool check_ok() const { return true; }
     static const void* extension_data(const char* uri) { return 0; }
@@ -125,11 +125,11 @@ namespace lvtk {
       inherit from this class, but it's convenient.
   */
   template <bool Required>
-  struct extension {
+  struct Extension {
     
     /** @internal 
      */
-    extension() : m_ok(!Required) { }
+    Extension() : m_ok(!Required) { }
     
     /** @internal
 	Default implementation does nothing - no handlers added. 

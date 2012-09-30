@@ -8,4 +8,4 @@ Version: @VERSION@
 Description: LV2 Toolkit Plugin Library
 Requires: @LVTK_PKG_DEPS@
 Libs: -L${libdir} -l@THELIB@
-Cflags: -I${includedir}/daps-@LVTK_MAJOR_VERSION@
+Cflags: -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@

@@ -135,7 +135,7 @@ namespace lvtk {
 	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
 	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
 	    class Ext7 = end, class Ext8 = end, class Ext9 = end>
-  class Plugin : public mixin_tree<Derived,
+  class Plugin : public MixinTree<Derived,
 				  Ext1, Ext2, Ext3, Ext4, Ext5, 
 				  Ext6, Ext7, Ext8, Ext9> {
   public:
@@ -247,7 +247,7 @@ unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
 	calls to any inherited @ref pluginmixins "mixins".
      */
     bool check_ok() {
-      return m_ok && mixin_tree<Derived,
+      return m_ok && MixinTree<Derived,
 	                        Ext1, Ext2, Ext3, Ext4, Ext5,
 	                        Ext6, Ext7, Ext8, Ext9>::check_ok();
     }

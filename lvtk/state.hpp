@@ -37,7 +37,7 @@ namespace lvtk {
          of memory.  It is safe to copy POD values with a simple memcpy and store
          them for the duration of the process.  A POD value is not necessarily
          safe to trasmit between processes or machines (e.g. filenames are POD),
-         see LV2_STATE_IS_PORTABLE for details.
+         see STATE_IS_PORTABLE for details.
 
          Implementations MUST NOT attempt to copy or serialise a non-POD value if
          they do not understand its type (and thus know how to correctly do so).
@@ -66,7 +66,7 @@ namespace lvtk {
          and portability.
       */
       STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
-   } state_flags_t;
+   } StateFlags;
 
    typedef enum {
       STATE_SUCCESS         = LV2_STATE_SUCCESS,          /**< Completed successfully. */
