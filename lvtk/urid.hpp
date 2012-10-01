@@ -29,6 +29,7 @@ namespace lvtk {
 
    /**
       The URID Mixin.
+      @headerfile lvtk/urid.hpp
       @class lvtk::URID
       @ingroup pluginmixins
    */

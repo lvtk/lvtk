@@ -30,9 +30,8 @@ LVTK_EXTRA_VERSION=""
 APPNAME = 'lvtk'
 VERSION = LVTK_VERSION + LVTK_EXTRA_VERSION
 
-LIB_LVTK        = APPNAME+"-plugin"+LVTK_MAJOR_VERSION
-LIB_LVTK_PLUGIN = LIB_LVTK # TODO: really separate this
-LIB_LVTK_GTKUI  = APPNAME+"-gtkui"+LVTK_MAJOR_VERSION
+LIB_LVTK        = APPNAME + LVTK_MAJOR_VERSION
+LIB_LVTKUI      = APPNAME + "ui" + LVTK_MAJOR_VERSION
 
 # Required by waf
 top = '.'
@@ -83,8 +82,7 @@ def configure(conf):
 	conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
 	conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
 	conf.env.LIB_LVTK           = LIB_LVTK
-	conf.env.LIB_LVTK_PLUGIN    = LIB_LVTK_PLUGIN
-	conf.env.LIB_LVTK_GTKUI     = LIB_LVTK_GTKUI
+	conf.env.LIB_LVTKUI         = LIB_LVTKUI
 	conf.env.APPNAME	        = APPNAME
 	
 	autowaf.configure(conf)
@@ -97,19 +95,21 @@ def build(bld):
 		bld.recurse(subdir)
 		bld.add_group()
 	
+	pcvers = LVTK_MAJOR_VERSION + "." + LVTK_MINOR_VERSION
+	
 	# Build PC Files
-	autowaf.build_pc(bld, 'LVTK-PLUGIN', LVTK_VERSION, LVTK_MAJOR_VERSION, [],
+	autowaf.build_pc(bld, 'LVTK', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
 						'THELIB'		       : LIB_LVTK,
 						'LVTK_PKG_DEPS'       : 'lv2'})
 						
 	if not bld.env.UI_DISABLED:
-		autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, LVTK_MAJOR_VERSION, [],
+		autowaf.build_pc(bld, 'LVTKUI', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
-						'THELIB'		       : LIB_LVTK_GTKUI,
-						'LVTK_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
+						'THELIB'		       : LIB_LVTKUI,
+						'LVTK_PKG_DEPS'       : 'lv2'})
 	bld.add_group()	
 	
 	# Install Static Libraries
@@ -121,7 +121,7 @@ def build(bld):
 	
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
-				+ APPNAME + "-" + LVTK_MAJOR_VERSION
+				+ APPNAME + "-" + pcvers
 	bld.install_files(header_base, "build/version.hpp")
 	bld.install_files(header_base+"/lvtk", \
 					  bld.path.ant_glob("lvtk/*.*"))

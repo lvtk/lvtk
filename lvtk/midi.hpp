@@ -28,6 +28,7 @@
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
 #include <lvtk/types.hpp>
+#include <lvtk/event.hpp>
 
 namespace lvtk {
 

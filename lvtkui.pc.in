@@ -3,9 +3,9 @@ exec_prefix=@EXEC_PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: lvtk-plugin
+Name: lvtkui
 Version: @VERSION@
-Description: LV2 Toolkit Plugin Library
+Description: LV2 Toolkit UI Library
 Requires: @LVTK_PKG_DEPS@
 Libs: -L${libdir} -l@THELIB@
-Cflags: -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@
+Cflags: -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@.0

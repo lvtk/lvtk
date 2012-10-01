@@ -30,9 +30,9 @@
 
 #include <lvtk/plugin.hpp>
 #include <lvtk/log.hpp>
-#include <lvtk/state.hpp>
 #include <lvtk/urid.hpp>
 
+/** This is a ttl2c generated header */
 #include "workhorse.h"
 
 using namespace lvtk;
@@ -46,19 +46,34 @@ class workhorse : public Plugin<workhorse, MIXINS >
 
     workhorse (double rate)
     : Plugin<workhorse, MIXINS > (3)
+    , m_sleeping (false)
     {
-    	msgType = map("http://lvtoolkit.org/plugins/workhorse#logger");
+    	msgType = map(LV2_LOG__Entry);
     }
 
     void
     run(uint32_t nframes)
     {
-    	/** Arbitrary message. Normally you'd want to send
+        /** Arbitrary message. Normally you'd want to send
     	    an LV2 Atom of sorts for scheduling */
        const char* msg = "go to sleep";
 
-       /** Schedule a job with msg as the data */
-       this->schedule_work(strlen(msg), (void*)msg);
+       if (!m_sleeping)
+       {
+		   /** Schedule a job with msg as the data */
+		   WorkerStatus status = schedule_work (strlen(msg), (void*)msg);
+
+		   switch (status)
+		   {
+			   case WORKER_SUCCESS:
+				   printf (msgType,"[worker] scheduled a job\n");
+				   break;
+			   default:
+				   printf (msgType,"[worker] unknown scheduling error\n");
+				   break;
+
+		   }
+       }
     }
 
    /* ============================= Worker ============================ */
@@ -72,7 +87,7 @@ class workhorse : public Plugin<workhorse, MIXINS >
     work_response (uint32_t size, const void* body)
     {
     	/** Print message with LV2 Log */
-        printf (msgType, "[workhorse] woke up. message was : %s\n", (char*)body);
+        printf (msgType, "[workhorse] woke up. message: %s\n", (char*)body);
 
         return WORKER_SUCCESS;
     }
@@ -88,7 +103,9 @@ class workhorse : public Plugin<workhorse, MIXINS >
     {
     	/** Print message with LV2 Log's printf */
         printf (msgType, "[workhorse] taking a nap now\n");
+        m_sleeping = true;
         sleep (3);
+        m_sleeping = false;
 
         /** Send a response */
         respond (size, data);
@@ -98,9 +115,12 @@ class workhorse : public Plugin<workhorse, MIXINS >
 
    private:
 
+    bool m_sleeping;
+
     /** This is used for LV2 Log demonstration */
     LV2_URID msgType;
 
 };
 
-static int _ = workhorse::register_class ("http://lvtoolkit.org/plugins/workhorse");
+static int _ = workhorse::register_class (p_uri);
+

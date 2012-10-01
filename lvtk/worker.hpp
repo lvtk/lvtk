@@ -40,7 +40,7 @@ namespace lvtk {
        and exeucutes via operator ()
     */
    struct WorkerRespond {
-      WorkerRespond(lvtk::handle instance,
+      WorkerRespond(LV2_Handle instance,
                      LV2_Worker_Respond_Function wrfunc,
                      LV2_Worker_Respond_Handle handle)
       : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
@@ -63,7 +63,7 @@ namespace lvtk {
    };
 
    /** The LV2 Worker Feature Mixin
-       @class lvtk::Worker
+       @struct lvtk::Worker lvtk/worker.hpp
        @ingroup pluginmixins
    */
    LVTK_MIXIN_CLASS Worker {
@@ -94,7 +94,7 @@ namespace lvtk {
          check_ok()
          {
             if (LVTK_DEBUG) {
-              std::clog<<"    [worker] validation "
+              std::clog<<"    [LV2::Worker] validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;

@@ -54,7 +54,10 @@ def create_task_lv2plugin(self):
 	
 	out = self.link_task.outputs[0]
     
-	name = bundle_name_for_output(out)
+	''' If lv2_target is set the value there will be used for the
+	bundle name '''
+	name = getattr(self, 'lv2_target', bundle_name_for_output(out))
+
 	dir = self.create_bundle_dirs(name, out)
 	plugin = dir.find_or_declare([out.name])
 	

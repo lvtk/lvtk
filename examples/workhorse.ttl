@@ -18,6 +18,7 @@
 @prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 @prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
@@ -33,6 +34,7 @@
 	lv2:extensionData state:interface ,
 		work:interface ;
 	ll:pegName "p" ;
+	ui:ui <http://lvtoolkit.org/plugins/workhorse#ui> ;
 	lv2:port [
 		a lv2:InputPort ,
 			atom:AtomPort ;
@@ -56,4 +58,13 @@
 		lv2:index 2 ;
 		lv2:symbol "out" ;
 		lv2:name "Out"
+	] .
+
+<http://lvtoolkit.org/plugins/workhorse#ui>
+	a ui:GtkUI ;
+	lv2:requiredFeature urid:map ;
+	ui:portNotification [
+		ui:plugin <http://lvtoolkit.org/plugins/workhorse> ;
+		lv2:symbol "notify" ;
+		ui:notifyType atom:Blank
 	] .

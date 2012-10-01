@@ -6,3 +6,8 @@
 	a lv2:Plugin ;
 	lv2:binary <workhorse@LIB_EXT@> ;
 	rdfs:seeAlso <workhorse.ttl> .
+
+<http://lvtoolkit.org/plugins/workhorse#ui>
+	a ui:GtkUI ;
+	ui:binary <workhorse_ui@LIB_EXT@> ;
+	rdfs:seeAlso <workhorse.ttl> .

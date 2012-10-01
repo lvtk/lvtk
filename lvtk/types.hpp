@@ -22,6 +22,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
 ****************************************************************************/
+/** @headerfile lvtk/types.hpp */
 
 #ifndef LVTK_LV2_TYPES_HPP
 #define LVTK_LV2_TYPES_HPP
@@ -33,15 +34,20 @@
 
 /** TODO: Put macros somewhere else that make sense */
 #define LVTK_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
+
+/** Macro to prefix a mixin with */
 #define LVTK_MIXIN_CLASS      template <bool Required = true> struct
+
+/** Macro to prefix a mixin's internal struct "I" */
 #define LVTK_MIXIN_DERIVED    template <class Derived> struct I : Extension<Required>
 
+/** @namespace lvtk */
 namespace lvtk {
    /** Convenience typedef */
-   typedef LV2_Handle handle;
+   typedef LV2_Handle Handle;
 }
 
-/** Tricky include, for the moment this needs ensured to be included
+/** @internal tricky include, for the moment this needs ensured to be included
  * after LV2_Handle's typdedef
  */
 #include <lvtk/feature.hpp>

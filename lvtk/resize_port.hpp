@@ -43,7 +43,8 @@ namespace lvtk {
 
    /**
       The Resize Port Mixin
-      @class lvtk::ResizePort
+      @struct lvtk::ResizePort lvtk/resize_port.hpp
+      @struct lvtk::ResizePort::I<Derived>
       @ingroup pluginmixins
    */
    LVTK_MIXIN_CLASS ResizePort {
@@ -64,7 +65,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature (lvtk::handle instance, feature_data data)
+         handle_feature (LV2_Handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
@@ -93,8 +94,8 @@ namespace lvtk {
 		   Resize a port buffer to at least @a size bytes.
 
 		   This function MAY return an error, in which case the port buffer
-		   was not resized and the port is still connected to the same location.  Plugins
-		   MUST gracefully handle this situation.
+		   was not resized and the port is still connected to the same location.
+		   Plugins MUST gracefully handle this situation.
 
 		   This function is in the audio threading class.
 

@@ -43,6 +43,7 @@ namespace lvtk {
 
    /** The URI map mixin. This can be used by both plugins and GUIs.
        @class lvtk::URIMap
+       @headerfile lvtk/urimap.hpp
        @ingroup pluginmixins
        @ingroup guimixins
    */
@@ -54,7 +55,7 @@ namespace lvtk {
        /** @internal */
        static void
        map_feature_handlers(feature_handler_map& hmap) {
-         hmap[LVTK_URI_MAP_URI] = &I<Derived>::handle_feature;
+         hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
        }
 
        /** @internal */
@@ -62,7 +63,7 @@ namespace lvtk {
        handle_feature(void* instance, void* data) {
          Derived* d = reinterpret_cast<Derived*>(instance);
          I<Derived>* fe = static_cast<I<Derived>*>(d);
-         LVTK_URI_Map_Feature* umf = reinterpret_cast<LVTK_URI_Map_Feature*>(data);
+         LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
          fe->m_callback_data = umf->callback_data;
          fe->m_func = umf->uri_to_id;
          fe->m_ok = (fe->m_func != 0);
@@ -96,8 +97,8 @@ namespace lvtk {
          return m_func(m_callback_data, map, uri);
        }
 
-       LVTK_URI_Map_Callback_Data m_callback_data;
-       uint32_t (*m_func)(LVTK_URI_Map_Callback_Data, const char*, const char*);
+       LV2_URI_Map_Callback_Data m_callback_data;
+       uint32_t (*m_func)(LV2_URI_Map_Callback_Data, const char*, const char*);
 
      };
 

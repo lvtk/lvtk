@@ -13,7 +13,7 @@ file COPYING for more details. '''
 pkg=bld.env.APPNAME
 
 plugin_code = bld.path.ant_glob("*plugin*.cpp")
-gtkui_code  = bld.path.ant_glob("*gtkui*.cpp")
+gtkui_code  = bld.path.ant_glob("ui.cpp")
 
 # Build the support library - Not Available yet
 
@@ -22,8 +22,8 @@ bld.stlib(
 	source   = plugin_code,
 	includes = ["../lvtk", "include"],
 	cxxflags = ["-fPIC"],
-	target   = bld.env.LIB_LVTK_PLUGIN,
-	name     = bld.env.LIB_LVTK_PLUGIN
+	target   = bld.env.LIB_LVTK,
+	name     = bld.env.LIB_LVTK
 )
 
 # Build the GtkUI library
@@ -32,7 +32,6 @@ if not bld.env.UI_DISABLED:
 		source   = gtkui_code,
 		includes = ["../lvtk", "include"],
 		cxxflags = ["-fPIC"],
-		target   = bld.env.LIB_LVTK_GTKUI,
-		name     = bld.env.LIB_LVTK_GTKUI,
-		use      = "gtkmm"
+		target   = bld.env.LIB_LVTKUI,
+		name     = bld.env.LIB_LVTKUI,
 	)
