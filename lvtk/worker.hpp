@@ -66,17 +66,21 @@ namespace lvtk {
        @struct lvtk::Worker lvtk/worker.hpp
        @ingroup pluginmixins
    */
-   LVTK_MIXIN_CLASS Worker {
-      LVTK_MIXIN_DERIVED {
+   template <bool Required = true>
+   struct Worker
+   {
+	   template <class Derived>
+	   struct I : Extension<Required>
+	   {
 
-         /** @internal */
+         /** @skip */
          static void
          map_feature_handlers(feature_handler_map& hmap)
          {
             hmap[LV2_WORKER__schedule] = &I<Derived>::handle_feature;
          }
 
-         /** @internal */
+         /** @skip */
          static void
          handle_feature(void* instance, FeatureData data)
          {
@@ -89,7 +93,7 @@ namespace lvtk {
             fe->m_ok = true;
          }
 
-         /** @internal */
+         /** Sanity check the mixin */
          bool
          check_ok()
          {
@@ -100,7 +104,7 @@ namespace lvtk {
             return this->m_ok;
          }
 
-         /** @internal */
+         /** @skip */
          static const void*
          extension_data (const char* uri)
          {

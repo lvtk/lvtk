@@ -30,54 +30,57 @@ namespace lvtk {
    /**
       The URID Mixin.
       @headerfile lvtk/urid.hpp
-      @class lvtk::URID
       @ingroup pluginmixins
+      @ingroup guimixins
+      @see The internal struct I for details.
    */
-   LVTK_MIXIN_CLASS URID {
-     LVTK_MIXIN_DERIVED {
-     
-         I() : p_unmap(NULL), p_map(NULL) { }
+	template <bool Required = true>
+	struct URID
+	{
+		template <class Derived>
+		struct I : Extension<Required>
+		{
+			I() : p_unmap(NULL), p_map(NULL) { }
 
-         /** @internal */
-         static void
-         map_feature_handlers(feature_handler_map& hmap)
-         {
-            hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
-            hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
-         }
+			/** @internal */
+			static void
+			map_feature_handlers(feature_handler_map& hmap)
+			{
+				hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
+				hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
+			}
 
-         /** @internal */
-         static void
-         handle_map_feature(void* instance, void* data)
-         {
-            Derived* d = reinterpret_cast<Derived*>(instance);
-            I<Derived>* mixin = static_cast<I<Derived>*>(d);
+			/** @internal */
+			static void
+			handle_map_feature(void* instance, void* data)
+			{
+				Derived* d = reinterpret_cast<Derived*>(instance);
+				I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
-            mixin->p_map = reinterpret_cast<LV2_URID_Map*>(data);
-            mixin->m_ok = true;
-         }
+				mixin->p_map = reinterpret_cast<LV2_URID_Map*>(data);
+				mixin->m_ok = true;
+			}
 
-         /** @internal */
-         static void
-         handle_unmap_feature(void* instance, void* data)
-         {
-            Derived* d = reinterpret_cast<Derived*>(instance);
-            I<Derived>* mixin = static_cast<I<Derived>*>(d);
+			/** @internal */
+			static void
+			handle_unmap_feature(void* instance, void* data)
+			{
+				Derived* d = reinterpret_cast<Derived*>(instance);
+				I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
-            mixin->p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
-            mixin->m_ok = true;
-         }
+				mixin->p_unmap = reinterpret_cast<LV2_URID_Unmap*> (data);
+				mixin->m_ok = true;
+			}
 
 
-         bool
-         check_ok()
-         {
-            if (LVTK_DEBUG) {
-              std::clog<<"    [LV2::URID] Validation "
-                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-            }
-            return this->m_ok;
-         }
+			bool check_ok()
+			{
+				if (LVTK_DEBUG) {
+				  std::clog<<"    [LV2::URID] Validation "
+						   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+				}
+				return this->m_ok;
+			}
 
      protected:
 

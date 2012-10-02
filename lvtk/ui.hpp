@@ -30,6 +30,8 @@
 #include <iostream>
 #include <map>
 
+#include <gtkmm.h>
+
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
 #include <lvtk/types.hpp>
@@ -40,66 +42,41 @@
 namespace lvtk {
 
 
-  /** Cast any pointer into an LV2_Widget */
-  #define widget_cast(w) reinterpret_cast<LV2UI_Widget*> (w)
-  
-  /** @internal
-      A convenient typedef that is only used internally. */
-  typedef std::vector<LV2UI_Descriptor*> UIDescList;
+	/** Cast any pointer into an LV2_Widget */
+	#define widget_cast(w) reinterpret_cast<LV2UI_Widget*> (w)
+
+
+	/** @internal A convenient typedef that is only used internally. */
+	typedef std::vector<LV2UI_Descriptor*> UIDescList;
     
   
-  /** @internal
-      This function returns the list of LV2 descriptors. It should only be 
-      used internally. */
-  UIDescList& get_lv2g2g_descriptors();
+	/** @internal
+	    This function returns the list of LV2 descriptors. It should only be
+	    used internally. */
+	UIDescList& get_lv2g2g_descriptors();
   
-  
-  /** @defgroup guimixins UI mixins
+
+
+  /** @defgroup guimixins UI Mixins
+
       These classes implement extra functionality that you may want to have
       in your UI class, just like the @ref pluginmixins "plugin mixins" do
       for plugin classes. Some of them are template classes with a boolean
       @c Required parameter - if this is true the UI will fail to instantiate
       unless the host supports the extension implemented by that mixin.
-      For example, if you wanted a UI that wrote a MIDI Note On event to port
-      3 in the plugin whenever the user clicked a button, you could do it like
-      this:
-
-      @code
-#include <lvtk/gtkui.hpp>
-#include <gtkmm.h>
-
-using namespace lvtk;
-
-class MyUI : public UI<MyUI, URID<true> > {
-public:
-  MyUI(const char* plugin_uri)
-    : m_button("Click me!") {
-    pack_start(m_button);
-    m_button.signal_clicked().connect(sigc::mem_fun(*this, &MyUI::send_event));
-  }
-protected:
-  void send_event() {
-    uint8_t noteon[] = { 0x90, 0x50, 0x40 };
-    //write_midi(3, 3, noteon);
-  }
-  Gtk::Button m_button;
-};
-      @endcode
-
-      The function @c write_midi() is implemented in lvtk::WriteMIDI and thus
-      available in @c MyUI. lvtk::WriteMIDI requires that lvtk::URID is also
-      used (because of the way event types work in LV2) - if you don't add
-      URID as well you will get a compilation error.
   */
+
+  /** @defgroup toolkitmixins Toolkit Mixins
+      These classes implement the UI's @c widget() method for a given
+      GUI toolkit. For example, the GtkUI mixin auto-creates a base
+      container (Gtk::VBox) and returns it via @ widget(). See
+      the @ref guimixins "ui mixins" section for other UI extensions
+   */
 
   /** This is the base class for a plugin UI. You should inherit it and
       override any public member functions you want to provide 
       implementations for. All subclasses must have a constructor with 
       the signature
-      
-      @code
-      MyUI(char const* plugin_uri);
-      @endcode
       
       where @c plugin_uri is the URI of the plugin that this UI will
       control (not the URI for the UI itself).
@@ -148,11 +125,19 @@ protected:
     
     /** Override this if you want your UI to do something when a control port
 	value changes in the plugin instance. */
-    inline void port_event(uint32_t port, uint32_t buffer_size, 
+    inline void
+    port_event(uint32_t port, uint32_t buffer_size,
 			   uint32_t format, void const* buffer) { }
     
-    /** Use this template function to register a class as a LV2 UI. */
-    static int register_class(char const* uri) {
+    /**
+       Use this template function to register a class as a LV2 UI.
+
+       @param uri The UIs URI
+       @return Descriptor index
+    */
+    static int
+    register_class(char const* uri)
+    {
       LV2UI_Descriptor* desc = new LV2UI_Descriptor;
       std::memset(desc, 0, sizeof(LV2UI_Descriptor));
       desc->URI = strdup(uri);
@@ -180,8 +165,10 @@ protected:
       write(port, sizeof(float), 0, &value);
     }
     
-    /** Get the feature array that was passed by the host. This may only
-	be valid while the constructor is running. */
+    /** Get the feature array
+        @return The host-passed Feature array
+        @remarks This may only be valid while the constructor
+        is running. */
     inline Feature const* const* features() {
       return m_features;
     }
@@ -192,14 +179,17 @@ protected:
     }
     
   public:
-    /** Get the controller - a handle on the plugin instance this UI
-	is controlling. You only need it if you want to handle extensions
-	yourself. */
-    inline void* controller() {
+    /**
+        Get the controller
+        @return Instance this UI is controlling
+		@remarks You only need it if you want to handle extensions
+		yourself.
+	*/
+    inline void* controller()
+    {
       return m_ctrl;
     }
-    
-    
+
   private:
     
     // This is quite ugly but needed to allow these mixins to call 
@@ -216,24 +206,24 @@ protected:
 	This function creates an instance of a plugin UI. It is used
 	as the instantiate() callback in the LV2 descriptor. You should not use
 	it directly. */
-    static LV2UI_Handle create_ui_instance (LV2UI_Descriptor const*
-					   descriptor,
-					   char const* plugin_uri,
-					   char const* bundle_path,
-					   LV2UI_Write_Function write_func,
-					   LV2UI_Controller ctrl,
-					   LV2UI_Widget* widget,
-					   LV2_Feature const* const* features) {
-      
-      // copy some data to static variables so the subclasses don't have to
-      // bother with it - this is threadsafe since hosts are not allowed
-      // to instantiate the same plugin concurrently
+    static LV2UI_Handle
+    create_ui_instance (LV2UI_Descriptor const* descriptor,
+					    char const* plugin_uri,
+					    char const* bundle_path,
+					    LV2UI_Write_Function write_func,
+					    LV2UI_Controller ctrl,
+					    LV2UI_Widget* widget,
+					    LV2_Feature const* const* features)
+    {
+      /** Copy some data to static variables so the subclasses don't have to
+          bother with it - this is threadsafe since hosts are not allowed
+          to instantiate the same plugin concurrently */
       s_ctrl = ctrl;
       s_wfunc = write_func;
       s_features = features;
       s_bundle_path = bundle_path;
       
-      // write some debug information
+      /** Write some debug information */
       if (LVTK_DEBUG)
       {
 		std::clog<<"[LV2::UI] Creating UI...\n\n"
@@ -247,12 +237,11 @@ protected:
       
       // create the UI object
       if (LVTK_DEBUG) std::clog<<"  Creating LV2 Widget..."<<std::endl;
-
       Derived* ui = new Derived (plugin_uri);
-      *widget = ui->get_widget();
-      
+      *widget = ui->widget();
+
       /** Check all is OK */
-      if (ui->check_ok())
+      if (ui->check_ok() && *widget != NULL)
       {
     	  return reinterpret_cast<LV2UI_Handle> (ui);
       }

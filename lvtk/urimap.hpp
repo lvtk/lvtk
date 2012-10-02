@@ -41,41 +41,51 @@
 
 namespace lvtk {
 
-   /** The URI map mixin. This can be used by both plugins and GUIs.
-       @class lvtk::URIMap
-       @headerfile lvtk/urimap.hpp
-       @ingroup pluginmixins
-       @ingroup guimixins
-   */
-   LVTK_MIXIN_CLASS URIMap {
-     LVTK_MIXIN_DERIVED {
+	/** The URI map mixin. This can be used by both plugins and GUIs.
+	   @see The internal struct I for API details
+	   @headerfile lvtk/urimap.hpp
+	   @ingroup pluginmixins
+	   @ingroup guimixins
+	   @deprecated
+	*/
+	template <bool Required = true>
+	struct URIMap
+	{
+	   template <class Derived>
+	   struct I : Extension<Required>
+	   {
 
-        I() : m_callback_data(0), m_func(0) { }
+		   I() : m_callback_data(0), m_func(0) { }
 
-       /** @internal */
-       static void
-       map_feature_handlers(feature_handler_map& hmap) {
-         hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
-       }
+		   /** @skip */
+		   static void
+		   map_feature_handlers(feature_handler_map& hmap)
+		   {
+			 hmap[LV2_URI_MAP_URI] = &I<Derived>::handle_feature;
+		   }
 
-       /** @internal */
-       static void
-       handle_feature(void* instance, void* data) {
-         Derived* d = reinterpret_cast<Derived*>(instance);
-         I<Derived>* fe = static_cast<I<Derived>*>(d);
-         LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
-         fe->m_callback_data = umf->callback_data;
-         fe->m_func = umf->uri_to_id;
-         fe->m_ok = (fe->m_func != 0);
-       }
+		   /** @skip */
+		   static void
+		   handle_feature(void* instance, void* data)
+		   {
+			 Derived* d = reinterpret_cast<Derived*>(instance);
+			 I<Derived>* fe = static_cast<I<Derived>*>(d);
+			 LV2_URI_Map_Feature* umf = reinterpret_cast<LV2_URI_Map_Feature*>(data);
+			 fe->m_callback_data = umf->callback_data;
+			 fe->m_func = umf->uri_to_id;
+			 fe->m_ok = (fe->m_func != 0);
+		   }
 
-       bool check_ok() {
-         if (LVTK_DEBUG) {
-           std::clog<<"    [LV2::URIMap] Validation "
-                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-         }
-         return this->m_ok;
-       }
+		   /** Sanity check the mixin */
+		   bool check_ok()
+		   {
+			  if (LVTK_DEBUG) {
+			  std::clog<<"    [LV2::URIMap] Validation "
+			 		<<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+			  }
+
+			  return this->m_ok;
+		   }
 
      protected:
 

@@ -34,16 +34,20 @@ namespace lvtk {
 
    /** A mixin that allows easy sending of MIDI from GUI to plugin.
 
-       @class lvtk::WriteMIDI
+       @see The internal struct I for API details
        @ingroup guimixins
    */
-    LVTK_MIXIN_CLASS WriteMIDI {
+    template <bool Required = true>
+    struct WriteMIDI
+    {
 
      enum {
        EVENT_BUFFER_SIZE = 4
      };
 
-     LVTK_MIXIN_DERIVED {
+     template <class Derived>
+     struct I : Extension<Required>
+     {
 
         I() : m_midi_type(0) {
          m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE,

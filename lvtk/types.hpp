@@ -116,7 +116,7 @@ namespace lvtk {
 
 
   /** @internal
-      This is a specialisation of the inheritance tree template that terminates
+      This is a specialization of the inheritance tree template that terminates
       the recursion. */
   template <class A>
   struct MixinTree<A, end, end, end, end, end, end, end, end, end> {

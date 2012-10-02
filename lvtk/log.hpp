@@ -29,23 +29,27 @@ namespace lvtk {
 
    /**
       The Log Mixin
-      @class lvtk::Log
       @ingroup pluginmixins
+      @see The internal struct I for API details.
    */
 
-   LVTK_MIXIN_CLASS Log {
-     LVTK_MIXIN_DERIVED {
-     
+   template <bool Required = true>
+   struct Log
+   {
+	   template <class Derived>
+	   struct I : Extension<Required>
+	   {
+		 /** @skip */
          I() : p_log (NULL) { }
 
-         /** @internal */
+         /** @skip */
          static void
          map_feature_handlers(feature_handler_map& hmap)
          {
             hmap[LV2_LOG__log] = &I<Derived>::handle_feature;
          }
 
-         /** @internal */
+         /** @skip */
          static void
          handle_feature(void* instance, FeatureData data)
          {
@@ -56,6 +60,7 @@ namespace lvtk {
             mixin->m_ok = true;
          }
 
+         /** Sanity check the mixin */
          bool
          check_ok()
          {

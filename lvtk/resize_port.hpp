@@ -43,12 +43,15 @@ namespace lvtk {
 
    /**
       The Resize Port Mixin
-      @struct lvtk::ResizePort lvtk/resize_port.hpp
-      @struct lvtk::ResizePort::I<Derived>
+      @see The internal struct I for API details
       @ingroup pluginmixins
    */
-   LVTK_MIXIN_CLASS ResizePort {
-      LVTK_MIXIN_DERIVED {
+   template <bool Required = true>
+   struct ResizePort
+   {
+		template <class Derived>
+		struct I : Extension<Required>
+		{
 
          I() : p_resize_port_resize (NULL) { }
 

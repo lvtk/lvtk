@@ -39,13 +39,21 @@
 
 namespace lvtk {
 
-   /** The event ref/unref function, required for plugins with event ports.
+   /** The event ref/unref function, required for
+       plugins with event ports.
 
-       @class lvtk::EventRef
        @ingroup pluginmixins
+       @ingroup guimixins
+       @headerfile lvtk/event.hpp
+       @deprecated
+       @see The internal struct I for details
    */
-   LVTK_MIXIN_CLASS EventRef {
-      LVTK_MIXIN_DERIVED {
+   template <bool Required = true>
+   struct EventRef
+   {
+	   template <class Derived>
+	   struct I : Extension<Required>
+	   {
 
          typedef I<Derived> Mixin;
 

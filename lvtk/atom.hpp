@@ -34,6 +34,6 @@
 
 namespace lvtk {
 
-} /* namespace lvtk::lv2 */
+} /* namespace lvtk */
 
 #endif /* LVTK_LV2_ATOM_HPP */

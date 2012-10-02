@@ -36,14 +36,17 @@ namespace lvtk {
 
    /**
       The Instance Access Mixin
-      @class lvtk::InstanceAccess
       @ingroup guimixins
+      @see The internal struct I for details.
    */
-   LVTK_MIXIN_CLASS InstanceAccess {
-      LVTK_MIXIN_DERIVED {
+   template <bool Required = true>
+   struct InstanceAccess
+   {
+	   template <class Derived>
+	   struct I : Extension<Required>
+	   {
 
          I() : p_plugin_instance (NULL) { }
-
 
          /* ================= Mixin API ========================= */
 
@@ -56,12 +59,12 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature (lvtk::handle instance, feature_data data)
+         handle_feature (LV2UI_Handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
 
-            mixin->p_plugin_instance = reinterpret_cast<LV2_Handle*> (data);
+            mixin->p_plugin_instance = reinterpret_cast<LV2_Handle> (data);
          }
 
          bool
@@ -86,7 +89,7 @@ namespace lvtk {
          }
 
          /** @internal Feature Data passed from host */
-         LV2_Handle   *p_plugin_instance;
+         LV2_Handle   p_plugin_instance;
      };
    };
 

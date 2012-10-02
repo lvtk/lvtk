@@ -44,28 +44,44 @@
 
 /** @mainpage LV2 Toolkit
 
+	@section intro Introduction
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
     so you only have to write the parts that matter, and hide the low-level
     C API.
     
+    @subsection libs Libraries
     The classes are separated into two libraries. One, called liblvtk-plugin,
-    contains the classes plugin and Synth, defined in the files
+    contains the classes Plugin and Synth, defined in the files
     <lvtk/plugin.hpp> and <lvtk/synth.hpp>. They are base classes that you
     can inherit in order to create new LV2 plugins. The other library, called 
-    liblvtk-gtkui, contains the class GUI, defined in the file <lvtk/gtkui.hpp>
-    which you can use in a similar way to create new LV2 plugin GUIs.
+    liblvtk-ui, contains the class GUI, defined in the file <lvtk/ui.hpp>
+    which you can use in a similar way to create new LV2 plugin UIs.
+
+	@subsection pkgconfig Packages
+    Theere are a few included pkg-config packages to choose from when writing
+    a plugins and UIs.  Below is a list of all packages included and what they
+    are for.
+
+    - <b>lvtk-plugin</b> - Use when writing an LV2 plugin
+    - <b>lvtk-ui</b> - Use if NOT using a Toolkit Mixin
+    - <b>lvtk-gtkui</b> - Use if using a Toolkit Mixin
+
+    In summary, there is one package for a plugin and one for each
+    type of supported UI. Each UI package includes the same static library plus
+    dependencies of its cooresponding toolkit.
     
+    @subsection mixin Mixins
     For both the plugin and the GUI class there are other helper classes called
     @ref pluginmixins "mixins" that you can use to add extra functionality to 
     your plugins, for example support for LV2 extensions.
 
+	@subsection versioning Versioning
     These libraries are only available as static libraries (and most of the
     code is template classes in header files), thus ABI stability is not an 
     issue. The API will be stable between major version bumps, at which the
     pkg-config name would change to prevent plugins from building against an
-    incompatible version, but if you were to modify the build system to create
-    shared libraries and link against those you are on your own.
+    incompatible version.
     
     @author Lars Luthman <lars.luthman@gmail.com>
     @author Michael Fisher <mfisher31@gmail.com>
@@ -442,7 +458,8 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 	 Ext5, Ext6, Ext7, Ext8, Ext9>::s_bundle_path = 0;
 
   
-  /** @defgroup pluginmixins plugin mixins
+  /** @defgroup pluginmixins Plugin Mixins
+
       These template classes implement extra functionality that you may
       want to have in your plugin class, usually features. You add them
       to your class by passing them as template parameters to plugin

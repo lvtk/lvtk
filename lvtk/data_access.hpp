@@ -39,11 +39,21 @@ namespace lvtk {
 
    /**
       The Data Access Mixin
-      @class lvtk::DataAccess
+
+      @code
+      class Hi { Hi() {} };
+      @endcode
+
+      @see The internal struct I for API details
+      @headerfile lvtk/data_access.hpp
       @ingroup pluginmixins
    */
-   LVTK_MIXIN_CLASS DataAccess {
-      LVTK_MIXIN_DERIVED {
+   template <bool Required = true>
+   struct DataAccess
+   {
+	   template <class Derived>
+	   struct I : Extension<Required>
+	   {
 
          I() : p_da (NULL) { }
 
@@ -60,7 +70,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature (lvtk::handle instance, feature_data data)
+         handle_feature (LV2UI_Handle instance, feature_data data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
