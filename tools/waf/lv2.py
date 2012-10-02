@@ -41,6 +41,13 @@ def configure(conf):
 	conf.env['pluginlib_PATTERN'] = pat
 	conf.env['pluginlib_EXT']  = pat[pat.rfind('.'):]
 
+@taskgen_method
+def create_bundle_dir(self, name, out):
+        bld = self.bld
+        dir = out.parent.find_or_declare(name)
+        dir.mkdir()
+        return dir
+
 
 @feature('cshlib','cxxshlib')
 @before_method('apply_link')
@@ -64,7 +71,7 @@ def create_task_lv2plugin(self):
 	bundle name '''
 	name = getattr(self, 'lv2_target', bundle_name_for_output(out))
 
-	dir = self.create_bundle_dirs(name, out)
+	dir = self.create_bundle_dir(name, out)
 	plugin = dir.find_or_declare([out.name])
 	
 	self.apptask = self.create_task('lv2', self.link_task.outputs, plugin)
