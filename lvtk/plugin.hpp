@@ -50,33 +50,33 @@
     so you only have to write the parts that matter, and hide the low-level
     C API.
     
-    @subsection libs Libraries
+    <b>Libraries</b>
     The classes are separated into two libraries. One, called liblvtk-plugin,
     contains the classes Plugin and Synth, defined in the files
     <lvtk/plugin.hpp> and <lvtk/synth.hpp>. They are base classes that you
     can inherit in order to create new LV2 plugins. The other library, called 
-    liblvtk-ui, contains the class GUI, defined in the file <lvtk/ui.hpp>
+    liblvtk-ui, contains the class UI, defined in the file <lvtk/ui.hpp>
     which you can use in a similar way to create new LV2 plugin UIs.
 
-	@subsection pkgconfig Packages
-    Theere are a few included pkg-config packages to choose from when writing
+	<b>Packages</b>
+    There are a few included pkg-config packages to choose from when writing
     a plugins and UIs.  Below is a list of all packages included and what they
     are for.
 
     - <b>lvtk-plugin</b> - Use when writing an LV2 plugin
-    - <b>lvtk-ui</b> - Use if NOT using a Toolkit Mixin
-    - <b>lvtk-gtkui</b> - Use if using a Toolkit Mixin
+    - <b>lvtk-ui</b> - Use if NOT using a @ref toolkitmixins "Toolkit Mixin"
+    - <b>lvtk-gtkui</b> - Use if using a @ref toolkitmixins "Toolkit Mixin"
 
     In summary, there is one package for a plugin and one for each
     type of supported UI. Each UI package includes the same static library plus
     dependencies of its cooresponding toolkit.
     
-    @subsection mixin Mixins
+    <b>Mixins</b>
     For both the plugin and the GUI class there are other helper classes called
     @ref pluginmixins "mixins" that you can use to add extra functionality to 
     your plugins, for example support for LV2 extensions.
 
-	@subsection versioning Versioning
+	<b>Versioning</b>
     These libraries are only available as static libraries (and most of the
     code is template classes in header files), thus ABI stability is not an 
     issue. The API will be stable between major version bumps, at which the
@@ -478,18 +478,21 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
       They are done as separate template classes so they won't add to the
       code size of your plugin if you don't need them. 
       
-      There are also @ref guimixins "UI mixins" that you can use in the same
+      There are also @ref guimixins "UI Mixins" that you can use in the same
       way with GUI.
   */
   
+  /** @example workhorse.cpp
+      @example workhorse_ui.cpp
+      @example silence.cpp
+      @example silence_ui.cpp */
+
 } /* namespace lvtk */
+
 
 /* ======== Doxygen ======== */
 
-/** @example workhorse.cpp */
-/** @example workhorse_ui.cpp */
-/** @example silence.cpp */
-/** @example silence_ui.cpp */
+
 
 
 #endif /* LVTK_LV2_PLUGIN_HPP */
