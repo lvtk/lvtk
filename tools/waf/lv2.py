@@ -3,7 +3,7 @@
 # Michael Fisher 2012
 
 """
-LV2 Bundle Related Tools
+LV2 and LV2 Bundle Related Tools
 ------------------------
 WARNING: At the time of writing, this file assumes you have called
 autowaf.configure(conf)  in your configure target. TODO: Fix That
@@ -14,7 +14,13 @@ Written for waf-1.7.x . Have not tested previous versions.
 import os, shutil, sys, platform
 from waflib import TaskGen, Task, Build, Options, Utils, Errors
 from waflib.TaskGen import taskgen_method, feature, after_method, before_method
+from waflib.Configure import conf
 
+import autowaf
+
+@conf
+def check_lv2 (self, min_version="1.0.0"):
+	autowaf.check_pkg(self, "lv2", uselib_store="lv2", atleast_version=min_version)
 
 def bundle_name_for_output(out):
 	name = out.name
