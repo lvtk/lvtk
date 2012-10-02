@@ -103,8 +103,9 @@ class workhorse : public Plugin<workhorse, MIXINS >
     {
     	/** Print message with LV2 Log's printf */
         printf (msgType, "[workhorse] taking a nap now\n");
+
         m_sleeping = true;
-        sleep (3);
+        sleep (10);
         m_sleeping = false;
 
         /** Send a response */

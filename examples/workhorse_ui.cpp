@@ -5,34 +5,25 @@
  *      Author: mfisher
  */
 
-#include <gtkmm.h>
 
-#include <lvtk/ui.hpp>
+#include <lvtk/gtkui.hpp>
 #include <lvtk/urid.hpp>
 
 using namespace lvtk;
+using namespace Gtk;
 
+using Glib::ustring;
 
-class workhorse_ui : public UI<workhorse_ui, URID<true> >
+class WorkhorseGtk : public UI<WorkhorseGtk, GtkUI<true>, URID<true> >
 {
 public:
 
-	workhorse_ui (const char* plugin_uri)
+	WorkhorseGtk (const char* plugin_uri)
 	{
-		Gtk::Main::init_gtkmm_internals();
-		widget.pack_start (*Gtk::manage(new Gtk::Button()));
-		widget.show_all();
+		Button *btn = manage (new Button(ustring("Workhorse")));
+		add (*btn);
 	}
-
-	LV2UI_Widget*
-	get_widget()
-	{
-		return widget_cast (widget.gobj());
-	}
-
-private:
-	Gtk::HBox widget;
 
 };
 
-int _ = workhorse_ui::register_class ("http://lvtoolkit.org/plugins/workhorse#ui");
+int _ = WorkhorseGtk::register_class ("http://lvtoolkit.org/plugins/workhorse#ui");

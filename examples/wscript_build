@@ -10,12 +10,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details. '''
 
+import os
 import lv2
 
 buildme = not bld.env.TOOLS_DISABLED
 
 if buildme:
-	examples = ["workhorse"]
+	examples = ["workhorse", "silence"]
 
 	for slug in examples:
 		
@@ -32,20 +33,22 @@ if buildme:
 			target        = slug,
 			source        = "%s.cpp" % slug,
 			includes      = ["../build/examples"],
-			use           = bld.env.LIB_LVTK,
+			use           = bld.env.LIB_LVTK_PLUGIN,
 			LIB_EXT		  = bld.env.pluginlib_EXT
 		)
+		
 		
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
 		
-		ui = bld.shlib(
-			lv2_bundle	  =	True,
-			lv2_target    = slug + ".lv2",
-			name          = uislug,
-			target        = uislug,
-			source        = uisrc,
-			includes      = ["../build/examples"],
-			use           = [bld.env.LIB_LVTKUI, "gtkmm"],
-			LIB_EXT		  = bld.env.pluginlib_EXT
-		)
+		if bld.path.find_resource(uisrc):
+			ui = bld.shlib(
+				lv2_bundle	  =	True,
+				lv2_target    = slug + ".lv2",
+				name          = uislug,
+				target        = uislug,
+				source        = uisrc,
+				includes      = ["../build/examples"],
+				use           = [bld.env.LIB_LVTK_UI, "gtkmm"],
+				LIB_EXT		  = bld.env.pluginlib_EXT
+			)
