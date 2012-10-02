@@ -88,6 +88,7 @@
 */
 
 
+
 namespace lvtk {
   
    using std::vector;
@@ -120,20 +121,25 @@ namespace lvtk {
       come in handy when using @ref pluginmixins "mixins" and it doesn't add 
       any additional vtable lookup and function call costs, like real dynamic
       binding would.
-      @code
+@code
       #include <cstring>
       #include <lvtk/plugin.hpp>
       
-      class TestLV2 : public Plugin<TestLV2> {
+      class TestLV2 : public Plugin<TestLV2>
+      {
       public:
+
         TestLV2(double) : plugin<TestLV2>(2) { }
-        void run(uint32_t sample_count) {
+
+        void run(uint32_t sample_count)
+        {
           std::memcpy(p(1), p(0), sample_count * sizeof(float));
         }
+
       };
       
-      static unsigned _ = TestLV2::register_class("http://daps-project.org/plugins/TestLV2");
-      @endcode
+      static unsigned _ = TestLV2::register_class("http://lvtoolkit.org/plugins/TestLV2");
+@endcode
       
       If the above code is compiled and linked with @c -ldaps-plugin0 into a
       shared module, it could form the shared object part of a fully 
@@ -146,7 +152,8 @@ namespace lvtk {
       
       If you want to write a synth plugin you should probably inherit the 
       Synth class instead of this one.
-  */
+ */
+
   template <class Derived, 
 	    class Ext1 = end, class Ext2 = end, class Ext3 = end,
 	    class Ext4 = end, class Ext5 = end, class Ext6 = end,
@@ -476,5 +483,13 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
   */
   
 } /* namespace lvtk */
+
+/* ======== Doxygen ======== */
+
+/** @example workhorse.cpp */
+/** @example workhorse_ui.cpp */
+/** @example silence.cpp */
+/** @example silence_ui.cpp */
+
 
 #endif /* LVTK_LV2_PLUGIN_HPP */

@@ -18,6 +18,7 @@
 @prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
 @prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
 
@@ -29,6 +30,7 @@
 	lv2:requiredFeature urid:map ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	ll:pegName "p" ;
+	ui:ui <http://lvtoolkit.org/plugins/silence#ui> ;
 	lv2:port [
 		a lv2:AudioPort ,
 			lv2:OutputPort ;
@@ -36,3 +38,7 @@
 		lv2:symbol "ouput" ;
 		lv2:name "Output"
 	] .
+	
+<http://lvtoolkit.org/plugins/silence#ui>
+	a ui:GtkUI ;
+	lv2:requiredFeature urid:map .

@@ -1,5 +1,5 @@
 /*
-  workhorse.cpp  -  LV2 Toolkit - Worker Demonstration
+  silence.cpp  -  LV2 Toolkit - Worker Demonstration
 
   Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
@@ -19,10 +19,12 @@
 
 */
 /**
- * @file workhorse.cpp
- * Demonstrates: LV2 Worker scheduling, working, and responding.
- * Demonstrates: LV2 URID mapping.
+ * @file silence.cpp
  */
+
+ /*
+  * Demonstrates LV2 URID mapping, Log, and State Save/Restore
+  */
 
 #include <iostream>
 #include <vector>

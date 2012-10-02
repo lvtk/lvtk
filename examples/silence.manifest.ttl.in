@@ -6,3 +6,8 @@
 	a lv2:Plugin ;
 	lv2:binary <silence@LIB_EXT@> ;
 	rdfs:seeAlso <silence.ttl> .
+
+<http://lvtoolkit.org/plugins/silence#ui>
+	a ui:GtkUI ;
+	ui:binary <silence_ui@LIB_EXT@> ;
+	rdfs:seeAlso <silence.ttl> .

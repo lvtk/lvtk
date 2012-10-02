@@ -1,5 +1,5 @@
-/*
-  workhorse.cpp  -  DAPS LV2++ Worker Demonstration
+/**
+  workhorse.cpp  -  LV2 Toolkit - Plugin Example
 
   Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
@@ -23,6 +23,8 @@
  * Demonstration of LV2 Worker and LV2 Log in C++
  */
 
+/* Demonstration of Plugin, URID, Log, and Worker extensions */
+
 #include <unistd.h>
 #include <iostream>
 #include <vector>
@@ -32,7 +34,7 @@
 #include <lvtk/log.hpp>
 #include <lvtk/urid.hpp>
 
-/** This is a ttl2c generated header */
+/* This is a ttl2c generated header */
 #include "workhorse.h"
 
 using namespace lvtk;
@@ -40,12 +42,12 @@ using std::vector;
 
 #define MIXINS URID<true>, Log<true>, Worker<true>
 
-class workhorse : public Plugin<workhorse, MIXINS >
+class Workhorse : public Plugin<Workhorse, MIXINS >
 {
    public:
 
-    workhorse (double rate)
-    : Plugin<workhorse, MIXINS > (3)
+    Workhorse (double rate)
+    : Plugin<Workhorse, MIXINS > (3)
     , m_sleeping (false)
     {
     	msgType = map(LV2_LOG__Entry);
@@ -123,5 +125,5 @@ class workhorse : public Plugin<workhorse, MIXINS >
 
 };
 
-static int _ = workhorse::register_class (p_uri);
+static int _ = Workhorse::register_class (p_uri);
 
