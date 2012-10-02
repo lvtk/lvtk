@@ -30,27 +30,21 @@
 #include <map>
 #include <string>
 
+#include <lvtk/feature.hpp>
 #include "private/debug.hpp"
 
-/** TODO: Put macros somewhere else that make sense */
-#define LVTK_PLUGIN_CLASS     Plugin<D, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>
-
-/** Macro to prefix a mixin with */
-#define LVTK_MIXIN_CLASS      template <bool Required = true> struct
-
-/** Macro to prefix a mixin's internal struct "I" */
-#define LVTK_MIXIN_DERIVED    template <class Derived> struct I : Extension<Required>
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
 /** @namespace lvtk */
 namespace lvtk {
-   /** Convenience typedef */
+   /** Convenience typedefs */
    typedef LV2_Handle Handle;
-}
 
-/** @internal tricky include, for the moment this needs ensured to be included
- * after LV2_Handle's typdedef
- */
-#include <lvtk/feature.hpp>
+   namespace ui {
+   	   typedef LV2UI_Handle Handle;
+   }
+}
 
 
 namespace lvtk {
