@@ -22,8 +22,8 @@ bld.stlib(
 	source   = plugin_code,
 	includes = ["../lvtk", "include"],
 	cxxflags = ["-fPIC"],
-	target   = bld.env.LIB_LVTK,
-	name     = bld.env.LIB_LVTK
+	target   = bld.env.LIB_LVTK_PLUGIN,
+	name     = bld.env.LIB_LVTK_PLUGIN
 )
 
 # Build the GtkUI library
@@ -32,6 +32,7 @@ if not bld.env.UI_DISABLED:
 		source   = gtkui_code,
 		includes = ["../lvtk", "include"],
 		cxxflags = ["-fPIC"],
-		target   = bld.env.LIB_LVTKUI,
-		name     = bld.env.LIB_LVTKUI,
+		target   = bld.env.LIB_LVTK_UI,
+		name     = bld.env.LIB_LVTK_UI,
+		use = "gtkmm"
 	)

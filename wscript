@@ -30,15 +30,15 @@ LVTK_EXTRA_VERSION=""
 APPNAME = 'lvtk'
 VERSION = LVTK_VERSION + LVTK_EXTRA_VERSION
 
-LIB_LVTK        = APPNAME + LVTK_MAJOR_VERSION
-LIB_LVTKUI      = APPNAME + "ui" + LVTK_MAJOR_VERSION
+LIB_LVTK_PLUGIN      = APPNAME + "_plugin" + LVTK_MAJOR_VERSION
+LIB_LVTK_UI      	 = APPNAME + "_ui" + LVTK_MAJOR_VERSION
 
 # Required by waf
 top = '.'
 out = 'build'
 
 def options(opts):
-	opts.load("cross compiler_c compiler_cxx lv2")
+	opts.load("cross compiler_c compiler_cxx lv2 boost")
 	autowaf.set_options(opts)
 	
 	opts.add_option('--disable-tools', default=False, \
@@ -47,47 +47,67 @@ def options(opts):
 	opts.add_option('--disable-ui', default=False, \
 		dest="disable_ui", action='store_true', \
 		help="Disable Building UI libraries")
+	opts.add_option('--disable-examples', default=False, \
+		dest="disable_examples", action='store_true', \
+		help="Disable Building Examples")
 	opts.add_option('--ziptype', default='gz', \
 		dest='ziptype', type='string', \
 		help="Zip type for waf dist (gz/bz2/zip) [ Default: gz ]")
 
 
 def configure(conf):
-	conf.load("cross compiler_c compiler_cxx lv2")
+	conf.load("cross compiler_c compiler_cxx lv2 boost")
 
+	a = autowaf
+	
 	conf.define ("LVTK_VERSION", VERSION)
 	conf.define ("LVTK_MAJOR_VERSION",LVTK_MAJOR_VERSION)
 	conf.define ("LVTK_MINOR_VERSION",LVTK_MINOR_VERSION)
 	conf.define ("LVTK_MICRO_VERSION",LVTK_MICRO_VERSION)
 	conf.define ("LVTK_EXTRA_VERSION",LVTK_EXTRA_VERSION)
-	conf.write_config_header("version.hpp")
+	conf.write_config_header("version.h")
 
-	# Check for required packages
-	autowaf.check_pkg(conf, "lv2", uselib_store="lv2", \
-				atleast_version="1.0.0")
+	conf.check_inline()
 
-	if not conf.options.disable_tools:
-		conf.check(header_name='boost/spirit/core.hpp')
-		conf.check(header_name='boost/spirit/utility.hpp')
-		conf.check(header_name='boost/spirit/tree/parse_tree.hpp')
-		conf.check(header_name='boost/spirit/tree/ast.hpp')
+	if not conf.options.disable_tools: conf.check_boost()
 		
-	if not conf.options.disable_ui:
-		autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
-				atleast_version="2.20.0")
-
+	# Check for required packages
+	conf.check_lv2("1.0.0")
+	
+	# UI Configuration
+	autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
+				atleast_version="2.20.0", mandatory=False)
+	
 	# Setup the Environment
+	conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
 	conf.env.TOOLS_DISABLED	    = conf.options.disable_tools
-	conf.env.UI_DISABLED        = conf.options.disable_ui	
+	conf.env.UI_DISABLED        = conf.options.disable_ui
+	
+	# Examples plugins depend on tools
+	if conf.env.TOOLS_DISABLED or conf.env.EXAMPLES_DISABLED:
+		conf.env.BUILD_EXAMPLE_PLUGINS = False
+	else: conf.env.BUILD_EXAMPLE_PLUGINS = True
+	
+	# Example UI's depend on Gtkmm and Plugins
+	if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and not conf.env.EXAMPLES_DISABLED:
+		conf.env.BUILD_EXAMPLE_UIS  = True
+	else: conf.env.BUILD_EXAMPLE_UIS  = False
+			
 	conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
 	conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
-	conf.env.LIB_LVTK           = LIB_LVTK
-	conf.env.LIB_LVTKUI         = LIB_LVTKUI
+	conf.env.LIB_LVTK_PLUGIN    = LIB_LVTK_PLUGIN
+	conf.env.LIB_LVTK_UI        = LIB_LVTK_UI
 	conf.env.APPNAME	        = APPNAME
 	
 	autowaf.configure(conf)
 	
-
+	autowaf.display_header( "LV2 Toolkit Configuration")
+	autowaf.display_msg(conf,"Build Plugin Library", True)
+	autowaf.display_msg(conf,"Build UI Library",True)
+	autowaf.display_msg(conf,"Build example plugins", not conf.env.TOOLS_DISABLED)
+	autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
+	autowaf.display_msg(conf,"Build tools", not conf.env.TOOLS_DISABLED)
+	
 def build(bld):
     
 	subdirs = ['src','tools','examples']
@@ -98,18 +118,24 @@ def build(bld):
 	pcvers = LVTK_MAJOR_VERSION + "." + LVTK_MINOR_VERSION
 	
 	# Build PC Files
-	autowaf.build_pc(bld, 'LVTK', LVTK_VERSION, pcvers, [],
+	autowaf.build_pc(bld, 'LVTK-PLUGIN', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
-						'THELIB'		       : LIB_LVTK,
+						'THELIB'		       : LIB_LVTK_PLUGIN,
 						'LVTK_PKG_DEPS'       : 'lv2'})
 						
 	if not bld.env.UI_DISABLED:
-		autowaf.build_pc(bld, 'LVTKUI', LVTK_VERSION, pcvers, [],
+		autowaf.build_pc(bld, 'LVTK-UI', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
-						'THELIB'		       : LIB_LVTKUI,
+						'THELIB'		       : LIB_LVTK_UI,
 						'LVTK_PKG_DEPS'       : 'lv2'})
+		autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, pcvers, [],
+						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
+						'VERSION'              : LVTK_VERSION,
+						'THELIB'		       : LIB_LVTK_UI,
+						'LVTK_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
+						
 	bld.add_group()	
 	
 	# Install Static Libraries
@@ -122,7 +148,7 @@ def build(bld):
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
 				+ APPNAME + "-" + pcvers
-	bld.install_files(header_base, "build/version.hpp")
+	bld.install_files(header_base, "build/version.h")
 	bld.install_files(header_base+"/lvtk", \
 					  bld.path.ant_glob("lvtk/*.*"))
 	bld.install_files(header_base+"/lvtk/private", \
