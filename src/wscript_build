@@ -34,5 +34,4 @@ if not bld.env.UI_DISABLED:
 		cxxflags = ["-fPIC"],
 		target   = bld.env.LIB_LVTK_UI,
 		name     = bld.env.LIB_LVTK_UI,
-		use = "gtkmm"
 	)

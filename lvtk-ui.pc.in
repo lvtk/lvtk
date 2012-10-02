@@ -7,5 +7,5 @@ Name: lvtkui
 Version: @VERSION@
 Description: LV2 Toolkit UI Library
 Requires: @LVTK_PKG_DEPS@
-Libs: -Wl,nodelete -L${libdir} -l@THELIB@
-Cflags: -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@.0
+Libs: -L${libdir} -l@THELIB@
+Cflags: -Wl,nodelete -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@.0
