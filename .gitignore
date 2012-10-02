@@ -3,6 +3,7 @@ build/
 .cproject
 .lock-waf*
 lock-waf*
+.autotools
 .project
 .settings/
 .waf-*/
