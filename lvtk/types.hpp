@@ -79,31 +79,37 @@ namespace lvtk {
 	    class E8 = end,
 	    class E9 = end>
   struct MixinTree
-    : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> {
+    : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9>
+  {
     
     typedef MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> Parent;
     
     /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
     static void
-    map_feature_handlers(feature_handler_map& hmap) {
+    map_feature_handlers(feature_handler_map& hmap)
+    {
       E1::template I<A>::map_feature_handlers(hmap);
       Parent::map_feature_handlers(hmap);
     }
     
     /** Check if the features are OK with the plugin initialisation. */
     bool
-    check_ok() {
+    check_ok()
+    {
       return E1::template I<A>::check_ok() && Parent::check_ok();
     }
     
     /** Return any extension data. */
     static const void*
-    extension_data(const char* uri) {
-      const void* result = E1::template I<A>::extension_data(uri);
-      if (result)
-	return result;
-      return Parent::extension_data(uri);
+    extension_data(const char* uri)
+    {
+		const void* result = E1::template I<A>::extension_data (uri);
+		if (result)
+		{
+			return result;
+		}
+		return Parent::extension_data (uri);
     }
     
   };
