@@ -40,10 +40,6 @@ namespace lvtk {
    /**
       The Data Access Mixin
 
-      @code
-      class Hi { Hi() {} };
-      @endcode
-
       @see The internal struct I for API details
       @headerfile lvtk/data_access.hpp
       @ingroup pluginmixins

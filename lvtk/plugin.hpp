@@ -65,7 +65,7 @@
 
     - <b>lvtk-plugin</b> - Use when writing an LV2 plugin
     - <b>lvtk-ui</b> - Use if NOT using a @ref toolkitmixins "Toolkit Mixin"
-    - <b>lvtk-gtkui</b> - Use if using a @ref toolkitmixins "Toolkit Mixin"
+    - <b>lvtk-gtkui</b> - Use if using the GtkUI @ref toolkitmixins "Toolkit Mixin"
 
     In summary, there is one package for a plugin and one for each
     type of supported UI. Each UI package includes the same static library plus

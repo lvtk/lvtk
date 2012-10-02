@@ -30,11 +30,10 @@
 #include <iostream>
 #include <map>
 
-#include <gtkmm.h>
-
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
 #include <lvtk/types.hpp>
+#include <lvtk/feature.hpp>
 #include <lvtk/midi.hpp>
 
 #include "private/debug.hpp"
