@@ -29,7 +29,7 @@
 
 #include <lv2/lv2plug.in/ns/ext/resize-port/resize-port.h>
 
-#include <lvtk/types.hpp>
+#include <lvtk/private/types.hpp>
 #include <lvtk/util.hpp>
 
 namespace lvtk {

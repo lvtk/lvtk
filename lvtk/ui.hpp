@@ -37,6 +37,8 @@
 #include <lvtk/ext/data_access.hpp>
 #include <lvtk/ext/instance_access.hpp>
 
+#include <lvtk/behaviors/write_midi.hpp>
+
 #include "private/debug.hpp"
 
 namespace lvtk {
@@ -197,7 +199,7 @@ namespace lvtk {
     friend class WriteMIDI<true>::I<Derived>;
     friend class WriteMIDI<false>::I<Derived>;
     
-#if defined (LVTK_EXTRA_ENABLED)
+#if defined (LVTK_EXTRAS_ENABLED)
     friend class WriteOSC<true>::I<Derived>;
     friend class WriteOSC<false>::I<Derived>;
 #endif

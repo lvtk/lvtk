@@ -28,7 +28,6 @@
 #include <vector>
 
 #include <lvtk/plugin.hpp>
-#include <lvtk/event.hpp>
 
 namespace lvtk {
   

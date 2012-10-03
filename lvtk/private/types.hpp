@@ -162,6 +162,13 @@ namespace lvtk {
   
   };
 
+
+  template <bool Required = true>
+  struct Behavior : Extension<Required>
+  {
+
+  };
+
 }
 
 #endif

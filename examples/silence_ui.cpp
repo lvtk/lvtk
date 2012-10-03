@@ -37,7 +37,7 @@ using Glib::ustring;
 // required widget() method impl is done manually without
 // a toolkit mixin
 
-class SilenceGtk : public UI<SilenceGtk, URID<true> >
+class SilenceGtk : public UI<SilenceGtk, URID<true>, URIMap<true>, WriteMIDI<false> >
 {
 public:
 
@@ -56,6 +56,7 @@ public:
 		} else {
 			p_hbox = 0;
 		}
+
 	}
 
 	/*  Required implementation required by the UI class.
