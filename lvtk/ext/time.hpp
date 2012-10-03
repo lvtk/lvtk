@@ -1,4 +1,4 @@
-/**
+/*
     time.hpp - Support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
@@ -18,10 +18,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 /**
-   @time.hpp
-   @page Time Extension
-   C++ convenience header for the LV2 time.
-   LV2 Version: 1.0 (2012-04-17)
+   @file time.hpp
+*/
+/**
+   @page time Time Extension
+   C++ convenience header for the LV2 time<br />
+   LV2 Version Support: >= 1.0 (2012-04-17)<br />
 
    This is a vocabulary for precisely describing a position in time and
    the passage of time itself, in both real and musical terms.
