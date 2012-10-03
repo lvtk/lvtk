@@ -18,13 +18,18 @@
 	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <iostream>
+#include <string>
+
 #include <lvtk/gtkui.hpp>
-#include <lvtk/urid.hpp>
+
 
 #include "workhorse.h"
 
 using namespace lvtk;
 using namespace Gtk;
+
+using std::cout;
 
 using Glib::ustring;
 
@@ -35,21 +40,42 @@ using Glib::ustring;
    You aren't required, but highly recommended, to create
    your main widget in the UI's ctor. */
 
-class WorkhorseGtk : public UI<WorkhorseGtk, GtkUI<true>, URID<true> >
+class WorkhorseGtk : public UI<WorkhorseGtk, GtkUI<true>,
+			 URID<true>, DataAccess<false>, InstanceAccess<true> >
 {
 public:
 
 	WorkhorseGtk (const char* plugin_uri)
+	: plugin (NULL)
 	{
+		setup_instance_access();
+
 		/* Create the main widget. This isn't functional. Instead
 		   of a plain Gtk::Button, you can add any Gtk::Widget
 		   as the Main Widget */
-
 		Button *btn = manage (new Button(ustring("Workhorse")));
 
 		/* Add the main widget */
 		add (*btn);
 	}
+private:
+
+	void
+	setup_instance_access()
+	{
+		/* Exercise instance access Feature */
+		plugin = get_instance();
+
+		if (plugin) {
+			cout << "[workhorse_ui] Got plugin instance\n";
+		} else {
+			cout << "[workhorse_ui] Didn't get plugin instance\n";
+			plugin = 0;
+		}
+	}
+
+	/* The Plugin Instance */
+	Handle plugin;
 
 };
 

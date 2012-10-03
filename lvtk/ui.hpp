@@ -32,9 +32,10 @@
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
-#include <lvtk/types.hpp>
 #include <lvtk/feature.hpp>
-#include <lvtk/midi.hpp>
+#include <lvtk/ext/common.h>
+#include <lvtk/ext/data_access.hpp>
+#include <lvtk/ext/instance_access.hpp>
 
 #include "private/debug.hpp"
 

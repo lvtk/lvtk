@@ -37,7 +37,7 @@
 #define LVTK_LV2_URIMAP_HPP
 
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
-#include <lvtk/types.hpp>
+#include "lvtk/private/types.hpp"
 
 namespace lvtk {
 

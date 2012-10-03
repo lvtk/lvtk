@@ -24,12 +24,13 @@
 */
 
 
-#ifndef LVTK_LV2_DATA_ACCESS_HPP
-#define LVTK_LV2_DATA_ACCESS_HPP
+#ifndef LVTK_LV2_INSTANCE_ACCESS_HPP
+#define LVTK_LV2_INSTANCE_ACCESS_HPP
 
 #include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
 
-#include <lvtk/types.hpp>
+#include "lvtk/private/types.hpp"
+
 #include <lvtk/util.hpp>
 
 namespace lvtk {
@@ -59,22 +60,26 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature (LV2UI_Handle instance, feature_data data)
+         handle_feature (LV2UI_Handle instance, FeatureData data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
 
             mixin->p_plugin_instance = reinterpret_cast<LV2_Handle> (data);
+
+            mixin->m_ok = (mixin->p_plugin_instance != NULL);
          }
 
          bool
          check_ok()
          {
-            if (LVTK_DEBUG) {
-              std::clog<<"    [UI::DataAccess] Validation "
-                       <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-            }
-            return this->m_ok;
+			if (!Required) return true;
+
+			if (LVTK_DEBUG) {
+			std::clog<<"    [InstanceAccess] Validation "
+				   <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+			}
+			return this->m_ok;
          }
 
      protected:
@@ -95,4 +100,4 @@ namespace lvtk {
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_DATA_ACCESS_HPP */
+#endif /* LVTK_LV2_INSTANCE_ACCESS_HPP */

@@ -26,7 +26,6 @@
 #include <gtkmm.h>
 
 #include <lvtk/ui.hpp>
-#include <lvtk/urid.hpp>
 
 using namespace lvtk;
 using namespace Gtk;

@@ -34,8 +34,7 @@
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 #include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
 
-#include <lvtk/types.hpp>
-#include <lvtk/util.hpp>
+#include "lvtk/private/types.hpp"
 
 namespace lvtk {
 

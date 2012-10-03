@@ -32,13 +32,12 @@
 #include <vector>
 
 #include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-#include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
-#include <lv2/lv2plug.in/ns/ext/event/event.h>
 
-#include <lvtk/types.hpp>
-#include <lvtk/atom.hpp>
-#include <lvtk/urid.hpp>
-#include <lvtk/worker.hpp>
+#include <lvtk/feature.hpp>
+#include <lvtk/ext/common.h>
+#include <lvtk/ext/resize_port.hpp>
+#include <lvtk/ext/state.hpp>
+#include <lvtk/ext/worker.hpp>
 
 #include "private/debug.hpp"
 

@@ -31,7 +31,8 @@
 #include <string>
 
 #include <lvtk/feature.hpp>
-#include "private/debug.hpp"
+
+#include "debug.hpp"
 
 #include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>

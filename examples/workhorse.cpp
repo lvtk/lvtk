@@ -31,8 +31,6 @@
 #include <cstdlib>
 
 #include <lvtk/plugin.hpp>
-#include <lvtk/log.hpp>
-#include <lvtk/urid.hpp>
 
 /* This is a ttl2c generated header */
 #include "workhorse.h"

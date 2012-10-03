@@ -26,15 +26,9 @@
 #ifndef LVTK_LV2_GTKUI_HPP
 #define LVTK_LV2_GTKUI_HPP
 
-#include <cstdlib>
-#include <cstring>
-#include <iomanip>
-#include <map>
 
 #include <gtkmm.h>
 #include <lvtk/ui.hpp>
-
-#include "private/debug.hpp"
 
 
 namespace lvtk {

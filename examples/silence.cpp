@@ -31,7 +31,6 @@
 #include <cstdlib>
 
 #include <lvtk/plugin.hpp>
-#include <lvtk/state.hpp>
 
 #include "silence.h"
 

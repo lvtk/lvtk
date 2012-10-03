@@ -25,10 +25,12 @@
 #ifndef LVTK_LV2_MIDI_HPP
 #define LVTK_LV2_MIDI_HPP
 
+#include <cstdlib>
+
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
-#include <lvtk/types.hpp>
-#include <lvtk/event.hpp>
+#include "lvtk/private/types.hpp"
+#include <lvtk/ext/event.hpp>
 
 namespace lvtk {
 

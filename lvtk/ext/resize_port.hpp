@@ -68,7 +68,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         handle_feature (LV2_Handle instance, feature_data data)
+         handle_feature (LV2_Handle instance, FeatureData data)
          {
             Derived* derived = reinterpret_cast<Derived*>  (instance);
             I<Derived>* mixin = static_cast<I<Derived>*> (derived);
