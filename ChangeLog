@@ -1,3 +1,12 @@
+Version 1.0.0 (2012-10-03)
+	* lvtk::UI harborded widget instead of inheriting
+	* Added GtkUI mixin for easy Gtk GUI's
+	* All data-only ext's supported.
+	* Worker, State, Log, Resize Port, URID Plugin Mixins Supported
+	* Instance Access, Data Access UI Mixins supported
+	* Added examples and new Mixin types  "Behavior" and "Toolkit"
+	* Legacy Event and WriteMIDI included, maybe work
+
 Version 0.0.0 (2012-09-23)
    Initial supported Features and Additions
 	* rc1 = library name approval pending
