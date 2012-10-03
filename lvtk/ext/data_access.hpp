@@ -43,7 +43,7 @@ namespace lvtk {
 
       @see The internal struct I for API details
       @headerfile lvtk/data_access.hpp
-      @ingroup pluginmixins
+      @ingroup guimixins
    */
    template <bool Required = true>
    struct DataAccess

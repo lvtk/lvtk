@@ -8,6 +8,8 @@
 
 #include "lvtk/private/types.hpp"
 
+/* Include all ext's common to plugin and UI */
+
 #include "atom.hpp"
 #include "log.hpp"
 #include "midi.hpp"

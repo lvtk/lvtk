@@ -46,7 +46,7 @@ namespace lvtk {
 
        @ingroup pluginmixins
        @ingroup guimixins
-       @headerfile lvtk/event.hpp
+       @headerfile lvtk/ext/event.hpp
        @deprecated
        @see The internal struct I for details
    */

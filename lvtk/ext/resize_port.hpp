@@ -43,6 +43,7 @@ namespace lvtk {
 
    /**
       The Resize Port Mixin
+      @headerfile lvtk/ext/resize_port.hpp
       @see The internal struct I for API details
       @ingroup pluginmixins
    */

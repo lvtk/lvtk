@@ -19,6 +19,7 @@
 */
 /**
    @time.hpp
+   @page Time Extension
    C++ convenience header for the LV2 time.
    LV2 Version: 1.0 (2012-04-17)
 
@@ -36,7 +37,7 @@
    time in terms of musical "bars". A bar is a higher level grouping of
    beats. The meter describes how many beats are in one bar.
 
-   @url http://lv2plug.in/ns/ext/time/
+   @link http://lv2plug.in/ns/ext/time/
 */
 
 #ifndef LVTK_LV2_TIME_HPP

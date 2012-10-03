@@ -141,6 +141,7 @@ namespace lvtk {
 
   /**
    * The State Mixin
+   * @headerfile lvtk/ext/state.hpp
    * @see The internal struct I for API details
    * @ingroup pluginmixins
    */

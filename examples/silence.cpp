@@ -72,6 +72,7 @@ class silence : public Plugin<silence, URID<true>, State<true> >
                      	 	 	 	 const FeatureVec &features)
     {
        const char* msg = "Sorry I can't hear you. Please speak up";
+
        return store (urids.silence_msg, (void*)msg,
                      strlen(msg), urids.atom_String,
                      STATE_IS_POD | STATE_IS_PORTABLE);
@@ -85,10 +86,11 @@ class silence : public Plugin<silence, URID<true>, State<true> >
        size_t size;
        uint32_t type,fs;
 
-       const void *st = retrieve (urids.silence_msg, &size, &type, &fs);
-       if (st)
+       const void *message =
+    		   retrieve (urids.silence_msg, &size, &type, &fs);
+       if (message)
        {
-         std::cout << "[silence] " << (char*)st << std::endl;
+         std::cout << "[silence] " << (char*)message << std::endl;
          return STATE_SUCCESS;
        }
 

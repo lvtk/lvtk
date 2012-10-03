@@ -29,7 +29,7 @@ namespace lvtk {
 
    /**
       The URID Mixin.
-      @headerfile lvtk/urid.hpp
+      @headerfile lvtk/ext/urid.hpp
       @ingroup pluginmixins
       @ingroup guimixins
       @see The internal struct I for details.

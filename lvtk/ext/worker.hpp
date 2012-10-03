@@ -63,7 +63,7 @@ namespace lvtk {
    };
 
    /** The LV2 Worker Feature Mixin
-       @struct lvtk::Worker lvtk/worker.hpp
+       @struct lvtk::Worker lvtk/ext/worker.hpp
        @ingroup pluginmixins
    */
    template <bool Required = true>

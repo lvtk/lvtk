@@ -46,7 +46,7 @@ namespace lvtk {
 
 	/** The URI map mixin. This can be used by both plugins and GUIs.
 	   @see The internal struct I for API details
-	   @headerfile lvtk/urimap.hpp
+	   @headerfile lvtk/ext/urimap.hpp
 	   @ingroup pluginmixins
 	   @ingroup guimixins
 	   @deprecated

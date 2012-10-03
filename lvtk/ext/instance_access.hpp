@@ -37,6 +37,7 @@ namespace lvtk {
 
    /**
       The Instance Access Mixin
+      @headerfile lvtk/ext/instance_access.hpp
       @ingroup guimixins
       @see The internal struct I for details.
    */
