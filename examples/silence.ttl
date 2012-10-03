@@ -21,6 +21,7 @@
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
 @prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
+@prefix ev:    <http://lv2plug.in/ns/ext/event#>.
 
 <http://lvtoolkit.org/plugins/silence>
 	a lv2:Plugin ;
@@ -32,12 +33,18 @@
 	ll:pegName "p" ;
 	ui:ui <http://lvtoolkit.org/plugins/silence#ui> ;
 	lv2:port [
-		a lv2:AudioPort ,
-			lv2:OutputPort ;
+		a lv2:AudioPort, lv2:OutputPort ;
 		lv2:index 0 ;
 		lv2:symbol "ouput" ;
 		lv2:name "Output"
-	] .
+	] , [
+		a atom:AtomPort, lv2:InputPort;
+	    lv2:index 1;
+	    atom:bufferType atom:Sequence ;
+	    atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ;
+	    lv2:symbol "midi";
+	    lv2:name "MIDI";
+	].
 	
 <http://lvtoolkit.org/plugins/silence#ui>
 	a ui:GtkUI ;

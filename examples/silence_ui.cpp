@@ -27,17 +27,26 @@
 
 #include <lvtk/ui.hpp>
 
+#include "silence.h"
+
 using namespace lvtk;
 using namespace Gtk;
+using namespace sigc;
 
 using Glib::ustring;
 
 
-// The Silence UI- Notice GtkUI<true> is not added here. The
-// required widget() method impl is done manually without
-// a toolkit mixin
+/* An atom-like struct for raw MIDI note on/offs */
+struct midi_t {
+	LV2_Atom atom;
+	uint8_t midi[3];
+};
 
-class SilenceGtk : public UI<SilenceGtk, URID<true>, URIMap<true>, WriteMIDI<false> >
+
+/* The Silence UI- Notice GtkUI<true> is not added here. The
+   required widget() method impl is done manually without
+   a toolkit mixin */
+class SilenceGtk : public UI<SilenceGtk, URID<true> >
 {
 public:
 
@@ -52,12 +61,19 @@ public:
 
 		if (p_hbox) {
 			Button *btn = manage (new Button(ustring("Silence")));
+
+		    btn->signal_pressed().connect(
+		    		  mem_fun(*this, &SilenceGtk::send_note_on));
+		    btn->signal_released().connect(
+		    		  mem_fun(*this, &SilenceGtk::send_note_off));
+
 			p_hbox->pack_start (*btn);
 		} else {
 			p_hbox = 0;
 		}
 
 	}
+
 
 	/*  Required implementation required by the UI class.
 	    The UI library will ALWAYS try to execute
@@ -83,7 +99,30 @@ public:
 		return NULL;
 	}
 
+protected:
+
+	/* Raw MIDI Senders */
+
+	void send_note_on()
+	{
+		LV2_URID xfer = map(LV2_ATOM__eventTransfer);
+		LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
+
+		midi_t midi = {{3, midiEvent}, { 0x90, 0x40, 0x40 }};
+		write (p_midi, sizeof(midi), xfer, (void*)&midi);
+	}
+
+	void send_note_off()
+	{
+		LV2_URID xfer = map(LV2_ATOM__eventTransfer);
+		LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
+
+		midi_t midi = {{3, midiEvent},{ 0x80, 0x40, 0x40 }};
+		write (p_midi, sizeof(midi), xfer, (void*)&midi);
+	}
+
 private:
+	/* The container object */
 	Gtk::HBox *p_hbox;
 
 };

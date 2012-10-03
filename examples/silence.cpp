@@ -50,12 +50,16 @@ class silence : public Plugin<silence, URID<true>, State<true> >
     {
        urids.atom_String = map(LV2_ATOM__String);
        urids.silence_msg = map(LVTK_SILENCE_MSG);
+       urids.midi_type   = map(LV2_MIDI__MidiEvent);
     }
 
     void
     run(uint32_t nframes)
     {
        float *out = p(0);
+
+       check_midi();
+
        for (int i = 0; i < nframes; i++)
        {
           out[i] = 0.0f;
@@ -92,9 +96,24 @@ class silence : public Plugin<silence, URID<true>, State<true> >
     }
 
    private:
+
+    void check_midi ()
+    {
+       const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence> (p_midi);
+	   LV2_ATOM_SEQUENCE_FOREACH(midiseq, ev)
+	   {
+		  uint32_t frame_offset = ev->time.frames;
+		  if (ev->body.type == urids.midi_type)
+			{
+			 std::cout << "MIDI\n";
+			}
+	   }
+  	}
+
     struct SilenceURIs {
        LV2_URID atom_String;
        LV2_URID silence_msg;
+       LV2_URID midi_type;
     } urids;
 
 };
