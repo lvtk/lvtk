@@ -6,13 +6,13 @@
 
 #include <string.h>
 
+#include "lvtk/private/types.hpp"
+
 #include "atom.hpp"
-#include "event.hpp"
 #include "log.hpp"
 #include "midi.hpp"
 #include "patch.hpp"
 #include "urid.hpp"
-#include "urimap.hpp"
 #include "time.hpp"
 
 

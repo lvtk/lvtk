@@ -30,7 +30,6 @@
 #include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
 #include "lvtk/private/types.hpp"
-#include <lvtk/ext/event.hpp>
 
 namespace lvtk {
 
