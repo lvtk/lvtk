@@ -4,6 +4,7 @@
 #ifndef LVTK_EXT_COMMON_H
 #define LVTK_EXT_COMMON_H
 
+#include <string.h>
 
 #include "atom.hpp"
 #include "event.hpp"
