@@ -27,11 +27,6 @@
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
 #include <lv2/lv2plug.in/ns/ext/atom/util.h>
 
-/** 
-   WIP-WIP-WIP - still not exatly sure what the purpose of this header will be.
-   For now it is an easy way to bulk include the above lv2 headers
- */
-
 namespace lvtk {
 
 } /* namespace lvtk */
