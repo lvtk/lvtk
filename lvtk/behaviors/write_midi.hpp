@@ -21,6 +21,9 @@
 #ifndef LVTK_WRITE_MIDI_HPP
 #define LVTK_WRITE_MIDI_HPP
 
+#warning "WriteMIDI uses deprecated LV2 extensions. WriteMIDI will \
+    probably not work correctly in a LV2 Rev 3 UI."
+
 #include <cstdlib>
 
 #include <lvtk/ext/event.hpp>
@@ -33,6 +36,7 @@ namespace lvtk {
 
     @see The internal struct I for API details
     @ingroup behaviors
+    @deprecated
 */
 
  template <bool Required = true>

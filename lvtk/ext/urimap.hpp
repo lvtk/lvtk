@@ -39,6 +39,9 @@
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 #include "lvtk/private/types.hpp"
 
+#warning "this header uses the deprecated lv2 extension uri-map. \
+	please use URID instead."
+
 namespace lvtk {
 
 	/** The URI map mixin. This can be used by both plugins and GUIs.
