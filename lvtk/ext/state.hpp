@@ -176,7 +176,11 @@ namespace lvtk {
          bool
          check_ok()
          {
-            this->m_ok = (p_make_path != NULL);
+            if (Required) {
+               this->m_ok = (p_make_path != NULL);
+            } else {
+               this->m_ok = true;
+            }
 
             if (LVTK_DEBUG) {
                std::clog<<"    [LV2::State] Validation "
