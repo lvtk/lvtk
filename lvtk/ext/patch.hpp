@@ -32,7 +32,7 @@
    transmitting it between plugins, or between a plugin and its UI, making
    it a good choice for advanced plugin control.
 
-   @url http://lv2plug.in/ns/ext/patch
+   @link http://lv2plug.in/ns/ext/patch
 */
 
 #ifndef LVTK_LV2_PATCH_HPP

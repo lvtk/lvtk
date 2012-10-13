@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
     
     synth.hpp - Support file for writing LV2 tone generating plugins in C++
     
@@ -18,7 +18,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
-****************************************************************************/
+*/
+/** @headerfile lvtk/synth.hpp */
 
 #ifndef LVTK_LV2_SYNTH_HPP
 #define LVTK_LV2_SYNTH_HPP
@@ -46,7 +47,8 @@ namespace lvtk {
 
    /** A base class for synth voices, to be used with the Synth template class.
       You don't have to make your voice classes inherit this one, but it
-      makes some things easier. */
+      makes some things easier.
+   */
    class Voice {
    public:
     

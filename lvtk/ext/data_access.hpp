@@ -32,9 +32,7 @@
 
 #include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
-#include "lvtk/private/types.hpp"
-
-#include <lvtk/util.hpp>
+#include <lvtk/private/types.hpp>
 
 namespace lvtk {
 

@@ -30,6 +30,7 @@ namespace lvtk {
    /**
       The Log Mixin
       @ingroup pluginmixins
+      @headerfile lvtk/ext/log.hpp
       @see The internal struct I for API details.
    */
 

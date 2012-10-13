@@ -151,6 +151,7 @@ namespace lvtk {
       
       If you want to write a synth plugin you should probably inherit the 
       Synth class instead of this one.
+      @headerfile lvtk/plugin.hpp
  */
 
   template <class Derived, 

@@ -29,9 +29,8 @@
 
 #include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
 
-#include "lvtk/private/types.hpp"
+#include <lvtk/private/types.hpp>
 
-#include <lvtk/util.hpp>
 
 namespace lvtk {
 

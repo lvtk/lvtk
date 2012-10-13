@@ -1,4 +1,4 @@
-/**
+/*
    feature.hpp - Support file for writing LV2 plugins in C++
 
    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
@@ -18,7 +18,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 /**
-   @feature.hpp
+   @headerfile lvtk/feature.hpp
    C++ convenience header for LV2 Feature handling.
    LV2 Version Support: lv2core 8.0 (2012-04-17) STABLE
 */
