@@ -1,3 +1,7 @@
+Version 1.0.1 (2012-10-13)
+	* #25 Doxygen include typos
+	* #28 State Mixin correct validation
+	
 Version 1.0.0 (2012-10-03)
 	* lvtk::UI harborded widget instead of inheriting
 	* Added GtkUI mixin for easy Gtk GUI's
