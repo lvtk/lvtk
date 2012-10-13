@@ -148,9 +148,18 @@ def build(bld):
 	# Header Installation
 	header_base = bld.env['INCLUDEDIR'] + "/" \
 				+ APPNAME + "-" + pcvers
-	bld.install_files(header_base, "build/version.h")
+				
+	bld.install_files(header_base+"/lvtk", "build/version.h")
+	
 	bld.install_files(header_base+"/lvtk", \
 					  bld.path.ant_glob("lvtk/*.*"))
+	
+	bld.install_files(header_base+"/lvtk/behaviors", \
+					  bld.path.ant_glob("lvtk/ext/*.*"))
+					  
+	bld.install_files(header_base+"/lvtk/ext", \
+					  bld.path.ant_glob("lvtk/ext/*.*"))
+					  
 	bld.install_files(header_base+"/lvtk/private", \
 					  bld.path.ant_glob("lvtk/private/*.*"))
 
