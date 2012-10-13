@@ -8,3 +8,4 @@ lock-waf*
 .settings/
 .waf-*/
 waf-*/
+*~
