@@ -115,7 +115,7 @@ def build(bld):
 		bld.recurse(subdir)
 		bld.add_group()
 	
-	pcvers = LVTK_MAJOR_VERSION + "." + LVTK_MINOR_VERSION
+	pcvers = LVTK_MAJOR_VERSION
 	
 	# Build PC Files
 	autowaf.build_pc(bld, 'LVTK-PLUGIN', LVTK_VERSION, pcvers, [],
