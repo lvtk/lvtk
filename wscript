@@ -155,7 +155,7 @@ def build(bld):
 					  bld.path.ant_glob("lvtk/*.*"))
 	
 	bld.install_files(header_base+"/lvtk/behaviors", \
-					  bld.path.ant_glob("lvtk/ext/*.*"))
+					  bld.path.ant_glob("lvtk/behaviors/*.*"))
 					  
 	bld.install_files(header_base+"/lvtk/ext", \
 					  bld.path.ant_glob("lvtk/ext/*.*"))
@@ -165,7 +165,7 @@ def build(bld):
 
 
 def release_tag(ctx):
-	tag = git.tag_version(VERSION, "Release: v" + VERSION , "v")
+	tag = git.tag_version(VERSION, "Release: v" + VERSION , "lvtk")
 	if tag : print "Git Tag Created: " + tag
 
 def dist(ctx):
