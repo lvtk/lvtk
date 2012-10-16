@@ -1,3 +1,6 @@
+Version 1.0.2 (2012-10-16)
+	* pkg-config files use only major version number
+
 Version 1.0.1 (2012-10-13)
 	* #25 Doxygen include typos
 	* #28 State Mixin correct validation
