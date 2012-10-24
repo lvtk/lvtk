@@ -4,6 +4,7 @@
 #ifndef LVTK_EXT_COMMON_H
 #define LVTK_EXT_COMMON_H
 
+#include <iostream> // For std::clog
 #include <string.h>
 
 #include "lvtk/private/types.hpp"
