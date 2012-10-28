@@ -26,10 +26,11 @@
 #ifndef LVTK_LV2_FEATURE_HPP
 #define LVTK_LV2_FEATURE_HPP
 
-
 #include <map>
 #include <string>
 #include <vector>
+
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 
 namespace lvtk {
 

@@ -193,7 +193,6 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         typedef Plugin<D, URID<true>, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
         Parent;
 
-
         /** This constructor must be called in the initialiser list for your
             synth class.
             @param ports The total number of ports in your plugin.
