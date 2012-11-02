@@ -19,6 +19,6 @@ if buildme:
 		includes = ["libpaq"],
 		target   = "ttl2c",
 		name     = "ttl2c",
-		use      = "redland"
+		use      = ["BOOST"]
 )
 bld.add_group()

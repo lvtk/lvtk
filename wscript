@@ -104,7 +104,7 @@ def configure(conf):
 	autowaf.display_header( "LV2 Toolkit Configuration")
 	autowaf.display_msg(conf,"Build Plugin Library", True)
 	autowaf.display_msg(conf,"Build UI Library",True)
-	autowaf.display_msg(conf,"Build example plugins", not conf.env.TOOLS_DISABLED)
+	autowaf.display_msg(conf,"Build example plugins", not conf.env.EXAMPLES_DISABLED)
 	autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
 	autowaf.display_msg(conf,"Build tools", not conf.env.TOOLS_DISABLED)
 	
@@ -130,7 +130,8 @@ def build(bld):
 						'VERSION'              : LVTK_VERSION,
 						'THELIB'		       : LIB_LVTK_UI,
 						'LVTK_PKG_DEPS'       : 'lv2'})
-		autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, pcvers, [],
+		if bld.env.LIB_gtkmm:
+			autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
 						'THELIB'		       : LIB_LVTK_UI,
