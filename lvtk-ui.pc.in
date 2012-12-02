@@ -8,4 +8,4 @@ Version: @VERSION@
 Description: LV2 Toolkit UI Library
 Requires: @LVTK_PKG_DEPS@
 Libs: -L${libdir} -l@THELIB@
-Cflags: -Wl,nodelete -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@
+Cflags: -Wl,-z,nodelete -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@
