@@ -32,15 +32,20 @@
 
 namespace lvtk {
 
-   /** Typedef for an Atom */
-   typedef LV2_Atom             Atom;
 
    /** Typedef for an Atom Forge */
    typedef LV2_Atom_Forge_Frame AtomForgeFrame;
 
+   /** Function type for mapping symbols */
    typedef uint32_t     (*MapFunc)(const char* symbol);
+
+   /** Function type for unmaping URIDs */
    typedef const char*  (*UnmapFunc)(uint32_t id);
 
+
+   /**
+    * Class wrapper around LV2_Atom_Forge
+    */
    class AtomForge
    {
       LV2_Atom_Forge forge;
@@ -48,11 +53,18 @@ namespace lvtk {
 
    public:
 
+      /**
+       * Uninitialized AtomForge.
+       * @note Client code must call AtomForge::init() before using
+       */
       AtomForge()
       : midi_MidiEvent(0)
       , patch_Set(0), patch_Get(0), patch_body(0)
       { }
 
+      /**
+       * Initialized AtomForge.
+       */
       AtomForge (MapFunc map)
       {
          init (map);
@@ -92,20 +104,32 @@ namespace lvtk {
       }
 
 
+      /**
+       * Get the underlying atom forge
+       * @return The forge
+       */
       inline LV2_Atom_Forge*
       cobj()
       {
          return &forge;
       }
 
-
+      /**
+       * Set the forge's buffer
+       * @param buf The buffer to use
+       * @param size The size of the buffer
+       */
       inline void
       set_buffer(uint8_t* buf, uint32_t size)
       {
          lv2_atom_forge_set_buffer (&forge, buf, size);
       }
 
-      uint32_t
+      /**
+       * Get an atom's total size
+       * @param atom The atom to inspect (must be valid)
+       */
+      inline uint32_t
       atom_total_size (const LV2_Atom* atom)
       {
          return lv2_atom_total_size (atom);
@@ -113,7 +137,14 @@ namespace lvtk {
 
       /* MIDI Related */
 
-      const LV2_Atom* note_on (uint8_t key, uint8_t velocity)
+      /**
+       * Forge a simple MIDI note-on event
+       * @param key The midi key
+       * @param velocity The note's velocity
+       * @return An atom
+       */
+      inline const LV2_Atom*
+      note_on (uint8_t key, uint8_t velocity)
       {
          uint8_t midi[3];
          midi[0] = 0x90;
@@ -125,7 +156,13 @@ namespace lvtk {
          return atom;
       }
 
-      const LV2_Atom* note_off (uint8_t key)
+      /**
+       * Forge a MIDI note-off event
+       * @param key The midi key
+       * @return An atom
+       */
+      inline const LV2_Atom*
+      note_off (uint8_t key)
       {
          uint8_t midi[3];
          midi[0] = 0x80;
@@ -137,12 +174,21 @@ namespace lvtk {
          return atom;
       }
 
+      /**
+       * Forge an atom path from string
+       * @param path The path to forge
+       * @return A reference to the Atom
+       */
       inline LV2_Atom_Forge_Ref
       path (const std::string& path)
       {
          return lv2_atom_forge_path(&forge,path.c_str(),path.size());
       }
 
+      /**
+       * Forge an atom resource
+       * @return A reference to the Atom
+       */
       inline LV2_Atom_Forge_Ref
       resource (AtomForgeFrame *frame, uint32_t id, uint32_t otype)
       {
