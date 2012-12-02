@@ -1,5 +1,5 @@
 /*
-  silence.cpp  -  LV2 Toolkit - Worker Demonstration
+  silence.cpp  -  LV2 Toolkit API Demonstration Plugin
 
   Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
