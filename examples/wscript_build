@@ -48,7 +48,7 @@ if buildme:
 				name          = uislug,
 				target        = uislug,
 				source        = uisrc,
-				cxxflags       = ['-Wl,nodelete'],
+				cxxflags       = ['-Wl,-z,nodelete'],
 				includes      = ["../build/examples"],
 				use           = [bld.env.LIB_LVTK_UI, "gtkmm"],
 				LIB_EXT		  = bld.env.pluginlib_EXT
