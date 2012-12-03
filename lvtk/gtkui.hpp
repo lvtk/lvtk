@@ -57,16 +57,12 @@ namespace lvtk {
 				Gtk::Main::init_gtkmm_internals();
 
 				/* Create the container object. */
-				p_container = new Gtk::VBox();
+				p_container = Gtk::manage( new Gtk::VBox());
 			}
 
 			~I()
 			{
-				/* Destroy the container if needed */
-				if (p_container) {
-					delete p_container;
-				}
-				p_container = 0;
+				/** Container is managed, so don't delete it */
 			}
 
 			/** @skip */
