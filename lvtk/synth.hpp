@@ -249,17 +249,21 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
     void
     handle_midi (uint32_t size, unsigned char* data)
     {
-      if (size != 3)
-	return;
-      if (data[0] == 0x90) {
+      if (size != 3) return;
+
+      if (data[0] == 0x90)
+      {
 	unsigned voice = 
 	  static_cast<D*>(this)->find_free_voice(data[1], data[2]);
 	if (voice < m_voices.size())
 	  m_voices[voice]->on(data[1], data[2]);
       }
-      else if (data[0] == 0x80) {
-	for (unsigned i = 0; i < m_voices.size(); ++i) {
-	  if (m_voices[i]->get_key() == data[1]) {
+      else if (data[0] == 0x80)
+      {
+	for (unsigned i = 0; i < m_voices.size(); ++i)
+	{
+	  if (m_voices[i]->get_key() == data[1])
+	  {
 	    m_voices[i]->off(data[2]);
 	    break;
 	  }
@@ -306,73 +310,55 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
     void
     run(uint32_t sample_count)
     {
+      D* synth = static_cast<D*>(this);
       
       // Zero output buffers so voices can add to them
       for (unsigned i = 0; i < m_audio_ports.size(); ++i)
-	std::memset(p(m_audio_ports[i]), 0, 
-		    sizeof(float) * sample_count);
+	std::memset(p(m_audio_ports[i]), 0, sizeof(float) * sample_count);
       
       // Make the port buffers available to the voices
       for (unsigned i = 0; i < m_voices.size(); ++i)
 	m_voices[i]->set_port_buffers(Parent::m_ports);
-      
-#if 0
-      LV2_Event_Iterator iter;
-      lv2_event_begin(&iter, p<LV2_Event_Buffer>(m_midi_input));
-      
-      uint8_t* event_data;
-#endif
+
+      // Get ahold of the first atom event if any
+      const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (m_midi_input);
+      LV2_Atom_Event* ev = lv2_atom_sequence_begin(&seq->body);
 
       uint32_t samples_done = 0;
       
-      while (samples_done < sample_count) {
-	uint32_t to = sample_count;
-#if 0
-	LV2_Event* ev = 0;
-	if (lv2_event_is_valid(&iter)) {
-	  ev = lv2_event_get(&iter, &event_data);
-	  to = ev->frames;
-	  lv2_event_increment(&iter);
-	}
-#endif
+      while (samples_done < sample_count)
+      {
+          uint32_t to = sample_count;
 
-	if (to > samples_done) {
-	  static_cast<D*>(this)->pre_process(samples_done, to);
-	  for (unsigned i = 0; i < m_voices.size(); ++i)
-	    m_voices[i]->render(samples_done, to);
-	  static_cast<D*>(this)->post_process(samples_done, to);
-	  samples_done = to;
-	}
+          if (lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev))
+          {
+              ev = NULL;
+          }
+          else
+          {
+              to = ev->time.frames;
+          }
 
-       const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence>(m_midi_input);
-       LV2_ATOM_SEQUENCE_FOREACH(midiseq, ev)
-       {
-          uint32_t frame_offset = ev->time.frames;
-          if (ev->body.type == m_midi_type)
-            {
-              uint8_t* const data = (uint8_t* const)(ev + 1);
-              handle_midi (3, data);
-            }
-       }
-#if 0
-	/* This is what we do with events:
-	   - if it's a MIDI event, pass it to handle_midi()
-	   - if it's a reference counted event, decrease the count and ignore it
-	   - if it's something else, just ignore it (it's safe)
-	*/
+          if (to > samples_done)
+          {
+              synth->pre_process(samples_done, to);
+              for (unsigned i = 0; i < m_voices.size(); ++i)
+                  m_voices[i]->render(samples_done, to);
+              synth->post_process(samples_done, to);
+              samples_done = to;
+          }
 
-	if (ev) {
-	  if (ev->type == m_midi_type)
-	    static_cast<D*>(this)->handle_midi(ev->size, event_data);
-	  else if (ev->type == 0) {
-	    /* We need to qualify this so the compiler knows that there is an
-	       event_unref() function */
-	   // Parent::event_unref(ev);
-	  }
-	}
-#endif
+          if (ev)
+          {
+              if (ev->body.type == m_midi_type)
+              {
+                  uint8_t* const data = (uint8_t* const)(ev + 1);
+                  handle_midi (ev->body.size, data);
+              }
+
+              ev = lv2_atom_sequence_next (ev);
+          }
       }
-      
     }
     
     
