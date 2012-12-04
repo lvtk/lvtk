@@ -32,6 +32,7 @@
 
 namespace lvtk {
 
+   typedef LV2_URID URID;
 
    /** Typedef for an Atom Forge */
    typedef LV2_Atom_Forge_Frame AtomForgeFrame;
@@ -41,6 +42,40 @@ namespace lvtk {
 
    /** Function type for unmaping URIDs */
    typedef const char*  (*UnmapFunc)(uint32_t id);
+
+
+   struct Atom
+   {
+      Atom (LV2_Atom* atom) : p_atom(atom) { }
+      static uint32_t pad_size(uint32_t size) const { return lv2_atom_pad_size(size); }
+      bool is_null() { return lv2_atom_is_null(p_atom); }
+
+      bool operator ==(Atom& other) { return lv2_atom_equals(cobj(), other.cobj()); }
+      uint32_t total_size() const { return lv2_atom_total_size(p_atom); }
+      uint32_t size() const { return p_atom->size; }
+      URID type() const { return p_atom->type; }
+      LV2_Atom* cobj() { return p_atom; }
+
+   private:
+      LV2_Atom* p_atom;
+   };
+
+
+   struct AtomObject
+   {
+      AtomObject (void* atom) : p_object((LV2_Atom_Object*)atom) {}
+
+      LV2_Atom_Object* cobj() { return p_object; }
+
+      LV2_Atom* atom() { return (LV2_Atom*)p_object; }
+
+      URID otype() const { return p_object->body.otype; }
+
+      uint32_t id() const { return p_object->body.id; }
+
+   private:
+      LV2_Atom_Object* p_object;
+   };
 
 
    /**
@@ -213,6 +248,12 @@ namespace lvtk {
       pop (AtomForgeFrame *frame)
       {
          lv2_atom_forge_pop(&forge, frame);
+      }
+
+      inline LV2_Atom_Forge_Ref
+      integer (const int val)
+      {
+         return lv2_atom_forge_int(&forge,val);
       }
 
       inline LV2_Atom_Forge_Ref
