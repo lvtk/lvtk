@@ -47,7 +47,7 @@ namespace lvtk {
    struct Atom
    {
       Atom (LV2_Atom* atom) : p_atom(atom) { }
-      static uint32_t pad_size(uint32_t size) const { return lv2_atom_pad_size(size); }
+      inline static uint32_t pad_size(uint32_t size) { return lv2_atom_pad_size(size); }
       bool is_null() { return lv2_atom_is_null(p_atom); }
 
       bool operator ==(Atom& other) { return lv2_atom_equals(cobj(), other.cobj()); }
@@ -63,7 +63,7 @@ namespace lvtk {
 
    struct AtomObject
    {
-      AtomObject (void* atom) : p_object((LV2_Atom_Object*)atom) {}
+      AtomObject (const void* atom) : p_object((LV2_Atom_Object*)atom) {}
 
       LV2_Atom_Object* cobj() { return p_object; }
 
