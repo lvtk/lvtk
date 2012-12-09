@@ -32,7 +32,6 @@
 
 namespace lvtk {
 
-   typedef LV2_URID URID;
 
    /** Typedef for an Atom Forge */
    typedef LV2_Atom_Forge_Frame AtomForgeFrame;
@@ -53,7 +52,7 @@ namespace lvtk {
       bool operator ==(Atom& other) { return lv2_atom_equals(cobj(), other.cobj()); }
       uint32_t total_size() const { return lv2_atom_total_size(p_atom); }
       uint32_t size() const { return p_atom->size; }
-      URID type() const { return p_atom->type; }
+      LV2_URID type() const { return p_atom->type; }
       LV2_Atom* cobj() { return p_atom; }
 
    private:
@@ -69,7 +68,7 @@ namespace lvtk {
 
       LV2_Atom* atom() { return (LV2_Atom*)p_object; }
 
-      URID otype() const { return p_object->body.otype; }
+      LV2_URID otype() const { return p_object->body.otype; }
 
       uint32_t id() const { return p_object->body.id; }
 
