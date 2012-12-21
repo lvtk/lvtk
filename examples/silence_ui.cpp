@@ -16,7 +16,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/
+ */
 
 /**
    @file silence_ui.cpp
@@ -24,7 +24,6 @@
  */
 
 #include <gtkmm.h>
-
 #include <lvtk/ui.hpp>
 
 #include "silence.h"
@@ -38,8 +37,8 @@ using Glib::ustring;
 
 /* An atom-like struct for raw MIDI note on/offs */
 struct midi_t {
-	LV2_Atom atom;
-	uint8_t midi[3];
+    LV2_Atom atom;
+    uint8_t midi[3];
 };
 
 
@@ -50,80 +49,77 @@ class SilenceGtk : public UI<SilenceGtk, URID<true> >
 {
 public:
 
-	SilenceGtk (const char* plugin_uri)
-	{
-		/* Required before creating widgets */
-		Gtk::Main::init_gtkmm_internals();
+    SilenceGtk (const char* plugin_uri)
+    {
+        /*  Required before creating widgets */
+        Gtk::Main::init_gtkmm_internals();
 
-		/* Create the container with @c new because we don't
-		   know if the host is using Gtkmm or not */
-		p_hbox = new Gtk::HBox();
+        /*  Create the container with @c new because we don't
+            know if the host is using Gtkmm or not */
+        p_hbox = new Gtk::HBox();
 
-		if (p_hbox) {
-			Button *btn = manage (new Button(ustring("Silence")));
+        if (p_hbox) {
+            Button *btn = manage (new Button(ustring("Silence")));
 
-		    btn->signal_pressed().connect(
-		    		  mem_fun(*this, &SilenceGtk::send_note_on));
-		    btn->signal_released().connect(
-		    		  mem_fun(*this, &SilenceGtk::send_note_off));
+            btn->signal_pressed().connect(
+                    mem_fun(*this, &SilenceGtk::send_note_on));
+            btn->signal_released().connect(
+                    mem_fun(*this, &SilenceGtk::send_note_off));
 
-			p_hbox->pack_start (*btn);
-		} else {
-			p_hbox = 0;
-		}
+            p_hbox->pack_start (*btn);
+        } else {
+            p_hbox = 0;
+        }
 
-	}
+    }
 
 
-	/*  Required implementation required by the UI class.
-	    The UI library will ALWAYS try to execute
-	    a @c widget() method during instantiation. The
-	    toolkit mixins this. Since we aren't using a mixin,
-	    we have to do it ourselves.
+    /*  Required implementation by the UI class. The UI library will ALWAYS
+        try to execute a @c widget() method during instantiation. The
+        toolkit mixins implement this method. Since we aren't using a mixin,
+        we have to do it ourselves.
 
-	    This is really easy for gtkmm. However, you can
-	    return ANY pointer here as the host supports the
-	    'widget type' you are returning. */
-
-	LV2UI_Widget* widget()
-	{
-		/* If the HBox is NULL at this point, it
+        This is really easy for gtkmm. However, you can return ANY pointer here
+        as the host supports the 'widget type' you are returning. */
+    LV2UI_Widget* widget()
+    {
+        /* If the HBox is NULL at this point, it
 		   will prevent the UI from instantiating */
 
-		if (p_hbox) {
-			/* LV2 GtkUI expects a Gtk C Object.
+        if (p_hbox) {
+            /* LV2 GtkUI expects a Gtk C Object.
 			   cast one to an LV2UI_Widget */
-			return widget_cast (p_hbox->gobj());
-		}
+            return widget_cast (p_hbox->gobj());
+        }
 
-		return NULL;
-	}
+        return NULL;
+    }
 
 protected:
 
-	/* Raw MIDI Senders */
+    /* Raw MIDI Senders */
 
-	void send_note_on()
-	{
-		LV2_URID xfer = map(LV2_ATOM__eventTransfer);
-		LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
+    void send_note_on()
+    {
+        LV2_URID xfer = map(LV2_ATOM__eventTransfer);
+        LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
 
-		midi_t midi = {{3, midiEvent}, { 0x90, 0x40, 0x40 }};
-		write (p_midi, sizeof(midi), xfer, (void*)&midi);
-	}
+        midi_t midi = {{3, midiEvent}, { 0x90, 0x40, 0x40 }};
+        write (p_midi, sizeof(midi), xfer, (void*)&midi);
+    }
 
-	void send_note_off()
-	{
-		LV2_URID xfer = map(LV2_ATOM__eventTransfer);
-		LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
+    void send_note_off()
+    {
+        LV2_URID xfer = map(LV2_ATOM__eventTransfer);
+        LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
 
-		midi_t midi = {{3, midiEvent},{ 0x80, 0x40, 0x40 }};
-		write (p_midi, sizeof(midi), xfer, (void*)&midi);
-	}
+        midi_t midi = {{3, midiEvent},{ 0x80, 0x40, 0x40 }};
+        write (p_midi, sizeof(midi), xfer, (void*)&midi);
+    }
 
 private:
-	/* The container object */
-	Gtk::HBox *p_hbox;
+    /* The container object */
+    Gtk::HBox *p_hbox;
 
 };
 
