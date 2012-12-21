@@ -57,7 +57,7 @@
     liblvtk-ui, contains the class UI, defined in the file <lvtk/ui.hpp>
     which you can use in a similar way to create new LV2 plugin UIs.
 
-	<b>Packages</b>
+    <b>Packages</b>
     There are a few included pkg-config packages to choose from when writing
     a plugins and UIs.  Below is a list of all packages included and what they
     are for.
@@ -75,7 +75,7 @@
     @ref pluginmixins "mixins" that you can use to add extra functionality to 
     your plugins, for example support for LV2 extensions.
 
-	<b>Versioning</b>
+    <b>Versioning</b>
     These libraries are only available as static libraries (and most of the
     code is template classes in header files), thus ABI stability is not an 
     issue. The API will be stable between major version bumps, at which the
@@ -485,7 +485,9 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
     /** @example workhorse.cpp
       @example workhorse_ui.cpp
       @example silence.cpp
-      @example silence_ui.cpp */
+      @example silence_ui.cpp
+      @example beep.cpp
+      @example beep_ui.cpp */
 
 } /* namespace lvtk */
 
