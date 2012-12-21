@@ -16,7 +16,7 @@ import lv2
 buildme = not bld.env.TOOLS_DISABLED
 
 if buildme:
-	examples = ["workhorse", "silence"]
+	examples = ["workhorse", "silence", "beep"]
 
 	for slug in examples:
 		
