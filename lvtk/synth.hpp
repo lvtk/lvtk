@@ -355,7 +355,6 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
                 {
                     if (ev->body.type == m_midi_type)
                     {
-                        std::cout << "synth: midi\n";
                         uint8_t* const data = (uint8_t* const)(ev + 1);
                         handle_midi (ev->body.size, data);
                     }

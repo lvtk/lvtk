@@ -40,7 +40,6 @@ public:
   
     void on(unsigned char key, unsigned char velocity)
     {
-        std::cout << "on\n";
         m_key = key;
         m_period = m_rate * 4.0 / lvtk::key2hz(m_key);
     }
