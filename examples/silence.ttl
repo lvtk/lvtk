@@ -1,4 +1,4 @@
-# DAPS - Silence Example Plugin
+# LV2 Toolkit - Silence Example Plugin
 # Copyright 2012  Michael Fisher <mfisher31@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
