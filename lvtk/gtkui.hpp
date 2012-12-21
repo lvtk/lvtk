@@ -48,7 +48,6 @@ namespace lvtk {
         template <class Derived>
         struct I : Extension<Required>
         {
-
             I() : p_container(NULL)
             {
                 /* Call before anything else. If init_gtkmm_internals
@@ -98,9 +97,8 @@ namespace lvtk {
 
                @param widget Gtkmm main UI widget
                @return void
-               @remarks You can also use the container()
-               method to aquire the unerlying Gtk::HBox.
-               Do this if you want to add widgets using
+               @remarks You can also use the container() method to acquire the
+               underlying Gtk::VBox. Do this if you want to add widgets using
                pack_start and pack_end.
              */
             void add (Gtk::Widget& widget)
@@ -115,7 +113,7 @@ namespace lvtk {
             LV2UI_Widget*
             widget()
             {
-            return widget_cast (p_container->gobj());
+                return widget_cast (p_container->gobj());
             }
 
         private:
