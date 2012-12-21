@@ -1,3 +1,10 @@
+Version 1.0.3 (2012-12-20)
+	* Fixed UI compiler errors with -Wl,nodelete.
+	* Accurate MIDI triggering Synth base class
+	* Review of Mixin validation.
+	* Fixed GtkUI mixin bug that was causing crashes 
+          when a plugin is unloaded while UI is still open.
+
 Version 1.0.2 (2012-10-16)
 	* pkg-config files use only major version number
 
