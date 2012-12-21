@@ -108,20 +108,20 @@ namespace lvtk {
 
 
     /** This is a base class template for LV2 synth plugins. Its parameters
-      are a voice class, either a subclass of Voice or something written from
-      scratch, and the derived class itself. By using the derived class as a
-      template parameter the base class can call member functions in the 
-      derived class without resorting to virtual function calls, which are
-      hard to optimise. 
+        are a voice class, either a subclass of Voice or something written from
+        scratch, and the derived class itself. By using the derived class as a
+        template parameter the base class can call member functions in the
+        derived class without resorting to virtual function calls, which are
+        hard to optimise.
 
-      You can use @ref pluginmixins "mixins" with this class just like with
-      the Plugin class, but don't use URID - they are already
-      added automatically.
+        You can use @ref pluginmixins "mixins" with this class just like with
+        the Plugin class, but don't use URID - they are already
+        added automatically.
 
-      Here is an example of a complete synth plugin. Granted, not a very
-      exciting one, but it should be enough to explain how to do it:
+        Here is an example of a complete synth plugin. Granted, not a very
+        exciting one, but it should be enough to explain how to do it:
 
-      @code
+        @code
 #include <cstdlib>
 #include <lvtk/synth.hpp>
 
@@ -180,7 +180,6 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
 };
       @endcode
      */
-
     template <class V, class D,
               class Ext1 = end, class Ext2 = end, class Ext3 = end,
               class Ext4 = end, class Ext5 = end, class Ext6 = end,
