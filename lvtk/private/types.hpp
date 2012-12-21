@@ -43,7 +43,7 @@ namespace lvtk {
    typedef LV2_Handle Handle;
 
    namespace ui {
-   	   typedef LV2UI_Handle Handle;
+       typedef LV2UI_Handle Handle;
    }
 }
 

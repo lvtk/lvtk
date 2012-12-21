@@ -53,10 +53,9 @@ namespace lvtk {
    template <bool Required = true>
    struct EventRef
    {
-	   template <class Derived>
-	   struct I : Extension<Required>
-	   {
-
+      template <class Derived>
+      struct I : Extension<Required>
+      {
          typedef I<Derived> Mixin;
 
          I() : m_callback_data(0), m_ref_func(0), m_unref_func(0) { }

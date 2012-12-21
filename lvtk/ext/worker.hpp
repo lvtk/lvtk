@@ -69,9 +69,9 @@ namespace lvtk {
    template <bool Required = true>
    struct Worker
    {
-	   template <class Derived>
-	   struct I : Extension<Required>
-	   {
+        template <class Derived>
+        struct I : Extension<Required>
+        {
 
          /** @skip */
          static void

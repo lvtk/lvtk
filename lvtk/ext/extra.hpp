@@ -22,6 +22,10 @@
    C++ convenience header for the LV2 extra extensions.
    This covers extensions that aren't in the LV2 Specification officially,
    Many of these are more than likely broken.
+
+   Everything in this file is old and could be updated to use the new
+   design in lvtk.  Nothing in here is supported and is mainly saved
+   just for future reference. MRF
 */
 
 #ifndef LVTK_LV2_EXTRA_HPP
@@ -31,7 +35,7 @@
 
 #include <lvtk/types.hpp>
 
-namespace DAPS {
+namespace lvtk {
 
 
    /** This extension provides no extra functions or data, it just makes sure
