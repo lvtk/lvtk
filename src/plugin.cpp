@@ -27,7 +27,7 @@ namespace lvtk {
   
   DescList::~DescList() {
     for (unsigned i = 0; i < size(); ++i)
-      delete [] operator[](i).URI;
+      free((void*)operator[](i).URI);
   }
 
   DescList& get_lv2_descriptors() {
