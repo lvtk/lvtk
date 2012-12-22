@@ -25,12 +25,14 @@
 
 namespace lvtk {
   
-  DescList::~DescList() {
+  DescList::~DescList()
+  {
     for (unsigned i = 0; i < size(); ++i)
       free((void*)operator[](i).URI);
   }
 
-  DescList& get_lv2_descriptors() {
+  DescList& get_lv2_descriptors()
+  {
     static DescList descriptors;
     return descriptors;
   }
@@ -40,9 +42,11 @@ namespace lvtk {
 
 extern "C" {
   
-  const LV2_Descriptor* lv2_descriptor(uint32_t index) {
+  const LV2_Descriptor* lv2_descriptor(uint32_t index)
+  {
     if (index < lvtk::get_lv2_descriptors().size())
       return &lvtk::get_lv2_descriptors()[index];
+
     return NULL;
   }
   

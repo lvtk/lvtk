@@ -155,12 +155,13 @@ namespace lvtk {
      */
 
     template <class Derived,
-    class Ext1 = end, class Ext2 = end, class Ext3 = end,
-    class Ext4 = end, class Ext5 = end, class Ext6 = end,
-    class Ext7 = end, class Ext8 = end, class Ext9 = end>
-    class Plugin : public MixinTree<Derived,
-    Ext1, Ext2, Ext3, Ext4, Ext5,
-    Ext6, Ext7, Ext8, Ext9> {
+              class Ext1 = end, class Ext2 = end, class Ext3 = end,
+              class Ext4 = end, class Ext5 = end, class Ext6 = end,
+              class Ext7 = end, class Ext8 = end, class Ext9 = end>
+    class Plugin : public MixinTree<Derived, Ext1, Ext2, Ext3,
+                                             Ext4, Ext5, Ext6,
+                                             Ext7, Ext8, Ext9>
+    {
     public:
 
         /** This constructor is needed to initialise the port vector with the
@@ -178,70 +179,70 @@ namespace lvtk {
             s_bundle_path = 0;
 
             if (m_features)
+            {
+                feature_handler_map hmap;
+                Derived::map_feature_handlers (hmap);
+
+                for (const Feature* const* iter = m_features; *iter != 0; ++iter)
                 {
-                    feature_handler_map hmap;
-                    Derived::map_feature_handlers (hmap);
+                    feature_handler_map::iterator miter;
+                    miter = hmap.find((*iter)->URI);
 
-                    for (const Feature* const* iter = m_features; *iter != 0; ++iter)
-                        {
-                            feature_handler_map::iterator miter;
-                            miter = hmap.find((*iter)->URI);
-
-                            if (miter != hmap.end())
-                                {
-                                    miter->second(static_cast<Derived*>(this), (*iter)->data);
-                                }
-                        }
+                    if (miter != hmap.end())
+                    {
+                        miter->second(static_cast<Derived*>(this), (*iter)->data);
+                    }
                 }
+            }
         }
 
         /** Connects the ports. You shouldn't have to override this, just use
-	p() to access the port buffers. 
+            p() to access the port buffers.
 
-	If you do override this function, remember that if you want your plugin
-	to be realtime safe this function may not block, allocate memory or
-	otherwise take a long time to return.
-	@param port The index of the port to connect.
-	@param data_location The buffer to connect it to.
+            If you do override this function, remember that if you want your plugin
+            to be realtime safe this function may not block, allocate memory or
+            otherwise take a long time to return.
+            @param port The index of the port to connect.
+            @param data_location The buffer to connect it to.
          */
         void connect_port(uint32_t port, void* data_location) {
             m_ports[port] = data_location;
         }
 
         /** Override this function if you need to do anything on activation.
-	This is always called before the host starts using the run() function.
-	You should reset your plugin to it's initial state here. */
+            This is always called before the host starts using the run() function.
+            You should reset your plugin to it's initial state here. */
         void activate() { }
 
         /** This is the process callback which should fill all output port buffers.
-	You most likely want to override it - the default implementation does
-	nothing.
+            You most likely want to override it - the default implementation does
+            nothing.
 
-	Remember that if you want your plugin to be realtime safe, this function
-	may not block, allocate memory or take more than O(sample_count) time
-	to execute.
-	@param sample_count The number of audio frames to process/generate in 
-	                    this call.
+            Remember that if you want your plugin to be realtime safe, this function
+            may not block, allocate memory or take more than O(sample_count) time
+            to execute.
+            @param sample_count The number of audio frames to process/generate in
+            this call.
          */
         void run(uint32_t sample_count) { }
 
         /** Override this function if you need to do anything on deactivation.
-	The host calls this when it does not plan to make any more calls to 
-	run() (unless it calls activate() again). 
+            The host calls this when it does not plan to make any more calls to
+            run() (unless it calls activate() again).
          */
         void deactivate() { }
 
         /** Use this function to register your plugin class so that the host
-	can find it. You need to do this when the shared library is loaded 
-	by the host. One portable way of doing that is to put the function 
-	call in the initialiser for a global variable, like this:
+            can find it. You need to do this when the shared library is loaded
+            by the host. One portable way of doing that is to put the function
+            call in the initialiser for a global variable, like this:
 
 	@code
 unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
         @endcode
 
-	The return value is not important, it's just there so you can use that
-	trick.
+            The return value is not important, it's just there so you can use that
+            trick.
          */
         static unsigned
         register_class(const char* uri)
@@ -262,12 +263,12 @@ unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
         }
 
         /** @internal
-	This is called by the plugin instantiation wrapper after the plugin
-	object has been created. If it returns false the object will be
-	discarded and NULL will be returned to the host.
+            This is called by the plugin instantiation wrapper after the plugin
+            object has been created. If it returns false the object will be
+            discarded and NULL will be returned to the host.
 
-	This function computes the AND combination of the results of check_ok()
-	calls to any inherited @ref pluginmixins "mixins".
+            This function computes the AND combination of the results of check_ok()
+            calls to any inherited @ref pluginmixins "mixins".
          */
         bool check_ok() {
             return m_ok && MixinTree<Derived,
@@ -278,15 +279,15 @@ unsigned _ =  MypluginClass::register_class("http://my.plugin.class");
     protected:
 
         /** Use this function to access and cast port buffers, for example
-        like this:
+            like this:
 
-        @code
+            @code
 LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
-        @endcode
+            @endcode
 
-	If you want to access a port buffer as a pointer-to-float (i.e. an audio
-	or control port) you can use the non-template version instead.
-	@param port The index of the port whose buffer you want to access.
+            If you want to access a port buffer as a pointer-to-float (i.e. an audio
+            or control port) you can use the non-template version instead.
+            @param port The index of the port whose buffer you want to access.
          */
         template <typename T> T*&
         p(uint32_t port)
@@ -295,7 +296,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
         }
 
         /** Use this function to access data buffers for control or audio ports.
-	@param port The index of the port whose buffer you want to access.
+	    @param port The index of the port whose buffer you want to access.
          */
         float*&
         p(uint32_t port) {
@@ -303,7 +304,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
         }
 
         /** Returns the filesystem path to the bundle that contains this plugin.
-	This may only be called after the plugin constructor is done executing.
+	    This may only be called after the plugin constructor is done executing.
          */
         const char*
         bundle_path() const
@@ -312,12 +313,12 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
         }
 
         /** Sets the OK state of the plugin. If it's @c true (which is the default)
-	the plugin has been instantiated OK, if @c false it has not and the 
-	host will discard it. You can call this in the constructor for your 
-	plugin class if you need to check some condition that isn't taken care 
-	of by a @ref pluginmixins "mixin". 
-	@param ok True if the plugin instance is OK and can be used, false if
-                  it should be discarded.
+            the plugin has been instantiated OK, if @c false it has not and the
+            host will discard it. You can call this in the constructor for your
+            plugin class if you need to check some condition that isn't taken care
+            of by a @ref pluginmixins "mixin".
+	    @param ok True if the plugin instance is OK and can be used, false if
+            it should be discarded.
          */
         void
         set_ok(bool ok)
@@ -326,14 +327,14 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
         }
 
         /** @internal
-	This vector contains pointers to all port buffers. You don't need to
-	access it directly, use the p() function instead. */
+            This vector contains pointers to all port buffers. You don't need to
+            access it directly, use the p() function instead. */
         std::vector<void*> m_ports;
 
     private:
 
         /** @internal
-	Wrapper function for connect_port().
+	    Wrapper function for connect_port().
          */
         static void _connect_port(LV2_Handle instance, uint32_t port,
                 void* data_location) {
@@ -341,75 +342,76 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
         }
 
         /** @internal
-	Wrapper function for activate().
+	    Wrapper function for activate().
          */
         static void _activate(LV2_Handle instance) {
             reinterpret_cast<Derived*>(instance)->activate();
         }
 
         /** @internal
-	Wrapper function for run().
+	    Wrapper function for run().
          */
         static void _run(LV2_Handle instance, uint32_t sample_count) {
             reinterpret_cast<Derived*>(instance)->run(sample_count);
         }
 
         /** @internal
-	Wrapper function for deactivate().
+	    Wrapper function for deactivate().
          */
         static void _deactivate(LV2_Handle instance) {
             reinterpret_cast<Derived*>(instance)->deactivate();
         }
 
         /** @internal
-	This function creates an instance of a plugin. It is used as
-	the instantiate() callback in the LV2 descriptor. You should not use
-	it directly. */
+            This function creates an instance of a plugin. It is used as
+            the instantiate() callback in the LV2 descriptor. You should not use
+            it directly. */
         static LV2_Handle _create_plugin_instance(const LV2_Descriptor* descriptor,
                                                   double sample_rate,
                                                   const char* bundle_path,
                                                   const LV2_Feature* const*
-                                                  features) {
-
+                                                  features)
+        {
             // copy some data to static variables so the subclasses don't have to
             // bother with it
             s_features = features;
             s_bundle_path = bundle_path;
 
-            if (LVTK_DEBUG) {
-                    std::clog<<"[plugin] Instantiating plugin...\n"
-                            <<"  Bundle path: "<<bundle_path<<"\n"
-                            <<"  features: \n";
-                    for (Feature const* const* f = features; *f != 0; ++f)
-                        std::clog<<"    "<<(*f)->URI<<"\n";
+            if (LVTK_DEBUG)
+            {
+                std::clog<<"[plugin] Instantiating plugin...\n"
+                        <<"  Bundle path: "<<bundle_path<<"\n"
+                        <<"  features: \n";
+                for (Feature const* const* f = features; *f != 0; ++f)
+                    std::clog<<"    "<<(*f)->URI<<"\n";
 
-                    std::clog<<"  Creating plugin object...\n";
+                std::clog<<"  Creating plugin object...\n";
             }
 
             Derived* t = new Derived (sample_rate);
 
             if (LVTK_DEBUG) {
-                    std::clog<<"  Validating...\n";
+                std::clog<<"  Validating...\n";
             }
 
             if (t->check_ok()) {
-                    if (LVTK_DEBUG)
-                        std::clog<<"  Done!"<<std::endl;
-                    return reinterpret_cast<LV2_Handle>(t);
+                if (LVTK_DEBUG)
+                    std::clog<<"  Done!"<<std::endl;
+                return reinterpret_cast<LV2_Handle>(t);
             }
 
             if (LVTK_DEBUG) {
-                    std::clog<<"  Failed!\n"
-                            <<"  Deleting object."<<std::endl;
+                std::clog<<"  Failed!\n"
+                        <<"  Deleting object."<<std::endl;
             }
             delete t;
             return 0;
         }
 
         /** @internal
-	This function destroys an instance of a plugin. It is used as the
-	cleanup() callback in the LV2 descriptor. You should not use it
-	directly. */
+            This function destroys an instance of a plugin. It is used as the
+            cleanup() callback in the LV2 descriptor. You should not use it
+            directly. */
         static void _delete_plugin_instance(LV2_Handle instance) {
             delete reinterpret_cast<Derived*> (instance);
         }
@@ -418,33 +420,33 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
     private:
 
         /** @internal
-	The feature array passed to this plugin instance. May not be valid
-	after the constructor has returned.
+            The feature array passed to this plugin instance. May not be valid
+            after the constructor has returned.
          */
         Feature const* const* m_features;
 
         /** @internal
-	The bundle path passed to this plugin instance. May not be valid
-	after the constructor has returned.
+            The bundle path passed to this plugin instance. May not be valid
+            after the constructor has returned.
          */
         char const* m_bundle_path;
 
         /** @internal
-	Used to pass the feature array to the plugin without having to pass
-	it through the constructor of the plugin class.
+            Used to pass the feature array to the plugin without having to pass
+            it through the constructor of the plugin class.
          */
         static Feature const* const* s_features;
 
         /** @internal
-	Used to pass the bundle path to the plugin without having to pass
-	it through the constructor of the plugin class.
+            Used to pass the bundle path to the plugin without having to pass
+            it through the constructor of the plugin class.
          */
         static char const* s_bundle_path;
 
         /** @internal
-	Local OK flag. Initialised to @c true, but the plugin class can set 
-	this to @c false using set_ok() in its constructor if the plugin 
-	instance for some reason should not be used.
+            Local OK flag. Initialised to @c true, but the plugin class can set
+            this to @c false using set_ok() in its constructor if the plugin
+            instance for some reason should not be used.
          */
         bool m_ok;
 
@@ -467,34 +469,29 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 
     /** @defgroup pluginmixins Plugin Mixins
 
-      These template classes implement extra functionality that you may
-      want to have in your plugin class, usually features. You add them
-      to your class by passing them as template parameters to plugin
-      when inheriting it. The internal structs of the mixin template classes,
-      named @c I, will then be inherited by your plugin class, so that any 
-      public and protected members they have will be available to your 
-      plugin as if they were declared in your plugin class. 
+        These template classes implement extra functionality that you may
+        want to have in your plugin class, usually features. You add them
+        to your class by passing them as template parameters to plugin
+        when inheriting it. The internal structs of the mixin template classes,
+        named @c I, will then be inherited by your plugin class, so that any
+        public and protected members they have will be available to your
+        plugin as if they were declared in your plugin class.
 
-      They are done as separate template classes so they won't add to the
-      code size of your plugin if you don't need them. 
+        They are done as separate template classes so they won't add to the
+        code size of your plugin if you don't need them.
 
-      There are also @ref guimixins "UI Mixins" that you can use in the same
-      way with GUI.
+        There are also @ref guimixins "UI Mixins" that you can use in the same
+        way with GUI.
      */
 
     /** @example workhorse.cpp
-      @example workhorse_ui.cpp
-      @example silence.cpp
-      @example silence_ui.cpp
-      @example beep.cpp
-      @example beep_ui.cpp */
+        @example workhorse_ui.cpp
+        @example silence.cpp
+        @example silence_ui.cpp
+        @example beep.cpp
+        @example beep_ui.cpp */
 
 } /* namespace lvtk */
-
-
-/* ======== Doxygen ======== */
-
-
 
 
 #endif /* LVTK_LV2_PLUGIN_HPP */
