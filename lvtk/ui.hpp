@@ -38,6 +38,7 @@
 #include <lvtk/ext/instance_access.hpp>
 
 #include "private/debug.hpp"
+#include "private/ui_features.hpp"
 
 namespace lvtk
 {
