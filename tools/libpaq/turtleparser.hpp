@@ -23,10 +23,10 @@
 #ifndef TURTLEPARSER_HPP
 #define TURTLEPARSER_HPP
 
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/utility.hpp>
-#include <boost/spirit/tree/parse_tree.hpp>
-#include <boost/spirit/tree/ast.hpp>
+#include <boost/spirit/include/classic_core.hpp>
+#include <boost/spirit/include/classic_utility.hpp>
+#include <boost/spirit/include/classic_parse_tree.hpp>
+#include <boost/spirit/include/classic_ast.hpp>
 
 #include <algorithm>
 #include <iostream>

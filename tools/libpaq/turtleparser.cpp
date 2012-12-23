@@ -28,7 +28,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <boost/spirit/dynamic.hpp>
+#include <boost/spirit/include/classic_dynamic.hpp>
 
 #include "turtleparser.hpp"
 

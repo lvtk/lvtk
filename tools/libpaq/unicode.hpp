@@ -29,7 +29,7 @@
 
 
 using namespace std;
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 
 
 template <typename ScannerT>
