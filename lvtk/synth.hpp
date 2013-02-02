@@ -254,6 +254,7 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         {
             if (size != 3) return;
 
+
             if (data[0] == 0x90)
             {
                 unsigned voice =
@@ -356,7 +357,7 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
                     if (ev->body.type == m_midi_type)
                     {
                         uint8_t* const data = (uint8_t* const)(ev + 1);
-                        handle_midi (ev->body.size, data);
+                        synth->handle_midi (ev->body.size, data);
                     }
 
                     ev = lv2_atom_sequence_next (ev);
