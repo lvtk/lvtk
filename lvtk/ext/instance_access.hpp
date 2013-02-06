@@ -77,14 +77,15 @@ namespace lvtk
             check_ok()
             {
                 if (!Required)
-                    return true;
+                    this->m_ok = true;
 
                 if (LVTK_DEBUG)
                 {
                     std::clog << "    [InstanceAccess] Validation "
-                            << (this->m_ok ? "succeeded" : "failed")
-                            << "." << std::endl;
+                              << (this->m_ok ? "succeeded" : "failed")
+                              << "." << std::endl;
                 }
+
                 return this->m_ok;
             }
 
