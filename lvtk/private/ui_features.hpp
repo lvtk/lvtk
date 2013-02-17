@@ -46,6 +46,12 @@ namespace lvtk {
             bool
             check_ok()
             {
+                if (Required == false) {
+                   this->m_ok = true;
+                } else {
+                   this->m_ok = p_resize != 0;
+                }
+
                 if (LVTK_DEBUG)
                 {
                     std::clog << "    [UI::Resize] Validation "
@@ -62,7 +68,10 @@ namespace lvtk {
             bool
             ui_resize(int width, int height)
             {
-                return (0 == p_resize->ui_resize (p_resize->handle, width, height));
+                if (p_resize != 0)
+                   return (0 == p_resize->ui_resize (p_resize->handle, width, height));
+
+                return false;
             }
 
             LV2UI_Resize* p_resize;
