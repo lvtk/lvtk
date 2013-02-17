@@ -45,14 +45,25 @@ namespace lvtk {
 
    struct Atom
    {
-      Atom (LV2_Atom* atom) : p_atom(atom) { }
+      Atom (LV2_Atom* atom) : p_atom (atom) { }
       inline static uint32_t pad_size(uint32_t size) { return lv2_atom_pad_size(size); }
       bool is_null() { return lv2_atom_is_null(p_atom); }
 
       bool operator ==(Atom& other) { return lv2_atom_equals(cobj(), other.cobj()); }
+
+      inline Atom& operator = (const Atom& other)
+      {
+         p_atom = other.p_atom;
+         return *this;
+      }
+
+      void* body() { return LV2_ATOM_BODY(p_atom); }
+      float as_float() { return ((LV2_Atom_Float*)p_atom)->body; }
+
+      LV2_URID type() const { return p_atom->type; }
       uint32_t total_size() const { return lv2_atom_total_size(p_atom); }
       uint32_t size() const { return p_atom->size; }
-      LV2_URID type() const { return p_atom->type; }
+
       LV2_Atom* cobj() { return p_atom; }
 
    private:
@@ -99,7 +110,7 @@ namespace lvtk {
       /**
        * Initialized AtomForge.
        */
-      AtomForge (MapFunc map)
+      AtomForge (LV2_URID_Map* map)
       {
          init (map);
       }
@@ -109,32 +120,13 @@ namespace lvtk {
        * @param map The mapping function needed for init
        */
       inline void
-      init (MapFunc map)
+      init (LV2_URID_Map* map)
       {
-         assert (map != NULL);
-
-         midi_MidiEvent = map(LV2_MIDI__MidiEvent);
-         patch_Set      = map(LV2_PATCH__Set);
-         patch_Get      = map(LV2_PATCH__Get);
-
-         lv2_atom_forge_set_buffer (&forge, NULL, 0);
-         forge.Blank    = map(LV2_ATOM__Blank);
-         forge.Bool     = map(LV2_ATOM__Bool);
-         forge.Chunk    = map(LV2_ATOM__Chunk);
-         forge.Double   = map(LV2_ATOM__Double);
-         forge.Float    = map(LV2_ATOM__Float);
-         forge.Int      = map(LV2_ATOM__Int);
-         forge.Long     = map(LV2_ATOM__Long);
-         forge.Literal  = map(LV2_ATOM__Literal);
-         forge.Path     = map(LV2_ATOM__Path);
-         forge.Property = map(LV2_ATOM__Property);
-         forge.Resource = map(LV2_ATOM__Resource);
-         forge.Sequence = map(LV2_ATOM__Sequence);
-         forge.String   = map(LV2_ATOM__String);
-         forge.Tuple    = map(LV2_ATOM__Tuple);
-         forge.URI      = map(LV2_ATOM__URI);
-         forge.URID     = map(LV2_ATOM__URID);
-         forge.Vector   = map(LV2_ATOM__Vector);
+         lv2_atom_forge_init (&forge, map);
+         midi_MidiEvent   = map->map (map->handle, LV2_MIDI__MidiEvent);
+         patch_Set        = map->map (map->handle, LV2_PATCH__Set);
+         patch_Get        = map->map (map->handle, LV2_PATCH__Get);
+         patch_body       = map->map (map->handle, LV2_PATCH__body);
       }
 
 
@@ -156,6 +148,7 @@ namespace lvtk {
       inline void
       set_buffer(uint8_t* buf, uint32_t size)
       {
+
          lv2_atom_forge_set_buffer (&forge, buf, size);
       }
 
@@ -177,7 +170,7 @@ namespace lvtk {
        * @param velocity The note's velocity
        * @return An atom
        */
-      inline const LV2_Atom*
+      inline Atom
       note_on (uint8_t key, uint8_t velocity)
       {
          uint8_t midi[3];
@@ -185,9 +178,9 @@ namespace lvtk {
          midi[1] = key;
          midi[2] = velocity;
 
-         LV2_Atom* atom = (LV2_Atom*) lv2_atom_forge_atom (&forge, 3, midi_MidiEvent);
+         Atom atom ((LV2_Atom*) lv2_atom_forge_atom (&forge, 3, midi_MidiEvent));
          lv2_atom_forge_raw (&forge, midi, 3);
-         return atom;
+         return Atom (atom);
       }
 
       /**
