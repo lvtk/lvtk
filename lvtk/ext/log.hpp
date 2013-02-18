@@ -46,7 +46,7 @@ namespace lvtk
 
             /** @skip */
             static void
-            map_feature_handlers(feature_handler_map& hmap)
+            map_feature_handlers(FeatureHandlerMap& hmap)
             {
                 hmap[LV2_LOG__log] = &I<Derived>::handle_feature;
             }
@@ -85,7 +85,7 @@ namespace lvtk
                 context if @p type is @ref LV2_LOG__Trace.
              */
             int
-            vprintf(LV2_URID type, const char* fmt, va_list ap)
+            vprintf (LV2_URID type, const char* fmt, va_list ap)
             {
                 if (p_log != NULL)
                     return p_log->vprintf(p_log->handle, type, fmt, ap);
@@ -100,16 +100,12 @@ namespace lvtk
                 is @ref LV2_LOG__Trace.
              */
             int
-            printf(LV2_URID type, const char* fmt, ...)
+            printf (LV2_URID type, const char* fmt, ...)
             {
-                /* The c++ verison of log's printf, simple
-                   makes a va_list and calls log's vprintf.  */
-                int res = 0;
                 va_list argptr;
                 va_start(argptr, fmt);
 
-                res = this->vprintf(type, fmt, argptr);
-
+                int res (this->vprintf(type, fmt, argptr));
                 va_end(argptr);
 
                 return res;

@@ -131,7 +131,7 @@ namespace lvtk {
 
             /** @skip */
             static void
-            map_feature_handlers (feature_handler_map& hmap)
+            map_feature_handlers (FeatureHandlerMap& hmap)
             {
                 hmap[LV2_OPTIONS__options] = &I<Derived>::handle_feature;
             }

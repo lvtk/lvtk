@@ -40,18 +40,14 @@ namespace lvtk
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() :
-                    p_unmap(NULL), p_map(NULL)
-            {
-            }
+            I() : p_unmap(NULL), p_map(NULL) { }
 
             /** @internal */
             static void
-            map_feature_handlers (feature_handler_map& hmap)
+            map_feature_handlers (FeatureHandlerMap& hmap)
             {
-                hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
-                hmap[LV2_URID__unmap] =
-                        &I<Derived>::handle_unmap_feature;
+                hmap[LV2_URID__map]   = &I<Derived>::handle_map_feature;
+                hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
             }
 
             /** @internal */
@@ -82,7 +78,7 @@ namespace lvtk
             {
                 if (LVTK_DEBUG)
                 {
-                    std::clog << "    [LV2::URID] Validation "
+                    std::clog << "    [URID] Validation "
                             << (this->m_ok ? "succeeded" : "failed")
                             << "." << std::endl;
                 }
@@ -143,7 +139,7 @@ namespace lvtk
 
         protected:
 
-            LV2_URID_Map *p_map;
+            LV2_URID_Map   *p_map;
             LV2_URID_Unmap *p_unmap;
 
         };

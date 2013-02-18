@@ -125,13 +125,12 @@ namespace lvtk {
           @param flags
           @return STATE_SUCCESS on Success
        */
-      StateStatus operator () (uint32_t key, const void* value,
-                                             size_t   size,
-                                             uint32_t type,
-                                             uint32_t flags = 0) const
+      inline StateStatus operator () (uint32_t key, const void* value,
+                                                    size_t   size,
+                                                    uint32_t type,
+                                                    uint32_t flags = 0) const
       {
-         return (StateStatus) p_ssfunc(
-                      p_handle, key, value, size, type, flags);
+         return (StateStatus) p_ssfunc (p_handle, key, value, size, type, flags);
       }
 
    private:
@@ -156,7 +155,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         map_feature_handlers (feature_handler_map& hmap)
+         map_feature_handlers (FeatureHandlerMap& hmap)
          {
             /** Setup makePath here. mapPath is intended for
                 use in LV2_State_Interface methods only **/

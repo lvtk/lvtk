@@ -88,7 +88,7 @@ namespace lvtk {
         /** @internal
 	Add feature handlers to @c hmap for the feature URIs. */
         static void
-        map_feature_handlers(feature_handler_map& hmap)
+        map_feature_handlers(FeatureHandlerMap& hmap)
         {
             E1::template I<A>::map_feature_handlers(hmap);
             Parent::map_feature_handlers(hmap);
@@ -121,7 +121,7 @@ namespace lvtk {
       the recursion. */
     template <class A>
     struct MixinTree<A, end, end, end, end, end, end, end, end, end> {
-        static void map_feature_handlers(feature_handler_map& hmap) { }
+        static void map_feature_handlers(FeatureHandlerMap& hmap) { }
         bool check_ok() const { return true; }
         static const void* extension_data(const char* uri) { return 0; }
     };
@@ -142,7 +142,7 @@ namespace lvtk {
 	Default implementation does nothing - no handlers added. 
          */
         static void
-        map_feature_handlers(feature_handler_map& hmap) { }
+        map_feature_handlers(FeatureHandlerMap& hmap) { }
 
         /** @internal
 	Return @c true if the plugin instance is OK, @c false if it isn't. 

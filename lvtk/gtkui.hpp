@@ -66,7 +66,7 @@ namespace lvtk {
 
             /** @skip */
             static void
-            map_feature_handlers (feature_handler_map& hmap)
+            map_feature_handlers (FeatureHandlerMap& hmap)
             {
                 /** Not required or implemented */
             }

@@ -58,7 +58,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            map_feature_handlers(feature_handler_map& hmap)
+            map_feature_handlers(FeatureHandlerMap& hmap)
             {
                 hmap[LV2_RESIZE_PORT__resize] =
                         &I<Derived>::handle_feature;
@@ -107,20 +107,16 @@ namespace lvtk
                 SHOULD make this as inexpensive as possible.
              */
             ResizePortStatus
-            resize(uint32_t index, size_t size)
+            resize (uint32_t index, size_t size)
             {
                 if (NULL == p_resize_port_resize)
-                {
                     return RESIZE_PORT_ERR_UNKNOWN;
-                }
 
-                LV2_Resize_Port_Feature_Data data =
-                        p_resize_port_resize->data;
-
-                return (ResizePortStatus) p_resize_port_resize->resize(
-                        data, index, size);
+                LV2_Resize_Port_Feature_Data data = p_resize_port_resize->data;
+                return (ResizePortStatus) p_resize_port_resize->resize (data, index, size);
             }
 
+        private:
             LV2_Resize_Port_Resize * p_resize_port_resize;
         };
     };

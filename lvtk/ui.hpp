@@ -114,12 +114,12 @@ namespace lvtk
             s_bundle_path = 0;
             if (m_features)
             {
-                feature_handler_map hmap;
+                FeatureHandlerMap hmap;
                 Derived::map_feature_handlers(hmap);
                 for (const lvtk::Feature* const * iter = m_features;
                         *iter != 0; ++iter)
                 {
-                    feature_handler_map::iterator miter;
+                    FeatureHandlerMap::iterator miter;
                     miter = hmap.find((*iter)->URI);
                     if (miter != hmap.end())
                     {

@@ -55,7 +55,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            map_feature_handlers(feature_handler_map& hmap)
+            map_feature_handlers(FeatureHandlerMap& hmap)
             {
                 hmap[LV2_DATA_ACCESS_URI] = &I<Derived>::handle_feature;
             }
