@@ -98,7 +98,7 @@ namespace lvtk {
          check_ok()
          {
             if (LVTK_DEBUG) {
-              std::clog<<"    [LV2::Worker] validation "
+              std::clog<<"    [Worker] validation "
                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
             }
             return this->m_ok;
