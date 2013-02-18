@@ -190,11 +190,12 @@ namespace lvtk {
 
                     if (miter != hmap.end())
                     {
-                        miter->second(static_cast<Derived*>(this), (*iter)->data);
+                        miter->second (static_cast<Derived*>(this), (*iter)->data);
                     }
                 }
             }
         }
+
 
         /** Connects the ports. You shouldn't have to override this, just use
             p() to access the port buffers.
@@ -390,9 +391,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 
             Derived* t = new Derived (sample_rate);
 
-            if (LVTK_DEBUG) {
-                std::clog<<"  Validating...\n";
-            }
+            if (LVTK_DEBUG) { std::clog<<"  Validating...\n"; }
 
             if (t->check_ok()) {
                 if (LVTK_DEBUG)
@@ -404,6 +403,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
                 std::clog<<"  Failed!\n"
                         <<"  Deleting object."<<std::endl;
             }
+
             delete t;
             return 0;
         }
