@@ -79,27 +79,27 @@ namespace lvtk {
 
         protected:
 
-            uint32_t
+            bool
             subscribe (uint32_t port, uint32_t protocol, const Feature* const* features)
             {
                 if (portsubscribe_is_valid())
-                    return m_subscribe.subscribe (m_subscribe.handle, port, protocol, features);
-                return 99; //error
+                    return (0 == m_subscribe.subscribe (m_subscribe.handle, port, protocol, features));
+                return false;
             }
 
-            uint32_t
+            bool
             unsubscribe (uint32_t port, uint32_t protocol, const Feature* const* features)
             {
                 if (portsubscribe_is_valid())
-                    return m_subscribe.unsubscribe (m_subscribe.handle, port, protocol, features);
-                return 99; //error
+                    return (0 == m_subscribe.unsubscribe (m_subscribe.handle, port, protocol, features));
+                return false;
             }
 
         private:
             LV2UI_Port_Subscribe m_subscribe;
 
             /** @internal */
-            bool portsubscribe_is_valid()
+            bool portsubscribe_is_valid() const
             {
                 return (m_subscribe.handle      != NULL &&
                         m_subscribe.subscribe   != NULL &&
@@ -171,9 +171,10 @@ namespace lvtk {
             LV2UI_Port_Map m_pmap;
 
             /** @internal */
-            bool portmap_is_valid()
+            bool portmap_is_valid() const
             {
-                return m_pmap.handle != NULL && m_pmap.port_index != NULL;
+                return (m_pmap.handle     != NULL &&
+                        m_pmap.port_index != NULL);
             }
 
         };
@@ -241,7 +242,7 @@ namespace lvtk {
             LV2UI_Touch m_touch;
 
             /** @internal */
-            bool touch_is_valid()
+            bool touch_is_valid() const
             {
                 return m_touch.handle != NULL &&
                        m_touch.touch  != NULL;
