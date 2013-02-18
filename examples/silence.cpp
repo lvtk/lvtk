@@ -41,16 +41,16 @@ using std::vector;
 #define LVTK_SILENCE_PREFIX LVTK_SILENCE_URI "#"
 #define LVTK_SILENCE_MSG LVTK_SILENCE_PREFIX "msg"
 
-class silence : public Plugin<silence, URID<true>, State<true> >
+class Silence : public Plugin<Silence, URID<true>, State<true> >
 {
    public:
 
-    silence (double rate)
-    : Plugin<silence, URID<true>, State<true> > (1)
+    Silence (double rate)
+    : Plugin<Silence, URID<true>, State<true> > (1)
     {
-       urids.atom_String = map(LV2_ATOM__String);
-       urids.silence_msg = map(LVTK_SILENCE_MSG);
-       urids.midi_type   = map(LV2_MIDI__MidiEvent);
+       urids.atom_String = map (LV2_ATOM__String);
+       urids.silence_msg = map (LVTK_SILENCE_MSG);
+       urids.midi_type   = map (LV2_MIDI__MidiEvent);
     }
 
     void
@@ -68,8 +68,7 @@ class silence : public Plugin<silence, URID<true>, State<true> >
 
 
     StateStatus
-    save (StateStore &store, uint32_t flags,
-                     	 	 	 	 const FeatureVec &features)
+    save (StateStore &store, uint32_t flags, const FeatureVec &features)
     {
        const char* msg = "Sorry I can't hear you. Please speak up";
 
@@ -80,18 +79,16 @@ class silence : public Plugin<silence, URID<true>, State<true> >
 
 
     StateStatus
-    restore(StateRetrieve &retrieve, uint32_t flags,
-                        		     const FeatureVec &features)
+    restore (StateRetrieve &retrieve, uint32_t flags, const FeatureVec &features)
     {
        size_t size;
        uint32_t type,fs;
 
-       const void *message =
-    		   retrieve (urids.silence_msg, &size, &type, &fs);
+       const void *message = retrieve (urids.silence_msg, &size, &type, &fs);
        if (message)
        {
-         std::cout << "[silence] " << (char*)message << std::endl;
-         return STATE_SUCCESS;
+          std::cout << "[silence] " << (char*)message << std::endl;
+          return STATE_SUCCESS;
        }
 
        return STATE_ERR_UNKNOWN;
@@ -120,4 +117,4 @@ class silence : public Plugin<silence, URID<true>, State<true> >
 
 };
 
-static int _ = silence::register_class (LVTK_SILENCE_URI);
+static int _ = Silence::register_class (LVTK_SILENCE_URI);

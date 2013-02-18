@@ -20,13 +20,12 @@
  */
 /**
  * @file workhorse.cpp
- * Demonstration of LV2 Worker and LV2 Log in C++
+ * Demonstration of LV2 Worker, LV2 URID, LV2 Options, and LV2 Log in C++
  */
-
-/* Demonstration of Plugin, URID, Log, and Worker extensions */
 
 #include <unistd.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <cstdlib>
 
@@ -38,39 +37,58 @@
 using namespace lvtk;
 using std::vector;
 
-#define MIXINS URID<true>, Log<true>, Worker<true>, Options<false>
 
-class Workhorse : public Plugin<Workhorse, MIXINS >
+
+
+class Workhorse;
+typedef lvtk::Plugin<Workhorse, URID<true>, Options<false>, BufSize<false>,
+                                Log<false>, Worker<true> >  PluginType;
+
+class Workhorse : public PluginType
 {
 public:
 
     Workhorse (double rate)
-    : Plugin<Workhorse, MIXINS > (3),
-      m_sleeping (false),
-      msgType (map(LV2_LOG__Entry))
-      { }
+        : PluginType (p_n_ports),
+          m_sleeping (false),
+          entryType (map (LV2_LOG__Entry)),
+          traceType (map (LV2_LOG__Trace)),
+          bufsize (0)
+    { }
+
+    void activate()
+    {
+        // query for buffer information
+        const BufferInfo& info (get_buffer_info());
+        std::stringstream ss;
+        ss << "Buffer Bounded:  " << info.bounded << std::endl
+           << "Buffer Fixed:    " << info.fixed << std::endl
+           << "Buffer Pow of 2: " << info.powerOfTwo << std::endl
+           << "Buffer Min:      " << info.min << std::endl
+           << "Buffer Max:      " << info.max << std::endl
+           << "Sequence Size:   " << info.seqSize << std::endl;
+        printf (entryType, ss.str().c_str());
+    }
 
     void
     run(uint32_t nframes)
     {
-        /** Arbitrary message. Normally you'd want to send
-    	    an LV2 Atom of sorts for scheduling */
+
         const char* msg = "go to sleep";
 
         if (!m_sleeping)
         {
             /** Schedule a job with msg as the data */
-            WorkerStatus status = schedule_work (strlen(msg), (void*)msg);
+            WorkerStatus status (schedule_work (strlen(msg), (void*)msg));
 
             switch (status)
             {
             case WORKER_SUCCESS:
-                printf (msgType,"[worker] scheduled a job\n");
+                printf (traceType, "[workhorse] scheduled a job\n");
                 break;
             default:
-                printf (msgType,"[worker] unknown scheduling error\n");
+                printf (traceType, "[workhorse] unknown scheduling error\n");
                 break;
-
             }
         }
     }
@@ -79,30 +97,24 @@ public:
 
     /* ============================= Worker ============================ */
 
-
-    /**
-       This is executed by the host after work executes a respond
-       object.
-     */
+    /** This is executed by the host after work executes a respond
+        object. */
     WorkerStatus
     work_response (uint32_t size, const void* body)
     {
         /** Print message with LV2 Log */
-        printf (msgType, "[workhorse] woke up. message: %s\n", (char*)body);
+        printf (traceType, "[workhorse] woke up. message: %s\n", (char*)body);
         return WORKER_SUCCESS;
     }
 
-
-    /**
-       Do some work
-       This gets called from the host after schedule_work
-       is called in run
-     */
+    /** Do some work ...
+        This gets called from the host after schedule_work
+        is called in run */
     WorkerStatus
     work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
         /** Print message with LV2 Log's printf */
-        printf (msgType, "[workhorse] taking a nap now\n");
+        printf (entryType, "[workhorse] taking a nap now\n");
 
         m_sleeping = true;
         sleep (10);
@@ -114,20 +126,15 @@ public:
         return WORKER_SUCCESS;
     }
 
-    void handle_options (const Option*)
-    {
-        std::cout << "handling options\n";
-    }
-
     uint32_t get_options (Option*)
     {
-        std::cout << "host getting options\n";
+        // Don't have a host for this yet
         return OPTIONS_SUCCESS;
     }
 
     uint32_t set_options (const Option*)
     {
-        std::cout << "host setting options\n";
+        // Don't have a host for this yet
         return OPTIONS_SUCCESS;
     }
 
@@ -136,7 +143,10 @@ private:
     bool m_sleeping;
 
     /** This is used for LV2 Log demonstration */
-    LV2_URID msgType;
+    LV2_URID entryType;
+    LV2_URID traceType;
+
+    uint32_t bufsize;
 
 };
 
