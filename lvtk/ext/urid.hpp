@@ -47,7 +47,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            map_feature_handlers(feature_handler_map& hmap)
+            map_feature_handlers (feature_handler_map& hmap)
             {
                 hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
                 hmap[LV2_URID__unmap] =
@@ -56,7 +56,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            handle_map_feature(void* instance, void* data)
+            handle_map_feature (void* instance, void* data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -67,7 +67,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            handle_unmap_feature(void* instance, void* data)
+            handle_unmap_feature (void* instance, void* data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -89,7 +89,7 @@ namespace lvtk
                 return this->m_ok;
             }
 
-        protected:
+
 
             /**
              Get the URI for a previously mapped numeric ID.
@@ -106,9 +106,11 @@ namespace lvtk
              @param urid The ID to be mapped back to the URI string.
              */
             const char*
-            unmap(LV2_URID urid)
+            unmap (LV2_URID urid)
             {
-                return p_unmap->unmap(p_unmap->handle, urid);
+                if (p_unmap != NULL)
+                    return p_unmap->unmap(p_unmap->handle, urid);
+                return "";
             }
 
             /**
@@ -132,10 +134,14 @@ namespace lvtk
              @param uri The URI to be mapped to an integer ID.
              */
             LV2_URID
-            map(const char* uri)
+            map (const char* uri)
             {
-                return p_map->map(p_map->handle, uri);
+                if (p_map != NULL)
+                    return p_map->map(p_map->handle, uri);
+                return 0;
             }
+
+        protected:
 
             LV2_URID_Map *p_map;
             LV2_URID_Unmap *p_unmap;
