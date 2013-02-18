@@ -28,14 +28,14 @@ namespace lvtk {
 
             /** @internal */
             static void
-            map_feature_handlers(FeatureHandlerMap& hmap)
+            map_feature_handlers (FeatureHandlerMap& hmap)
             {
                 hmap[LV2_UI__touch] = &I<Derived>::handle_feature;
             }
 
             /** @internal */
             static void
-            handle_feature(void* instance, void* data)
+            handle_feature (void* instance, void* data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -61,6 +61,7 @@ namespace lvtk {
                               << (this->m_ok ? "succeeded" : "failed")
                               << "." << std::endl;
                 }
+
                 return this->m_ok;
             }
 
@@ -132,8 +133,8 @@ namespace lvtk {
 
             /** Get the parent widget if any
 
-                @return The parent LV2_Widget or NULL if not provided */
-
+                @return The parent LV2_Widget or NULL if not provided
+            */
             LV2_Widget*
             get_parent()
             {
