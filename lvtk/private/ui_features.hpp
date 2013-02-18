@@ -10,7 +10,77 @@
 
 namespace lvtk {
 
-    /** The UIResize Mixin.
+    /** The UIParent Mixin.
+        @ingroup guimixins
+        @see The internal struct I for details.
+     */
+    template<bool Required = false>
+    struct UITouch
+    {
+        template<class Derived>
+        struct I : Extension<Required>
+        {
+            I()
+            {
+                m_touch.handle = NULL;
+                m_touch.touch  = NULL;
+            }
+
+            /** @internal */
+            static void
+            map_feature_handlers(FeatureHandlerMap& hmap)
+            {
+                hmap[LV2_UI__touch] = &I<Derived>::handle_feature;
+            }
+
+            /** @internal */
+            static void
+            handle_feature(void* instance, void* data)
+            {
+                Derived* d = reinterpret_cast<Derived*>(instance);
+                I<Derived>* mixin = static_cast<I<Derived>*>(d);
+
+                LV2UI_Touch* t (reinterpret_cast<LV2_Widget*>(data));
+                mixin->m_touch.handle = t->handle;
+                mixin->m_touch.touch  = t->touch;
+                mixin->m_ok = true;
+            }
+
+            bool
+            check_ok()
+            {
+                if (Required == false) {
+                   this->m_ok = true;
+                } else {
+                   this->m_ok = p_resize != 0;
+                }
+
+                if (LVTK_DEBUG)
+                {
+                    std::clog << "    [UITouch] Validation "
+                              << (this->m_ok ? "succeeded" : "failed")
+                              << "." << std::endl;
+                }
+                return this->m_ok;
+            }
+
+        protected:
+
+            void
+            touch (uint32_t port, bool grabbed)
+            {
+                if (m_touch.handle != NULL && m_touch.touch  != NULL)
+                    m_touch.touch (m_touch.handle, port, grabbed);
+            }
+
+        private:
+            LV2UI_Touch m_touch;
+
+        };
+    };
+
+
+    /** The UIParent Mixin.
         @ingroup guimixins
         @see The internal struct I for details.
      */
@@ -51,7 +121,7 @@ namespace lvtk {
 
                 if (LVTK_DEBUG)
                 {
-                    std::clog << "    [UI::Resize] Validation "
+                    std::clog << "    [UIParent] Validation "
                             << (this->m_ok ? "succeeded" : "failed")
                             << "." << std::endl;
                 }
@@ -87,7 +157,11 @@ namespace lvtk {
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() : p_resize(0) { }
+            I()
+            {
+                m_resize.handle    = NULL;
+                m_resize.ui_resize = NULL;
+            }
 
             /** @internal */
             static void
@@ -103,7 +177,9 @@ namespace lvtk {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
-                mixin->p_resize = reinterpret_cast<LV2UI_Resize*>(data);
+                LV2UI_Resize* rz (reinterpret_cast<LV2UI_Resize*> (data));
+                mixin->m_resize.handle    = rz->handle;
+                mixin->m_resize.ui_resize = rz->ui_resize;
                 mixin->m_ok = true;
             }
 
@@ -113,14 +189,14 @@ namespace lvtk {
                 if (Required == false) {
                    this->m_ok = true;
                 } else {
-                   this->m_ok = p_resize != 0;
+                   this->m_ok = (m_resize.ui_resize != NULL && m_resize.handle != NULL);
                 }
 
                 if (LVTK_DEBUG)
                 {
-                    std::clog << "    [UI::Resize] Validation "
-                            << (this->m_ok ? "succeeded" : "failed")
-                            << "." << std::endl;
+                    std::clog << "    [UIResize] Validation "
+                              << (this->m_ok ? "succeeded" : "failed")
+                              << "." << std::endl;
                 }
                 return this->m_ok;
             }
@@ -132,13 +208,14 @@ namespace lvtk {
             bool
             ui_resize(int width, int height)
             {
-                if (p_resize != 0)
-                   return (0 == p_resize->ui_resize (p_resize->handle, width, height));
+                if (m_resize.ui_resize != NULL && m_resize.handle != NULL)
+                   return (0 == m_resize.ui_resize (m_resize.handle, width, height));
 
                 return false;
             }
 
-            LV2UI_Resize* p_resize;
+        private:
+            LV2UI_Resize m_resize;
 
         };
     };
