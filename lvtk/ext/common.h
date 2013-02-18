@@ -14,6 +14,7 @@
 #include "atom.hpp"
 #include "log.hpp"
 #include "midi.hpp"
+#include "options.hpp"
 #include "patch.hpp"
 #include "urid.hpp"
 #include "time.hpp"
