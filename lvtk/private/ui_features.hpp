@@ -10,10 +10,74 @@
 
 namespace lvtk {
 
+    /** The UIResize Mixin.
+        @ingroup guimixins
+        @see The internal struct I for details.
+     */
+    template<bool Required = false>
+    struct UIParent
+    {
+        template<class Derived>
+        struct I : Extension<Required>
+        {
+            I() : p_parent (NULL) { }
 
-    /** The URID Mixin.
-        @headerfile lvtk/ext/urid.hpp
-        @ingroup pluginmixins
+            /** @internal */
+            static void
+            map_feature_handlers(FeatureHandlerMap& hmap)
+            {
+                hmap[LV2_UI__parent] = &I<Derived>::handle_feature;
+            }
+
+            /** @internal */
+            static void
+            handle_feature(void* instance, void* data)
+            {
+                Derived* d = reinterpret_cast<Derived*>(instance);
+                I<Derived>* mixin = static_cast<I<Derived>*>(d);
+
+                mixin->p_parent = reinterpret_cast<LV2_Widget*>(data);
+                mixin->m_ok = true;
+            }
+
+            bool
+            check_ok()
+            {
+                if (Required == false) {
+                   this->m_ok = true;
+                } else {
+                   this->m_ok = p_resize != 0;
+                }
+
+                if (LVTK_DEBUG)
+                {
+                    std::clog << "    [UI::Resize] Validation "
+                            << (this->m_ok ? "succeeded" : "failed")
+                            << "." << std::endl;
+                }
+                return this->m_ok;
+            }
+
+        protected:
+
+            /** Get the parent widget if any
+
+                @return The parent LV2_Widget or NULL if not provided */
+
+            LV2_Widget*
+            get_parent()
+            {
+               return p_parent;
+            }
+
+        private:
+
+            LV2_Widget* p_parent;
+
+        };
+    };
+
+    /** The UIResize Mixin.
         @ingroup guimixins
         @see The internal struct I for details.
      */
@@ -79,6 +143,6 @@ namespace lvtk {
         };
     };
 
-    }
+}
 
 #endif /* UI_FEATURES_HPP_ */
