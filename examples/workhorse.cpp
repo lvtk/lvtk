@@ -17,7 +17,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-*/
+ */
 /**
  * @file workhorse.cpp
  * Demonstration of LV2 Worker and LV2 Log in C++
@@ -38,45 +38,46 @@
 using namespace lvtk;
 using std::vector;
 
-#define MIXINS URID<true>, Log<true>, Worker<true>
+#define MIXINS URID<true>, Log<true>, Worker<true>, Options<false>
 
 class Workhorse : public Plugin<Workhorse, MIXINS >
 {
-   public:
+public:
 
     Workhorse (double rate)
-    : Plugin<Workhorse, MIXINS > (3)
-    , m_sleeping (false)
-    {
-    	msgType = map(LV2_LOG__Entry);
-    }
+    : Plugin<Workhorse, MIXINS > (3),
+      m_sleeping (false),
+      msgType (map(LV2_LOG__Entry))
+      { }
 
     void
     run(uint32_t nframes)
     {
         /** Arbitrary message. Normally you'd want to send
     	    an LV2 Atom of sorts for scheduling */
-       const char* msg = "go to sleep";
+        const char* msg = "go to sleep";
 
-       if (!m_sleeping)
-       {
-		   /** Schedule a job with msg as the data */
-		   WorkerStatus status = schedule_work (strlen(msg), (void*)msg);
+        if (!m_sleeping)
+        {
+            /** Schedule a job with msg as the data */
+            WorkerStatus status = schedule_work (strlen(msg), (void*)msg);
 
-		   switch (status)
-		   {
-			   case WORKER_SUCCESS:
-				   printf (msgType,"[worker] scheduled a job\n");
-				   break;
-			   default:
-				   printf (msgType,"[worker] unknown scheduling error\n");
-				   break;
+            switch (status)
+            {
+            case WORKER_SUCCESS:
+                printf (msgType,"[worker] scheduled a job\n");
+                break;
+            default:
+                printf (msgType,"[worker] unknown scheduling error\n");
+                break;
 
-		   }
-       }
+            }
+        }
     }
 
-   /* ============================= Worker ============================ */
+
+
+    /* ============================= Worker ============================ */
 
 
     /**
@@ -86,9 +87,8 @@ class Workhorse : public Plugin<Workhorse, MIXINS >
     WorkerStatus
     work_response (uint32_t size, const void* body)
     {
-    	/** Print message with LV2 Log */
+        /** Print message with LV2 Log */
         printf (msgType, "[workhorse] woke up. message: %s\n", (char*)body);
-
         return WORKER_SUCCESS;
     }
 
@@ -101,7 +101,7 @@ class Workhorse : public Plugin<Workhorse, MIXINS >
     WorkerStatus
     work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
-    	/** Print message with LV2 Log's printf */
+        /** Print message with LV2 Log's printf */
         printf (msgType, "[workhorse] taking a nap now\n");
 
         m_sleeping = true;
@@ -114,7 +114,24 @@ class Workhorse : public Plugin<Workhorse, MIXINS >
         return WORKER_SUCCESS;
     }
 
-   private:
+    void handle_options (const Option*)
+    {
+        std::cout << "handling options\n";
+    }
+
+    uint32_t get_options (Option*)
+    {
+        std::cout << "host getting options\n";
+        return OPTIONS_SUCCESS;
+    }
+
+    uint32_t set_options (const Option*)
+    {
+        std::cout << "host setting options\n";
+        return OPTIONS_SUCCESS;
+    }
+
+private:
 
     bool m_sleeping;
 
