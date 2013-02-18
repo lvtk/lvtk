@@ -68,7 +68,7 @@ namespace lvtk
             {
                 if (LVTK_DEBUG)
                 {
-                    std::clog << "    [LV2::Log] Validation "
+                    std::clog << "    [Log] Validation "
                             << (this->m_ok ? "succeeded" : "failed")
                             << "." << std::endl;
                 }
