@@ -55,8 +55,26 @@ namespace lvtk {
    typedef void(*FeatureHandler)(void* instance, FeatureData data);
 
    /** Convenient typedef for the feature handler map type. */
-   typedef map<string, FeatureHandler> feature_handler_map;
+   typedef map<string, FeatureHandler> FeatureHandlerMap;
 
+   class FeatureIter
+   {
+   public:
+       FeatureIter (const Feature* const* features)
+           : index (0), p_feats (features) { }
+
+       inline const Feature*
+       next()
+       {
+           if (NULL == p_feats[index])
+               return NULL;
+           return p_feats[index++];
+       }
+
+   private:
+       uint32_t                 index;
+       const Feature* const*    p_feats;
+   };
 } /* namespace lvtk */
 
 #endif /* LVTK_LV2_FEATURE_HPP */

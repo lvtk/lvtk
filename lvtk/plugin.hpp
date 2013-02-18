@@ -35,6 +35,7 @@
 
 #include <lvtk/feature.hpp>
 #include <lvtk/ext/common.h>
+#include <lvtk/ext/bufsize.hpp>
 #include <lvtk/ext/resize_port.hpp>
 #include <lvtk/ext/state.hpp>
 #include <lvtk/ext/worker.hpp>
@@ -180,12 +181,12 @@ namespace lvtk {
 
             if (m_features)
             {
-                feature_handler_map hmap;
+                FeatureHandlerMap hmap;
                 Derived::map_feature_handlers (hmap);
 
                 for (const Feature* const* iter = m_features; *iter != 0; ++iter)
                 {
-                    feature_handler_map::iterator miter;
+                    FeatureHandlerMap::iterator miter;
                     miter = hmap.find((*iter)->URI);
 
                     if (miter != hmap.end())
@@ -383,8 +384,10 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
                 std::clog<<"[plugin] Instantiating plugin...\n"
                         <<"  Bundle path: "<<bundle_path<<"\n"
                         <<"  features: \n";
-                for (Feature const* const* f = features; *f != 0; ++f)
-                    std::clog<<"    "<<(*f)->URI<<"\n";
+
+                FeatureIter feats (features);
+                while (const Feature* feature = feats.next())
+                    std::clog <<"    "<< feature->URI << "\n";
 
                 std::clog<<"  Creating plugin object...\n";
             }
