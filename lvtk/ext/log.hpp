@@ -23,6 +23,7 @@
 #ifndef LVTK_LV2_LOG_HPP
 #define LVTK_LV2_LOG_HPP
 
+#include <stdio.h>
 #include <lv2/lv2plug.in/ns/ext/log/log.h>
 
 namespace lvtk
@@ -41,10 +42,7 @@ namespace lvtk
         struct I : Extension<Required>
         {
             /** @skip */
-            I() :
-                    p_log(NULL)
-            {
-            }
+            I() : p_log(NULL) { }
 
             /** @skip */
             static void
@@ -89,7 +87,9 @@ namespace lvtk
             int
             vprintf(LV2_URID type, const char* fmt, va_list ap)
             {
-                return p_log->vprintf(p_log->handle, type, fmt, ap);
+                if (p_log != NULL)
+                    return p_log->vprintf(p_log->handle, type, fmt, ap);
+                return ::vprintf (fmt, ap);
             }
 
             /** Log a message, passing format parameters directly.
