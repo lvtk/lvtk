@@ -28,7 +28,87 @@
 
 namespace lvtk {
 
-    /** The Touch Mixin.
+    /** The PortSubscribe Mixin.
+        @ingroup guimixins
+        @see The internal struct I for details.
+     */
+    template<bool Required = false>
+    struct PortSubscribe
+    {
+        template<class Derived>
+        struct I : Extension<Required>
+        {
+            I() { memset (&m_pmap, 0, sizeof (LV2UI_Port_Map)); }
+
+            /** @internal */
+            static void
+            map_feature_handlers (FeatureHandlerMap& hmap)
+            {
+                hmap[LV2_UI__portSubscribe] = &I<Derived>::handle_feature;
+            }
+
+            /** @internal */
+            static void
+            handle_feature (void* instance, FeatureData* data)
+            {
+                Derived* d = reinterpret_cast<Derived*>(instance);
+                I<Derived>* mixin = static_cast<I<Derived>*>(d);
+
+                LV2UI_Port_Subscribe* ps (reinterpret_cast<LV2UI_Port_Subscribe*> (data));
+                memcpy (&mixin->m_subscribe, ps, sizeof (LV2UI_Port_Subscribe));
+                mixin->m_ok = (ps->handle      != NULL &&
+                               ps->subscribe   != NULL &&
+                               ps->unsubscribe != NULL);
+            }
+
+            bool
+            check_ok()
+            {
+                if (! Required)
+                    this->m_ok = true;
+
+                if (LVTK_DEBUG)
+                {
+                    std::clog << "    [PortSubscribe] Validation "
+                              << (this->m_ok ? "succeeded" : "failed")
+                              << "." << std::endl;
+                }
+
+                return this->m_ok;
+            }
+
+        protected:
+
+            uint32_t
+            subscribe (uint32_t port, uint32_t protocol, const Feature* const* features)
+            {
+                if (portsubscribe_is_valid())
+                    return m_subscribe.subscribe (m_subscribe.handle, port, protocol, features);
+                return 99; //error
+            }
+
+            uint32_t
+            unsubscribe (uint32_t port, uint32_t protocol, const Feature* const* features)
+            {
+                if (portsubscribe_is_valid())
+                    return m_subscribe.unsubscribe (m_subscribe.handle, port, protocol, features);
+                return 99; //error
+            }
+
+        private:
+            LV2UI_Port_Subscribe m_subscribe;
+
+            /** @internal */
+            bool portsubscribe_is_valid()
+            {
+                return (m_subscribe.handle      != NULL &&
+                        m_subscribe.subscribe   != NULL &&
+                        m_subscribe.unsubscribe != NULL);
+            }
+        };
+    };
+
+    /** The PortMap Mixin.
         @ingroup guimixins
         @see The internal struct I for details.
      */
@@ -45,6 +125,7 @@ namespace lvtk {
             map_feature_handlers (FeatureHandlerMap& hmap)
             {
                 hmap[LV2_UI__portIndex] = &I<Derived>::handle_feature;
+                //hmap[LV2_UI__portMap]   = &I<Derived>::handle_feature;
             }
 
             /** @internal */

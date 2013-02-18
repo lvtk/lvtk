@@ -39,17 +39,12 @@
 
 /** @namespace lvtk */
 namespace lvtk {
+
     /** Convenience typedefs */
-    typedef LV2_Handle Handle;
+    typedef LV2_Handle      Handle;
+    typedef LV2UI_Handle    UIHandle;
+    typedef LV2UI_Peak_Data PeakData;
 
-    namespace ui {
-        typedef LV2UI_Handle Handle;
-    }
-
-}
-
-
-namespace lvtk {
 
     /** @internal This class is used by the end class */
     struct empty {};
