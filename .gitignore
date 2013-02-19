@@ -9,3 +9,4 @@ lock-waf*
 .waf-*/
 waf-*/
 *~
+.DS_Store
