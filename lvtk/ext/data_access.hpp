@@ -27,8 +27,8 @@
     potentially remote users of a plugin via a data_access() method.
  */
 
-#ifndef LVTK_LV2_DATA_ACCESS_HPP
-#define LVTK_LV2_DATA_ACCESS_HPP
+#ifndef LVTK_DATA_ACCESS_HPP
+#define LVTK_DATA_ACCESS_HPP
 
 #include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
@@ -85,20 +85,19 @@ namespace lvtk
                 return this->m_ok;
             }
 
-            /**
-             A UI can call this to get data (of a type specified by some other
-             extension) from the plugin.
+            /** A UI can call this to get data (of a type specified by some other
+                extension) from the plugin.
 
-             This call never is never guaranteed to return anything, UIs should
-             degrade gracefully if direct access to the plugin data is not possible
-             (in which case this function will return NULL).
+                This call never is never guaranteed to return anything, UIs should
+                degrade gracefully if direct access to the plugin data is not possible
+                (in which case this function will return NULL).
 
-             This is for access to large data that can only possibly work if the UI
-             and plugin are running in the same process.  For all other things, use
-             the normal LV2 UI communication system.
+                This is for access to large data that can only possibly work if the UI
+                and plugin are running in the same process.  For all other things, use
+                the normal LV2 UI communication system.
 
-             @param uri The uri string to query
-             @return Not NULL on Success
+                @param uri The uri string to query
+                @return Not NULL on Success
              */
             const void*
             data_access(const char *uri)
@@ -116,4 +115,4 @@ namespace lvtk
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_DATA_ACCESS_HPP */
+#endif /* LVTK_DATA_ACCESS_HPP */
