@@ -45,29 +45,90 @@ namespace lvtk {
 
    struct Atom
    {
-      Atom (LV2_Atom* atom) : p_atom (atom) { }
-      inline static uint32_t pad_size(uint32_t size) { return lv2_atom_pad_size(size); }
-      bool is_null() { return lv2_atom_is_null(p_atom); }
+      Atom (LV2_Atom* atom) : p_atom (atom)  { }
 
-      bool operator ==(Atom& other) { return lv2_atom_equals(cobj(), other.cobj()); }
+      /** Pad a size to 64 bits */
+      inline static uint32_t
+      pad_size (uint32_t size)
+      {
+          return lv2_atom_pad_size (size);
+      }
 
-      inline Atom& operator = (const Atom& other)
+      /** Determine if the Atom is null */
+      inline bool
+      is_null()
+      {
+          return lv2_atom_is_null (p_atom);
+      }
+
+      /** Get the Atom's body */
+      inline void*
+      body()
+      {
+          return LV2_ATOM_BODY (p_atom);
+      }
+
+      /** Get the Atom's body as a float */
+      inline float
+      as_float() const
+      {
+          return ((LV2_Atom_Float*)p_atom)->body;
+      }
+
+      /** Get the Atom's body as a float */
+      inline int
+      as_int() const
+      {
+          return ((LV2_Atom_Int*)p_atom)->body;
+      }
+
+      /** Get this Atom's type */
+      LV2_URID type() const
+      {
+          return p_atom->type;
+      }
+
+      /** Get the Atom's total size */
+      inline uint32_t
+      total_size() const
+      {
+          return lv2_atom_total_size (p_atom);
+      }
+
+
+      /** Get the Atom's body size */
+      inline uint32_t
+      size() const
+      {
+          return p_atom->size;
+      }
+
+      /** Get the underlying LV2_Atom pointer */
+      inline LV2_Atom*
+      cobj()
+      {
+          return p_atom;
+      }
+
+      inline operator LV2_Atom*() { return cobj(); }
+
+      inline Atom&
+      operator= (const Atom& other)
       {
          p_atom = other.p_atom;
          return *this;
       }
 
-      void* body() { return LV2_ATOM_BODY(p_atom); }
-      float as_float() { return ((LV2_Atom_Float*)p_atom)->body; }
-
-      LV2_URID type() const { return p_atom->type; }
-      uint32_t total_size() const { return lv2_atom_total_size(p_atom); }
-      uint32_t size() const { return p_atom->size; }
-
-      LV2_Atom* cobj() { return p_atom; }
+      inline bool
+      operator== (Atom& other)
+      {
+          return lv2_atom_equals (cobj(), other.cobj());
+      }
 
    private:
+
       LV2_Atom* p_atom;
+
    };
 
 
@@ -88,9 +149,7 @@ namespace lvtk {
    };
 
 
-   /**
-    * Class wrapper around LV2_Atom_Forge
-    */
+   /** Class wrapper around LV2_Atom_Forge */
    class AtomForge
    {
       LV2_Atom_Forge forge;
@@ -98,26 +157,24 @@ namespace lvtk {
 
    public:
 
-      /**
-       * Uninitialized AtomForge.
-       * @note Client code must call AtomForge::init() before using
+      typedef LV2_Atom_Forge_Ref   Ref;
+      typedef LV2_Atom_Forge_Frame Frame;
+
+      /** Uninitialized AtomForge.
+          @note Client code must call AtomForge::init() before using
        */
       AtomForge()
-      : midi_MidiEvent(0)
-      , patch_Set(0), patch_Get(0), patch_body(0)
-      { }
+          : midi_MidiEvent(0), patch_Set(0),
+            patch_Get(0), patch_body(0) { }
 
-      /**
-       * Initialized AtomForge.
-       */
+      /** Initialized AtomForge. */
       AtomForge (LV2_URID_Map* map)
       {
          init (map);
       }
 
-      /**
-       * Initialize the underlying atom forge
-       * @param map The mapping function needed for init
+      /** Initialize the underlying atom forge
+          @param map The mapping function needed for init
        */
       inline void
       init (LV2_URID_Map* map)
@@ -130,9 +187,8 @@ namespace lvtk {
       }
 
 
-      /**
-       * Get the underlying atom forge
-       * @return The forge
+      /** Get the underlying atom forge
+          @return The forge
        */
       inline LV2_Atom_Forge*
       cobj()
@@ -140,37 +196,24 @@ namespace lvtk {
          return &forge;
       }
 
-      /**
-       * Set the forge's buffer
-       * @param buf The buffer to use
-       * @param size The size of the buffer
+      /** Set the forge's buffer
+
+          @param buf The buffer to use
+          @param size The size of the buffer
        */
       inline void
-      set_buffer(uint8_t* buf, uint32_t size)
+      set_buffer (uint8_t* buf, uint32_t size)
       {
-
          lv2_atom_forge_set_buffer (&forge, buf, size);
       }
 
-      /**
-       * Get an atom's total size
-       * @param atom The atom to inspect (must be valid)
-       */
-      inline uint32_t
-      atom_total_size (const LV2_Atom* atom)
-      {
-         return lv2_atom_total_size (atom);
-      }
+      /** Forge a simple MIDI note-on event
 
-      /* MIDI Related */
-
-      /**
-       * Forge a simple MIDI note-on event
-       * @param key The midi key
-       * @param velocity The note's velocity
-       * @return An atom
+          @param key The midi key
+          @param velocity The note's velocity
+          @return An atom
        */
-      inline Atom
+      inline Ref
       note_on (uint8_t key, uint8_t velocity)
       {
          uint8_t midi[3];
@@ -179,8 +222,7 @@ namespace lvtk {
          midi[2] = velocity;
 
          Atom atom ((LV2_Atom*) lv2_atom_forge_atom (&forge, 3, midi_MidiEvent));
-         lv2_atom_forge_raw (&forge, midi, 3);
-         return Atom (atom);
+         return lv2_atom_forge_raw (&forge, midi, 3);
       }
 
       /**
@@ -204,17 +246,16 @@ namespace lvtk {
       /**
        * Forge an atom path from string
        * @param path The path to forge
-       * @return A reference to the Atom
+       * @return An Atom
        */
-      inline LV2_Atom_Forge_Ref
+      inline Atom
       path (const std::string& path)
       {
-         return lv2_atom_forge_path(&forge,path.c_str(),path.size());
+         return Atom ((LV2_Atom*) lv2_atom_forge_path (&forge, path.c_str(), path.size()));
       }
 
-      /**
-       * Forge an atom resource
-       * @return A reference to the Atom
+      /** Forge an atom resource
+          @return A reference to the Atom
        */
       inline LV2_Atom_Forge_Ref
       resource (AtomForgeFrame *frame, uint32_t id, uint32_t otype)
