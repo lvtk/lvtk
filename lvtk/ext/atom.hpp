@@ -20,8 +20,8 @@
 
 ****************************************************************************/
 
-#ifndef LVTK_LV2_ATOM_HPP
-#define LVTK_LV2_ATOM_HPP
+#ifndef LVTK_ATOM_HPP
+#define LVTK_ATOM_HPP
 
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
@@ -257,4 +257,4 @@ namespace lvtk {
    };
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_ATOM_HPP */
+#endif /* LVTK_ATOM_HPP */

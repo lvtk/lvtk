@@ -1,12 +1,6 @@
-/*
- * buf_size.hpp
- *
- *  Created on: Feb 17, 2013
- *      Author: mfisher
- */
 
-#ifndef BUF_SIZE_HPP_
-#define BUF_SIZE_HPP_
+#ifndef LVTK_BUFSIZE_HPP
+#define LVTK_BUFSIZE_HPP
 
 
 #include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
@@ -26,7 +20,7 @@ namespace lvtk {
         bool powerOfTwo;
     };
 
-    /** The LV2 Options Feature Mixin
+    /** The LV2 BufSize Feature Mixin
 
         This mixin provides a method that scans options for buffer
         information.
@@ -124,7 +118,6 @@ namespace lvtk {
                 return m_info;
             }
 
-
         private:
             bool m_checked;
             BufferInfo m_info;
@@ -135,4 +128,4 @@ namespace lvtk {
 }
 
 
-#endif /* BUF_SIZE_HPP_ */
+#endif /* LVTK_BUFSIZE_HPP */
