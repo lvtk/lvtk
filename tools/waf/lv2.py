@@ -20,7 +20,7 @@ import autowaf
 
 @conf
 def check_lv2 (self, min_version="1.0.0"):
-	autowaf.check_pkg(self, "lv2", uselib_store="lv2", atleast_version=min_version)
+	autowaf.check_pkg(self, "lv2", uselib_store="LV2", atleast_version=min_version)
 
 def bundle_name_for_output(out):
 	name = out.name
