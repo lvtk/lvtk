@@ -35,6 +35,7 @@ namespace lvtk {
 
    /** Typedef for an Atom Forge */
    typedef LV2_Atom_Forge_Frame AtomForgeFrame;
+   typedef LV2_Atom_Event       AtomEvent;
 
    /** Function type for mapping symbols */
    typedef uint32_t     (*MapFunc)(const char* symbol);
