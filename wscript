@@ -119,6 +119,11 @@ def build(bld):
 	pcvers = LVTK_MAJOR_VERSION
 	
 	# Build PC Files
+	autowaf.build_pc(bld, 'LVTK', LVTK_VERSION, pcvers, [],
+						{'LVTK_MAJOR_VERSION'  : LVTK_MAJOR_VERSION,
+						'VERSION'              : LVTK_VERSION,
+						'LVTK_PKG_DEPS'        : 'lv2'})
+    
 	autowaf.build_pc(bld, 'LVTK-PLUGIN', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
