@@ -135,16 +135,24 @@ namespace lvtk {
 
    struct AtomObject
    {
-      AtomObject (const void* atom) : p_object((LV2_Atom_Object*)atom) {}
+      AtomObject (const void* atom) : p_object ((LV2_Atom_Object*) atom) { }
+      AtomObject (const Atom& atom) : p_object ((LV2_Atom_Object*) atom.cobj())              { }
+      AtomObject (const AtomObject& other) : p_object (other.p_object)   { }
 
-      LV2_Atom_Object* cobj() { return p_object; }
+      LV2_Atom_Object* cobj()           { return p_object; }
+      operator LV2_Atom_Object*()       { return p_object; }
 
-      LV2_Atom* atom() { return (LV2_Atom*)p_object; }
+      LV2_Atom* atom()                  { return (LV2_Atom*) p_object; }
 
-      LV2_URID otype() const { return p_object->body.otype; }
+      LV2_URID otype() const            { return p_object->body.otype; }
 
-      uint32_t id() const { return p_object->body.id; }
+      uint32_t id() const               { return p_object->body.id; }
 
+      AtomObject& operator= (const AtomObject& other)
+      {
+         p_object = other.p_object;
+         return *this;
+      }
    private:
       LV2_Atom_Object* p_object;
    };
