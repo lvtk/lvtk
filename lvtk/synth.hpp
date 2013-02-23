@@ -203,7 +203,7 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         : Parent(ports),
           m_midi_input (midi_input)
         {
-            m_midi_type = Parent::map(LV2_MIDI__MidiEvent);
+            m_midi_type = Parent::map (LV2_MIDI__MidiEvent);
         }
 
 
@@ -252,7 +252,7 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         handle_midi (uint32_t size, unsigned char* data)
         {
             if (size != 3) return;
-
+            LV2_Midi_Message_Type type (lv2_midi_message_type (data));
 
             if (data[0] == 0x90)
             {
@@ -274,6 +274,8 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             }
         }
 
+        void
+        handle_atom_event (AtomEvent* ev) { }
 
         /** This function is called before the synth renders a chunk of audio from
             the voices, from sample @c from to sample @c to in the output buffers.
@@ -323,44 +325,33 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             for (unsigned i = 0; i < m_voices.size(); ++i)
                 m_voices[i]->set_port_buffers(Parent::m_ports);
 
-            // Get ahold of the first atom event if any
             const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (m_midi_input);
-            LV2_Atom_Event* ev = lv2_atom_sequence_begin(&seq->body);
+            uint32_t last_frame = 0;
 
-            uint32_t samples_done = 0;
-
-            while (samples_done < sample_count)
+            for (AtomEvent* ev = lv2_atom_sequence_begin (&seq->body);
+                 !lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev);
+                 ev = lv2_atom_sequence_next (ev))
             {
-                uint32_t to = sample_count;
+               synth->pre_process (last_frame, ev->time.frames);
+               for (uint32_t i = 0; i < m_voices.size(); ++i)
+                  m_voices[i]->render (last_frame, ev->time.frames);
+               synth->post_process (last_frame, ev->time.frames);
 
-                if (lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev))
-                {
-                    ev = NULL;
-                }
-                else
-                {
-                    to = ev->time.frames;
-                }
+               Atom evbody (&ev->body);
+               if (evbody.type() == m_midi_type)
+                  synth->handle_midi (evbody.size(), (uint8_t*) evbody.body());
+               else
+                  synth->handle_atom_event (ev);
 
-                if (to > samples_done)
-                {
-                    synth->pre_process(samples_done, to);
-                    for (unsigned i = 0; i < m_voices.size(); ++i)
-                        m_voices[i]->render(samples_done, to);
-                    synth->post_process(samples_done, to);
-                    samples_done = to;
-                }
+               last_frame = ev->time.frames;
+            }
 
-                if (ev)
-                {
-                    if (ev->body.type == m_midi_type)
-                    {
-                        uint8_t* const data = (uint8_t* const)(ev + 1);
-                        synth->handle_midi (ev->body.size, data);
-                    }
-
-                    ev = lv2_atom_sequence_next (ev);
-                }
+            if (last_frame < sample_count)
+            {
+               synth->pre_process (last_frame, sample_count);
+               for (uint32_t i = 0; i < m_voices.size(); ++i)
+                  m_voices[i]->render (last_frame, sample_count);
+               synth->post_process (last_frame, sample_count);
             }
         }
 
