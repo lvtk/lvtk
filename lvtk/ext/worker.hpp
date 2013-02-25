@@ -23,6 +23,7 @@
 #ifndef LVTK_LV2_WORKER_HPP
 #define LVTK_LV2_WORKER_HPP
 
+#include <cstring>
 #include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 
 namespace lvtk {
