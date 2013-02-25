@@ -41,9 +41,12 @@ namespace lvtk {
     */
    struct WorkerRespond {
       WorkerRespond(LV2_Handle instance,
-                     LV2_Worker_Respond_Function wrfunc,
-                     LV2_Worker_Respond_Handle handle)
-      : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
+                    LV2_Worker_Respond_Function wrfunc,
+                    LV2_Worker_Respond_Handle handle)
+          : p_instance(instance),
+            p_handle(handle), 
+            p_wrfunc (wrfunc) 
+      { }
 
       /**
           Execute the worker retrieval functor.
