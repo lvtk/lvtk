@@ -43,10 +43,58 @@ namespace lvtk {
    /** Function type for unmaping URIDs */
    typedef const char*  (*UnmapFunc)(uint32_t id);
 
+   struct AtomObject
+   {
+       typedef LV2_Atom_Property_Body Property;
+
+       typedef std::vector<LV2_Atom_Property_Body*> PropertyVec;
+
+
+      AtomObject (const void* atom) : p_obj ((LV2_Atom_Object*) atom) { }
+      AtomObject (const AtomObject& other) : p_obj (other.p_obj)   { }
+
+      LV2_Atom_Object* cobj()           { return p_obj; }
+      operator LV2_Atom_Object*()       { return p_obj; }
+
+      LV2_Atom* atom()                  { return (LV2_Atom*) p_obj; }
+
+      LV2_URID otype() const            { return p_obj->body.otype; }
+
+      uint32_t id() const               { return p_obj->body.id; }
+
+      inline void
+      query (LV2_Atom_Object_Query* query)
+      {
+          lv2_atom_object_query (p_obj, query);
+      }
+
+      void print ()
+      {
+          LV2_ATOM_OBJECT_FOREACH (p_obj, iter)
+        {
+              std::cout<< "key: " << iter->key << std::endl;
+
+        }
+
+      }
+      const LV2_Atom*
+      get_property_body (uint32_t key)
+      {
+          const LV2_Atom* value = NULL;
+          LV2_Atom_Object_Query q[] = {{ key, &value }, LV2_ATOM_OBJECT_QUERY_END };
+          query (q);
+          return value;
+      }
+
+   private:
+
+      LV2_Atom_Object* p_obj;
+
+   };
 
    struct Atom
    {
-      Atom (LV2_Atom* atom) : p_atom (atom)  { }
+      Atom (const void* atom) : p_atom ((LV2_Atom*) atom)  { }
 
       /** Pad a size to 64 bits */
       inline static uint32_t
@@ -64,7 +112,7 @@ namespace lvtk {
 
       /** Get the Atom's body */
       inline void*
-      body()
+      body() const
       {
           return LV2_ATOM_BODY (p_atom);
       }
@@ -74,6 +122,11 @@ namespace lvtk {
       as_float() const
       {
           return ((LV2_Atom_Float*)p_atom)->body;
+      }
+
+      const AtomObject
+      as_object() const {
+          return AtomObject ((LV2_Atom_Object* ) p_atom);
       }
 
       /** Get the Atom's body as a float */
@@ -105,13 +158,13 @@ namespace lvtk {
       }
 
       /** Get the underlying LV2_Atom pointer */
-      inline LV2_Atom*
-      cobj()
+      inline const LV2_Atom*
+      cobj() const
       {
           return p_atom;
       }
 
-      inline operator LV2_Atom*() { return cobj(); }
+      inline operator const LV2_Atom*() { return cobj(); }
 
       inline Atom&
       operator= (const Atom& other)
@@ -128,34 +181,8 @@ namespace lvtk {
 
    private:
 
-      LV2_Atom* p_atom;
+      const LV2_Atom* p_atom;
 
-   };
-
-
-   struct AtomObject
-   {
-      AtomObject (const void* atom) : p_object ((LV2_Atom_Object*) atom) { }
-      AtomObject (const AtomObject& other) : p_object (other.p_object)   { }
-      AtomObject (Atom atom) : p_object ((LV2_Atom_Object*) atom.cobj()) { }
-
-      LV2_Atom_Object* cobj()           { return p_object; }
-      operator LV2_Atom_Object*()       { return p_object; }
-
-      LV2_Atom* atom()                  { return (LV2_Atom*) p_object; }
-
-      LV2_URID otype() const            { return p_object->body.otype; }
-
-      uint32_t id() const               { return p_object->body.id; }
-
-      AtomObject& operator= (const AtomObject& other)
-      {
-         p_object = other.p_object;
-         return *this;
-      }
-
-   private:
-      LV2_Atom_Object* p_object;
    };
 
 
@@ -164,6 +191,7 @@ namespace lvtk {
    {
       LV2_Atom_Forge forge;
       LV2_URID midi_MidiEvent, patch_Set, patch_Get, patch_body;
+      LV2_URID patch_subject;
 
    public:
 
@@ -175,7 +203,7 @@ namespace lvtk {
        */
       AtomForge()
           : midi_MidiEvent(0), patch_Set(0),
-            patch_Get(0), patch_body(0) { }
+            patch_Get(0), patch_body(0), patch_subject(0) { }
 
       /** Initialized AtomForge. */
       AtomForge (LV2_URID_Map* map)
@@ -194,6 +222,7 @@ namespace lvtk {
          patch_Set        = map->map (map->handle, LV2_PATCH__Set);
          patch_Get        = map->map (map->handle, LV2_PATCH__Get);
          patch_body       = map->map (map->handle, LV2_PATCH__body);
+         patch_subject    = map->map (map->handle, LV2_PATCH__subject);
       }
 
 
@@ -223,15 +252,12 @@ namespace lvtk {
           @param velocity The note's velocity
           @return An atom
        */
-      inline Ref
-      note_on (uint8_t key, uint8_t velocity)
+      inline LV2_Atom_Forge_Ref
+      note_on (uint8_t key, uint8_t velocity, uint8_t chan = 0x0)
       {
-         uint8_t midi[3];
-         midi[0] = 0x90;
-         midi[1] = key;
-         midi[2] = velocity;
-
-         Atom atom ((LV2_Atom*) lv2_atom_forge_atom (&forge, 3, midi_MidiEvent));
+         if (chan > 0x0F) chan = 0x0F;
+         uint8_t midi[3] = { 0x90 | chan, key, velocity };
+       //  Atom atom (lv2_atom_forge_atom (&forge, 3, midi_MidiEvent));
          return lv2_atom_forge_raw (&forge, midi, 3);
       }
 
@@ -243,11 +269,7 @@ namespace lvtk {
       inline const LV2_Atom*
       note_off (uint8_t key)
       {
-         uint8_t midi[3];
-         midi[0] = 0x80;
-         midi[1] = key;
-         midi[2] = 0x00;
-
+         uint8_t midi[3] = { 0x80, key, 0x00 };
          LV2_Atom* atom = (LV2_Atom*) lv2_atom_forge_atom (&forge, 3, midi_MidiEvent);
          lv2_atom_forge_raw (&forge, midi, 3);
          return atom;
@@ -258,27 +280,27 @@ namespace lvtk {
        * @param path The path to forge
        * @return An Atom
        */
-      inline Atom
+      inline LV2_Atom_Forge_Ref
       path (const std::string& path)
       {
-         return Atom ((LV2_Atom*) lv2_atom_forge_path (&forge, path.c_str(), path.size()));
+         return lv2_atom_forge_path (&forge, path.c_str(), path.size());
       }
 
       /** Forge an atom resource
           @return A reference to the Atom
        */
       inline LV2_Atom_Forge_Ref
-      resource (AtomForgeFrame *frame, uint32_t id, uint32_t otype)
+      resource (AtomForgeFrame& frame, uint32_t id, uint32_t otype)
       {
          // Write object header
-         return lv2_atom_forge_resource (&forge, frame, id, otype);
+         return lv2_atom_forge_resource (&forge, &frame, id, otype);
       }
 
       inline LV2_Atom_Forge_Ref
-      blank (AtomForgeFrame *frame, uint32_t id, uint32_t otype)
+      blank (AtomForgeFrame& frame, uint32_t id, uint32_t otype)
       {
          // Write object header
-         return lv2_atom_forge_blank (&forge, frame, id, otype);
+         return lv2_atom_forge_blank (&forge, &frame, id, otype);
       }
 
       inline LV2_Atom_Forge_Ref
@@ -287,22 +309,40 @@ namespace lvtk {
          return lv2_atom_forge_property_head (&forge, key, context);
       }
 
-      inline void
-      pop (AtomForgeFrame *frame)
+      inline LV2_Atom_Forge_Ref
+      patch_get (LV2_URID subject, uint32_t id = 0, uint32_t context = 0)
       {
-         lv2_atom_forge_pop(&forge, frame);
+          AtomForgeFrame frame;
+          LV2_Atom* atom = (LV2_Atom*) blank (frame, id, patch_Get);
+          property_head (patch_subject, context);
+          urid (subject);
+          pop (frame);
+
+          return (LV2_Atom_Forge_Ref) atom;
+      }
+
+      inline void
+      pop (AtomForgeFrame& frame)
+      {
+         lv2_atom_forge_pop (&forge, &frame);
       }
 
       inline LV2_Atom_Forge_Ref
       integer (const int val)
       {
-         return lv2_atom_forge_int(&forge,val);
+         return lv2_atom_forge_int (&forge, val);
       }
 
       inline LV2_Atom_Forge_Ref
       raw (const void* data, uint32_t size)
       {
          return lv2_atom_forge_raw (&forge, data, size);
+      }
+
+      inline LV2_Atom_Forge_Ref
+      urid (LV2_URID id)
+      {
+          return lv2_atom_forge_urid (&forge, id);
       }
 
    };
