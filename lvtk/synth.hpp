@@ -275,7 +275,7 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         }
 
         void
-        handle_atom_event (AtomEvent* ev) { }
+        handle_atom_event (LV2_Atom_Event* ev) { }
 
         /** This function is called before the synth renders a chunk of audio from
             the voices, from sample @c from to sample @c to in the output buffers.
@@ -328,7 +328,7 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (m_midi_input);
             uint32_t last_frame = 0;
 
-            for (AtomEvent* ev = lv2_atom_sequence_begin (&seq->body);
+            for (LV2_Atom_Event* ev = lv2_atom_sequence_begin (&seq->body);
                  !lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev);
                  ev = lv2_atom_sequence_next (ev))
             {
@@ -337,9 +337,8 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
                   m_voices[i]->render (last_frame, ev->time.frames);
                synth->post_process (last_frame, ev->time.frames);
 
-               Atom evbody (&ev->body);
-               if (evbody.type() == m_midi_type)
-                  synth->handle_midi (evbody.size(), (uint8_t*) evbody.body());
+               if (ev->body.type == m_midi_type)
+                  synth->handle_midi (ev->body.size, (uint8_t*) LV2_ATOM_BODY (&ev->body));
                else
                   synth->handle_atom_event (ev);
 
