@@ -38,7 +38,7 @@ namespace lvtk {
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() { memset (&m_pmap, 0, sizeof (LV2UI_Port_Map)); }
+            I() { memset (&m_subscribe, 0, sizeof (LV2UI_Port_Subscribe)); }
 
             /** @internal */
             static void
