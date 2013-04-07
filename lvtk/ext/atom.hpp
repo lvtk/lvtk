@@ -67,6 +67,11 @@ namespace lvtk {
 
       uint32_t id() const               { return p_obj->body.id; }
 
+      uint32_t total_size() const
+      {
+          return lv2_atom_total_size ((LV2_Atom*) p_obj);
+      }
+
       inline void
       query (LV2_Atom_Object_Query* query)
       {

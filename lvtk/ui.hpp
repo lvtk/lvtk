@@ -134,7 +134,7 @@ namespace lvtk
             value changes in the plugin instance. */
         inline void
         port_event(uint32_t port, uint32_t buffer_size, uint32_t format,
-                void const* buffer)
+                   void const* buffer)
         {
         }
 
