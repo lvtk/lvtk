@@ -23,6 +23,7 @@
 #ifndef LVTK_LV2_WORKER_HPP
 #define LVTK_LV2_WORKER_HPP
 
+#include <cstring>
 #include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 
 namespace lvtk {
@@ -41,9 +42,12 @@ namespace lvtk {
     */
    struct WorkerRespond {
       WorkerRespond(LV2_Handle instance,
-                     LV2_Worker_Respond_Function wrfunc,
-                     LV2_Worker_Respond_Handle handle)
-      : p_instance(instance), p_wrfunc(wrfunc), p_handle(handle) { }
+                    LV2_Worker_Respond_Function wrfunc,
+                    LV2_Worker_Respond_Handle handle)
+          : p_instance(instance),
+            p_handle(handle), 
+            p_wrfunc (wrfunc) 
+      { }
 
       /**
           Execute the worker retrieval functor.

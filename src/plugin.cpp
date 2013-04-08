@@ -42,7 +42,9 @@ namespace lvtk {
 
 extern "C" {
   
-  const LV2_Descriptor* lv2_descriptor(uint32_t index)
+  LV2_SYMBOL_EXPORT
+  const LV2_Descriptor* 
+  lv2_descriptor(uint32_t index)
   {
     if (index < lvtk::get_lv2_descriptors().size())
       return &lvtk::get_lv2_descriptors()[index];

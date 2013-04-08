@@ -66,17 +66,17 @@ namespace lvtk {
       next level of the inheritance tree. Each @c bool parameter will be used
       as the second parameter to the template directly preceding it. */
     template <class A,
-    class E1 = end,
-    class E2 = end,
-    class E3 = end,
-    class E4 = end,
-    class E5 = end,
-    class E6 = end,
-    class E7 = end,
-    class E8 = end,
-    class E9 = end>
+              class E1 = end,
+              class E2 = end,
+              class E3 = end,
+              class E4 = end,
+              class E5 = end,
+              class E6 = end,
+              class E7 = end,
+              class E8 = end,
+              class E9 = end>
     struct MixinTree
-    : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9>
+        : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9>
     {
 
         typedef MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> Parent;
