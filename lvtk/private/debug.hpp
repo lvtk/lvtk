@@ -27,7 +27,7 @@
 #  ifdef NDEBUG
 #    define LVTK_DEBUG false
 #  else
-#    define LVTK_DEBUG false
+#    define LVTK_DEBUG true
 #  endif
 #endif
 
