@@ -80,7 +80,7 @@ namespace lvtk {
 
       void print ()
       {
-          LV2_ATOM_OBJECT_FOREACH (p_obj, iter)
+        LV2_ATOM_OBJECT_FOREACH (p_obj, iter)
         {
              // std::cout<< "key: " << iter->key << std::endl;
 
@@ -139,6 +139,12 @@ namespace lvtk {
       const AtomObject
       as_object() const {
           return AtomObject ((LV2_Atom_Object* ) p_atom);
+      }
+
+      inline const char*
+      as_string() const
+      {
+          return (const char*) LV2_ATOM_BODY (p_atom);
       }
 
       /** Get the Atom's body as a float */
@@ -200,6 +206,7 @@ namespace lvtk {
    private:
 
       const LV2_Atom* p_atom;
+      friend class AtomObject;
 
    };
 
@@ -371,6 +378,12 @@ namespace lvtk {
       }
 
       inline ForgeRef
+      write_bool (const bool val)
+      {
+          return lv2_atom_forge_bool (&forge, val);
+      }
+
+      inline ForgeRef
       write_int (const int val)
       {
           return lv2_atom_forge_int (&forge, val);
@@ -389,6 +402,17 @@ namespace lvtk {
           return lv2_atom_forge_long (&forge, val);
       }
 
+      inline ForgeRef
+      write_string (const char* str)
+      {
+          return lv2_atom_forge_string (&forge, str, strlen (str));
+      }
+
+      inline ForgeRef
+      write_uri (const char* uri)
+      {
+          return lv2_atom_forge_uri (&forge, uri, strlen(uri));
+      }
 
       inline ForgeRef
       raw (const void* data, uint32_t size)
