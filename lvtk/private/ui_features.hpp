@@ -395,7 +395,7 @@ namespace lvtk {
                 if (! Required) {
                    this->m_ok = true;
                 } else {
-                   this->m_ok = rsz_is_valid();
+                   this->m_ok = plugin_rsz_is_valid();
                 }
 
                 if (LVTK_DEBUG)
