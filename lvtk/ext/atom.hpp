@@ -236,9 +236,11 @@ namespace lvtk {
            return p_seq;
        }
 
+       inline operator LV2_Atom_Sequence*() const { return p_seq; }
        inline operator uint8_t*() const { return (uint8_t*) p_seq; }
 
    private:
+
        LV2_Atom_Sequence* p_seq;
    };
 
@@ -246,8 +248,6 @@ namespace lvtk {
    /** Class wrapper around LV2_Atom_Forge */
    class AtomForge
    {
-      LV2_Atom_Forge forge;
-
    public:
 
       /** Uninitialized AtomForge.
@@ -271,7 +271,6 @@ namespace lvtk {
       {
          lv2_atom_forge_init (&forge, map);
       }
-
 
       /** Get the underlying atom forge
           @return The forge
@@ -363,15 +362,15 @@ namespace lvtk {
       inline ForgeRef
       write_resource (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
-         // Write object header
-         return lv2_atom_forge_resource (&forge, &frame, id, otype);
+          // Write object header
+          return lv2_atom_forge_resource (&forge, &frame, id, otype);
       }
 
       inline ForgeRef
       write_blank (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
-         // Write object header
-         return lv2_atom_forge_blank (&forge, &frame, id, otype);
+          // Write object header
+          return lv2_atom_forge_blank (&forge, &frame, id, otype);
       }
 
       inline ForgeRef
@@ -414,7 +413,7 @@ namespace lvtk {
       inline ForgeRef
       write_raw (const void* data, uint32_t size)
       {
-         return lv2_atom_forge_raw (&forge, data, size);
+          return lv2_atom_forge_raw (&forge, data, size);
       }
 
       inline ForgeRef
@@ -423,6 +422,9 @@ namespace lvtk {
           return lv2_atom_forge_urid (&forge, id);
       }
 
+   private:
+
+      LV2_Atom_Forge forge;
    };
 
 } /* namespace lvtk */
