@@ -1,5 +1,4 @@
-/****************************************************************************
-
+/*
     options.hpp - Support file for writing LV2 plugins in C++
 
     Copyright (C) 2013 Michael Fisher <mfisher31@gmail.com>
@@ -17,8 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
- ****************************************************************************/
+*/
 
 /** @file options.hpp
     LV2 Compatibility: LV2 Options v1.0 (2012-10-14)
@@ -40,7 +38,6 @@ namespace lvtk {
     /** Convenience enum to get LV2_Options_Option into a C++ namespace */
     typedef LV2_Options_Option Option;
 
-
     /** Convenience enum to get LV2_Options_Context into a C++ namespace */
     typedef enum {
         /** This option applies to the instance itself.  The subject must be
@@ -61,7 +58,7 @@ namespace lvtk {
     } OptionsContext;
 
 
-    /** Convenience enum to get LV2_Worker_Status into a C++ namespace */
+    /** Convenience enum to get LV2_Options_Status into a C++ namespace */
     typedef enum {
         OPTIONS_SUCCESS         = LV2_OPTIONS_SUCCESS,          /**< Completed successfully. */
         OPTIONS_ERR_UNKNOWN     = LV2_OPTIONS_ERR_UNKNOWN,      /**< Unknown error. */
@@ -78,7 +75,7 @@ namespace lvtk {
         OptionsIter (const Option* options)
             : index (0),m_size (0), p_opts (options)
         {
-            while (NULL != next())
+            while (0 != next())
                 ++m_size;
             index = 0;
         }
@@ -88,7 +85,7 @@ namespace lvtk {
         {
             if (p_opts == NULL || (p_opts[index].key   == 0 &&
                                    p_opts[index].value == 0))
-                return NULL;
+                return 0;
 
             return &p_opts[index++];
         }
@@ -111,12 +108,12 @@ namespace lvtk {
 
     /** The LV2 Options Feature Mixin
 
-       This mixin provides a callback handler for the LV2 Options feature and
-       hooks up the LV2_Options_Interface as extension data.
+        This mixin provides a callback handler for the LV2 Options feature and
+        hooks up the LV2_Options_Interface as extension data.
 
-       @struct lvtk::Options lvtk/ext/options.hpp
-       @ingroup pluginmixins
-       @ingroup guimixins
+        @struct lvtk::Options lvtk/ext/options.hpp
+        @ingroup pluginmixins
+        @ingroup guimixins
      */
     template <bool Required = false>
     struct Options
