@@ -64,10 +64,10 @@ public:
         std::stringstream ss;
         ss << "Buffer Bounded:  " << info.bounded << std::endl
            << "Buffer Fixed:    " << info.fixed << std::endl
-           << "Buffer Pow of 2: " << info.powerOfTwo << std::endl
+           << "Buffer Pow of 2: " << info.power_of_two << std::endl
            << "Buffer Min:      " << info.min << std::endl
            << "Buffer Max:      " << info.max << std::endl
-           << "Sequence Size:   " << info.seqSize << std::endl;
+           << "Sequence Size:   " << info.sequence_size << std::endl;
         printf (entryType, ss.str().c_str());
     }
 
