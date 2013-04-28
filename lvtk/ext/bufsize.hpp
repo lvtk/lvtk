@@ -1,3 +1,24 @@
+/*
+    bufsize.hpp - Support file for writing LV2 plugins in C++
+
+    Copyright (C) 2013 Michael Fisher <mfisher31@gmail.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
+*/
+
+/** @file bufsize.hpp */
 
 #ifndef LVTK_BUFSIZE_HPP
 #define LVTK_BUFSIZE_HPP
@@ -14,10 +35,10 @@ namespace lvtk {
     struct BufferInfo {
         uint32_t min;
         uint32_t max;
-        uint32_t seqSize;
+        uint32_t sequence_size;
         bool bounded;
         bool fixed;
-        bool powerOfTwo;
+        bool power_of_two;
     };
 
     /** The LV2 BufSize Feature Mixin
@@ -32,11 +53,9 @@ namespace lvtk {
     template <bool Required = false>
     struct BufSize
     {
-
         template <class Derived>
         struct I : Extension<Required>
         {
-
             /** @skip */
             I() : m_checked (false)
             {
@@ -67,7 +86,7 @@ namespace lvtk {
             {
                 Derived* plugin (reinterpret_cast<Derived*> (instance));
                 I<Derived>* mixin (static_cast<I<Derived>*> (plugin));
-                mixin->m_info.powerOfTwo = true;
+                mixin->m_info.power_of_two = true;
             }
 
             /** @internal Handle the options feature */
@@ -108,8 +127,8 @@ namespace lvtk {
                             m_info.min = *(uint32_t*) opt->value;
                         if (max == opt->key)
                             m_info.max = *(uint32_t*) opt->value;
-                        if (seqSize == opt->key)
-                            m_info.seqSize = *(uint32_t*) opt->value;
+                        if (seq_size == opt->key)
+                            m_info.sequence_size = *(uint32_t*) opt->value;
                     }
 
                     m_checked = true;
@@ -119,6 +138,7 @@ namespace lvtk {
             }
 
         private:
+
             bool m_checked;
             BufferInfo m_info;
 
