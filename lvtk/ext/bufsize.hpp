@@ -101,7 +101,6 @@ namespace lvtk {
             bool
             check_ok()
             {
-                get_buffer_info();
                 if (LVTK_DEBUG) {
                     std::clog <<"    [BufSize] validation "
                               <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
@@ -111,14 +110,16 @@ namespace lvtk {
 
         protected:
 
-            const BufferInfo& get_buffer_info()
+            /** Extract buffer information from host provided options */
+            const BufferInfo&
+            get_buffer_info()
             {
                 if (! m_checked)
                 {
-                    Derived* plugin  (static_cast<Derived*> (this));
-                    LV2_URID min     (plugin->map (LV2_BUF_SIZE__minBlockLength));
-                    LV2_URID max     (plugin->map (LV2_BUF_SIZE__maxBlockLength));
-                    LV2_URID seqSize (plugin->map (LV2_BUF_SIZE__sequenceSize));
+                    Derived* plugin   (static_cast<Derived*> (this));
+                    LV2_URID min      (plugin->map (LV2_BUF_SIZE__minBlockLength));
+                    LV2_URID max      (plugin->map (LV2_BUF_SIZE__maxBlockLength));
+                    LV2_URID seq_size (plugin->map (LV2_BUF_SIZE__sequenceSize));
 
                     OptionsIter iter (plugin->get_supplied_options());
                     while (const Option* opt = iter.next())
