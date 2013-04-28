@@ -22,7 +22,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
  ****************************************************************************/
-/** @headerfile lvtk/types.hpp */
+/** @headerfile lvtk/private/types.hpp */
 
 #ifndef LVTK_LV2_TYPES_HPP
 #define LVTK_LV2_TYPES_HPP
@@ -50,21 +50,22 @@ namespace lvtk {
     struct empty {};
 
     /** @internal
-      This class is used to terminate the recursive inheritance trees
-      created by MixinTree. */
+        This class is used to terminate the recursive inheritance trees
+        created by MixinTree. */
     struct end {
         typedef empty C;
     };
 
 
     /** @internal
-      This template class creates an inheritance tree of extension templates
-      from a parameter list. It is inherited by the Plugin class to make
-      it possible to add overridable extension functions to the class.
-      The first template parameter will be used as the first template
-      parameter of @c E1, and also be passed as the first parameter of the
-      next level of the inheritance tree. Each @c bool parameter will be used
-      as the second parameter to the template directly preceding it. */
+        This template class creates an inheritance tree of extension templates
+        from a parameter list. It is inherited by the Plugin class to make
+        it possible to add overridable extension functions to the class.
+        The first template parameter will be used as the first template
+        parameter of @c E1, and also be passed as the first parameter of the
+        next level of the inheritance tree. Each @c bool parameter will be used
+        as the second parameter to the template directly preceding it.
+     */
     template <class A,
               class E1 = end,
               class E2 = end,
@@ -113,8 +114,9 @@ namespace lvtk {
 
 
     /** @internal
-      This is a specialization of the inheritance tree template that terminates
-      the recursion. */
+        This is a specialization of the inheritance tree template that terminates
+        the recursion.
+     */
     template <class A>
     struct MixinTree<A, end, end, end, end, end, end, end, end, end> {
         static void map_feature_handlers(FeatureHandlerMap& hmap) { }
@@ -124,8 +126,8 @@ namespace lvtk {
 
 
     /** @internal
-      Base class for extensions. extension mixin classes don't have to
-      inherit from this class, but it's convenient.
+        Base class for extensions. extension mixin classes don't have to
+        Inherit from this class, but it's convenient.
      */
     template <bool Required>
     struct Extension {
@@ -135,19 +137,19 @@ namespace lvtk {
         Extension() : m_ok(!Required) { }
 
         /** @internal
-	Default implementation does nothing - no handlers added. 
+	    Default implementation does nothing - no handlers added.
          */
         static void
         map_feature_handlers(FeatureHandlerMap& hmap) { }
 
         /** @internal
-	Return @c true if the plugin instance is OK, @c false if it isn't. 
+	    Return @c true if the plugin instance is OK, @c false if it isn't.
          */
         bool check_ok() { return m_ok; }
 
         /** @internal
-	Return a data pointer corresponding to the URI if this extension 
-	has one. 
+            Return a data pointer corresponding to the URI if this extension
+            has one.
          */
         static const void*
         extension_data(const char* uri) { return 0; }
