@@ -79,6 +79,20 @@ namespace lvtk {
 
         protected:
 
+            /**
+                Subscribe to updates for a port.
+
+                This means that the host will call the UI's port_event() function when
+                the port value changes (as defined by protocol).
+
+                Calling this function with the same @p port_index and @p port_protocol
+                as an already active subscription has no effect.
+
+                @param port The index of the port.
+                @param protocol The URID of the ui:PortProtocol.
+                @param features Features for this subscription.
+                @return true on success.
+            */
             bool
             subscribe (uint32_t port, uint32_t protocol, const Feature* const* features)
             {
@@ -87,6 +101,20 @@ namespace lvtk {
                 return false;
             }
 
+            /**
+                Unsubscribe from updates for a port.
+
+                This means that the host will cease calling calling port_event() when
+                the port value changes.
+
+                Calling this function with a @p port_index and @p port_protocol that
+                does not refer to an active port subscription has no effect.
+
+                @param port_index The index of the port.
+                @param port_protocol The URID of the ui:PortProtocol.
+                @param features Features for this subscription.
+                @return true on success.
+            */
             bool
             unsubscribe (uint32_t port, uint32_t protocol, const Feature* const* features)
             {
@@ -159,6 +187,9 @@ namespace lvtk {
 
         protected:
 
+            /** Return the port index for a given symbol
+                @param symbol The port symbol to get an index for
+             */
             uint32_t
             port_index (const char* symbol)
             {
@@ -231,6 +262,13 @@ namespace lvtk {
 
         protected:
 
+           /**
+               Notify the host that a control has been grabbed or released.
+
+               @param port The index of the port associated with the control.
+               @param grabbed If true, the control has been grabbed, otherwise the
+               control has been released.
+            */
             void
             touch (uint32_t port, bool grabbed)
             {
@@ -279,7 +317,7 @@ namespace lvtk {
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
                 mixin->p_parent = reinterpret_cast<LV2UI_Widget*> (data);
-                mixin->m_ok = mixin->p_parent != NULL;
+                mixin->m_ok = mixin->p_parent != 0;
             }
 
             bool
@@ -300,9 +338,8 @@ namespace lvtk {
         protected:
 
             /** Get the parent widget if any
-
                 @return The parent LV2_Widget or NULL if not provided
-            */
+             */
             LV2UI_Widget*
             get_parent()
             {
@@ -372,20 +409,26 @@ namespace lvtk {
 
         protected:
 
-            /** */
+            /**
+               Request a size change.
+               Call this method to inform the host about the size of the UI.
 
+               @return true on success.
+             */
             bool
-            ui_resize(int width, int height)
+            ui_resize (int width, int height)
             {
-                if (rsz_is_valid())
+                if (plugin_rsz_is_valid())
                    return (0 == m_resize.ui_resize (m_resize.handle, width, height));
 
                 return false;
             }
 
+
         private:
+
             LV2UI_Resize m_resize;
-            bool rsz_is_valid() const { return m_resize.ui_resize != NULL && m_resize.handle != NULL; }
+            bool plugin_rsz_is_valid() const { return m_resize.ui_resize != NULL && m_resize.handle != NULL; }
 
         };
     };

@@ -27,6 +27,11 @@
 
 namespace lvtk
 {
+    /** Function type for mapping symbols */
+    typedef uint32_t     (*MapFunc)(const char* symbol);
+
+    /** Function type for unmaping URIDs */
+    typedef const char*  (*UnmapFunc)(uint32_t id);
 
     /** The URID Mixin.
         @headerfile lvtk/ext/urid.hpp
