@@ -73,5 +73,4 @@ protected:
   
 };
 
-static int _ = BeepGUI::register_class(
-        "http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/gui");
+static int _ = BeepGUI::register_class ("http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/gui");

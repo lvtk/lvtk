@@ -56,9 +56,10 @@ public:
           bufsize (0)
     { }
 
-    void activate()
+    void
+    activate()
     {
-        // query for buffer information
+        // query for buffer information.
         const BufferInfo& info (get_buffer_info());
         std::stringstream ss;
         ss << "Buffer Bounded:  " << info.bounded << std::endl
@@ -123,13 +124,15 @@ public:
         return WORKER_SUCCESS;
     }
 
-    uint32_t get_options (Option*)
+    uint32_t
+    get_options (Option*)
     {
         // Don't have a host for this yet
         return OPTIONS_SUCCESS;
     }
 
-    uint32_t set_options (const Option*)
+    uint32_t
+    set_options (const Option*)
     {
         // Don't have a host for this yet
         return OPTIONS_SUCCESS;
