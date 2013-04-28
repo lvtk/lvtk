@@ -1,5 +1,4 @@
-/****************************************************************************
-
+/*
     atom.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
@@ -17,8 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
-****************************************************************************/
+*/
 
 #ifndef LVTK_ATOM_HPP
 #define LVTK_ATOM_HPP
@@ -27,16 +25,14 @@
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
 #include <lv2/lv2plug.in/ns/ext/atom/util.h>
 
-#include <lvtk/ext/midi.hpp>
-#include <lvtk/ext/patch.hpp>
-
 namespace lvtk {
 
 
-   /** Typedef for an Atom Forge */
-   typedef LV2_Atom_Forge_Frame AtomForgeFrame;
-   typedef LV2_Atom_Forge_Frame ForgeFrame;
-   typedef LV2_Atom_Forge_Ref   ForgeRef;
+   /** Typedefs for an Atom data types */
+   typedef LV2_Atom_Event        AtomEvent;
+   typedef LV2_Atom_Forge_Frame  ForgeFrame;
+   typedef LV2_Atom_Forge_Ref    ForgeRef;
+   typedef LV2_Atom_Object_Query ObjectQuery;
 
    /** Function type for mapping symbols */
    typedef uint32_t     (*MapFunc)(const char* symbol);
@@ -45,47 +41,37 @@ namespace lvtk {
    typedef const char*  (*UnmapFunc)(uint32_t id);
 
 
-   struct Atom;
-
-
    struct AtomObject
    {
-       typedef LV2_Atom_Property_Body Property;
-
-       typedef std::vector<LV2_Atom_Property_Body*> PropertyVec;
-
-
       AtomObject (const void* atom) : p_obj ((LV2_Atom_Object*) atom) { }
       AtomObject (const AtomObject& other) : p_obj (other.p_obj)   { }
 
-      LV2_Atom_Object* cobj() const     { return p_obj; }
-      operator LV2_Atom_Object*()       { return p_obj; }
+      inline uint32_t
+      otype() const
+      {
+          return p_obj->body.otype;
+      }
 
-      Atom atom(); //                       { return (LV2_Atom*) p_obj; }
+      inline uint32_t
+      id() const
+      {
+          return p_obj->body.id;
+      }
 
-      LV2_URID otype() const            { return p_obj->body.otype; }
-
-      uint32_t id() const               { return p_obj->body.id; }
-
-      uint32_t total_size() const
+      inline uint32_t
+      total_size() const
       {
           return lv2_atom_total_size ((LV2_Atom*) p_obj);
       }
 
       inline void
-      query (LV2_Atom_Object_Query* query)
+      query (ObjectQuery& query)
       {
-          lv2_atom_object_query (p_obj, query);
+          lv2_atom_object_query (p_obj, &query);
       }
 
-      void print ()
-      {
-        LV2_ATOM_OBJECT_FOREACH (p_obj, iter)
-        {
-             // std::cout<< "key: " << iter->key << std::endl;
-
-        }
-      }
+      inline LV2_Atom_Object* cobj() const     { return p_obj; }
+      inline operator LV2_Atom_Object*()       { return p_obj; }
 
       inline AtomObject&
       operator= (const AtomObject& other)
@@ -129,39 +115,50 @@ namespace lvtk {
           return LV2_ATOM_BODY (p_atom);
       }
 
-      /** Get the Atom's body as a float */
+      /** Get the body as a float */
       inline float
       as_float() const
       {
           return ((LV2_Atom_Float*)p_atom)->body;
       }
 
+      /** Returns the atom casted to LV2_Atom_Object */
       const AtomObject
       as_object() const {
           return AtomObject ((LV2_Atom_Object* ) p_atom);
       }
 
+      /** Get the body as a string */
       inline const char*
       as_string() const
       {
           return (const char*) LV2_ATOM_BODY (p_atom);
       }
 
-      /** Get the Atom's body as a float */
+      /** Get the body as a float */
       inline int
       as_int() const
       {
           return ((LV2_Atom_Int*)p_atom)->body;
       }
 
+      /** Get the body as a long */
       inline int64_t
       as_long() const
       {
           return ((LV2_Atom_Long*)p_atom)->body;
       }
 
+      /** Get the body as a URID */
+      inline uint32_t
+      as_urid() const
+      {
+          return ((LV2_Atom_URID*)p_atom)->body;
+      }
       /** Get this Atom's type */
-      LV2_URID type() const
+
+      inline uint32_t
+      type() const
       {
           return p_atom->type;
       }
@@ -211,36 +208,38 @@ namespace lvtk {
    };
 
 
-   struct AtomEvent
-   {
-       AtomEvent (const void* ev) : event ((LV2_Atom_Event*) ev) { }
-
-       uint32_t type() const { return event->body.type; }
-       uint32_t size() const { return event->body.size; }
-       uint32_t time_frames() const { return event->time.frames; }
-       uint32_t frames() const { return time_frames(); }
-       double time_beats() const { return event->time.beats; }
-       const LV2_Atom* body() const { return &event->body; }
-
-       Atom atom() { return Atom (&event->body); }
-
-   private:
-       LV2_Atom_Event* event;
-   };
-
-
    struct AtomSequence
    {
-       AtomSequence (const void* slab) : seq ((LV2_Atom_Sequence*) slab) { }
+       AtomSequence (const void* slab) : p_seq ((LV2_Atom_Sequence*) slab) { }
 
-       uint32_t size() const { return seq->atom.size; }
+       inline uint32_t
+       pad() const
+       {
+           return p_seq->body.pad;
+       }
 
-       inline LV2_Atom_Sequence* cobj() { return seq; }
+       inline uint32_t
+       size() const
+       {
+           return p_seq->atom.size;
+       }
 
-       inline operator uint8_t*() const { return (uint8_t*) seq; }
+       inline uint32_t
+       unit() const
+       {
+           return p_seq->body.unit;
+       }
+
+       inline LV2_Atom_Sequence*
+       cobj()
+       {
+           return p_seq;
+       }
+
+       inline operator uint8_t*() const { return (uint8_t*) p_seq; }
 
    private:
-       LV2_Atom_Sequence* seq;
+       LV2_Atom_Sequence* p_seq;
    };
 
 
@@ -250,10 +249,6 @@ namespace lvtk {
       LV2_Atom_Forge forge;
 
    public:
-
-      typedef ForgeRef   Ref;
-
-      typedef LV2_Atom_Forge_Frame Frame;
 
       /** Uninitialized AtomForge.
 
@@ -287,7 +282,7 @@ namespace lvtk {
          return &forge;
       }
 
-      /** */
+      /** Forge the header of a sequence */
       inline ForgeRef
       sequence_head (ForgeFrame& frame, uint32_t unit)
       {
@@ -309,39 +304,53 @@ namespace lvtk {
 
       /** Forge frame time (in a sequence) */
       inline ForgeRef
-      frame_time (int64_t frames)
-      {
-          return lv2_atom_forge_frame_time (&forge, frames);
-      }
-
-      /** Forge frame time (in a sequence) */
-      inline ForgeRef
       beat_time (double beats)
       {
           return lv2_atom_forge_beat_time (&forge, beats);
       }
 
-      /** Forge an atom header
+      /** Forge frame time (in a sequence). The return ForgeRef is to an
+          LV2_Atom_Event
+       */
+      inline ForgeRef
+      frame_time (int64_t frames)
+      {
+          return lv2_atom_forge_frame_time (&forge, frames);
+      }
+
+      inline ForgeRef
+      property_head (uint32_t key, uint32_t context)
+      {
+         return lv2_atom_forge_property_head (&forge, key, context);
+      }
+
+      inline void
+      pop (ForgeFrame& frame)
+      {
+         lv2_atom_forge_pop (&forge, &frame);
+      }
+
+      /** Write an atom header
 
           @param size The atom's body size
           @param type The atom's body type
           @return A reference to the written atom
        */
       inline ForgeRef
-      atom (uint32_t size, uint32_t type)
+      write_atom (uint32_t size, uint32_t type)
       {
           return lv2_atom_forge_atom (&forge, size, type);
       }
 
-      /** Forge an atom path from string
+      /** Write an atom path from string
 
           @param path The path to forge
           @return An Atom
        */
       inline ForgeRef
-      path (const std::string& path)
+      write_path (const std::string& path)
       {
-         return lv2_atom_forge_path (&forge, path.c_str(), path.size());
+          return lv2_atom_forge_path (&forge, path.c_str(), path.size());
       }
 
       /** Forge an atom resource
@@ -352,29 +361,17 @@ namespace lvtk {
           @return A reference to the Atom
        */
       inline ForgeRef
-      resource (AtomForgeFrame& frame, uint32_t id, uint32_t otype)
+      write_resource (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
          // Write object header
          return lv2_atom_forge_resource (&forge, &frame, id, otype);
       }
 
       inline ForgeRef
-      blank (AtomForgeFrame& frame, uint32_t id, uint32_t otype)
+      write_blank (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
          // Write object header
          return lv2_atom_forge_blank (&forge, &frame, id, otype);
-      }
-
-      inline ForgeRef
-      property_head (uint32_t key, uint32_t context)
-      {
-         return lv2_atom_forge_property_head (&forge, key, context);
-      }
-
-      inline void
-      pop (AtomForgeFrame& frame)
-      {
-         lv2_atom_forge_pop (&forge, &frame);
       }
 
       inline ForgeRef
@@ -411,28 +408,22 @@ namespace lvtk {
       inline ForgeRef
       write_uri (const char* uri)
       {
-          return lv2_atom_forge_uri (&forge, uri, strlen(uri));
+          return lv2_atom_forge_uri (&forge, uri, strlen (uri));
       }
 
       inline ForgeRef
-      raw (const void* data, uint32_t size)
+      write_raw (const void* data, uint32_t size)
       {
          return lv2_atom_forge_raw (&forge, data, size);
       }
 
       inline ForgeRef
-      urid (LV2_URID id)
+      write_urid (LV2_URID id)
       {
           return lv2_atom_forge_urid (&forge, id);
       }
 
    };
-
-   inline Atom
-   AtomObject::atom()
-   {
-       return Atom ((LV2_Atom*) p_obj);
-   }
 
 } /* namespace lvtk */
 
