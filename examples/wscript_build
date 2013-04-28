@@ -14,6 +14,7 @@ import os
 import lv2
 
 buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
+builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
 	examples = ["workhorse", "silence", "beep"]
@@ -48,7 +49,7 @@ if buildme:
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
 		
-		if bld.path.find_resource(uisrc):
+		if builduis and bld.path.find_resource(uisrc):
 			ui = bld.shlib(
 				lv2_bundle	  =	True,
 				lv2_target    = "lvtk.lv2",

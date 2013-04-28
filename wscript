@@ -1,4 +1,4 @@
-#!/usr/bin/evn python
+#!/usr/bin/env python
 # encoding: utf-8
 # Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -89,7 +89,8 @@ def configure(conf):
 	else: conf.env.BUILD_EXAMPLE_PLUGINS = True
 	
 	# Example UI's depend on Gtkmm and Plugins
-	if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and not conf.env.EXAMPLES_DISABLED:
+	if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and \
+		not conf.env.EXAMPLES_DISABLED and not conf.env.UI_DISABLED:
 		conf.env.BUILD_EXAMPLE_UIS  = True
 	else: conf.env.BUILD_EXAMPLE_UIS  = False
 			
@@ -104,7 +105,7 @@ def configure(conf):
 	autowaf.display_header( "LV2 Toolkit Configuration")
 	autowaf.display_msg(conf,"Library Version", LVTK_VERSION)
 	autowaf.display_msg(conf,"Build Plugin Library", True)
-	autowaf.display_msg(conf,"Build UI Library",True)
+	autowaf.display_msg(conf,"Build UI Library",not conf.env.UI_DISABLED)
 	autowaf.display_msg(conf,"Build example plugins", not conf.env.EXAMPLES_DISABLED)
 	autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
 	autowaf.display_msg(conf,"Build tools", not conf.env.TOOLS_DISABLED)

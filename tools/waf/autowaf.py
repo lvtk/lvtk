@@ -432,9 +432,9 @@ def build_dox(bld, name, version, srcdir, blddir):
 
     docs.post()
 
-    bld.install_files('${DOCDIR}/%s-1.0/html' % name.lower(),
+    bld.install_files('${DOCDIR}/%s-1/html' % name.lower(),
                       bld.path.get_bld().ant_glob('doc/html/*'))
-    bld.install_files('${DOCDIR}/%s-1.0/html/search' % name.lower(),
+    bld.install_files('${DOCDIR}/%s-1/html/search' % name.lower(),
                       bld.path.get_bld().ant_glob('doc/html/search/*'))
 
     for i in range(1, 8):
