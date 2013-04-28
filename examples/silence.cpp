@@ -43,12 +43,12 @@ class Silence : public Plugin<Silence, URID<true>, State<true> >
 public:
 
     Silence (double rate)
-    : Plugin<Silence, URID<true>, State<true> > (1)
-      {
+        : Plugin<Silence, URID<true>, State<true> > (1)
+    {
         urids.atom_String = map (LV2_ATOM__String);
         urids.silence_msg = map (LVTK_SILENCE_MSG);
         urids.midi_type   = map (LV2_MIDI__MidiEvent);
-      }
+    }
 
     void
     run(uint32_t nframes)
