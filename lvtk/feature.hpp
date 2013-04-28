@@ -61,18 +61,18 @@ namespace lvtk {
    {
    public:
        FeatureIter (const Feature* const* features)
-           : index (0), p_feats (features) { }
+           : m_index (0), p_feats (features) { }
 
        inline const Feature*
        next()
        {
-           if (NULL == p_feats[index])
+           if (NULL == p_feats[m_index])
                return NULL;
-           return p_feats[index++];
+           return p_feats[m_index++];
        }
 
    private:
-       uint32_t                 index;
+       uint32_t                 m_index;
        const Feature* const*    p_feats;
    };
 } /* namespace lvtk */

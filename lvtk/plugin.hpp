@@ -94,8 +94,8 @@ namespace lvtk {
     using std::vector;
 
     /** @internal
-      A thin wrapper around std::vector<LV2_Descriptor> that frees the URI
-      members of the descriptors. */
+        A thin wrapper around std::vector<LV2_Descriptor> that frees the URI
+        members of the descriptors. */
     class DescList : public vector<LV2_Descriptor> {
     public:
         ~DescList();
@@ -103,24 +103,24 @@ namespace lvtk {
 
 
     /** @internal
-      This returns a list of all registered plugins. It is only used 
-      internally. */
+        This returns a list of all registered plugins. It is only used
+        internally. */
     DescList& get_lv2_descriptors();
 
 
     /** This is a template base class for LV2 plugins. It has default
-      implementations for all functions, so you only have to implement the 
-      functions that you need (for example run()). All subclasses must have 
-      a constructor whose signature matches the one in the example code below, 
-      otherwise it will not work with the register_class() function. The 
-      host will use this @c double parameter to pass the sample rate that the
-      plugin should run at when it creates a new instance of the plugin. 
+        implementations for all functions, so you only have to implement the
+        functions that you need (for example run()). All subclasses must have
+        a constructor whose signature matches the one in the example code below,
+        otherwise it will not work with the register_class() function. The
+        host will use this @c double parameter to pass the sample rate that the
+        plugin should run at when it creates a new instance of the plugin.
 
-      This is a template so that simulated dynamic binding can be used for
-      the callbacks. This is not all that useful for simple plugins but it may
-      come in handy when using @ref pluginmixins "mixins" and it doesn't add 
-      any additional vtable lookup and function call costs, like real dynamic
-      binding would.
+        This is a template so that simulated dynamic binding can be used for
+        the callbacks. This is not all that useful for simple plugins but it may
+        come in handy when using @ref pluginmixins "mixins" and it doesn't add
+        any additional vtable lookup and function call costs, like real dynamic
+        binding would.
 @code
       #include <cstring>
       #include <lvtk/plugin.hpp>
@@ -141,18 +141,18 @@ namespace lvtk {
       static unsigned _ = TestLV2::register_class("http://lvtoolkit.org/plugins/TestLV2");
 @endcode
 
-      If the above code is compiled and linked with @c -ldaps-plugin0 into a
-      shared module, it could form the shared object part of a fully 
-      functional (but not very useful) LV2 plugin with one audio input port
-      and one audio output port that just copies the input to the output.
+        If the above code is compiled and linked with @c -ldaps-plugin0 into a
+        shared module, it could form the shared object part of a fully
+        functional (but not very useful) LV2 plugin with one audio input port
+        and one audio output port that just copies the input to the output.
 
-      You can extend your plugin classes, for example adding support for
-      LV2 extensions, by passing @ref pluginmixins "mixin classes" as template
-      parameters to plugin (second template parameter and onwards).
+        You can extend your plugin classes, for example adding support for
+        LV2 extensions, by passing @ref pluginmixins "mixin classes" as template
+        parameters to plugin (second template parameter and onwards).
 
-      If you want to write a synth plugin you should probably inherit the 
-      Synth class instead of this one.
-      @headerfile lvtk/plugin.hpp
+        If you want to write a synth plugin you should probably inherit the
+        Synth class instead of this one.
+        @headerfile lvtk/plugin.hpp
      */
 
     template <class Derived,
@@ -166,10 +166,10 @@ namespace lvtk {
     public:
 
         /** This constructor is needed to initialise the port vector with the
-	correct number of ports, and to check if all the required features
-	are provided. This must be called as the first item in the 
-	initialiser list for your plugin class.
-	@param ports The number of ports in this plugin.
+            correct number of ports, and to check if all the required features
+            are provided. This must be called as the first item in the
+            initialiser list for your plugin class.
+            @param ports The number of ports in this plugin.
          */
         Plugin(uint32_t ports)
         : m_ports(ports, 0), m_ok(true)

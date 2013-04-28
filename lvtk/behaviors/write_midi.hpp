@@ -34,7 +34,7 @@ namespace lvtk {
 /** A mixin that allows easy sending of MIDI from GUI to plugin.
     WriteMIDI requires the URIMap mixin.
 
-	@headerfile lvtk/behaviors/write_midi.hpp
+    @headerfile lvtk/behaviors/write_midi.hpp
     @see The internal struct I for API details
     @ingroup behaviors
     @deprecated
@@ -56,7 +56,6 @@ namespace lvtk {
       m_buffer = lv2_event_buffer_new(sizeof(LV2_Event) + EVENT_BUFFER_SIZE,
                                       0);
     }
-
     /** @internal */
     bool check_ok() {
 
