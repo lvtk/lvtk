@@ -1,15 +1,20 @@
+Version 1.1.1 (2013-05-01)
+	* Small Fixes in waf scripts
+	* Code formatting
+	* Fixed typos in example rdf files
+
 Version 1.1.0 (2013-04-27)
-  * Added basic C++ wrappers for LV2 Atom handling/forging
-  * Added Make Path mixin
-  * LV2UI rev3 Supported
-  * Support LV2UI_Port_Map
-  * Support LV2UI Port Subscribe
-  * Support LV2UI Touch
-  * Support LV2UI Peak Data
-  * Support buf-size
-  * Support Options Extension
-  * Support for morph extension (data only)
-  * Examples install to a single lvtk.lv2 bundle
+	* Added basic C++ wrappers for LV2 Atom handling/forging
+	* Added Make Path mixin
+	* LV2UI rev3 Supported
+	* Support LV2UI_Port_Map
+	* Support LV2UI Port Subscribe
+	* Support LV2UI Touch
+	* Support LV2UI Peak Data
+	* Support buf-size
+	* Support Options Extension
+	* Support for morph extension (data only)
+	* Examples install to a single lvtk.lv2 bundle
 
 Version 1.0.4 (2013-02-02)
   * Fixed Synth bug where handle_midi wasn’t being called if overridden

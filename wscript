@@ -18,7 +18,7 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-LVTK_VERSION="1.1.0"
+LVTK_VERSION="1.1.1"
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
 LVTK_MINOR_VERSION=LVTK_VERSION[2]
 LVTK_MICRO_VERSION=LVTK_VERSION[4]
