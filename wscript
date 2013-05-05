@@ -1,4 +1,4 @@
-#!/usr/bin/evn python
+#!/usr/bin/env python
 # encoding: utf-8
 # Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -18,7 +18,7 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-LVTK_VERSION="1.0.4"
+LVTK_VERSION="1.1.0"
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
 LVTK_MINOR_VERSION=LVTK_VERSION[2]
 LVTK_MICRO_VERSION=LVTK_VERSION[4]
@@ -72,7 +72,7 @@ def configure(conf):
 	if not conf.options.disable_tools: conf.check_boost()
 		
 	# Check for required packages
-	conf.check_lv2("1.0.0")
+	conf.check_lv2 ("1.2.0")
 	
 	# UI Configuration
 	autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
@@ -89,7 +89,8 @@ def configure(conf):
 	else: conf.env.BUILD_EXAMPLE_PLUGINS = True
 	
 	# Example UI's depend on Gtkmm and Plugins
-	if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and not conf.env.EXAMPLES_DISABLED:
+	if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and \
+		not conf.env.EXAMPLES_DISABLED and not conf.env.UI_DISABLED:
 		conf.env.BUILD_EXAMPLE_UIS  = True
 	else: conf.env.BUILD_EXAMPLE_UIS  = False
 			
@@ -102,9 +103,10 @@ def configure(conf):
 	autowaf.configure(conf)
 	
 	autowaf.display_header( "LV2 Toolkit Configuration")
+	autowaf.display_msg(conf,"Library Version", LVTK_VERSION)
 	autowaf.display_msg(conf,"Build Plugin Library", True)
-	autowaf.display_msg(conf,"Build UI Library",True)
-	autowaf.display_msg(conf,"Build example plugins", not conf.env.TOOLS_DISABLED)
+	autowaf.display_msg(conf,"Build UI Library",not conf.env.UI_DISABLED)
+	autowaf.display_msg(conf,"Build example plugins", not conf.env.EXAMPLES_DISABLED)
 	autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
 	autowaf.display_msg(conf,"Build tools", not conf.env.TOOLS_DISABLED)
 	
@@ -118,6 +120,11 @@ def build(bld):
 	pcvers = LVTK_MAJOR_VERSION
 	
 	# Build PC Files
+	autowaf.build_pc(bld, 'LVTK', LVTK_VERSION, pcvers, [],
+						{'LVTK_MAJOR_VERSION'  : LVTK_MAJOR_VERSION,
+						'VERSION'              : LVTK_VERSION,
+						'LVTK_PKG_DEPS'        : 'lv2'})
+    
 	autowaf.build_pc(bld, 'LVTK-PLUGIN', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
@@ -130,7 +137,8 @@ def build(bld):
 						'VERSION'              : LVTK_VERSION,
 						'THELIB'		       : LIB_LVTK_UI,
 						'LVTK_PKG_DEPS'       : 'lv2'})
-		autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, pcvers, [],
+		if bld.env.LIB_gtkmm:
+			autowaf.build_pc(bld, 'LVTK-GTKUI', LVTK_VERSION, pcvers, [],
 						{'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
 						'VERSION'              : LVTK_VERSION,
 						'THELIB'		       : LIB_LVTK_UI,

@@ -26,10 +26,11 @@
 #ifndef LVTK_LV2_FEATURE_HPP
 #define LVTK_LV2_FEATURE_HPP
 
-
 #include <map>
 #include <string>
 #include <vector>
+
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 
 namespace lvtk {
 
@@ -54,8 +55,26 @@ namespace lvtk {
    typedef void(*FeatureHandler)(void* instance, FeatureData data);
 
    /** Convenient typedef for the feature handler map type. */
-   typedef map<string, FeatureHandler> feature_handler_map;
+   typedef map<string, FeatureHandler> FeatureHandlerMap;
 
+   class FeatureIter
+   {
+   public:
+       FeatureIter (const Feature* const* features)
+           : m_index (0), p_feats (features) { }
+
+       inline const Feature*
+       next()
+       {
+           if (NULL == p_feats[m_index])
+               return NULL;
+           return p_feats[m_index++];
+       }
+
+   private:
+       uint32_t                 m_index;
+       const Feature* const*    p_feats;
+   };
 } /* namespace lvtk */
 
 #endif /* LVTK_LV2_FEATURE_HPP */

@@ -39,70 +39,68 @@ namespace lvtk {
 
 
     /** A simple function that translates a MIDI key number to a fundamental
-      frequency in Hz. */
+        frequency in Hz. */
     static inline float key2hz(unsigned char key) {
         return 8.1758 * std::pow(1.0594, key);
     }
 
 
     /** A base class for synth voices, to be used with the Synth template class.
-      You don't have to make your voice classes inherit this one, but it
-      makes some things easier.
+        You don't have to make your voice classes inherit this one, but it
+        makes some things easier.
      */
     class Voice {
     public:
 
         /** Turn the voice on. This default implementation does nothing, you
-        probably want to override it.
+            probably want to override it.
 
-        If @c key is lvtk::INVALID_KEY the voice should go silent as fast at
-        possible (the synth may use this when it receives an All Sound Off
-        event).
-        @param key The MIDI key for the note that the voice should play.
-        @param velocity The MIDI velocity for the Note On event.
+            If @c key is lvtk::INVALID_KEY the voice should go silent as fast at
+            possible (the synth may use this when it receives an All Sound Off
+            event).
+            @param key The MIDI key for the note that the voice should play.
+            @param velocity The MIDI velocity for the Note On event.
          */
         void on(unsigned char key, unsigned char velocity) { }
 
         /** Turn the voice off. This default implementation does nothing, you
-        probably want to override it.
-        @param velocity The MIDI velocity for the Note Off event.
+            probably want to override it.
+            @param velocity The MIDI velocity for the Note Off event.
          */
         void off(unsigned char velocity) { }
 
         /** Return the MIDI key that the voice is currently playing.
-        lvtk::INVALID_KEY means that the voice is not active and could be used
-        to play a new note. */
+            lvtk::INVALID_KEY means that the voice is not active and could be used
+            to play a new note.
+         */
         unsigned char get_key() const { return lvtk::INVALID_KEY; }
 
         /** Render audio for this voice to the output buffers, from sample
-        @c from to sample @c to. The buffers may already contain audio from
-        other voices, so use += instead of = when writing to it. This default
-        implementation does nothing, you probably want to override it.
+            @c from to sample @c to. The buffers may already contain audio from
+            other voices, so use += instead of = when writing to it. This default
+            implementation does nothing, you probably want to override it.
          */
         void render(uint32_t from, uint32_t to) { }
 
         /** @internal
-        Set the port buffer vector. The Synth class always calls this before
-        it calls render().
+            Set the port buffer vector. The Synth class always calls this before
+            it calls render().
          */
         void set_port_buffers(vector<void*>& ports) { m_ports = &ports; }
 
     protected:
 
-        /** Same as Plugin::p() - returns the buffer for the given port.
-         */
+        /** Same as Plugin::p() - returns the buffer for the given port. */
         template <typename T> inline T*& p(uint32_t port) {
             return reinterpret_cast<T*&>((*m_ports)[port]);
         }
 
-        /** Same as Plugin::p() - returns the buffer for the given port.
-         */
+        /** Same as Plugin::p() - returns the buffer for the given port. */
         float*& p(uint32_t port) {
             return reinterpret_cast<float*&>((*m_ports)[port]);
         }
 
-        /** @internal
-        The current port buffer vector. */
+        /** @internal The current port buffer vector. */
         vector<void*>* m_ports;
     };
 
@@ -188,11 +186,9 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
     {
     public:
 
-        /** @internal
-	Convenient typedef for the parent class. */
+        /** @internal Convenient typedef for the parent class. */
         typedef Plugin<D, URID<true>, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7>
         Parent;
-
 
         /** This constructor must be called in the initialiser list for your
             synth class.
@@ -204,18 +200,16 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         : Parent(ports),
           m_midi_input (midi_input)
         {
-            m_midi_type = Parent::map(LV2_MIDI__MidiEvent);
+            m_midi_type = Parent::map (LV2_MIDI__MidiEvent);
         }
 
 
-        /** This is needed to delete the voices.
-         */
+        /** This is needed to delete the voices. */
         ~Synth()
         {
             for (unsigned i = 0; i < m_voices.size(); ++i)
                 delete m_voices[i];
         }
-
 
         /** This function implements the voice stealing algorithm. The @c key and
             @c velocity arguments are the parameters for the MIDI Note On event
@@ -225,7 +219,8 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             This is not a virtual function, but if you override it in a subclass
             this class will still use that implementation thanks to the second
             template class parameter. This means that you can override this function
-            if you want to implement your own voice stealing algorithm. */
+            if you want to implement your own voice stealing algorithm.
+         */
         unsigned
         find_free_voice(unsigned char key, unsigned char velocity)
         {
@@ -248,12 +243,13 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             template class parameter. This means that you can override this function
             if you want to respond to other MIDI events - just be sure to either
             call this function for note on and note off events or turn on and off
-            the voices yourself. */
+            the voices yourself.
+         */
         void
         handle_midi (uint32_t size, unsigned char* data)
         {
             if (size != 3) return;
-
+            LV2_Midi_Message_Type type (lv2_midi_message_type (data));
 
             if (data[0] == 0x90)
             {
@@ -275,6 +271,8 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             }
         }
 
+        void
+        handle_atom_event (LV2_Atom_Event* ev) { }
 
         /** This function is called before the synth renders a chunk of audio from
             the voices, from sample @c from to sample @c to in the output buffers.
@@ -324,44 +322,32 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
             for (unsigned i = 0; i < m_voices.size(); ++i)
                 m_voices[i]->set_port_buffers(Parent::m_ports);
 
-            // Get ahold of the first atom event if any
             const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (m_midi_input);
-            LV2_Atom_Event* ev = lv2_atom_sequence_begin(&seq->body);
+            uint32_t last_frame = 0;
 
-            uint32_t samples_done = 0;
-
-            while (samples_done < sample_count)
+            for (LV2_Atom_Event* ev = lv2_atom_sequence_begin (&seq->body);
+                 !lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev);
+                 ev = lv2_atom_sequence_next (ev))
             {
-                uint32_t to = sample_count;
+               synth->pre_process (last_frame, ev->time.frames);
+               for (uint32_t i = 0; i < m_voices.size(); ++i)
+                  m_voices[i]->render (last_frame, ev->time.frames);
+               synth->post_process (last_frame, ev->time.frames);
 
-                if (lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev))
-                {
-                    ev = NULL;
-                }
-                else
-                {
-                    to = ev->time.frames;
-                }
+               if (ev->body.type == m_midi_type)
+                  synth->handle_midi (ev->body.size, (uint8_t*) LV2_ATOM_BODY (&ev->body));
+               else
+                  synth->handle_atom_event (ev);
 
-                if (to > samples_done)
-                {
-                    synth->pre_process(samples_done, to);
-                    for (unsigned i = 0; i < m_voices.size(); ++i)
-                        m_voices[i]->render(samples_done, to);
-                    synth->post_process(samples_done, to);
-                    samples_done = to;
-                }
+               last_frame = ev->time.frames;
+            }
 
-                if (ev)
-                {
-                    if (ev->body.type == m_midi_type)
-                    {
-                        uint8_t* const data = (uint8_t* const)(ev + 1);
-                        synth->handle_midi (ev->body.size, data);
-                    }
-
-                    ev = lv2_atom_sequence_next (ev);
-                }
+            if (last_frame < sample_count)
+            {
+               synth->pre_process (last_frame, sample_count);
+               for (uint32_t i = 0; i < m_voices.size(); ++i)
+                  m_voices[i]->render (last_frame, sample_count);
+               synth->post_process (last_frame, sample_count);
             }
         }
 
@@ -482,7 +468,8 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
     protected:
 
         /** Use this function to access data buffers for ports. They will be
-            casted to pointers to the template parameter @c T. */
+            casted to pointers to the template parameter @c T.
+         */
         template <typename T> T*&
         p(uint32_t port) {
             return reinterpret_cast<T*&>(Parent::m_ports[port]);
@@ -493,7 +480,6 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         p(uint32_t port) {
             return reinterpret_cast<float*&>(Parent::m_ports[port]);
         }
-
 
         /** @internal The voice objects that render the audio. */
         vector<V*> m_voices;

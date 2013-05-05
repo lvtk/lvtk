@@ -42,21 +42,18 @@ namespace lvtk {
        @see The internal struct I for API details.
      */
     template <bool Required = true>
-    struct GtkUI {
-
+    struct GtkUI
+    {
         /** @memberof GtkUI */
         template <class Derived>
         struct I : Extension<Required>
         {
             I() : p_container(NULL)
             {
-                /* Call before anything else. If init_gtkmm_internals
-				   is not called before creating widgets. Glib-GOBJECT
-				   warnings will occur. */
+                /* Call before anything else. Prevents glib warnings */
                 Gtk::Main::init_gtkmm_internals();
 
-                /* Create the container object. */
-                p_container = Gtk::manage( new Gtk::VBox());
+                p_container = Gtk::manage (new Gtk::VBox());
             }
 
             ~I()
@@ -66,7 +63,7 @@ namespace lvtk {
 
             /** @skip */
             static void
-            map_feature_handlers (feature_handler_map& hmap)
+            map_feature_handlers (FeatureHandlerMap& hmap)
             {
                 /** Not required or implemented */
             }
@@ -76,7 +73,8 @@ namespace lvtk {
                Sanity check the Mixin
                @return true if the container was created.
              */
-            bool check_ok()
+            bool
+            check_ok()
             {
                 return (p_container != NULL);
             }

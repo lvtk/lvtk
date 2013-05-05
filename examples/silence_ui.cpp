@@ -1,26 +1,26 @@
 /*
- 	silence_ui.cpp - LV2 Toolkit UI Example
+    silence_ui.cpp - LV2 Toolkit UI Example
 
-	Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
+    Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as
-	published by the Free Software Foundation; either version 2 of
-	the License, or (at your option) any later version.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as
+    published by the Free Software Foundation; either version 2 of
+    the License, or (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
 
 /**
    @file silence_ui.cpp
-   Demonstrates creating a GtkUI manually without the GtkUI Mixin.
+   Demonstrates of creating a GtkUI manually without the GtkUI Mixin.
  */
 
 #include <gtkmm.h>
@@ -70,7 +70,6 @@ public:
         } else {
             p_hbox = 0;
         }
-
     }
 
 
@@ -81,14 +80,14 @@ public:
 
         This is really easy for gtkmm. However, you can return ANY pointer here
         as the host supports the 'widget type' you are returning. */
-    LV2UI_Widget* widget()
+    LV2UI_Widget*
+    widget()
     {
-        /* If the HBox is NULL at this point, it
-		   will prevent the UI from instantiating */
+        /* If the HBox is NULL at this point, it  will prevent the UI from
+           instantiating */
 
         if (p_hbox) {
-            /* LV2 GtkUI expects a Gtk C Object.
-			   cast one to an LV2UI_Widget */
+            /* LV2 GtkUI expects a Gtk C Object. cast one to an LV2UI_Widget */
             return widget_cast (p_hbox->gobj());
         }
 
@@ -99,7 +98,8 @@ protected:
 
     /* Raw MIDI Senders */
 
-    void send_note_on()
+    void
+    send_note_on()
     {
         LV2_URID xfer = map(LV2_ATOM__eventTransfer);
         LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
@@ -108,7 +108,8 @@ protected:
         write (p_midi, sizeof(midi), xfer, (void*)&midi);
     }
 
-    void send_note_off()
+    void
+    send_note_off()
     {
         LV2_URID xfer = map(LV2_ATOM__eventTransfer);
         LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);

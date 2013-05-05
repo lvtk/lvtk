@@ -1,4 +1,4 @@
-# DAPS - Worker Example Plugin
+# LVTK - Worker Example Plugin
 # Copyright 2012  Michael Fisher <mfisher31@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
@@ -22,12 +22,14 @@
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
 @prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 @prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
+@prefix lvtkp: <http://lvtoolkit.org/plugins/> .
 
-<http://lvtoolkit.org/plugins/workhorse>
-	a lv2:Plugin ;
-	doap:name "Workhorse" ;
-	doap:license <http://opensource.org/licenses/isc> ;
-	lv2:project <http://lvtoolkit.org/ns> ;
+lvtkp:workhorse
+	a lv2:Plugin ,
+		lv2:UtilityPlugin ;
+	doap:name "LVTK Workhorse" ;
+	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
+	lv2:project lvtkp: ;
 	lv2:requiredFeature urid:map ,
 		work:schedule ;
 	lv2:optionalFeature lv2:hardRTCapable ;
@@ -64,7 +66,7 @@
 	a ui:GtkUI ;
 	lv2:requiredFeature urid:map ;
 	ui:portNotification [
-		ui:plugin <http://lvtoolkit.org/plugins/workhorse> ;
+		ui:plugin lvtkp:workhorse ;
 		lv2:symbol "notify" ;
 		ui:notifyType atom:Blank
 	] .

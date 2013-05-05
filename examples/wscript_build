@@ -13,11 +13,13 @@ file COPYING for more details. '''
 import os
 import lv2
 
-buildme = not bld.env.TOOLS_DISABLED
+buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
+builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
 	examples = ["workhorse", "silence", "beep"]
-
+	first_plugin = True
+	
 	for slug in examples:
 		
 		bld(rule="../build/tools/ttl2c ${SRC} ${TGT}", \
@@ -25,10 +27,16 @@ if buildme:
 			target=slug+'.h')
 	
 		bld.add_group()
-	
-		plugin = bld.shlib(
+
+		res = ["%s.ttl" % slug]
+		if True == first_plugin:
+			res += ["manifest.ttl.in"]
+			first_plugin = False
+
+		plugin = bld.shlib (
 			lv2_bundle	  =	 True,
-			lv2_resources = ["%s.manifest.ttl.in" % slug,"%s.ttl" % slug],
+			lv2_resources = res,
+			lv2_target    = "lvtk.lv2",
 			name          = slug,
 			target        = slug,
 			source        = "%s.cpp" % slug,
@@ -37,14 +45,14 @@ if buildme:
 			LIB_EXT		  = bld.env.pluginlib_EXT
 		)
 		
-		
+		# Build the plugin gui (if able)
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
 		
-		if bld.path.find_resource(uisrc):
+		if builduis and bld.path.find_resource(uisrc):
 			ui = bld.shlib(
 				lv2_bundle	  =	True,
-				lv2_target    = slug + ".lv2",
+				lv2_target    = "lvtk.lv2",
 				name          = uislug,
 				target        = uislug,
 				source        = uisrc,

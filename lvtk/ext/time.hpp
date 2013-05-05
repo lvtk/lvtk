@@ -22,7 +22,7 @@
 */
 /**
    @page time Time Extension
-   C++ convenience header for the LV2 time<br />
+   C++ convenience header for LV2 time<br />
    LV2 Version Support: >= 1.0 (2012-04-17)<br />
 
    This is a vocabulary for precisely describing a position in time and

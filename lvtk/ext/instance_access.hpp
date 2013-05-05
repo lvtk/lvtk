@@ -54,7 +54,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            map_feature_handlers(feature_handler_map& hmap)
+            map_feature_handlers(FeatureHandlerMap& hmap)
             {
                 hmap[LV2_INSTANCE_ACCESS_URI] =
                         &I<Derived>::handle_feature;
@@ -77,14 +77,15 @@ namespace lvtk
             check_ok()
             {
                 if (!Required)
-                    return true;
+                    this->m_ok = true;
 
                 if (LVTK_DEBUG)
                 {
                     std::clog << "    [InstanceAccess] Validation "
-                            << (this->m_ok ? "succeeded" : "failed")
-                            << "." << std::endl;
+                              << (this->m_ok ? "succeeded" : "failed")
+                              << "." << std::endl;
                 }
+
                 return this->m_ok;
             }
 

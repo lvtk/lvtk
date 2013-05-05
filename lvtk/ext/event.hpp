@@ -62,7 +62,7 @@ namespace lvtk {
 
          /** @internal */
          static void
-         map_feature_handlers(feature_handler_map& hmap)
+         map_feature_handlers(FeatureHandlerMap& hmap)
          {
             hmap[LV2_EVENT_URI] = &Mixin::handle_feature;
          }

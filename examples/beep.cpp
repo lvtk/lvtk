@@ -19,40 +19,41 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 */
+/** @file beep.cpp */
 
-/**
- * @file beep.cpp
- */
-
- /*
-  * Demonstrates lvtk::Synth
-  */
 
 #include <lvtk/synth.hpp>
 #include "beep.h"
 
-class BeepVoice : public lvtk::Voice {
+class BeepVoice : public lvtk::Voice
+{
 public:
   
-    BeepVoice(double rate)
-    : m_key(lvtk::INVALID_KEY), m_rate(rate), m_period(10), m_counter(0)
+    BeepVoice (double rate)
+        : m_key(lvtk::INVALID_KEY), m_rate(rate), m_period(10), m_counter(0)
     { }
   
-    void on(unsigned char key, unsigned char velocity)
+    void
+    on (unsigned char key, unsigned char velocity)
     {
         m_key = key;
         m_period = m_rate * 4.0 / lvtk::key2hz(m_key);
     }
 
-    void off(unsigned char velocity) {
+    void
+    off (unsigned char velocity)
+    {
         m_key = lvtk::INVALID_KEY;
     }
 
-    unsigned char get_key() const {
+    unsigned char
+    get_key() const
+    {
         return m_key;
     }
 
-    void render(uint32_t from, uint32_t to)
+    void
+    render(uint32_t from, uint32_t to)
     {
         if (m_key == lvtk::INVALID_KEY) return;
 
@@ -75,15 +76,15 @@ protected:
 };
 
 
-class Beep : public lvtk::Synth<BeepVoice, Beep> {
+class Beep : public lvtk::Synth<BeepVoice, Beep>
+{
 public:
   
-    Beep(double rate) : lvtk::Synth<BeepVoice, Beep> (p_n_ports, p_midi)
+    Beep (double rate) : lvtk::Synth<BeepVoice, Beep> (p_n_ports, p_midi)
     {
-        add_voices(new BeepVoice(rate), new BeepVoice(rate), new BeepVoice(rate));
-        add_audio_outputs(p_left, p_right);
+        add_voices (new BeepVoice(rate), new BeepVoice(rate), new BeepVoice(rate));
+        add_audio_outputs (p_left, p_right);
     }
-
 };
 
 

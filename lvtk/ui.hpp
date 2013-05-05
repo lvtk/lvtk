@@ -114,12 +114,12 @@ namespace lvtk
             s_bundle_path = 0;
             if (m_features)
             {
-                feature_handler_map hmap;
+                FeatureHandlerMap hmap;
                 Derived::map_feature_handlers(hmap);
                 for (const lvtk::Feature* const * iter = m_features;
                         *iter != 0; ++iter)
                 {
-                    feature_handler_map::iterator miter;
+                    FeatureHandlerMap::iterator miter;
                     miter = hmap.find((*iter)->URI);
                     if (miter != hmap.end())
                     {
@@ -134,7 +134,7 @@ namespace lvtk
             value changes in the plugin instance. */
         inline void
         port_event(uint32_t port, uint32_t buffer_size, uint32_t format,
-                void const* buffer)
+                   void const* buffer)
         {
         }
 
@@ -223,16 +223,17 @@ namespace lvtk
         /** @internal
             This function creates an instance of a plugin UI. It is used
             as the instantiate() callback in the LV2 descriptor. You should not use
-            it directly. */
+            it directly.
+         */
         static LV2UI_Handle
-        create_ui_instance(LV2UI_Descriptor const* descriptor,
-                char const* plugin_uri, char const* bundle_path,
-                LV2UI_Write_Function write_func, LV2UI_Controller ctrl,
-                LV2UI_Widget* widget, LV2_Feature const* const * features)
+        create_ui_instance (LV2UI_Descriptor const* descriptor,
+                            char const* plugin_uri, char const* bundle_path,
+                            LV2UI_Write_Function write_func, LV2UI_Controller ctrl,
+                            LV2UI_Widget* widget, LV2_Feature const* const * features)
         {
             /* Copy some data to static variables so the subclasses don't have to
-             bother with it - this is threadsafe since hosts are not allowed
-             to instantiate the same plugin concurrently */
+               bother with it - this is threadsafe since hosts are not allowed
+               to instantiate the same plugin concurrently */
             s_ctrl = ctrl;
             s_wfunc = write_func;
             s_features = features;

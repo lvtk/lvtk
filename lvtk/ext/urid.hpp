@@ -27,6 +27,11 @@
 
 namespace lvtk
 {
+    /** Function type for mapping symbols */
+    typedef uint32_t     (*MapFunc)(const char* symbol);
+
+    /** Function type for unmaping URIDs */
+    typedef const char*  (*UnmapFunc)(uint32_t id);
 
     /** The URID Mixin.
         @headerfile lvtk/ext/urid.hpp
@@ -40,23 +45,19 @@ namespace lvtk
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() :
-                    p_unmap(NULL), p_map(NULL)
+            I() : p_unmap(NULL), p_map(NULL) { }
+
+            /** @internal */
+            static void
+            map_feature_handlers (FeatureHandlerMap& hmap)
             {
+                hmap[LV2_URID__map]   = &I<Derived>::handle_map_feature;
+                hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
             }
 
             /** @internal */
             static void
-            map_feature_handlers(feature_handler_map& hmap)
-            {
-                hmap[LV2_URID__map] = &I<Derived>::handle_map_feature;
-                hmap[LV2_URID__unmap] =
-                        &I<Derived>::handle_unmap_feature;
-            }
-
-            /** @internal */
-            static void
-            handle_map_feature(void* instance, void* data)
+            handle_map_feature (void* instance, void* data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -67,7 +68,7 @@ namespace lvtk
 
             /** @internal */
             static void
-            handle_unmap_feature(void* instance, void* data)
+            handle_unmap_feature (void* instance, void* data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -82,14 +83,14 @@ namespace lvtk
             {
                 if (LVTK_DEBUG)
                 {
-                    std::clog << "    [LV2::URID] Validation "
+                    std::clog << "    [URID] Validation "
                             << (this->m_ok ? "succeeded" : "failed")
                             << "." << std::endl;
                 }
                 return this->m_ok;
             }
 
-        protected:
+
 
             /**
              Get the URI for a previously mapped numeric ID.
@@ -106,9 +107,11 @@ namespace lvtk
              @param urid The ID to be mapped back to the URI string.
              */
             const char*
-            unmap(LV2_URID urid)
+            unmap (LV2_URID urid)
             {
-                return p_unmap->unmap(p_unmap->handle, urid);
+                if (p_unmap != NULL)
+                    return p_unmap->unmap(p_unmap->handle, urid);
+                return "";
             }
 
             /**
@@ -132,12 +135,16 @@ namespace lvtk
              @param uri The URI to be mapped to an integer ID.
              */
             LV2_URID
-            map(const char* uri)
+            map (const char* uri)
             {
-                return p_map->map(p_map->handle, uri);
+                if (p_map != NULL)
+                    return p_map->map(p_map->handle, uri);
+                return 0;
             }
 
-            LV2_URID_Map *p_map;
+        protected:
+
+            LV2_URID_Map   *p_map;
             LV2_URID_Unmap *p_unmap;
 
         };

@@ -1,3 +1,21 @@
+Version 1.1.0 (2013-04-27)
+  * Added basic C++ wrappers for LV2 Atom handling/forging
+  * Added Make Path mixin
+  * LV2UI rev3 Supported
+  * Support LV2UI_Port_Map
+  * Support LV2UI Port Subscribe
+  * Support LV2UI Touch
+  * Support LV2UI Peak Data
+  * Support buf-size
+  * Support Options Extension
+  * Support for morph extension (data only)
+  * Examples install to a single lvtk.lv2 bundle
+
+Version 1.0.4 (2013-02-02)
+  * Fixed Synth bug where handle_midi wasn’t being called if overridden
+  * Compatibility with older and newer boost versions
+  * Added support for LV2UI_Resize
+ 
 Version 1.0.3 (2012-12-20)
 	* Fixed UI compiler errors with -Wl,nodelete.
 	* Accurate MIDI triggering Synth base class
