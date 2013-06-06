@@ -36,7 +36,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details.
 
 Note that this licence requires that any plugin that uses the 
-libdaps-* frameworks is also licensed under GPL version 3 or later.
+liblvtk-* frameworks is also licensed under GPL version 3 or later.
 
 Issue Tracking 
 -------------- 
