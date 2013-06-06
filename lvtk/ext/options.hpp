@@ -83,7 +83,7 @@ namespace lvtk {
         /** */
         const Option* next()
         {
-            if (p_opts == NULL || (p_opts[index].key   == 0 &&
+            if (p_opts == 0 || (p_opts[index].key   == 0 &&
                                    p_opts[index].value == 0))
                 return 0;
 
@@ -124,7 +124,7 @@ namespace lvtk {
         {
 
             /** @skip */
-            I() : p_supplied_opts (NULL) { }
+            I() : p_supplied_opts (0) { }
 
             /** @skip */
             static void
@@ -171,7 +171,7 @@ namespace lvtk {
             /** Get the options passed by the host as an LV2_Feature
 
                 @note The options array MUST NOT be modified by the plugin instance
-                @return The options array or NULL if no options were supplied
+                @return The options array or 0 if no options were supplied
              */
             const Option* get_supplied_options()       { return p_supplied_opts; }
 
