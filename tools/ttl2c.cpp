@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
   Namespace lv2("<http://lv2plug.in/ns/lv2core#>");
   Namespace cx("<http://ll-plugins.nongnu.org/lv2/dev/contexts/1#>");
   Namespace ll("<http://ll-plugins.nongnu.org/lv2/namespace#>");
+  Namespace pprops("<http://lv2plug.in/ns/ext/port-props#>");
   Variable plugin, pegname;
   vector<QueryResult> qr =
     select(plugin, pegname)
@@ -191,19 +192,19 @@ int main(int argc, char** argv) {
       ports[atoi(qr[i][index]->name.c_str())].default_value =
         atof(qr[i][value]->name.c_str());
     
-    // get port hints
-    Variable hint;
-    qr = select(index, hint)
+    // get port properties
+    Variable property;
+    qr = select(index, property)
       .where(plug_iter->first, lv2("port"), port)
       .where(port, lv2("index"), index)
-      .where(port, lv2("portHint"), hint)
+      .where(port, lv2("portProperty"), property)
       .run(data);
     for (unsigned i = 0; i < qr.size(); ++i) {
-      if (qr[i][hint]->name == lv2("toggled"))
+      if (qr[i][property]->name == lv2("toggled"))
         ports[atoi(qr[i][index]->name.c_str())].toggled = true;
-      if (qr[i][hint]->name == lv2("integer"))
+      if (qr[i][property]->name == lv2("integer"))
         ports[atoi(qr[i][index]->name.c_str())].integer = true;
-      if (qr[i][hint]->name == lv2("logarithmic"))
+      if (qr[i][property]->name == pprops("logarithmic"))
         ports[atoi(qr[i][index]->name.c_str())].logarithmic = true;
     }
     
