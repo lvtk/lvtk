@@ -41,7 +41,7 @@ namespace lvtk {
     /** A simple function that translates a MIDI key number to a fundamental
         frequency in Hz. */
     static inline float key2hz(unsigned char key) {
-        return 8.1758 * std::pow(1.0594, key);
+        return 440.0f * std::pow(2.0f, (key - 69) / 12.0f);
     }
 
 
