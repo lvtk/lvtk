@@ -284,6 +284,7 @@ namespace lvtk {
        inline LV2_Atom_Sequence*
        cobj()
        {
+    	   lv2_atom_sequence_end(0,0);
            return p_seq;
        }
 
@@ -292,6 +293,25 @@ namespace lvtk {
 
        /** @skip */
        inline operator uint8_t*() const { return (uint8_t*) p_seq; }
+
+       class iterator
+       {
+       public:
+
+    	   iterator (AtomEvent* ev) : p_event (ev) { }
+    	   AtomEvent&  operator*() { return *p_event; }
+    	   AtomEvent*  operator->() const { return p_event; }
+    	   iterator& operator++() { p_event = lv2_atom_sequence_next (p_event); return *this; }
+    	   bool operator== (const iterator& other) const { return p_event == other.p_event; }
+    	   bool operator!= (const iterator& other) const { return p_event != other.p_event; }
+
+       private:
+    	   friend class AtomSequence;
+    	   LV2_Atom_Event* p_event;
+       };
+
+       iterator begin() { return iterator (lv2_atom_sequence_begin (&p_seq->body)); }
+       iterator end()   { return iterator (lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
 
    private:
 
