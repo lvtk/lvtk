@@ -25,6 +25,8 @@
 #ifndef LVTK_ATOM_HPP
 #define LVTK_ATOM_HPP
 
+#include <string>
+
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
 #include <lv2/lv2plug.in/ns/ext/atom/util.h>
