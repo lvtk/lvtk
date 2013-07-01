@@ -25,6 +25,8 @@
 #ifndef LVTK_ATOM_HPP
 #define LVTK_ATOM_HPP
 
+#include <string>
+
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
 #include <lv2/lv2plug.in/ns/ext/atom/util.h>
@@ -291,6 +293,43 @@ namespace lvtk {
        /** @skip */
        inline operator uint8_t*() const { return (uint8_t*) p_seq; }
 
+       class iterator
+       {
+       public:
+
+    	   iterator (LV2_Atom_Sequence *seq, AtomEvent* ev) : p_event (ev), p_seq (seq) { }
+    	   AtomEvent&  operator*() { return *p_event; }
+    	   AtomEvent*  operator->() const { return p_event; }
+
+    	   iterator& operator++()
+		   {
+    		   p_event = ! lv2_atom_sequence_is_end (&p_seq->body, p_seq->atom.size, p_event)
+    				     ? lv2_atom_sequence_next (p_event)
+    				   	 : p_event;
+    		   return *this;
+		   }
+
+    	   iterator operator++(int)
+		   {
+    		   iterator res (p_seq, p_event);
+    		   ++(*this);
+    		   return res;
+		   }
+
+    	   bool operator== (const iterator& other) const { return p_event == other.p_event; }
+    	   bool operator!= (const iterator& other) const { return p_event != other.p_event; }
+
+       private:
+
+    	   friend class AtomSequence;
+    	   LV2_Atom_Event* p_event;
+    	   LV2_Atom_Sequence* p_seq;
+       };
+
+
+       inline iterator begin() { return iterator (p_seq, lv2_atom_sequence_begin (&p_seq->body)); }
+       inline iterator end()   { return iterator (p_seq, lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
+
    private:
 
        LV2_Atom_Sequence* p_seq;
@@ -298,7 +337,7 @@ namespace lvtk {
 
 
    /** Class wrapper around LV2_Atom_Forge */
-   class AtomForge
+   class AtomForge : public LV2_Atom_Forge
    {
    public:
 
@@ -321,7 +360,7 @@ namespace lvtk {
       inline void
       init (LV2_URID_Map* map)
       {
-         lv2_atom_forge_init (&forge, map);
+         lv2_atom_forge_init (this, map);
       }
 
       /** Get the underlying atom forge
@@ -330,14 +369,14 @@ namespace lvtk {
       inline LV2_Atom_Forge*
       cobj()
       {
-         return &forge;
+         return (LV2_Atom_Forge*) this;
       }
 
       /** Forge the header of a sequence */
       inline ForgeRef
       sequence_head (ForgeFrame& frame, uint32_t unit)
       {
-          return lv2_atom_forge_sequence_head (&forge, &frame, unit);
+          return lv2_atom_forge_sequence_head (this, &frame, unit);
       }
 
       inline operator LV2_Atom_Forge* () { return cobj(); }
@@ -350,14 +389,14 @@ namespace lvtk {
       inline void
       set_buffer (uint8_t* buf, uint32_t size)
       {
-         lv2_atom_forge_set_buffer (&forge, buf, size);
+         lv2_atom_forge_set_buffer (this, buf, size);
       }
 
       /** Forge frame time (in a sequence) */
       inline ForgeRef
       beat_time (double beats)
       {
-          return lv2_atom_forge_beat_time (&forge, beats);
+          return lv2_atom_forge_beat_time (this, beats);
       }
 
       /** Forge frame time (in a sequence). The return ForgeRef is to an
@@ -366,19 +405,19 @@ namespace lvtk {
       inline ForgeRef
       frame_time (int64_t frames)
       {
-          return lv2_atom_forge_frame_time (&forge, frames);
+          return lv2_atom_forge_frame_time (this, frames);
       }
 
       inline ForgeRef
       property_head (uint32_t key, uint32_t context)
       {
-         return lv2_atom_forge_property_head (&forge, key, context);
+         return lv2_atom_forge_property_head (this, key, context);
       }
 
       inline void
       pop (ForgeFrame& frame)
       {
-         lv2_atom_forge_pop (&forge, &frame);
+         lv2_atom_forge_pop (this, &frame);
       }
 
       /** Write an atom header
@@ -390,7 +429,7 @@ namespace lvtk {
       inline ForgeRef
       write_atom (uint32_t size, uint32_t type)
       {
-          return lv2_atom_forge_atom (&forge, size, type);
+          return lv2_atom_forge_atom (this, size, type);
       }
 
       /** Write an atom path from string
@@ -401,7 +440,7 @@ namespace lvtk {
       inline ForgeRef
       write_path (const std::string& path)
       {
-          return lv2_atom_forge_path (&forge, path.c_str(), path.size());
+          return lv2_atom_forge_path (this, path.c_str(), path.size());
       }
 
       /** Forge an atom resource
@@ -415,68 +454,67 @@ namespace lvtk {
       write_resource (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
           // Write object header
-          return lv2_atom_forge_resource (&forge, &frame, id, otype);
+          return lv2_atom_forge_resource (this, &frame, id, otype);
       }
 
       inline ForgeRef
       write_blank (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
           // Write object header
-          return lv2_atom_forge_blank (&forge, &frame, id, otype);
+          return lv2_atom_forge_blank (this, &frame, id, otype);
       }
 
       inline ForgeRef
       write_bool (const bool val)
       {
-          return lv2_atom_forge_bool (&forge, val);
+          return lv2_atom_forge_bool (this, val);
       }
 
       inline ForgeRef
       write_int (const int val)
       {
-          return lv2_atom_forge_int (&forge, val);
+          return lv2_atom_forge_int (this, val);
       }
 
 
       inline ForgeRef
       write_float (const float val)
       {
-          return lv2_atom_forge_float (&forge, val);
+          return lv2_atom_forge_float (this, val);
       }
 
       inline ForgeRef
       write_long (const int64_t val)
       {
-          return lv2_atom_forge_long (&forge, val);
+          return lv2_atom_forge_long (this, val);
       }
 
       inline ForgeRef
       write_string (const char* str)
       {
-          return lv2_atom_forge_string (&forge, str, strlen (str));
+          return lv2_atom_forge_string (this, str, strlen (str));
       }
 
       inline ForgeRef
       write_uri (const char* uri)
       {
-          return lv2_atom_forge_uri (&forge, uri, strlen (uri));
+          return lv2_atom_forge_uri (this, uri, strlen (uri));
       }
 
       inline ForgeRef
       write_raw (const void* data, uint32_t size)
       {
-          return lv2_atom_forge_raw (&forge, data, size);
+          return lv2_atom_forge_raw (this, data, size);
       }
 
       inline ForgeRef
       write_urid (LV2_URID id)
       {
-          return lv2_atom_forge_urid (&forge, id);
+          return lv2_atom_forge_urid (this, id);
       }
 
    private:
 
-      LV2_Atom_Forge forge;
    };
 
 } /* namespace lvtk */
