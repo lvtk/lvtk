@@ -91,13 +91,15 @@ namespace lvtk
 
         protected:
 
-            /** Get the plugin instance */
+            /** Get the plugin instance
+                @return The plugin instance or nullptr if not available */
             LV2_Handle
             get_instance()
             {
                 return p_plugin_instance;
             }
 
+        private:
             /** @internal Feature Data passed from host */
             LV2_Handle p_plugin_instance;
         };
