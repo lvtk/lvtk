@@ -74,7 +74,7 @@ public:
     void
     run(uint32_t nframes)
     {
-        const char* msg = "go to sleep";
+        static const char* msg = "go to sleep";
 
         if (! m_sleeping)
         {
