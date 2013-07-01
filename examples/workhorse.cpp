@@ -51,8 +51,8 @@ public:
     Workhorse (double rate)
         : PluginType (p_n_ports),
           m_sleeping (false),
-          entryType (map (LV2_LOG__Entry)),
-          traceType (map (LV2_LOG__Trace)),
+          log_Entry (map (LV2_LOG__Entry)),
+          log_Trace (map (LV2_LOG__Trace)),
           bufsize (0)
     { }
 
@@ -62,13 +62,14 @@ public:
         // query for buffer information.
         const BufferInfo& info (get_buffer_info());
         std::stringstream ss;
-        ss << "Buffer Bounded:  " << info.bounded << std::endl
-           << "Buffer Fixed:    " << info.fixed << std::endl
-           << "Buffer Pow of 2: " << info.power_of_two << std::endl
-           << "Buffer Min:      " << info.min << std::endl
-           << "Buffer Max:      " << info.max << std::endl
-           << "Sequence Size:   " << info.sequence_size << std::endl;
-        printf (entryType, ss.str().c_str());
+        ss << "Workhorse Buffer Information:\n";
+        ss << "\tBuffer Bounded:  " << info.bounded << std::endl
+           << "\tBuffer Fixed:    " << info.fixed << std::endl
+           << "\tBuffer Pow of 2: " << info.power_of_two << std::endl
+           << "\tBuffer Min:      " << info.min << std::endl
+           << "\tBuffer Max:      " << info.max << std::endl
+           << "\tSequence Size:   " << info.sequence_size << std::endl;
+        printf (log_Entry, ss.str().c_str());
     }
 
     void
@@ -84,11 +85,11 @@ public:
             switch (status)
             {
             case WORKER_SUCCESS:
-                printf (traceType, "[workhorse] scheduled a job\n");
+                printf (log_Trace, "[workhorse] scheduled a job\n");
                 m_sleeping = true;
                 break;
             default:
-                printf (traceType, "[workhorse] unknown scheduling error\n");
+                printf (log_Trace, "[workhorse] unknown scheduling error\n");
                 break;
             }
         }
@@ -102,7 +103,7 @@ public:
     work_response (uint32_t size, const void* body)
     {
         /** Print message with LV2 Log */
-        printf (traceType, "[workhorse] woke up. message: %s\n", (char*)body);
+        printf (log_Trace, "[workhorse] woke up. message: %s\n", (char*)body);
         m_sleeping = false;
         return WORKER_SUCCESS;
     }
@@ -114,7 +115,7 @@ public:
     work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
         /** Print message with LV2 Log's printf */
-        printf (entryType, "[workhorse] taking a nap now\n");
+        printf (log_Entry, "[workhorse] taking a nap now\n");
         sleep (10);
 
         /** Send a response */
@@ -141,8 +142,8 @@ private:
     bool m_sleeping;
 
     /** This is used for LV2 Log demonstration */
-    LV2_URID entryType;
-    LV2_URID traceType;
+    LV2_URID log_Entry;
+    LV2_URID log_Trace;
 
     uint32_t bufsize;
 
