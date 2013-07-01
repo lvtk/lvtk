@@ -42,7 +42,7 @@ using Glib::ustring;
 class WorkhorseGtk : public UI<WorkhorseGtk, GtkUI<true>,
                             URID<true>, UIResize<false>,
                             DataAccess<false>, Parent<false>,
-                            InstanceAccess<true> >
+                            InstanceAccess<false> >
 {
 public:
 
