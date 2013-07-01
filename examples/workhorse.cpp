@@ -76,15 +76,16 @@ public:
     {
         const char* msg = "go to sleep";
 
-        if (!m_sleeping)
+        if (! m_sleeping)
         {
             /** Schedule a job with msg as the data */
-            WorkerStatus status (schedule_work (strlen(msg), (void*)msg));
+            WorkerStatus status (schedule_work (strlen(msg) + 1, (void*)msg));
 
             switch (status)
             {
             case WORKER_SUCCESS:
                 printf (traceType, "[workhorse] scheduled a job\n");
+                m_sleeping = true;
                 break;
             default:
                 printf (traceType, "[workhorse] unknown scheduling error\n");
@@ -102,6 +103,7 @@ public:
     {
         /** Print message with LV2 Log */
         printf (traceType, "[workhorse] woke up. message: %s\n", (char*)body);
+        m_sleeping = false;
         return WORKER_SUCCESS;
     }
 
@@ -113,14 +115,10 @@ public:
     {
         /** Print message with LV2 Log's printf */
         printf (entryType, "[workhorse] taking a nap now\n");
-
-        m_sleeping = true;
         sleep (10);
-        m_sleeping = false;
 
         /** Send a response */
         respond (size, data);
-
         return WORKER_SUCCESS;
     }
 
