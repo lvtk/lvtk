@@ -154,7 +154,7 @@ namespace lvtk {
             @param data   Message to pass to work(), or NULL.
          */
           WorkerStatus
-          schedule_work (uint32_t size, void *data)
+          schedule_work (uint32_t size, const void* data)
           {
             return (WorkerStatus)m_schedule_work_func(
                                     m_work_schedule_handle, size, data);
