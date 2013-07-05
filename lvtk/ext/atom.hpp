@@ -116,13 +116,8 @@ namespace lvtk {
           iterator (LV2_Atom_Object* o, LV2_Atom_Property_Body* i)
               : obj (o), index (i) { }
 
-          const LV2_Atom_Property_Body*
-          operator*() const
-          {
-              return index;
-          }
-
-          const LV2_Atom_Property_Body*  operator->() const { return index; }
+          const PropertyBody& operator*()  const { assert (index); return *index; }
+          const PropertyBody* operator->() const { assert (index); return index; }
 
           iterator& operator++()
           {
