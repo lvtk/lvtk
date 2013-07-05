@@ -59,6 +59,7 @@ namespace lvtk {
             /** @skip */
             I() : m_checked (false)
             {
+                this->m_ok = true;
                 memset (&m_info, 0, sizeof (BufferInfo));
             }
 
