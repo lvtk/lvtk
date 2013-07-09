@@ -38,7 +38,7 @@ namespace lvtk {
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() { memset (&m_subscribe, 0, sizeof (LV2UI_Port_Subscribe)); }
+            I() { memset ((void*)&m_subscribe, 0, sizeof (LV2UI_Port_Subscribe)); }
 
             /** @internal */
             static void
@@ -49,7 +49,7 @@ namespace lvtk {
 
             /** @internal */
             static void
-            handle_feature (void* instance, FeatureData* data)
+            handle_feature (void* instance, FeatureData data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
@@ -158,7 +158,7 @@ namespace lvtk {
 
             /** @internal */
             static void
-            handle_feature (void* instance, FeatureData* data)
+            handle_feature (void* instance, void* data)
             {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
