@@ -52,7 +52,7 @@ namespace lvtk {
       @param instance The plugin instance
       @param data Feature Data passed from host
     */
-   typedef void(*FeatureHandler)(void* instance, FeatureData data);
+   typedef void(*FeatureHandler)(void* instance, void* data);
 
    /** Convenient typedef for the feature handler map type. */
    typedef map<string, FeatureHandler> FeatureHandlerMap;

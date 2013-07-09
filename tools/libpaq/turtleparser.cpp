@@ -297,6 +297,7 @@ namespace PAQ {
     else if (child->value.id() == parser_id(&blank))
       return do_blank(child);
     assert(!"This should never happen");
+    return 0;
   }
 
 
@@ -470,9 +471,10 @@ namespace PAQ {
       return do_resource(child);
     else if (child->value.id() == parser_id(&blank))
       return do_blank(child);
-    else if (child->value.id() == parser_id(&literal))
+    else if(child->value.id() == parser_id(&literal))
       return do_literal(child);
     assert(!"This should never happen");
+    return 0;
   }
 
 

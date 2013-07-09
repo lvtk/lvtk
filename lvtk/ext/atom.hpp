@@ -34,10 +34,13 @@
 namespace lvtk {
 
    /** Typedefs for an Atom data types */
-   typedef LV2_Atom_Event        AtomEvent;
-   typedef LV2_Atom_Forge_Frame  ForgeFrame;
-   typedef LV2_Atom_Forge_Ref    ForgeRef;
-   typedef LV2_Atom_Object_Query ObjectQuery;
+   typedef LV2_Atom_Event         AtomEvent;
+
+   typedef LV2_Atom_Property_Body PropertyBody;
+
+   typedef LV2_Atom_Forge_Frame   ForgeFrame;
+   typedef LV2_Atom_Forge_Ref     ForgeRef;
+   typedef LV2_Atom_Object_Query  ObjectQuery;
 
 
    /** Basic wrapper for an LV2_Atom_Object
@@ -105,6 +108,45 @@ namespace lvtk {
          p_obj = other.p_obj;
          return *this;
       }
+
+      class iterator
+      {
+      public:
+
+          iterator (LV2_Atom_Object* o, LV2_Atom_Property_Body* i)
+              : obj (o), index (i) { }
+
+          const PropertyBody& operator*()  const { assert (index); return *index; }
+          const PropertyBody* operator->() const { assert (index); return index; }
+
+          iterator& operator++()
+          {
+              index = lv2_atom_object_next (index);
+              if (lv2_atom_object_is_end (&obj->body, obj->atom.size, index))
+                  index = 0;
+              return *this;
+          }
+
+          iterator operator++(int)
+          {
+              iterator ret (obj, index);
+              ++(*this);
+              return ret;
+          }
+
+          bool operator== (const iterator& other) const { return index == other.index; }
+          bool operator!= (const iterator& other) const { return index != other.index; }
+
+      private:
+
+          friend class AtomObject;
+          LV2_Atom_Property_Body* index;
+          LV2_Atom_Object*        obj;
+
+      };
+
+      iterator begin() { return iterator (p_obj, lv2_atom_object_begin (&p_obj->body)); }
+      iterator end()   { return iterator (p_obj, 0); }
 
    private:
 

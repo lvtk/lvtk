@@ -172,7 +172,7 @@ namespace lvtk {
             @param ports The number of ports in this plugin.
          */
         Plugin(uint32_t ports)
-        : m_ports(ports, 0), m_ok(true)
+            : m_ports(ports, 0), m_ok(true)
         {
             m_features = s_features;
             m_bundle_path = s_bundle_path;
