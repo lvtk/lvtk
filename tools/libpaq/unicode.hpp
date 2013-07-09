@@ -56,43 +56,43 @@ pair<unsigned int, unsigned int> decode_utf8(ScannerT const& scan) {
   
   // two byte char
   else if ((unsigned char)ch >= 192 && (unsigned char)ch < 224) {
-    codepoint = ((unsigned char)ch && 0x1F) << 6;
+    codepoint = ((unsigned char)ch & 0x1F) << 6;
     ++iter;
     if (iter == scan.last)
       return make_pair(0, 0);
-    codepoint += (unsigned char)(*iter) && 0x3F;
+    codepoint += (unsigned char)(*iter) & 0x3F;
     size = 2;
   }
   
   // three byte char
   else if ((unsigned char)ch >= 224 && (unsigned char)ch < 240) {
-    codepoint = ((unsigned char)ch && 0x0F) << 12;
+    codepoint = ((unsigned char)ch & 0x0F) << 12;
     ++iter;
     if (iter == scan.last)
       return make_pair(0, 0);
-    codepoint += ((unsigned char)(*iter) && 0x3F) << 6;
+    codepoint += ((unsigned char)(*iter) & 0x3F) << 6;
     ++iter;
     if (iter == scan.last)
       return make_pair(0, 0);
-    codepoint += ((unsigned char)(*iter) && 0x3F);
+    codepoint += ((unsigned char)(*iter) & 0x3F);
     size = 3;
   }
   
   // four byte char
   else if ((unsigned char)ch >= 240 && (unsigned char)ch < 248) {
-    codepoint = ((unsigned char)ch && 0x07) << 18;
+    codepoint = ((unsigned char)ch & 0x07) << 18;
     ++iter;
     if (iter == scan.last)
       return make_pair(0, 0);
-    codepoint += ((unsigned char)(*iter) && 0x3F) << 12;
+    codepoint += ((unsigned char)(*iter) & 0x3F) << 12;
     ++iter;
     if (iter == scan.last)
       return make_pair(0, 0);
-    codepoint += ((unsigned char)(*iter) && 0x3F) << 6;
+    codepoint += ((unsigned char)(*iter) & 0x3F) << 6;
     ++iter;
     if (iter == scan.last)
       return make_pair(0, 0);
-    codepoint += ((unsigned char)(*iter) && 0x3F);
+    codepoint += ((unsigned char)(*iter) & 0x3F);
     size = 4;
   }
   
