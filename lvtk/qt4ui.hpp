@@ -2,21 +2,21 @@
     qt4ui.hpp - This file is part of LVTK
     Copyright (C) 2013  Michael Fisher <mfisher@bketech.com>
 
-    Element is free software; you can redistribute it and/or modify
+    LVTK is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
-    Element is distributed in the hope that it will be useful,
+    LVTK is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Element; if not, write to the Free Software
+    along with LVTK; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-/** @file qt4ui.hpp */
+/** @headerfile lvtk/qt4ui.hpp */
 
 #ifndef LVTK_QT4UI_HPP
 #define LVTK_QT4UI_HPP
@@ -27,14 +27,12 @@
 
 namespace lvtk {
 
-    /**
-       The Qt4UI Mixin.
-       @headerfile lvtk/qt4ui.hpp
-       @ingroup guimixins
-       @ingroup toolkitmixins
-       @see The internal struct I for API details.
+    /** The Qt4UI Mixin.
 
-			 Qt4UI - Implements an LV2 Qt4UI by harboring a user settable QWidget
+        @ingroup guimixins
+        @ingroup toolkitmixins
+        @see The internal struct I for API details. Qt4UI - Implements an LV2
+        Qt4UI by harboring a user settable QWidget
      */
     template <bool Required = true>
     struct Qt4UI
@@ -49,9 +47,6 @@ namespace lvtk {
             {
                 if (p_widget && ! p_widget->parent())
                 {
-#if LVTK_DEBUG
-                    std::clog << "[Qt4UI] deleting QWidget\n";
-#endif
                     delete p_widget;
                 }
             }
@@ -78,10 +73,19 @@ namespace lvtk {
                 Use this method to set your main widget after its creation.
                 Normally, you'll want to call this in your UI's contstructor
                 @note The mixin takes ownership and will delete the
-                passed in QWidget */
-            void 
-					  set_widget (QWidget* plugin_gui)
+                passed in QWidget. If the widget has already been set, the
+                previous object will be deleted */
+            void
+            set_widget (QWidget* plugin_gui)
             {
+                if (p_widget == plugin_gui)
+                    return;
+
+                if (0 != p_widget) {
+                    delete p_widget;
+                    p_widget = 0;
+                }
+
                 p_widget = plugin_gui;
             }
 
