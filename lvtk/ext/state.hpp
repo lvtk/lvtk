@@ -29,40 +29,37 @@
 namespace lvtk {
 
     typedef enum {
-        /**
-         Plain Old Data.
+        /** Plain Old Data.
 
-         Values with this flag contain no pointers or references to other areas
-         of memory.  It is safe to copy POD values with a simple memcpy and store
-         them for the duration of the process.  A POD value is not necessarily
-         safe to trasmit between processes or machines (e.g. filenames are POD),
-         see STATE_IS_PORTABLE for details.
+            Values with this flag contain no pointers or references to other areas
+            of memory.  It is safe to copy POD values with a simple memcpy and store
+            them for the duration of the process.  A POD value is not necessarily
+            safe to trasmit between processes or machines (e.g. filenames are POD),
+            see STATE_IS_PORTABLE for details.
 
-         Implementations MUST NOT attempt to copy or serialise a non-POD value if
-         they do not understand its type (and thus know how to correctly do so).
+            Implementations MUST NOT attempt to copy or serialise a non-POD value if
+            they do not understand its type (and thus know how to correctly do so).
          */
 
         STATE_IS_POD = LV2_STATE_IS_POD,
 
-        /**
-         Portable (architecture independent) data.
+        /** Portable (architecture independent) data.
 
-         Values with this flag are in a format that is usable on any
-         architecture.  A portable value saved on one machine can be restored on
-         another machine regardless of architecture.  The format of portable
-         values MUST NOT depend on architecture-specific properties like
-         endianness or alignment.  Portable values MUST NOT contain filenames.
+            Values with this flag are in a format that is usable on any
+            architecture.  A portable value saved on one machine can be restored on
+            another machine regardless of architecture.  The format of portable
+            values MUST NOT depend on architecture-specific properties like
+            endianness or alignment.  Portable values MUST NOT contain filenames.
          */
         STATE_IS_PORTABLE = LV2_STATE_IS_PORTABLE,
 
-        /**
-         Native data.
+        /** Native data.
 
-         This flag is used by the host to indicate that the saved data is only
-         going to be used locally in the currently running process (e.g. for
-         instance duplication or snapshots), so the plugin should use the most
-         efficient representation possible and not worry about serialisation
-         and portability.
+            This flag is used by the host to indicate that the saved data is only
+            going to be used locally in the currently running process (e.g. for
+            instance duplication or snapshots), so the plugin should use the most
+            efficient representation possible and not worry about serialisation
+            and portability.
          */
         STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
     } StateFlags;
@@ -77,10 +74,8 @@ namespace lvtk {
     } StateStatus;
 
 
-    /**
-       Wrapper struct for state retrieval. This wraps an
-       LV2_State_Retrieve_Function and exeucutes via operator ()
-     */
+    /** Wrapper struct for state retrieval. This wraps an
+        LV2_State_Retrieve_Function and exeucutes via operator () */
     struct StateRetrieve {
         StateRetrieve(LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
         : p_handle(handle), p_srfunc(srfunc) { }
@@ -107,22 +102,20 @@ namespace lvtk {
 
     /* A little redundant */
 
-    /**
-      Wrapper struct for state storage. This wraps an
-      LV2_State_Store_Function and exeucutes via operator ()
-     */
+    /**  Wrapper struct for state storage. This wraps an
+         LV2_State_Store_Function and exeucutes via operator () */
     struct StateStore {
         StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
         : p_handle(handle), p_ssfunc(ssfunc) { }
 
-        /**
-          Execute the store functor.
-          @param key
-          @param value
-          @param size
-          @param type
-          @param flags
-          @return STATE_SUCCESS on Success
+        /** Execute the store functor.
+
+            @param key
+            @param value
+            @param size
+            @param type
+            @param flags
+            @return STATE_SUCCESS on Success
          */
         inline StateStatus operator () (uint32_t key, const void* value,
                 size_t   size,
@@ -201,9 +194,6 @@ namespace lvtk {
                 }
                 return 0;
             }
-
-
-            /* ===============  State C++ Interface ==========================  */
 
 
             StateStatus

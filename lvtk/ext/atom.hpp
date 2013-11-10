@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
-/** @file atom.hpp */
+/** @headerfile lvtk/ext/atom.hpp */
 /** @page atom LVTK Atom
     C++ convenience wrappers for LV2 Atoms<br />
  */

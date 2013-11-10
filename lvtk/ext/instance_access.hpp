@@ -23,8 +23,8 @@
  LV2 Support: 1.6 (2012-04-17)
  */
 
-#ifndef LVTK_LV2_INSTANCE_ACCESS_HPP
-#define LVTK_LV2_INSTANCE_ACCESS_HPP
+#ifndef LVTK_INSTANCE_ACCESS_HPP
+#define LVTK_INSTANCE_ACCESS_HPP
 
 #include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
 
@@ -50,8 +50,6 @@ namespace lvtk
             {
             }
 
-            /* ================= Mixin API ========================= */
-
             /** @internal */
             static void
             map_feature_handlers(FeatureHandlerMap& hmap)
@@ -67,16 +65,14 @@ namespace lvtk
                 Derived* derived = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(derived);
 
-                mixin->p_plugin_instance =
-                        reinterpret_cast<LV2_Handle>(data);
-
+                mixin->p_plugin_instance = reinterpret_cast<LV2_Handle>(data);
                 mixin->m_ok = (mixin->p_plugin_instance != NULL);
             }
 
             bool
             check_ok()
             {
-                if (!Required)
+                if (! Required)
                     this->m_ok = true;
 
                 if (LVTK_DEBUG)
@@ -106,4 +102,4 @@ namespace lvtk
     };
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_INSTANCE_ACCESS_HPP */
+#endif /* LVTK_INSTANCE_ACCESS_HPP */

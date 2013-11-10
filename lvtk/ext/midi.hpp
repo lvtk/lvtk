@@ -18,12 +18,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 /**
-   @file midi.hpp
+   @headerfile lvtk/ext/midi.hpp
    C++ convenience header for the LV2 midi extension.
 */
 
-#ifndef LVTK_LV2_MIDI_HPP
-#define LVTK_LV2_MIDI_HPP
+#ifndef LVTK_MIDI_HPP
+#define LVTK_MIDI_HPP
 
 #include <cstdlib>
 
@@ -36,4 +36,4 @@ namespace lvtk {
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_MIDI_HPP */
+#endif /* LVTK_MIDI_HPP */

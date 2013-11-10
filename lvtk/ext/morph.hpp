@@ -1,6 +1,5 @@
-/****************************************************************************
-
-    atom.hpp - support file for writing LV2 plugins in C++
+/*
+    morph.hpp - support file for writing LV2 plugins in C++
 
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
@@ -17,8 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
-****************************************************************************/
+*/
 
 #ifndef LVTK_MORPH_HPP
 #define LVTK_MORPH_HPP

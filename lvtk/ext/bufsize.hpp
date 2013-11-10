@@ -18,7 +18,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 
-/** @file bufsize.hpp */
+/** @headerfile lvtk/ext/bufsize.hpp */
 
 #ifndef LVTK_BUFSIZE_HPP
 #define LVTK_BUFSIZE_HPP
