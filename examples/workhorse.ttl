@@ -56,11 +56,17 @@ lvtkp:workhorse
 		lv2:name "Notify"
 	] , [
 		a lv2:AudioPort ,
-			lv2:OutputPort ;
+			lv2:InputPort ;
 		lv2:index 2 ;
+		lv2:symbol "in" ;
+		lv2:name "Input"
+	] , [
+		a lv2:AudioPort ,
+			lv2:OutputPort ;
+		lv2:index 3 ;
 		lv2:symbol "out" ;
-		lv2:name "Out"
-	] .
+		lv2:name "Output"
+	].
 
 <http://lvtoolkit.org/plugins/workhorse#ui>
 	a ui:GtkUI ;
