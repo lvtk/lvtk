@@ -145,8 +145,8 @@ namespace lvtk {
 
       };
 
-      iterator begin() { return iterator (p_obj, lv2_atom_object_begin (&p_obj->body)); }
-      iterator end()   { return iterator (p_obj, 0); }
+      iterator begin() const { return iterator (p_obj, lv2_atom_object_begin (&p_obj->body)); }
+      iterator end()   const { return iterator (p_obj, 0); }
 
    private:
 
@@ -193,6 +193,13 @@ namespace lvtk {
           return LV2_ATOM_BODY (p_atom);
       }
 
+      /** Get the body as a boolean */
+      inline bool
+      as_bool() const
+      {
+          return ((LV2_Atom_Bool*)p_atom)->body > 0;
+      }
+
       /** Get the body as a float */
       inline float
       as_float() const
@@ -214,7 +221,7 @@ namespace lvtk {
       }
 
       /** Get the body as a float */
-      inline int
+      inline int32_t
       as_int() const
       {
           return ((LV2_Atom_Int*)p_atom)->body;
@@ -292,6 +299,11 @@ namespace lvtk {
    /** Basic wrapper for an LV2_Atom_Sequence */
    struct AtomSequence
    {
+       typedef AtomEvent* pointer;
+       typedef AtomEvent& reference;
+       typedef const AtomEvent* const_pointer;
+       typedef const AtomEvent& const_reference;
+
        /** Create an AtomSequence from raw data */
        AtomSequence (const void* slab) : p_seq ((LV2_Atom_Sequence*) slab) { }
 
@@ -330,36 +342,72 @@ namespace lvtk {
        }
 
        /** @skip */
+       inline operator bool() const { return p_seq != nullptr; }
+
+       /** @skip */
        inline operator LV2_Atom_Sequence*() const { return p_seq; }
 
        /** @skip */
        inline operator uint8_t*() const { return (uint8_t*) p_seq; }
+
+       inline void
+       append (const AtomEvent& ev)
+       {
+           if (AtomEvent* pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size))
+           {
+               memcpy (pos, &ev, sizeof (AtomEvent));
+               memcpy (pos + 1, LV2_ATOM_BODY_CONST (&ev.body), ev.body.size);
+               ((LV2_Atom*) p_seq)->size += sizeof (LV2_Atom_Event) + lv2_atom_pad_size (ev.body.size);
+           }
+       }
+
+       inline void
+       insert (const AtomEvent& ev)
+       {
+           const uint32_t evsize = sizeof (LV2_Atom_Event) + lv2_atom_pad_size (ev.body.size);
+           AtomEvent* pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size);
+           LV2_ATOM_SEQUENCE_FOREACH (p_seq, iter)
+           {
+               if (iter->time.frames > ev.time.frames)
+               {
+                   memmove ((uint8_t*)iter + evsize, iter,
+                            (uint8_t*)pos - (uint8_t*)iter);
+                   pos = iter;
+                   break;
+               }
+           }
+
+           if (pos)
+           {
+               memcpy (pos, &ev, sizeof (AtomEvent));
+               memcpy (pos + 1, LV2_ATOM_BODY_CONST (&ev.body), ev.body.size);
+               ((LV2_Atom*) p_seq)->size += evsize;
+           }
+       }
 
        class iterator
        {
        public:
 
     	   iterator (LV2_Atom_Sequence *seq, AtomEvent* ev) : p_event (ev), p_seq (seq) { }
-    	   AtomEvent&  operator*() { return *p_event; }
-    	   AtomEvent*  operator->() const { return p_event; }
+           AtomEvent&  operator*()  { return *p_event; }
+           const AtomEvent* operator->() const { return p_event; }
 
     	   iterator& operator++()
-		   {
-    		   p_event = ! lv2_atom_sequence_is_end (&p_seq->body, p_seq->atom.size, p_event)
-    				     ? lv2_atom_sequence_next (p_event)
-    				   	 : p_event;
+           {
+               p_event = lv2_atom_sequence_next (p_event);
     		   return *this;
 		   }
 
-    	   iterator operator++(int)
-		   {
-    		   iterator res (p_seq, p_event);
-    		   ++(*this);
-    		   return res;
-		   }
+           iterator operator++(int)
+           {
+               iterator res (p_seq, p_event);
+               ++(*this);
+               return res;
+           }
 
-    	   bool operator== (const iterator& other) const { return p_event == other.p_event; }
-    	   bool operator!= (const iterator& other) const { return p_event != other.p_event; }
+           inline bool operator== (const iterator& other) const { return p_event == other.p_event; }
+           inline bool operator!= (const iterator& other) const { return p_event != other.p_event; }
 
        private:
 
@@ -368,13 +416,13 @@ namespace lvtk {
     	   LV2_Atom_Sequence* p_seq;
        };
 
-
-       inline iterator begin() { return iterator (p_seq, lv2_atom_sequence_begin (&p_seq->body)); }
-       inline iterator end()   { return iterator (p_seq, lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
+       inline iterator begin() const { return iterator (p_seq, lv2_atom_sequence_begin (&p_seq->body)); }
+       inline iterator end()   const { return iterator (p_seq, lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
 
    private:
 
        LV2_Atom_Sequence* p_seq;
+
    };
 
 
@@ -441,7 +489,7 @@ namespace lvtk {
           return lv2_atom_forge_beat_time (this, beats);
       }
 
-      /** Forge frame time (in a sequence). The return ForgeRef is to an
+      /** Forge frame time (in a sequence). The returned ForgeRef is to an
           LV2_Atom_Event
        */
       inline ForgeRef

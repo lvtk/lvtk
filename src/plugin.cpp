@@ -1,7 +1,5 @@
-/****************************************************************************
-    
-    lv2plugin.cpp - support file for writing LV2 plugins in C++
-    
+/*
+    plugin.cpp - support file for writing LV2 plugins in C++
     Copyright (C) 2006-2007 Lars Luthman <lars.luthman@gmail.com>
     
     This program is free software; you can redistribute it and/or modify
@@ -17,39 +15,37 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
-****************************************************************************/
+*/
 
 #include <lvtk/plugin.hpp>
 
-
 namespace lvtk {
   
-  DescList::~DescList()
-  {
-    for (unsigned i = 0; i < size(); ++i)
-      free((void*)operator[](i).URI);
-  }
+    DescList::~DescList()
+    {
+        for (unsigned i = 0; i < size(); ++i)
+            free ((void*)operator[](i).URI);
+    }
 
-  DescList& get_lv2_descriptors()
-  {
-    static DescList descriptors;
-    return descriptors;
-  }
-  
+    DescList& get_lv2_descriptors()
+    {
+        static DescList descriptors;
+        return descriptors;
+    }
+
 }
 
 
 extern "C" {
-  
-  LV2_SYMBOL_EXPORT
-  const LV2_Descriptor* 
-  lv2_descriptor(uint32_t index)
-  {
-    if (index < lvtk::get_lv2_descriptors().size())
-      return &lvtk::get_lv2_descriptors()[index];
 
-    return NULL;
-  }
-  
+    LV2_SYMBOL_EXPORT
+    const LV2_Descriptor*
+    lv2_descriptor(uint32_t index)
+    {
+        if (index < lvtk::get_lv2_descriptors().size())
+            return &lvtk::get_lv2_descriptors()[index];
+
+        return NULL;
+    }
+
 }

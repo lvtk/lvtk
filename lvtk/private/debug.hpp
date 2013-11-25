@@ -1,7 +1,5 @@
-/****************************************************************************
-
+/*
     debug.hpp - Support file for writing LV2 plugins in C++
-
     Copyright (C) Lars Luthman <lars.luthman@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -17,8 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
-****************************************************************************/
+*/
 
 #ifndef LVTK_DEBUG_HPP
 #define LVTK_DEBUG_HPP
