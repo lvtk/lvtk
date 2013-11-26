@@ -42,7 +42,7 @@ namespace lvtk
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() : p_unmap(NULL), p_map(NULL) { }
+            I() : p_map(0), p_unmap(0)  { }
 
             /** @internal */
             static void
