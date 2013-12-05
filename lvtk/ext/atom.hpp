@@ -543,14 +543,12 @@ namespace lvtk {
       inline ForgeRef
       write_resource (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
-          // Write object header
           return lv2_atom_forge_resource (this, &frame, id, otype);
       }
 
       inline ForgeRef
       write_blank (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
-          // Write object header
           return lv2_atom_forge_blank (this, &frame, id, otype);
       }
 
