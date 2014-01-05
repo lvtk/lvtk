@@ -18,7 +18,7 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-LVTK_VERSION="1.1.1"
+LVTK_VERSION="1.2.0"
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
 LVTK_MINOR_VERSION=LVTK_VERSION[2]
 LVTK_MICRO_VERSION=LVTK_VERSION[4]
@@ -72,7 +72,7 @@ def configure(conf):
 	if not conf.options.disable_tools: conf.check_boost()
 		
 	# Check for required packages
-	conf.check_lv2 ("1.2.0")
+        conf.check_lv2 ("1.6.0")
 	
 	# UI Configuration
 	autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
@@ -98,7 +98,7 @@ def configure(conf):
 	conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
 	conf.env.LIB_LVTK_PLUGIN    = LIB_LVTK_PLUGIN
 	conf.env.LIB_LVTK_UI        = LIB_LVTK_UI
-	conf.env.APPNAME	        = APPNAME
+        conf.env.APPNAME	    = APPNAME
 	
 	autowaf.configure(conf)
 	
@@ -154,22 +154,12 @@ def build(bld):
 	bld.add_group()
 	
 	# Header Installation
-	header_base = bld.env['INCLUDEDIR'] + "/" \
-				+ APPNAME + "-" + pcvers
-				
+        header_base = bld.env['INCLUDEDIR'] + "/"  + APPNAME + "-" + pcvers
 	bld.install_files(header_base+"/lvtk", "build/version.h")
-	
-	bld.install_files(header_base+"/lvtk", \
-					  bld.path.ant_glob("lvtk/*.*"))
-	
-	bld.install_files(header_base+"/lvtk/behaviors", \
-					  bld.path.ant_glob("lvtk/behaviors/*.*"))
-					  
-	bld.install_files(header_base+"/lvtk/ext", \
-					  bld.path.ant_glob("lvtk/ext/*.*"))
-					  
-	bld.install_files(header_base+"/lvtk/private", \
-					  bld.path.ant_glob("lvtk/private/*.*"))
+        bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
+        bld.install_files(header_base+"/lvtk/behaviors", bld.path.ant_glob("lvtk/behaviors/*.*"))
+        bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
+        bld.install_files(header_base+"/lvtk/private", bld.path.ant_glob("lvtk/private/*.*"))
 
 
 def release_tag(ctx):
