@@ -68,6 +68,16 @@ namespace lvtk {
     } OptionsStatus;
 
 
+    /** An simple iterator to use with and array of LV2_Options_Option's
+
+        @code
+            OptionsIter iter (get_options());
+            while (const Option* opt = iter.next())
+            {
+                // handle the option
+            }
+        @endcode
+    */
     class OptionsIter
     {
     public:
@@ -80,7 +90,7 @@ namespace lvtk {
             index = 0;
         }
 
-        /** */
+        /** Returns the next option or NULL if the end of the list is reached */
         const Option* next()
         {
             if (p_opts == 0 || (p_opts[index].key   == 0 &&
@@ -90,7 +100,8 @@ namespace lvtk {
             return &p_opts[index++];
         }
 
-        uint32_t size()     const       { return m_size; }
+        /** Returns the total number of options */
+        uint32_t size() const { return m_size; }
 
     private:
 

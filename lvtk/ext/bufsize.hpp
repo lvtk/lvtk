@@ -31,7 +31,6 @@
 
 namespace lvtk {
 
-
     struct BufferInfo {
         uint32_t min;
         uint32_t max;
