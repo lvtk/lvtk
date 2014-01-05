@@ -58,7 +58,7 @@ def configure(conf):
     conf.define ("LVTK_MINOR_VERSION", LVTK_MINOR_VERSION)
     conf.define ("LVTK_MICRO_VERSION", LVTK_MICRO_VERSION)
     conf.define ("LVTK_EXTRA_VERSION", LVTK_EXTRA_VERSION)
-    conf.write_config_header ('lvtk_version.h')
+    conf.write_config_header ('version.h')
 
     conf.check_inline()
     if not conf.options.disable_tools: conf.check_boost()

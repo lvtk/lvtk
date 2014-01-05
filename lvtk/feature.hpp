@@ -1,6 +1,5 @@
 /*
    feature.hpp - Support file for writing LV2 plugins in C++
-
    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
    This program is free software; you can redistribute it and/or modify
@@ -23,8 +22,8 @@
    LV2 Version Support: lv2core 8.0 (2012-04-17) STABLE
 */
 
-#ifndef LVTK_LV2_FEATURE_HPP
-#define LVTK_LV2_FEATURE_HPP
+#ifndef LVTK_FEATURE_HPP
+#define LVTK_FEATURE_HPP
 
 #include <map>
 #include <string>
@@ -77,4 +76,4 @@ namespace lvtk {
    };
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_FEATURE_HPP */
+#endif /* LVTK_FEATURE_HPP */

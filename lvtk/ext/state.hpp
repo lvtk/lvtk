@@ -1,7 +1,5 @@
-/****************************************************************************
-
+/*
     state.hpp - support file for writing LV2 plugins in C++
-
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -17,11 +15,10 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
+ */
 
- ****************************************************************************/
-
-#ifndef LVTK_LV2_STATE_HPP
-#define LVTK_LV2_STATE_HPP
+#ifndef LVTK_STATE_HPP
+#define LVTK_STATE_HPP
 
 #include <cassert>
 #include <lv2/lv2plug.in/ns/ext/state/state.h>
@@ -291,4 +288,4 @@ namespace lvtk {
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_STATE_HPP */
+#endif /* LVTK_STATE_HPP */

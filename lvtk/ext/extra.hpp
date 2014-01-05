@@ -28,8 +28,8 @@
    just for future reference. MRF
 */
 
-#ifndef LVTK_LV2_EXTRA_HPP
-#define LVTK_LV2_EXTRA_HPP
+#ifndef LVTK_EXTRA_HPP
+#define LVTK_EXTRA_HPP
 
 #if defined (LVTK_EXTRA_ENABLED)
 
@@ -651,4 +651,4 @@ namespace lvtk {
 
 #endif
 
-#endif /* LVTK_LV2_EXTRA_HPP */
+#endif /* LVTK_EXTRA_HPP */

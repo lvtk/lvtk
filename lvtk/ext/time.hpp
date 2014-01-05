@@ -42,8 +42,8 @@
    @link http://lv2plug.in/ns/ext/time/
 */
 
-#ifndef LVTK_LV2_TIME_HPP
-#define LVTK_LV2_TIME_HPP
+#ifndef LVTK_TIME_HPP
+#define LVTK_TIME_HPP
 
 #include <lv2/lv2plug.in/ns/ext/time/time.h>
 
@@ -51,4 +51,4 @@ namespace lvtk {
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_TIME_HPP */
+#endif /* LVTK_TIME_HPP */

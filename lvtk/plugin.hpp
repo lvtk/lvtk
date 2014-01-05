@@ -1,7 +1,5 @@
-/****************************************************************************
-
+/*
     plugin.hpp - Support file for writing LV2 plugins in C++
-
     Copyright (C) 2006-2007 Lars Luthman <lars.luthman@gmail.com>
     Modified by Dave Robillard, 2008
     Modified by Michael Fisher, 2012
@@ -19,11 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
+*/
 
- ****************************************************************************/
-
-#ifndef LVTK_LV2_PLUGIN_HPP
-#define LVTK_LV2_PLUGIN_HPP
+#ifndef LVTK_PLUGIN_HPP
+#define LVTK_PLUGIN_HPP
 
 #include <iostream>
 #include <cstdarg>
@@ -485,7 +482,7 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 
         There are also @ref guimixins "UI Mixins" that you can use in the same
         way with GUI.
-     */
+    */
 
     /** @example workhorse.cpp
         @example workhorse_ui.cpp
@@ -497,4 +494,4 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 } /* namespace lvtk */
 
 
-#endif /* LVTK_LV2_PLUGIN_HPP */
+#endif /* LVTK_PLUGIN_HPP */

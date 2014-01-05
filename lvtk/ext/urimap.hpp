@@ -33,8 +33,8 @@
     enumerations).
  */
 
-#ifndef LVTK_LV2_URIMAP_HPP
-#define LVTK_LV2_URIMAP_HPP
+#ifndef LVTK_URIMAP_HPP
+#define LVTK_URIMAP_HPP
 
 #include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 #include <lvtk/private/types.hpp>
@@ -126,4 +126,4 @@ namespace lvtk
     };
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_URIMAP_HPP */
+#endif /* LVTK_URIMAP_HPP */

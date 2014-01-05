@@ -1,7 +1,5 @@
 /*
-
     synth.hpp - Support file for writing LV2 tone generating plugins in C++
-
     Copyright (C) 2007 Lars Luthman <lars.luthman@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -17,12 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
-
  */
 /** @headerfile lvtk/synth.hpp */
 
-#ifndef LVTK_LV2_SYNTH_HPP
-#define LVTK_LV2_SYNTH_HPP
+#ifndef LVTK_SYNTH_HPP
+#define LVTK_SYNTH_HPP
 
 #include <cmath>
 #include <cstring>
@@ -494,8 +491,6 @@ struct NoiseSynth : public lvtk::Synth<NoiseVoice, NoiseSynth> {
         LV2_URID m_midi_type;
 
     };
-
 }
 
-
-#endif
+#endif /* LVTK_SYNTH_HPP */

@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
 
     ui_features.hpp - Support file for writing LV2 plugins in C++
 
@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
- ****************************************************************************/
+ */
 
 
 #ifndef LVTK_UI_FEATURES_HPP

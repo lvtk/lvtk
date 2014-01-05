@@ -28,8 +28,8 @@
    by a port is defined in the data file for a plugin.
 */
 
-#ifndef LVTK_LV2_EVENT_HPP
-#define LVTK_LV2_EVENT_HPP
+#ifndef LVTK_EVENT_HPP
+#define LVTK_EVENT_HPP
 
 #include <lv2/lv2plug.in/ns/ext/event/event.h>
 #include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
@@ -128,4 +128,4 @@ namespace lvtk {
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_EVENT_HPP */
+#endif /* LVTK_EVENT_HPP */

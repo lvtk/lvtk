@@ -1,28 +1,25 @@
-/****************************************************************************
+/*
+    ui.hpp - Wrapper library to make it easier to write LV2 UIs in C++
+    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
- ui.hpp - Wrapper library to make it easier to write LV2 UIs in C++
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
 
- Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA  02110-1301  USA
+*/
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor,
- Boston, MA  02110-1301  USA
-
- ****************************************************************************/
-
-#ifndef LVTK_LV2_UI_HPP
-#define LVTK_LV2_UI_HPP
+#ifndef LVTK_UI_HPP
+#define LVTK_UI_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -138,8 +135,7 @@ namespace lvtk
         {
         }
 
-        /**
-            Use this template function to register a class as a LV2 UI.
+        /** Use this template function to register a class as a LV2 UI.
 
             @param uri The UIs URI
             @return Descriptor index
@@ -325,4 +321,4 @@ namespace lvtk
 
 }
 
-#endif /* LVTK_LV2_UI_HPP */
+#endif /* LVTK_UI_HPP */

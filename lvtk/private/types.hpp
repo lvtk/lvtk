@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
 
     types.hpp - support file for writing LV2 plugins in C++
 
@@ -21,11 +21,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
- ****************************************************************************/
+ */
 /** @headerfile lvtk/private/types.hpp */
 
-#ifndef LVTK_LV2_TYPES_HPP
-#define LVTK_LV2_TYPES_HPP
+#ifndef LVTK_TYPES_HPP
+#define LVTK_TYPES_HPP
 
 #include <map>
 #include <string>

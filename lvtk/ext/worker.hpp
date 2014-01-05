@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
 
     worker.hpp - Support file for writing LV2 plugins in C++
 
@@ -18,10 +18,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
-****************************************************************************/
+*/
 
-#ifndef LVTK_LV2_WORKER_HPP
-#define LVTK_LV2_WORKER_HPP
+#ifndef LVTK_WORKER_HPP
+#define LVTK_WORKER_HPP
 
 #include <cstring>
 
@@ -252,4 +252,4 @@ namespace lvtk {
 
 } /* namespace lvtk */
 
-#endif /* LVTK_LV2_WORKER_HPP */
+#endif /* LVTK_WORKER_HPP */

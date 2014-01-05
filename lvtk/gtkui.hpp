@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
 
     gtkui.hpp - Wrapper library to make it easier to write LV2 GtkUIs in C++
 
@@ -21,11 +21,10 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA  02110-1301  USA
 
- ****************************************************************************/
+ */
 
-#ifndef LVTK_LV2_GTKUI_HPP
-#define LVTK_LV2_GTKUI_HPP
-
+#ifndef LVTK_GTKUI_HPP
+#define LVTK_GTKUI_HPP
 
 #include <gtkmm.h>
 #include <lvtk/ui.hpp>
@@ -34,12 +33,11 @@
 namespace lvtk {
 
 
-    /**
-       The GtkUI Mixin.
-       @headerfile lvtk/gtkui.hpp
-       @ingroup guimixins
-       @ingroup toolkitmixins
-       @see The internal struct I for API details.
+    /** The GtkUI Mixin.
+        @headerfile lvtk/gtkui.hpp
+        @ingroup guimixins
+        @ingroup toolkitmixins
+        @see The internal struct I for API details.
      */
     template <bool Required = true>
     struct GtkUI
@@ -125,4 +123,4 @@ namespace lvtk {
 } /* namespace lvtk */
 
 
-#endif /* LVTK_LV2_GTKUI_HPP */
+#endif /* LVTK_GTKUI_HPP */
