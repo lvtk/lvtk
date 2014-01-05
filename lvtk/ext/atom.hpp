@@ -342,7 +342,7 @@ namespace lvtk {
        }
 
        /** @skip */
-       inline operator bool() const { return p_seq != nullptr; }
+       inline operator bool() const { return p_seq != 0; }
 
        /** @skip */
        inline operator LV2_Atom_Sequence*() const { return p_seq; }
