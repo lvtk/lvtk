@@ -1,6 +1,5 @@
 /*
     atom.hpp - support file for writing LV2 plugins in C++
-
     Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -17,6 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
+
 /** @headerfile lvtk/ext/atom.hpp */
 /** @page atom LVTK Atom
     C++ convenience wrappers for LV2 Atoms<br />
@@ -35,17 +35,14 @@ namespace lvtk {
 
    /** Typedefs for an Atom data types */
    typedef LV2_Atom_Event         AtomEvent;
-
    typedef LV2_Atom_Property_Body PropertyBody;
-
    typedef LV2_Atom_Forge_Frame   ForgeFrame;
    typedef LV2_Atom_Forge_Ref     ForgeRef;
    typedef LV2_Atom_Object_Query  ObjectQuery;
 
 
    /** Basic wrapper for an LV2_Atom_Object
-       This class is intended to be created on the stack
-    */
+       This class is intended to be created on the stack */
    struct AtomObject
    {
       /** Create an AtomObject from raw data */
@@ -77,17 +74,16 @@ namespace lvtk {
           return lv2_atom_total_size ((LV2_Atom*) p_obj);
       }
 
-      /**
-         Get an object's values for various keys.
+      /** Get an object's values for various keys.
 
-         The value pointer of each item in @p query will be set to the location of
-         the corresponding value in @p object.  Every value pointer in @p query MUST
-         be initialised to NULL.  This function reads @p object in a single linear
-         sweep.  By allocating @p query on the stack, objects can be "queried"
-         quickly without allocating any memory.  This method is realtime safe.
+          The value pointer of each item in @p query will be set to the location of
+          the corresponding value in @p object.  Every value pointer in @p query MUST
+          be initialised to NULL.  This function reads @p object in a single linear
+          sweep.  By allocating @p query on the stack, objects can be "queried"
+          quickly without allocating any memory.  This method is realtime safe.
 
-         This function can only do "flat" queries, it is not smart enough to match
-         variables in nested objects.
+          This function can only do "flat" queries, it is not smart enough to match
+          variables in nested objects.
       */
       inline void
       query (ObjectQuery& query)
@@ -95,7 +91,7 @@ namespace lvtk {
           lv2_atom_object_query (p_obj, &query);
       }
 
-      /** @internal */
+      /** Get the underlying LV2_Atom_Object pointer */
       inline LV2_Atom_Object* cobj() const     { return p_obj; }
 
       /** @internal */
@@ -109,6 +105,7 @@ namespace lvtk {
          return *this;
       }
 
+      /** A Property Iterator */
       class iterator
       {
       public:
@@ -156,8 +153,7 @@ namespace lvtk {
 
 
    /** Basic wrapper for an LV2_Atom
-       These are intended to be used on the stack
-    */
+       These are intended to be used on the stack */
    struct Atom
    {
       /** Create a null Atom */
@@ -255,7 +251,6 @@ namespace lvtk {
           return lv2_atom_total_size (p_atom);
       }
 
-
       /** Get the Atom's body size */
       inline uint32_t
       size() const
@@ -296,7 +291,7 @@ namespace lvtk {
    };
 
 
-   /** Basic wrapper for an LV2_Atom_Sequence */
+   /** A basic wrapper around LV2_Atom_Sequence  */
    struct AtomSequence
    {
        typedef AtomEvent* pointer;
@@ -304,10 +299,12 @@ namespace lvtk {
        typedef const AtomEvent* const_pointer;
        typedef const AtomEvent& const_reference;
 
-       /** Create an AtomSequence from raw data */
-       AtomSequence (const void* slab) : p_seq ((LV2_Atom_Sequence*) slab) { }
+       /** Create an AtomSequence from raw data
+           @param seq Sequence Pointer (castable to LV2_Atom_Sequence) */
+       AtomSequence (const void* seq) : p_seq ((LV2_Atom_Sequence*) seq) { }
 
-       /** Create an AtomSequnce from an LV2_Atom_Sequence */
+       /** Create an AtomSequnce from an LV2_Atom_Sequence
+           @param seq The sequence to wrap */
        AtomSequence  (LV2_Atom_Sequence* seq) : p_seq (seq) { }
 
        /** Create an AtomSequence from a ForgeRef */
@@ -327,14 +324,14 @@ namespace lvtk {
            return p_seq->atom.size;
        }
 
-       /** Return the sequences unit */
+       /** Return the sequence's unit */
        inline uint32_t
        unit() const
        {
            return p_seq->body.unit;
        }
 
-       /** Return the sequences c-type */
+       /** Return the sequence's c-type */
        inline LV2_Atom_Sequence*
        cobj()
        {
@@ -350,6 +347,8 @@ namespace lvtk {
        /** @skip */
        inline operator uint8_t*() const { return (uint8_t*) p_seq; }
 
+       /** Append an AtomEvent to the end of the sequence
+           @param ev The event to add */
        inline void
        append (const AtomEvent& ev)
        {
@@ -361,6 +360,8 @@ namespace lvtk {
            }
        }
 
+       /** Insert an AtomEvent into the middle of the sequence
+           @param ev The event to insert */
        inline void
        insert (const AtomEvent& ev)
        {
@@ -385,6 +386,7 @@ namespace lvtk {
            }
        }
 
+       /** An event iterator */
        class iterator
        {
        public:
@@ -438,7 +440,8 @@ namespace lvtk {
        */
       AtomForge() { }
 
-      /** Initialized AtomForge. */
+      /** Initialized AtomForge.
+          @param map The LV2_URID_Map to use for initialization */
       AtomForge (LV2_URID_Map* map)
       {
          init (map);
