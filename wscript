@@ -18,20 +18,20 @@ from subprocess import call
 sys.path.insert(0, "tools/waf")
 import autowaf, cross, lv2, git
 
-LVTK_VERSION="1.2.0"
+LVTK_VERSION='1.2.0'
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
 LVTK_MINOR_VERSION=LVTK_VERSION[2]
 LVTK_MICRO_VERSION=LVTK_VERSION[4]
 
 # Anything appended to version number goes here
-LVTK_EXTRA_VERSION=""
+LVTK_EXTRA_VERSION=''
 
 # For waf dist
 APPNAME = 'lvtk'
 VERSION = LVTK_VERSION + LVTK_EXTRA_VERSION
 
-LIB_LVTK_PLUGIN = APPNAME + "_plugin" + LVTK_MAJOR_VERSION
-LIB_LVTK_UI     = APPNAME + "_ui" + LVTK_MAJOR_VERSION
+LIB_LVTK_PLUGIN = APPNAME + '_plugin' + LVTK_MAJOR_VERSION
+LIB_LVTK_UI     = APPNAME + '_ui' + LVTK_MAJOR_VERSION
 
 # Required by waf
 top = '.'
@@ -42,28 +42,25 @@ def options(opts):
     autowaf.set_options(opts)
 
     opts.add_option('--disable-tools', default=False, \
-        dest="disable_tools", action='store_true', help="Disable Building Tools")
+        dest="disable_tools", action='store_true', help='Disable Building Tools')
     opts.add_option('--disable-ui', default=False, \
-        dest="disable_ui", action='store_true', help="Disable Building UI libraries")
+        dest="disable_ui", action='store_true', help='Disable Building UI libraries')
     opts.add_option('--disable-examples', default=False, \
-        dest="disable_examples", action='store_true', help="Disable Building Examples")
+        dest="disable_examples", action='store_true', help='Disable Building Examples')
     opts.add_option('--ziptype', default='gz', \
-        dest='ziptype', type='string', help="Zip type for waf dist (gz/bz2/zip) [ Default: gz ]")
+        dest='ziptype', type='string', help='Zip type for waf dist (gz/bz2/zip) [ Default: gz ]')
 
 def configure(conf):
-    conf.load("cross compiler_c compiler_cxx lv2 boost")
-
-    a = autowaf
+    conf.load ("cross compiler_c compiler_cxx lv2 boost")
 
     conf.define ("LVTK_VERSION", VERSION)
-    conf.define ("LVTK_MAJOR_VERSION",LVTK_MAJOR_VERSION)
-    conf.define ("LVTK_MINOR_VERSION",LVTK_MINOR_VERSION)
-    conf.define ("LVTK_MICRO_VERSION",LVTK_MICRO_VERSION)
-    conf.define ("LVTK_EXTRA_VERSION",LVTK_EXTRA_VERSION)
-    conf.write_config_header("version.h")
+    conf.define ("LVTK_MAJOR_VERSION", LVTK_MAJOR_VERSION)
+    conf.define ("LVTK_MINOR_VERSION", LVTK_MINOR_VERSION)
+    conf.define ("LVTK_MICRO_VERSION", LVTK_MICRO_VERSION)
+    conf.define ("LVTK_EXTRA_VERSION", LVTK_EXTRA_VERSION)
+    conf.write_config_header ('lvtk_version.h')
 
     conf.check_inline()
-
     if not conf.options.disable_tools: conf.check_boost()
 
     # Check for required packages
@@ -75,7 +72,7 @@ def configure(conf):
 
     # Setup the Environment
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
-    conf.env.TOOLS_DISABLED	    = conf.options.disable_tools
+    conf.env.TOOLS_DISABLED     = conf.options.disable_tools
     conf.env.UI_DISABLED        = conf.options.disable_ui
 	
     # Examples plugins depend on tools
@@ -86,8 +83,8 @@ def configure(conf):
     # Example UI's depend on Gtkmm and Plugins
     if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and \
         not conf.env.EXAMPLES_DISABLED and not conf.env.UI_DISABLED:
-        conf.env.BUILD_EXAMPLE_UIS  = True
-    else: conf.env.BUILD_EXAMPLE_UIS  = False
+        conf.env.BUILD_EXAMPLE_UIS = True
+    else: conf.env.BUILD_EXAMPLE_UIS = False
 			
     conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
     conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
