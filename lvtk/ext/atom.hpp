@@ -105,7 +105,7 @@ namespace lvtk {
          return *this;
       }
 
-      /** A Property Iterator */
+      /** A Property Iterator for an AtomObjects */
       class iterator
       {
       public:
@@ -305,7 +305,7 @@ namespace lvtk {
 
        /** Create an AtomSequnce from an LV2_Atom_Sequence
            @param seq The sequence to wrap */
-       AtomSequence  (LV2_Atom_Sequence* seq) : p_seq (seq) { }
+       AtomSequence (LV2_Atom_Sequence* seq) : p_seq (seq) { }
 
        /** Create an AtomSequence from a ForgeRef */
        AtomSequence (ForgeRef ref) : p_seq ((LV2_Atom_Sequence*) ref) { }
@@ -418,7 +418,10 @@ namespace lvtk {
     	   LV2_Atom_Sequence* p_seq;
        };
 
+       /** Returns an iterator starting at the first event */
        inline iterator begin() const { return iterator (p_seq, lv2_atom_sequence_begin (&p_seq->body)); }
+
+       /** Returns the end iterator of this sequence */
        inline iterator end()   const { return iterator (p_seq, lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
 
    private:
@@ -501,12 +504,19 @@ namespace lvtk {
           return lv2_atom_forge_frame_time (this, frames);
       }
 
+      /** Forge a property header
+          @param key The URID for the key
+          @param context The context
+       */
       inline ForgeRef
       property_head (uint32_t key, uint32_t context)
       {
          return lv2_atom_forge_property_head (this, key, context);
       }
 
+      /** Pop a forge frame
+          @param frame The frame to pop
+       */
       inline void
       pop (ForgeFrame& frame)
       {
@@ -549,65 +559,91 @@ namespace lvtk {
           return lv2_atom_forge_resource (this, &frame, id, otype);
       }
 
+      /** Forge a blank object
+          @param frame
+          @param id
+          @param otype
+       */
       inline ForgeRef
       write_blank (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
           return lv2_atom_forge_blank (this, &frame, id, otype);
       }
 
+      /** Forge a boolean value
+          @param val The value to write
+       */
       inline ForgeRef
       write_bool (const bool val)
       {
           return lv2_atom_forge_bool (this, val);
       }
 
+      /** Forge an integeger value
+          @param val The value to write
+       */
       inline ForgeRef
       write_int (const int val)
       {
           return lv2_atom_forge_int (this, val);
       }
 
-
+      /** Forge a float value
+          @param val The value to write
+       */
       inline ForgeRef
       write_float (const float val)
       {
           return lv2_atom_forge_float (this, val);
       }
 
+      /** Forge a long integer value
+          @param val The value to write
+       */
       inline ForgeRef
       write_long (const int64_t val)
       {
           return lv2_atom_forge_long (this, val);
       }
 
+      /** Forge a string value
+          @param val The value to write
+       */
       inline ForgeRef
       write_string (const char* str)
       {
           return lv2_atom_forge_string (this, str, strlen (str));
       }
 
+      /** Forge a uri value
+          @param val The value to write
+       */
       inline ForgeRef
       write_uri (const char* uri)
       {
           return lv2_atom_forge_uri (this, uri, strlen (uri));
       }
 
+      /** Forge raw data
+          @param data The data to write
+          @param size The size in bytes of data
+       */
       inline ForgeRef
       write_raw (const void* data, uint32_t size)
       {
           return lv2_atom_forge_raw (this, data, size);
       }
 
+      /** Forge a URID value
+          @param id The URID to write
+       */
       inline ForgeRef
       write_urid (LV2_URID id)
       {
           return lv2_atom_forge_urid (this, id);
       }
-
-   private:
-
    };
 
-} /* namespace lvtk */
+}  /* namespace lvtk */
 
-#endif /* LVTK_ATOM_HPP */
+#endif  /* LVTK_ATOM_HPP */
