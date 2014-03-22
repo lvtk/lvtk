@@ -10,3 +10,11 @@ lock-waf*
 waf-*/
 *~
 .DS_Store
+
+# qt creator
+lvtk.config
+lvtk.creator
+lvtk.creator.user*
+lvtk.files
+lvtk.includes
+
