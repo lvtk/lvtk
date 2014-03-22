@@ -644,6 +644,26 @@ namespace lvtk {
       }
    };
 
+
+   /** An abstraction of an LV2_Atom_Vector */
+   class AtomVector
+   {
+   public:
+
+       inline AtomVector (ForgeRef ref) : vec ((LV2_Atom_Vector*) ref) { }
+       ~AtomVector() { }
+
+       inline size_t size() const { return vec->atom.size / vec->body.child_size; }
+       inline uint32_t child_size() const { return vec->body.child_size; }
+       inline uint32_t child_type() const { return vec->body.child_type; }
+
+       inline operator LV2_Atom_Vector* () const { return vec; }
+
+   private:
+       LV2_Atom_Vector* vec;
+
+   };
+
 }  /* namespace lvtk */
 
 #endif  /* LVTK_ATOM_HPP */
