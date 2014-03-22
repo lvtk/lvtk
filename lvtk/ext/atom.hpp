@@ -659,6 +659,52 @@ namespace lvtk {
 
        inline operator LV2_Atom_Vector* () const { return vec; }
 
+       /** Atom Vector Iterator */
+       class iterator
+       {
+       public:
+
+           iterator& operator++()
+           {
+               offset += vec->body.child_size;
+
+               if (vec && offset >= vec->atom.size)
+                   offset = vec->atom.size;
+
+               return *this;
+           }
+
+           iterator operator++(int)
+           {
+               iterator it (vec, offset);
+               ++(*this);
+               return it;
+           }
+
+           inline bool operator== (const iterator& other) const { return vec == other.vec && offset == other.offset; }
+           inline bool operator!= (const iterator& other) const { return vec != other.vec && offset != other.offset; }
+
+           /** Reference another iterator */
+           inline iterator& operator= (const iterator& other)
+           {
+               this->vec = other.vec;
+               this->offset = other.offset;
+               return *this;
+           }
+
+       private:
+           friend class AtomVector;
+           iterator (LV2_Atom_Vector *v, uint32_t os = 0) : vec (v), offset (os) { }
+           LV2_Atom_Vector* vec;
+           uint32_t offset;
+       };
+
+       /** Returns an iterator to the begining of the vector */
+       iterator begin() const { return iterator (vec); }
+
+       /** Returns the end iterator */
+       iterator end()   const { return iterator (vec, vec->atom.size); }
+
    private:
        LV2_Atom_Vector* vec;
 
