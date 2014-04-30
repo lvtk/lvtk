@@ -112,7 +112,7 @@ namespace lvtk
             if (m_features)
             {
                 FeatureHandlerMap hmap;
-                Derived::map_feature_handlers(hmap);
+                Derived::map_feature_handlers (hmap);
                 for (const lvtk::Feature* const * iter = m_features;
                         *iter != 0; ++iter)
                 {
@@ -144,7 +144,7 @@ namespace lvtk
         register_class(char const* uri)
         {
             LV2UI_Descriptor desc;
-            std::memset(&desc, 0, sizeof(LV2UI_Descriptor));
+            std::memset (&desc, 0, sizeof(LV2UI_Descriptor));
             desc.URI = strdup(uri);
             desc.instantiate = &Derived::create_ui_instance;
             desc.cleanup = &Derived::delete_ui_instance;

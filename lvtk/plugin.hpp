@@ -168,7 +168,7 @@ namespace lvtk {
             initialiser list for your plugin class.
             @param ports The number of ports in this plugin.
          */
-        Plugin(uint32_t ports)
+        Plugin (uint32_t ports)
             : m_ports(ports, 0), m_ok(true)
         {
             m_features = s_features;
