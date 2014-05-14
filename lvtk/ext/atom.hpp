@@ -556,7 +556,7 @@ namespace lvtk {
       inline ForgeRef
       write_resource (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
-          return lv2_atom_forge_resource (this, &frame, id, otype);
+          return lv2_atom_forge_object (this, &frame, id, otype);
       }
 
       /** Forge a blank object
@@ -567,7 +567,7 @@ namespace lvtk {
       inline ForgeRef
       write_blank (ForgeFrame& frame, uint32_t id, uint32_t otype)
       {
-          return lv2_atom_forge_blank (this, &frame, id, otype);
+          return lv2_atom_forge_object (this, &frame, id, otype);
       }
 
       /** Forge a boolean value

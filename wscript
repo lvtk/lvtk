@@ -64,7 +64,7 @@ def configure(conf):
     if not conf.options.disable_tools: conf.check_boost()
 
     # Check for required packages
-    conf.check_lv2 ("1.6.0")
+    conf.check_lv2 ("1.8.0")
 
     # UI Configuration
     autowaf.check_pkg(conf, "gtkmm-2.4", uselib_store="gtkmm", \
