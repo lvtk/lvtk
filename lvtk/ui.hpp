@@ -50,11 +50,9 @@ namespace lvtk
         ~UIDescList();
     };
 
-    /** @internal
-     This function returns the list of LV2 descriptors. It should only be
-     used internally. */
-    UIDescList&
-    get_lv2g2g_descriptors();
+    /** @internal This function returns the list of LV2 descriptors. It should only be
+        used internally. */
+    UIDescList& get_lv2g2g_descriptors();
 
     /** @defgroup guimixins UI Mixins
 
@@ -130,8 +128,8 @@ namespace lvtk
         /** Override this if you want your UI to do something when a control port
             value changes in the plugin instance. */
         inline void
-        port_event(uint32_t port, uint32_t buffer_size, uint32_t format,
-                   void const* buffer)
+        port_event (uint32_t port, uint32_t buffer_size, uint32_t format,
+                    void const* buffer)
         {
         }
 
@@ -162,7 +160,7 @@ namespace lvtk
             should probably use a wrapper function instead such as write_control().
          */
         inline void
-        write(uint32_t port, uint32_t buffer_size, uint32_t format,
+        write (uint32_t port, uint32_t buffer_size, uint32_t format,
                 void const* buffer)
         {
             (*m_wfunc)(m_ctrl, port, buffer_size, format, buffer);
@@ -170,7 +168,7 @@ namespace lvtk
 
         /** Set the value of a control input port in the plugin instance. */
         inline void
-        write_control(uint32_t port, float value)
+        write_control (uint32_t port, float value)
         {
             write(port, sizeof(float), 0, &value);
         }
@@ -250,13 +248,13 @@ namespace lvtk
             // create the UI object
             if (LVTK_DEBUG)
                 std::clog << "  Creating LV2 Widget..." << std::endl;
-            Derived* ui = new Derived(plugin_uri);
+            Derived* ui = new Derived (plugin_uri);
             *widget = ui->widget();
 
-            /** Check all is OK */
+            /* Check all is OK */
             if (ui->check_ok() && *widget != NULL)
             {
-                return reinterpret_cast<LV2UI_Handle>(ui);
+                return reinterpret_cast<LV2UI_Handle> (ui);
             }
 
             delete ui;
@@ -269,9 +267,9 @@ namespace lvtk
             directly.
         */
         static void
-        delete_ui_instance(LV2UI_Handle instance)
+        delete_ui_instance (LV2UI_Handle instance)
         {
-            delete static_cast<Derived*>(instance);
+            delete static_cast<Derived*> (instance);
         }
 
         /** @internal
@@ -279,7 +277,7 @@ namespace lvtk
             use it directly.
          */
         static void
-        _port_event(LV2UI_Handle instance, uint32_t port,
+        _port_event (LV2UI_Handle instance, uint32_t port,
                 uint32_t buffer_size, uint32_t format, void const* buffer)
         {
             static_cast<Derived*>(instance)->port_event(port, buffer_size,

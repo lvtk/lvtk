@@ -152,8 +152,7 @@ namespace lvtk {
             static void
             map_feature_handlers (FeatureHandlerMap& hmap)
             {
-                hmap[LV2_UI__portIndex] = &I<Derived>::handle_feature;
-                //hmap[LV2_UI__portMap]   = &I<Derived>::handle_feature;
+                hmap [LV2_UI__portMap] = &I<Derived>::handle_feature;
             }
 
             /** @internal */
@@ -163,10 +162,10 @@ namespace lvtk {
                 Derived* d = reinterpret_cast<Derived*>(instance);
                 I<Derived>* mixin = static_cast<I<Derived>*>(d);
 
-                LV2UI_Port_Map* pm (reinterpret_cast<LV2UI_Port_Map*> (data));
-                mixin->m_pmap.handle      = pm->handle;
-                mixin->m_pmap.port_index  = pm->port_index;
-                mixin->m_ok = (pm->handle != NULL && pm->port_index != NULL);
+                if (LV2UI_Port_Map* pm = reinterpret_cast<LV2UI_Port_Map*> (data))
+                    memcpy (&mixin->m_pmap, pm, sizeof (LV2UI_Port_Map));
+
+                mixin->m_ok = (mixin->m_pmap.handle != 0 && mixin->m_pmap.port_index != 0);
             }
 
             bool
