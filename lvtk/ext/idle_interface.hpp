@@ -27,66 +27,60 @@ namespace lvtk {
 template <bool Required = true>
 struct IdleInterface
 {
-     template <class Derived>
-     struct I : Extension<Required>
-     {
+    template <class Derived>
+    struct I : Extension<Required>
+    {
+        /** @skip */
+        static void
+        map_feature_handlers (FeatureHandlerMap& hmap)
+        {
+            hmap[LV2_UI__idleInterface] = &I<Derived>::handle_feature;
+        }
 
-      /** @skip */
-      static void
-      map_feature_handlers (FeatureHandlerMap& hmap)
-      {
-         hmap[LV2_UI__idleInterface] = &I<Derived>::handle_feature;
-      }
+        /** @skip */
+        static void
+        handle_feature (void* instance, FeatureData data)
+        {
+            Derived* d = reinterpret_cast<Derived*> (instance);
+            I<Derived>* fe = static_cast<I<Derived>*> (d);
+            fe->m_ok = true;
+        }
 
-      /** @skip */
-      static void
-      handle_feature (void* instance, FeatureData data)
-      {
-          std::clog << "HANDLE FEATURE FEATERUDUDUD\n";
-         Derived* d = reinterpret_cast<Derived*> (instance);
-         I<Derived>* fe = static_cast<I<Derived>*> (d);
-         fe->m_ok = true;
-      }
+        /** Sanity check the mixin */
+        bool
+        check_ok()
+        {
+            if (LVTK_DEBUG) {
+                std::clog<<"    [IdleInterface] validation "
+                        <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
+            }
+            return true;
+        }
 
-      /** Sanity check the mixin */
-      bool
-      check_ok()
-      {
-         if (LVTK_DEBUG) {
-           std::clog<<"    [IdleInterface] validation "
-                    <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-         }
-         return true;
-      }
+        /** @skip */
+        static const void*
+        extension_data (const char* uri)
+        {
+            if (! std::strcmp (uri, LV2_UI__idleInterface)) {
+                static LV2UI_Idle_Interface idle_iface = { &I<Derived>::_idle };
+                return &idle_iface;
+            }
 
-      /** @skip */
-      static const void*
-      extension_data (const char* uri)
-      {
-         if (! std::strcmp (uri, LV2_UI__idleInterface)) {
-            std::clog << "giving back idle interface struct\n";
-            static LV2UI_Idle_Interface idle_iface = { &I<Derived>::_idle };
-            return &idle_iface;
-         }
+            return 0;
+        }
 
-         std::clog << "giving back idle interface struct FALED\n";
-         return 0;
-      }
+        int idle() { }
 
+    protected:
 
-
-      int idle() { }
-
-     protected:
-
-      /** @internal */
-      static int _idle (LV2UI_Handle ui)
-      {
-          std::clog << "idle\n";
-         Derived* d = reinterpret_cast<Derived*> (ui);
-         return d->idle();
-      }
-   };
+        /** @internal */
+        static int _idle (LV2UI_Handle ui)
+        {
+            if (Derived* d = reinterpret_cast<Derived*> (ui))
+                return d->idle();
+            return 1;
+        }
+    };
 };
 
 }
