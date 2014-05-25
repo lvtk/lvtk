@@ -393,8 +393,7 @@ namespace lvtk {
             extension_data (const char* uri)
             {
                 // TODO: Need to implement ui resize host-side.
-                // FIXME: Need to provide a pointer, somehow, to
-                //        extension_data
+                // FIXME: Need to provide a pointer, somehow, to extension_data
                 return 0;
             }
 
