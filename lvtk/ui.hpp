@@ -89,7 +89,7 @@ namespace lvtk
              class Ext6 = end, class Ext7 = end, class Ext8 = end,
              class Ext9 = end>
     class UI : public MixinTree<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6,
-            Ext7, Ext8, Ext9>
+                                         Ext7, Ext8, Ext9>
     {
     public:
 

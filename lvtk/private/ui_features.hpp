@@ -299,7 +299,7 @@ namespace lvtk {
         template<class Derived>
         struct I : Extension<Required>
         {
-            I() : p_parent (NULL) { }
+            I() : p_parent (0) { }
 
             /** @internal */
             static void
@@ -386,6 +386,16 @@ namespace lvtk {
                 mixin->m_resize.handle    = rz->handle;
                 mixin->m_resize.ui_resize = rz->ui_resize;
                 mixin->m_ok = true;
+            }
+
+            /** @skip */
+            static const void*
+            extension_data (const char* uri)
+            {
+                // TODO: Need to implement ui resize host-side.
+                // FIXME: Need to provide a pointer, somehow, to
+                //        extension_data
+                return 0;
             }
 
             bool
