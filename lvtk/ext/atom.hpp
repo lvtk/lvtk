@@ -25,6 +25,7 @@
 #ifndef LVTK_ATOM_HPP
 #define LVTK_ATOM_HPP
 
+#include <iostream>
 #include <string>
 
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
@@ -92,10 +93,9 @@ namespace lvtk {
       }
 
       /** Get the underlying LV2_Atom_Object pointer */
-      inline LV2_Atom_Object* cobj() const     { return p_obj; }
-
-      /** @internal */
-      inline operator LV2_Atom_Object*()       { return p_obj; }
+      inline LV2_Atom_Object* cobj()           const { return p_obj; }
+      inline operator LV2_Atom_Object*()       const { return p_obj; }
+      inline operator const LV2_Atom_Object*() const { return p_obj; }
 
       /** @internal */
       inline AtomObject&
@@ -146,10 +146,10 @@ namespace lvtk {
       iterator end()   const { return iterator (p_obj, 0); }
 
    private:
-
       LV2_Atom_Object* p_obj;
 
    };
+
 
 
    /** Basic wrapper for an LV2_Atom
@@ -160,131 +160,96 @@ namespace lvtk {
       Atom () : p_atom (0) { }
 
       /** Create an Atom from raw data */
-      Atom (const void* atom) : p_atom ((LV2_Atom*) atom)  { }
+      Atom (const void* atom) : p_atom (reinterpret_cast<const LV2_Atom*> (atom))  { }
 
       /** Create an Atom from a Forge Ref */
-      Atom (ForgeRef ref) : p_atom ((LV2_Atom*) ref) { }
+      Atom (ForgeRef ref) : p_atom (reinterpret_cast<LV2_Atom*> (ref)) { }
 
       /** Create an Atom from an AtomEvent */
       Atom (AtomEvent* ev) : p_atom (&ev->body) { }
 
+      /** Create an Atom from a CType reference */
+      Atom (const LV2_Atom& ref) : p_atom (&ref) { }
+
       /** Pad a size to 64 bits */
-      inline static uint32_t
-      pad_size (uint32_t size)
-      {
-          return lv2_atom_pad_size (size);
-      }
+      inline static uint32_t pad_size (uint32_t size) { return lv2_atom_pad_size (size); }
 
       /** Determine if the Atom is null */
-      inline bool
-      is_null()
-      {
-          return lv2_atom_is_null (p_atom);
+      inline bool is_null()         const { return lv2_atom_is_null (p_atom); }
+
+      /** Returns true if this atom has type and equals a given value
+          @param type The atom POD type
+          @param pod_value The value to test
+       */
+      template<typename POD>
+      inline bool has_type_and_equals (uint32_t type, const POD& pod_value) const {
+          return this->p_atom->type == type && operator== (pod_value);
+      }
+
+      /** Returns true if this atom is an otype when casted to AtomObject */
+      inline bool  has_object_type (uint32_t otype) const {
+          return as_object().otype() == otype;
       }
 
       /** Get the Atom's body */
-      inline void*
-      body() const
-      {
-          return LV2_ATOM_BODY (p_atom);
-      }
+      inline void* body()           const { return LV2_ATOM_BODY (p_atom); }
 
       /** Get the body as a boolean */
-      inline bool
-      as_bool() const
-      {
-          return ((LV2_Atom_Bool*)p_atom)->body > 0;
-      }
+      inline bool as_bool()         const { return ((LV2_Atom_Bool*)p_atom)->body > 0; }
 
       /** Get the body as a float */
-      inline float
-      as_float() const
-      {
-          return ((LV2_Atom_Float*)p_atom)->body;
-      }
+      inline float as_float()       const { return ((LV2_Atom_Float*)p_atom)->body; }
+
+      /** Get the body as a double */
+      inline double as_double()     const { return ((LV2_Atom_Double*)p_atom)->body; }
 
       /** Returns the atom casted to LV2_Atom_Object */
-      const AtomObject
-      as_object() const {
-          return AtomObject ((LV2_Atom_Object* ) p_atom);
-      }
+      const AtomObject as_object()  const { return AtomObject ((LV2_Atom_Object* ) p_atom); }
 
       /** Get the body as a string */
-      inline const char*
-      as_string() const
-      {
-          return (const char*) LV2_ATOM_BODY (p_atom);
-      }
+      inline const char* as_string() const { return (const char*) LV2_ATOM_BODY (p_atom); }
 
-      /** Get the body as a float */
-      inline int32_t
-      as_int() const
-      {
-          return ((LV2_Atom_Int*)p_atom)->body;
-      }
+      /** Get the body as a 32bit integer */
+      inline int32_t as_int()       const { return ((LV2_Atom_Int*)p_atom)->body; }
 
       /** Get the body as a long */
-      inline int64_t
-      as_long() const
-      {
-          return ((LV2_Atom_Long*)p_atom)->body;
-      }
+      inline int64_t as_long()      const { return ((LV2_Atom_Long*)p_atom)->body; }
 
       /** Get the body as a URID */
-      inline uint32_t
-      as_urid() const
-      {
-          return ((LV2_Atom_URID*)p_atom)->body;
-      }
-      /** Get this Atom's type */
+      inline uint32_t as_urid()     const { return ((LV2_Atom_URID*)p_atom)->body; }
 
-      inline uint32_t
-      type() const
-      {
-          return p_atom->type;
-      }
+      /** Get this Atom's type */
+      inline uint32_t type()        const { return p_atom->type; }
 
       /** Get the Atom's total size */
-      inline uint32_t
-      total_size() const
-      {
-          return lv2_atom_total_size (p_atom);
-      }
+      inline uint32_t total_size()  const { return lv2_atom_total_size (p_atom); }
 
       /** Get the Atom's body size */
-      inline uint32_t
-      size() const
-      {
-          return p_atom->size;
-      }
+      inline uint32_t size()        const { return p_atom->size; }
 
       /** Get the underlying LV2_Atom pointer */
-      inline const LV2_Atom*
-      cobj() const
-      {
-          return p_atom;
-      }
+      inline const LV2_Atom* cobj() const { return p_atom; }
 
       /** @internal */
-      inline operator const LV2_Atom*() { return cobj(); }
+      inline operator bool() const { return ! lv2_atom_is_null (p_atom); }
+      inline operator const LV2_Atom*() const { return p_atom; }
 
       /** @internal */
-      inline Atom&
-      operator= (const Atom& other)
+      inline Atom& operator= (const Atom& other)
       {
          p_atom = other.p_atom;
          return *this;
       }
 
-      /** @internal */
-      inline bool
-      operator== (Atom& other)
-      {
-          return lv2_atom_equals (cobj(), other.cobj());
-      }
+      inline bool operator== (Atom& other) { return lv2_atom_equals (cobj(), other.cobj()); }
+
+   protected:
+      inline bool operator== (const LV2_URID& u) const { return (((LV2_Atom_URID*)p_atom)->body == u); }
+      inline bool operator== (const int32_t& i)  const { return (((LV2_Atom_Int*)p_atom)->body == i); }
+      inline bool operator== (const int64_t& l)  const { return (((LV2_Atom_Long*)p_atom)->body == l); }
+      inline bool operator== (const float& f)    const { return (((LV2_Atom_Float*)p_atom)->body == f); }
 
    private:
-
       const LV2_Atom* p_atom;
       friend class AtomObject;
 
@@ -437,9 +402,8 @@ namespace lvtk {
    public:
 
       /** Uninitialized AtomForge.
-
-          @note Client code must call AtomForge::init() before using otherwise
-          written output will be unpredictable
+          Client code must call AtomForge::init() before using otherwise
+          written output will be unpredictable and likely cause a nasty crash
        */
       AtomForge() { }
 
@@ -514,11 +478,30 @@ namespace lvtk {
          return lv2_atom_forge_property_head (this, key, context);
       }
 
+      /** Forge a property header
+          @param key The URID for the key
+          @param context The context
+       */
+      inline ForgeRef
+      write_property_head (uint32_t key, uint32_t context)
+      {
+         return lv2_atom_forge_property_head (this, key, context);
+      }
+
       /** Pop a forge frame
           @param frame The frame to pop
        */
       inline void
       pop (ForgeFrame& frame)
+      {
+         lv2_atom_forge_pop (this, &frame);
+      }
+
+      /** Pop a forge frame
+          @param frame The frame to pop
+       */
+      inline void
+      pop_frame (ForgeFrame& frame)
       {
          lv2_atom_forge_pop (this, &frame);
       }
@@ -535,6 +518,19 @@ namespace lvtk {
           return lv2_atom_forge_atom (this, size, type);
       }
 
+      inline ForgeRef
+      write_key (uint32_t urid)
+      {
+          return lv2_atom_forge_key (this, urid);
+      }
+
+      /** Write an atom object */
+      inline ForgeRef
+      write_object (ForgeFrame& frame, uint32_t id, uint32_t otype)
+      {
+          return lv2_atom_forge_object (this, &frame, id, otype);
+      }
+
       /** Write an atom path from string
 
           @param path The path to forge
@@ -544,6 +540,12 @@ namespace lvtk {
       write_path (const std::string& path)
       {
           return lv2_atom_forge_path (this, path.c_str(), path.size());
+      }
+
+      inline ForgeRef
+      write_primitive (const Atom& atom)
+      {
+          return lv2_atom_forge_primitive (this, atom.cobj());
       }
 
       /** Forge an atom resource
@@ -588,41 +590,20 @@ namespace lvtk {
           return lv2_atom_forge_int (this, val);
       }
 
-      /** Forge a float value
-          @param val The value to write
-       */
-      inline ForgeRef
-      write_float (const float val)
-      {
-          return lv2_atom_forge_float (this, val);
-      }
+      /** Forge a double value @param val the value to write */
+      inline ForgeRef write_double (const double val)   { return lv2_atom_forge_double (this, val); }
 
-      /** Forge a long integer value
-          @param val The value to write
-       */
-      inline ForgeRef
-      write_long (const int64_t val)
-      {
-          return lv2_atom_forge_long (this, val);
-      }
+      /** Forge a float value */
+      inline ForgeRef write_float (const float val)     { return lv2_atom_forge_float (this, val); }
 
-      /** Forge a string value
-          @param val The value to write
-       */
-      inline ForgeRef
-      write_string (const char* str)
-      {
-          return lv2_atom_forge_string (this, str, strlen (str));
-      }
+      /** Forge a long integer value  */
+      inline ForgeRef write_long (const int64_t val)    { return lv2_atom_forge_long (this, val); }
 
-      /** Forge a uri value
-          @param val The value to write
-       */
-      inline ForgeRef
-      write_uri (const char* uri)
-      {
-          return lv2_atom_forge_uri (this, uri, strlen (uri));
-      }
+      /** Forge a string value */
+      inline ForgeRef write_string (const char* str)    { return lv2_atom_forge_string (this, str, strlen (str)); }
+
+      /** Forge a uri string */
+      inline ForgeRef write_uri (const char* uri)       { return lv2_atom_forge_uri (this, uri, strlen (uri)); }
 
       /** Forge raw data
           @param data The data to write
