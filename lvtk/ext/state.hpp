@@ -101,9 +101,10 @@ namespace lvtk {
 
     /**  Wrapper struct for state storage. This wraps an
          LV2_State_Store_Function and exeucutes via operator () */
-    struct StateStore {
+    struct StateStore
+    {
         StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
-        : p_handle(handle), p_ssfunc(ssfunc) { }
+            : p_handle(handle), p_ssfunc(ssfunc) { }
 
         /** Execute the store functor.
 
@@ -114,10 +115,9 @@ namespace lvtk {
             @param flags
             @return STATE_SUCCESS on Success
          */
-        inline StateStatus operator () (uint32_t key, const void* value,
-                size_t   size,
-                uint32_t type,
-                uint32_t flags = 0) const
+        inline StateStatus operator() (uint32_t key, const void* value,
+                                       size_t size, uint32_t type,
+                                       uint32_t flags = 0) const
         {
             return (StateStatus) p_ssfunc (p_handle, key, value, size, type, flags);
         }
@@ -139,7 +139,6 @@ namespace lvtk {
         template <class Derived>
         struct I : Extension<Required>
         {
-
             I() : p_make_path (NULL) { }
 
             /** @internal */
@@ -224,7 +223,7 @@ namespace lvtk {
 
             /** Return a path the plugin may use to create a new file.
                 @param path The path of the new file within a namespace unique to this
-                plugin instance.
+                            plugin instance.
                 @return The absolute path to use for the new file.
 
                 @note This method is provided during instantiation, so it is ok to
