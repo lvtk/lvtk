@@ -161,7 +161,7 @@ namespace lvtk
          */
         inline void
         write (uint32_t port, uint32_t buffer_size, uint32_t format,
-                void const* buffer)
+               void const* buffer)
         {
             (*m_wfunc)(m_ctrl, port, buffer_size, format, buffer);
         }
