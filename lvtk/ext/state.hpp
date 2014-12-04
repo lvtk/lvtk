@@ -85,9 +85,9 @@ namespace lvtk {
           @param flags
           @return Associate 'value' data for the given key
          */
-        const void* operator () (uint32_t key, size_t *size  = NULL,
-                uint32_t *type  = NULL,
-                uint32_t *flags = NULL) const
+        const void* operator () (uint32_t key, size_t *size  = 0,
+                uint32_t *type  = 0,
+                uint32_t *flags = 0) const
         {
             return p_srfunc(p_handle, key, size, type, flags);
         }
