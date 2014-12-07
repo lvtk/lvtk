@@ -102,9 +102,9 @@ namespace lvtk
             const char*
             unmap (LV2_URID urid)
             {
-                if (p_unmap != NULL)
+                if (p_unmap != 0)
                     return p_unmap->unmap(p_unmap->handle, urid);
-                return "";
+                return 0;
             }
 
             /** Get the numeric ID of a URI.
@@ -141,7 +141,6 @@ namespace lvtk
             LV2_URID_Unmap* get_urid_unmap() const { return p_unmap; }
 
         protected:
-
             LV2_URID_Map   *p_map;
             LV2_URID_Unmap *p_unmap;
 
