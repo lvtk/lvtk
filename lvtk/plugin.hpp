@@ -378,15 +378,18 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
 
             if (LVTK_DEBUG)
             {
-                std::clog<<"[plugin] Instantiating plugin...\n"
-                        <<"  Bundle path: "<<bundle_path<<"\n"
-                        <<"  features: \n";
+                std::stringstream ss;
+                ss << "[plugin] Instantiating plugin...\n"
+                   << "  Bundle path: " << bundle_path <<"\n"
+                   << "  features: \n";
 
                 FeatureIter feats (features);
                 while (const Feature* feature = feats.next())
-                    std::clog <<"    "<< feature->URI << "\n";
+                    ss << "    " << feature->URI << "\n";
 
-                std::clog<<"  Creating plugin object...\n";
+                ss << "  Creating plugin object...\n";
+
+                std::clog << ss.str();
             }
 
             Derived* t = new Derived (sample_rate);

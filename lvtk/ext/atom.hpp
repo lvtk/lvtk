@@ -136,7 +136,7 @@ namespace lvtk {
 
       private:
 
-          friend class AtomObject;
+          friend struct AtomObject;
           LV2_Atom_Property_Body* index;
           LV2_Atom_Object*        obj;
 
@@ -251,8 +251,7 @@ namespace lvtk {
 
    private:
       const LV2_Atom* p_atom;
-      friend class AtomObject;
-
+      friend struct AtomObject;
    };
 
 
@@ -377,8 +376,7 @@ namespace lvtk {
            inline bool operator!= (const iterator& other) const { return p_event != other.p_event; }
 
        private:
-
-    	   friend class AtomSequence;
+    	   friend struct AtomSequence;
     	   LV2_Atom_Event* p_event;
     	   LV2_Atom_Sequence* p_seq;
        };
@@ -390,9 +388,7 @@ namespace lvtk {
        inline iterator end()   const { return iterator (p_seq, lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
 
    private:
-
        LV2_Atom_Sequence* p_seq;
-
    };
 
 

@@ -25,12 +25,10 @@
 #    define LVTK_DEBUG false
 #  else
 #    define LVTK_DEBUG true
+#    include <iomanip>
+#    include <iostream>
+#    include <sstream>
 #  endif
-#endif
-
-#if LVTK_DEBUG
-#include <iomanip>
-#include <iostream>
 #endif
 
 #endif /* LVTK_DEBUG_HPP */
