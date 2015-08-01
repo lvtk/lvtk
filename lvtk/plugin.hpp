@@ -23,6 +23,7 @@
 #define LVTK_PLUGIN_HPP
 
 #include <iostream>
+#include <sstream>
 #include <cstdarg>
 #include <cstring>
 #include <string>
