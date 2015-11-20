@@ -74,24 +74,24 @@ def configure(conf):
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
     conf.env.TOOLS_DISABLED     = conf.options.disable_tools
     conf.env.UI_DISABLED        = conf.options.disable_ui
-	
+
     # Examples plugins depend on tools
     if conf.env.TOOLS_DISABLED or conf.env.EXAMPLES_DISABLED:
         conf.env.BUILD_EXAMPLE_PLUGINS = False
     else: conf.env.BUILD_EXAMPLE_PLUGINS = True
-	
+
     # Example UI's depend on Gtkmm and Plugins
     if conf.env.LIB_gtkmm and conf.env.BUILD_EXAMPLE_PLUGINS and \
         not conf.env.EXAMPLES_DISABLED and not conf.env.UI_DISABLED:
         conf.env.BUILD_EXAMPLE_UIS = True
     else: conf.env.BUILD_EXAMPLE_UIS = False
-			
+
     conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
     conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
     conf.env.LIB_LVTK_PLUGIN    = LIB_LVTK_PLUGIN
     conf.env.LIB_LVTK_UI        = LIB_LVTK_UI
     conf.env.APPNAME            = APPNAME
-	
+
     autowaf.configure(conf)
 
     autowaf.display_header( "LV2 Toolkit Configuration")
@@ -101,14 +101,14 @@ def configure(conf):
     autowaf.display_msg(conf,"Build example plugins", not conf.env.EXAMPLES_DISABLED)
     autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
     autowaf.display_msg(conf,"Build tools", not conf.env.TOOLS_DISABLED)
-	
+
 def build(bld):
     for subdir in ['src','tools','examples']:
         bld.recurse(subdir)
         bld.add_group()
 
     pcvers = LVTK_MAJOR_VERSION
-	
+
     # Build PC Files
     autowaf.build_pc(bld, 'LVTK', LVTK_VERSION, pcvers, [],
         {'LVTK_MAJOR_VERSION'  : LVTK_MAJOR_VERSION,
@@ -120,7 +120,7 @@ def build(bld):
         'VERSION'              : LVTK_VERSION,
         'THELIB'		       : LIB_LVTK_PLUGIN,
         'LVTK_PKG_DEPS'       : 'lv2'})
-						
+
     if not bld.env.UI_DISABLED:
         autowaf.build_pc(bld, 'LVTK-UI', LVTK_VERSION, pcvers, [],
             {'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
@@ -134,9 +134,9 @@ def build(bld):
                 'VERSION'             : LVTK_VERSION,
                 'THELIB'              : LIB_LVTK_UI,
                 'LVTK_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
-						
+
     bld.add_group()
-	
+
     # Install Static Libraries
     bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 
