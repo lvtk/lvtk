@@ -22,10 +22,10 @@
 #ifndef LVTK_PLUGIN_HPP
 #define LVTK_PLUGIN_HPP
 
-#include <iostream>
-#include <sstream>
 #include <cstdarg>
 #include <cstring>
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -52,7 +52,7 @@
     The classes are separated into two libraries. One, called liblvtk-plugin,
     contains the classes Plugin and Synth, defined in the files
     <lvtk/plugin.hpp> and <lvtk/synth.hpp>. They are base classes that you
-    can inherit in order to create new LV2 plugins. The other library, called 
+    can inherit in order to create new LV2 plugins. The other library, called
     liblvtk-ui, contains the class UI, defined in the file <lvtk/ui.hpp>
     which you can use in a similar way to create new LV2 plugin UIs.
 
@@ -71,12 +71,12 @@
 
     <b>Mixins</b>
     For both the plugin and the GUI class there are other helper classes called
-    @ref pluginmixins "mixins" that you can use to add extra functionality to 
+    @ref pluginmixins "mixins" that you can use to add extra functionality to
     your plugins, for example support for LV2 extensions.
 
     <b>Versioning</b>
     These libraries are only available as static libraries (and most of the
-    code is template classes in header files), thus ABI stability is not an 
+    code is template classes in header files), thus ABI stability is not an
     issue. The API will be stable between major version bumps, at which the
     pkg-config name would change to prevent plugins from building against an
     incompatible version.
@@ -380,15 +380,15 @@ LV2_Atom_Sequence* midi = p<LV2_Atom_Sequence>(midi_port);
             if (LVTK_DEBUG)
             {
                 std::stringstream ss;
-                ss << "[plugin] Instantiating plugin...\n"
-                   << "  Bundle path: " << bundle_path <<"\n"
+                ss << "[plugin] Instantiating plugin..." << std::endl
+                   << "  Bundle path: " << bundle_path << std::endl
                    << "  features: \n";
 
                 FeatureIter feats (features);
                 while (const Feature* feature = feats.next())
-                    ss << "    " << feature->URI << "\n";
+                    ss << "    " << feature->URI << std::endl;
 
-                ss << "  Creating plugin object...\n";
+                ss << "  Creating plugin object..." << std::endl;
 
                 std::clog << ss.str();
             }

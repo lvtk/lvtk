@@ -109,7 +109,6 @@ namespace lvtk {
       class iterator
       {
       public:
-
           iterator (LV2_Atom_Object* o, LV2_Atom_Property_Body* i)
               : index (i), obj (o) { }
 
@@ -135,11 +134,9 @@ namespace lvtk {
           bool operator!= (const iterator& other) const { return index != other.index; }
 
       private:
-
           friend struct AtomObject;
           LV2_Atom_Property_Body* index;
           LV2_Atom_Object*        obj;
-
       };
 
       iterator begin() const { return iterator (p_obj, lv2_atom_object_begin (&p_obj->body)); }
@@ -147,7 +144,6 @@ namespace lvtk {
 
    private:
       LV2_Atom_Object* p_obj;
-
    };
 
 
@@ -170,6 +166,9 @@ namespace lvtk {
 
       /** Create an Atom from a CType reference */
       Atom (const LV2_Atom& ref) : p_atom (&ref) { }
+
+      /** Create an Atom from an AtomObject */
+      Atom (const AtomObject& o) : p_atom ((const LV2_Atom*) o.cobj()) { }
 
       /** Pad a size to 64 bits */
       inline static uint32_t pad_size (uint32_t size) { return lv2_atom_pad_size (size); }
