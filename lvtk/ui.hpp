@@ -103,10 +103,14 @@ namespace lvtk
             m_wfunc = s_wfunc;
             m_features = s_features;
             m_bundle_path = s_bundle_path;
+            m_uri = s_uri;
+
             s_ctrl = 0;
             s_wfunc = 0;
             s_features = 0;
             s_bundle_path = 0;
+            s_uri = 0;
+
             if (m_features)
             {
                 FeatureHandlerMap hmap;
@@ -125,21 +129,38 @@ namespace lvtk
             }
         }
 
-        /** Override this if you want your UI to do something when a control port
-            value changes in the plugin instance. */
-        inline void
-        port_event (uint32_t port, uint32_t buffer_size, uint32_t format,
-                    void const* buffer)
-        {
-        }
+        /** Get the controller
+            @return Instance this UI is controlling
+            @remarks You only need it if you want to handle extensions
+            yourself.
+         */
+        inline void* controller() { return m_ctrl; }
+
+        /** Handle port events
+
+            Override this if you want your UI to do something when a control port
+            value changes in the plugin instance.
+
+            @param port The port index
+            @param buffer_size The port buffer size
+            @param format The data format
+            @param buffer Port data
+         */
+        inline void port_event (uint32_t /*port*/, uint32_t /*buffer_size*/,
+                                uint32_t /*format*/, void const* /*buffer*/)
+        { }
+
+        /** Get this UI's URI
+            @return The UI uri
+         */
+        inline const char* uri() const { return m_uri.c_str(); }
 
         /** Use this template function to register a class as a LV2 UI.
 
             @param uri The UIs URI
             @return Descriptor index
          */
-        static int
-        register_class(char const* uri)
+        static int register_class(char const* uri)
         {
             LV2UI_Descriptor desc;
             std::memset (&desc, 0, sizeof(LV2UI_Descriptor));
@@ -154,57 +175,34 @@ namespace lvtk
         }
 
     protected:
-
         /** Send a chunk of data to a plugin port. The format of the chunk is
             determined by the port type and the transfer mechanisms used, you
             should probably use a wrapper function instead such as write_control().
          */
-        inline void
-        write (uint32_t port, uint32_t buffer_size, uint32_t format,
-               void const* buffer)
+        inline void write (uint32_t port, uint32_t buffer_size,
+                           uint32_t format, void const* buffer)
         {
             (*m_wfunc)(m_ctrl, port, buffer_size, format, buffer);
         }
 
         /** Set the value of a control input port in the plugin instance. */
-        inline void
-        write_control (uint32_t port, float value)
+        inline void write_control (uint32_t port, float value)
         {
-            write(port, sizeof(float), 0, &value);
+            this->write (port, sizeof(float), 0, &value);
         }
 
         /** Get the feature array
+
             @return The host-passed Feature array
             @remarks This may only be valid while the constructor
             is running.
         */
-        inline Feature const* const *
-        features()
-        {
-            return m_features;
-        }
+        inline Feature const* const* features() { return m_features; }
 
         /** Get the filesystem path to the bundle that contains this UI. */
-        inline char const*
-        bundle_path() const
-        {
-            return m_bundle_path;
-        }
-
-    public:
-        /** Get the controller
-            @return Instance this UI is controlling
-            @remarks You only need it if you want to handle extensions
-            yourself.
-         */
-        inline void*
-        controller()
-        {
-            return m_ctrl;
-        }
+        inline char const* bundle_path() const { return m_bundle_path; }
 
     private:
-
         // This is quite ugly but needed to allow these mixins to call
         // protected functions in the UI class, which we want.
 #if defined (LVTK_EXTRAS_ENABLED)
@@ -232,6 +230,7 @@ namespace lvtk
             s_wfunc = write_func;
             s_features = features;
             s_bundle_path = bundle_path;
+            s_uri = descriptor->URI;
 
             /** Write some debug information */
             if (LVTK_DEBUG)
@@ -288,12 +287,13 @@ namespace lvtk
         LV2UI_Write_Function m_wfunc;
         lvtk::Feature const* const * m_features;
         char const* m_bundle_path;
+        std::string m_uri;
 
         static void* s_ctrl;
         static LV2UI_Write_Function s_wfunc;
         static lvtk::Feature const* const * s_features;
         static char const* s_bundle_path;
-
+        static char const* s_uri;
     };
 
     /* Yes, static variables are messy. */
@@ -313,10 +313,14 @@ namespace lvtk
                 Ext6, Ext7, Ext8, Ext9>::s_features = 0;
 
     template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
-            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
+             class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
         char const* UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8,
                 Ext9>::s_bundle_path = 0;
 
+    template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
+             class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
+        char const* UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8,
+                Ext9>::s_uri = 0;
 }
 
 #endif /* LVTK_UI_HPP */
