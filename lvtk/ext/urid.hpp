@@ -48,6 +48,7 @@ namespace lvtk
             static void
             map_feature_handlers (FeatureHandlerMap& hmap)
             {
+
                 hmap[LV2_URID__map]   = &I<Derived>::handle_map_feature;
                 hmap[LV2_URID__unmap] = &I<Derived>::handle_unmap_feature;
             }

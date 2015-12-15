@@ -30,12 +30,12 @@
 #include <vector>
 
 #include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-
 #include <lvtk/feature.hpp>
 #include <lvtk/ext/common.h>
 #include <lvtk/ext/bufsize.hpp>
 #include <lvtk/ext/resize_port.hpp>
 #include <lvtk/ext/state.hpp>
+#include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/worker.hpp>
 
 #include "private/debug.hpp"
@@ -162,7 +162,8 @@ namespace lvtk {
                                              Ext7, Ext8, Ext9>
     {
     public:
-
+        static void
+        dummy_feature (void* instance, void* data) { }
         /** This constructor is needed to initialise the port vector with the
             correct number of ports, and to check if all the required features
             are provided. This must be called as the first item in the
@@ -170,26 +171,25 @@ namespace lvtk {
             @param ports The number of ports in this plugin.
          */
         Plugin (uint32_t ports)
-            : m_ports(ports, 0), m_ok(true)
+            : m_ports (ports, 0),
+              m_ok(true)
         {
             m_features = s_features;
             m_bundle_path = s_bundle_path;
             s_features = 0;
             s_bundle_path = 0;
 
+            FeatureHandlerMap hmap;
+
             if (m_features)
             {
-                FeatureHandlerMap hmap;
                 Derived::map_feature_handlers (hmap);
-
-                for (const Feature* const* iter = m_features; *iter != 0; ++iter)
-                {
+                FeatureIter feats (m_features);
+                while (const Feature* iter = feats.next()) {
                     FeatureHandlerMap::iterator miter;
-                    miter = hmap.find((*iter)->URI);
-
-                    if (miter != hmap.end())
-                    {
-                        miter->second (static_cast<Derived*>(this), (*iter)->data);
+                    miter = hmap.find (iter->URI);
+                    if (miter != hmap.end()) {
+                        miter->second (static_cast<Derived*>(this), iter->data);
                     }
                 }
             }

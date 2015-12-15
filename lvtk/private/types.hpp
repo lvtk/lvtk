@@ -79,7 +79,6 @@ namespace lvtk {
     struct MixinTree
         : E1::template I<A>, MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9>
     {
-
         typedef MixinTree<A, E2, E3, E4, E5, E6, E7, E8, E9> Parent;
 
         /** @internal
