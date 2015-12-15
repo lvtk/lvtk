@@ -19,13 +19,13 @@ builduis = bld.env.BUILD_EXAMPLE_UIS
 if buildme:
 	examples = ["workhorse", "silence", "beep"]
 	first_plugin = True
-	
+
 	for slug in examples:
-		
-		bld(rule="../build/tools/ttl2c ${SRC} ${TGT}", \
+
+		bld(rule="ttl2c ${SRC} ${TGT}", \
 			source=slug+'.ttl', \
 			target=slug+'.h')
-	
+
 		bld.add_group()
 
 		res = ["%s.ttl" % slug]
@@ -44,11 +44,11 @@ if buildme:
 			use           = bld.env.LIB_LVTK_PLUGIN,
 			LIB_EXT		  = bld.env.pluginlib_EXT
 		)
-		
+
 		# Build the plugin gui (if able)
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
-		
+
 		if builduis and bld.path.find_resource(uisrc):
 			ui = bld.shlib(
 				lv2_bundle	  =	True,
