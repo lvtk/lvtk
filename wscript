@@ -60,9 +60,9 @@ def configure (conf):
     conf.write_config_header ('version.h')
 
     conf.check_inline()
-    conf.check_lv2 ("1.10.0")
+    conf.check_lv2 ("1.15.0")
     autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="gtkmm", \
-                             atleast_version="2.20.0", mandatory=False)
+                       atleast_version="2.20.0", mandatory=False)
 
     # Setup the Environment
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples or len(conf.env.TTL2C) == 0

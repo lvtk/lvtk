@@ -92,7 +92,6 @@ namespace lvtk
                                          Ext7, Ext8, Ext9>
     {
     public:
-
         /** @internal
             The constructor for the UI class. You should never use it directly.
          */
