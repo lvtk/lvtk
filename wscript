@@ -61,8 +61,11 @@ def configure (conf):
 
     conf.check_inline()
     conf.check_lv2 ("1.10.0")
+
     autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="gtkmm", \
                              atleast_version="2.20.0", mandatory=False)
+    autowaf.check_pkg (conf, "gtkmm-3.0", uselib_store="gtkmm3", \
+                             atleast_version="3.20.0", mandatory=False)
 
     # Setup the Environment
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples or len(conf.env.TTL2C) == 0
@@ -121,6 +124,12 @@ def build (bld):
                 'VERSION'             : LVTK_VERSION,
                 'THELIB'              : LIB_LVTK_UI,
                 'LVTK_PKG_DEPS'       : 'lv2 gtkmm-2.4'})
+        if bld.env.LIB_gtkmm3:
+            autowaf.build_pc(bld, 'LVTK-GTK3UI', LVTK_VERSION, pcvers, [],
+                {'LVTK_MAJOR_VERSION' : LVTK_MAJOR_VERSION,
+                'VERSION'             : LVTK_VERSION,
+                'THELIB'              : LIB_LVTK_UI,
+                'LVTK_PKG_DEPS'       : 'lv2 gtkmm-3.0'})
 
     bld.add_group()
 

@@ -1,0 +1,11 @@
+prefix=@PREFIX@
+exec_prefix=@EXEC_PREFIX@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@
+
+Name: lvtk-gtk3ui
+Version: @VERSION@
+Description: LV2 Toolkit Gtk3UI 
+Requires: @LVTK_PKG_DEPS@
+Libs: -L${libdir} -l@THELIB@
+Cflags: -Wl,-z,nodelete -I${includedir}/lvtk-@LVTK_MAJOR_VERSION@
