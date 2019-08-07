@@ -1,27 +1,3 @@
-/**
-  workhorse.cpp  -  LV2 Toolkit - Plugin Example
-
-  Copyright (C) 2012  Michael Fisher <mfisher31@gmail.com>
-
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License as
-  published by the Free Software Foundation; either version 2 of
-  the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
- */
-/**
- * @file workhorse.cpp
- * Demonstration of LV2 Worker, LV2 URID, LV2 Options, and LV2 Log in C++
- */
 
 #include <unistd.h>
 #include <iostream>
@@ -30,35 +6,29 @@
 #include <cstdlib>
 
 #include <lvtk/plugin.hpp>
-
-/* This is a ttl2c generated header */
-#include "workhorse.h"
+#include <lvtk/ext/atom.hpp>
+#include <lv2/log/log.h>
+#include <lvtk/ext/worker.hpp>
 
 using namespace lvtk;
 using std::vector;
 
-
-
-
-class Workhorse;
-typedef lvtk::Plugin<Workhorse, URID<true>, Options<false>, BufSize<false>,
-                                Log<false>, Worker<true> >  PluginType;
-
-class Workhorse : public PluginType
+class Workhorse : public Instance
 {
 public:
-
-    Workhorse (double rate)
-        : PluginType (p_n_ports),
+    Workhorse (double rate, const String& path, const FeatureList& features)
+        : Instance (rate, path, features),
           m_sleeping (false),
           log_Entry (map (LV2_LOG__Entry)),
           log_Trace (map (LV2_LOG__Trace)),
           bufsize (0)
     { }
 
-    void
-    activate()
+    void deactivate()  { }
+    void connect_port (uint32_t, void* data)  {}
+    void activate() 
     {
+        #if 0
         // query for buffer information.
         const BufferInfo& info (get_buffer_info());
         std::stringstream ss;
@@ -70,26 +40,23 @@ public:
            << "\tBuffer Max:      " << info.max << std::endl
            << "\tSequence Size:   " << info.sequence_size << std::endl;
         printf (log_Entry, ss.str().c_str());
+        #endif
     }
 
-    void
-    run(uint32_t nframes)
+    void run (uint32_t nframes) 
     {
         static const char* msg = "go to sleep";
 
         if (! m_sleeping)
         {
-            /** Schedule a job with msg as the data */
-            WorkerStatus status (schedule_work (strlen(msg) + 1, (void*)msg));
-
-            switch (status)
+            switch (schedule_work (strlen (msg) + 1, (void*) msg))
             {
             case WORKER_SUCCESS:
-                printf (log_Trace, "[workhorse] scheduled a job\n");
+                // printf (log_Trace, "[workhorse] scheduled a job\n");
                 m_sleeping = true;
                 break;
             default:
-                printf (log_Trace, "[workhorse] unknown scheduling error\n");
+                // printf (log_Trace, "[workhorse] unknown scheduling error\n");
                 break;
             }
         }
@@ -99,11 +66,11 @@ public:
 
     /** This is executed by the host after work executes a respond
         object. */
-    WorkerStatus
-    work_response (uint32_t size, const void* body)
+    WorkerStatus work_response (uint32_t size, const void* body)
     {
         /** Print message with LV2 Log */
-        printf (log_Trace, "[workhorse] woke up. message: %s\n", (char*)body);
+        // printf (log_Trace, "[workhorse] woke up. message: %s\n", (char*)body);
+        std::clog << "scheduled_work \n";
         m_sleeping = false;
         return WORKER_SUCCESS;
     }
@@ -111,34 +78,36 @@ public:
     /** Do some work ...
         This gets called from the host after schedule_work
         is called in run */
-    WorkerStatus
-    work (WorkerRespond &respond, uint32_t  size, const void*  data)
+    WorkerStatus work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
         /** Print message with LV2 Log's printf */
-        printf (log_Entry, "[workhorse] taking a nap now\n");
-        sleep (10);
+        // printf (log_Entry, "[workhorse] taking a nap now\n");
+        sleep (1);
+
+        std::clog << "working.... " << std::endl;
 
         /** Send a response */
         respond (size, data);
         return WORKER_SUCCESS;
     }
 
-    uint32_t
-    get_options (Option*)
+    WorkerStatus end_run()  { return WORKER_SUCCESS; }
+
+#if 0
+    uint32_t get_options (Option*)
     {
         // Don't have a host for this yet
         return OPTIONS_SUCCESS;
     }
 
-    uint32_t
-    set_options (const Option*)
+    uint32_t set_options (const Option*)
     {
         // Don't have a host for this yet
         return OPTIONS_SUCCESS;
     }
+#endif
 
 private:
-
     bool m_sleeping;
 
     /** This is used for LV2 Log demonstration */
@@ -146,8 +115,7 @@ private:
     LV2_URID log_Trace;
 
     uint32_t bufsize;
-
 };
 
-static int _ = Workhorse::register_class (p_uri);
-
+static lvtk::Plugin<Workhorse> lvtk_Plugin ("http://lvtoolkit.org/plugins/workhorse");
+static lvtk::Worker<Workhorse> lvtk_Worker;

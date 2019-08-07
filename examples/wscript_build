@@ -10,40 +10,50 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details. '''
 
-import os
-import lv2
+import os, re
 
 buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
 builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
-	examples = ["workhorse", "silence", "beep"]
+	examples = [ "silence", "workhorse", "beep" ]
 	first_plugin = True
 
+	install_dir = os.path.join (bld.env.LV2DIR, 'lvtk.lv2')
+	module_pat = re.sub('^lib', '', bld.env.cxxshlib_PATTERN)
+	module_ext = module_pat[module_pat.rfind('.'):]
+	plugin_env = bld.env.derive()
+	plugin_env.cxxshlib_PATTERN = module_pat
+
 	for slug in examples:
-
-		bld(rule="ttl2c ${SRC} ${TGT}", \
-			source=slug+'.ttl', \
-			target=slug+'.h')
-
-		bld.add_group()
-
-		res = ["%s.ttl" % slug]
-		if True == first_plugin:
-			res += ["manifest.ttl.in"]
+		if first_plugin:
 			first_plugin = False
+			bld (
+				features	= 'subst',
+				source		= 'manifest.ttl.in',
+				target		= 'lvtk.lv2/manifest.ttl',
+				LIB_EXT		= module_ext,
+				install_path = install_dir
+			)
 
-		plugin = bld.shlib (
-			lv2_bundle	  =	 True,
-			lv2_resources = res,
-			lv2_target    = "lvtk.lv2",
-			name          = slug,
-			target        = slug,
-			source        = "%s.cpp" % slug,
-			includes      = ["../build/examples"],
-			use           = bld.env.LIB_LVTK_PLUGIN,
-			LIB_EXT		  = bld.env.pluginlib_EXT
+		bld (
+			features	= 'subst',
+			source		= '%s.ttl' % slug,
+			target		= 'lvtk.lv2/%s.ttl' % slug,
+			install_path = install_dir
 		)
+
+		if 'silence' == slug or 'workhorse' == slug:
+			plugin = bld.shlib (
+				cxxflags      = '-std=c++14',
+				name          = slug,
+				target        = 'lvtk.lv2/%s' % slug,
+				source        = "%s.cpp" % slug,
+				includes      = [],
+				use           = bld.env.LIB_LVTK_PLUGIN,
+				install_path  = install_dir,
+				env			  = plugin_env
+			)
 
 		# Build the plugin gui (if able)
 		uislug = slug + "_ui"

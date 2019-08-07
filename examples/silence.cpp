@@ -28,8 +28,13 @@
 #include <cstdlib>
 
 #include <lvtk/plugin.hpp>
+#include <lvtk/ext/atom.hpp>
+#include <lv2/midi/midi.h>
 
-#include "silence.h"
+#include <lvtk/feature.hpp>
+#include <lvtk/ext/state.hpp>
+#include <lvtk/ext/urid.hpp>
+#include <lvtk/ext/worker.hpp>
 
 using namespace lvtk;
 using std::vector;
@@ -38,53 +43,47 @@ using std::vector;
 #define LVTK_SILENCE_PREFIX LVTK_SILENCE_URI "#"
 #define LVTK_SILENCE_MSG LVTK_SILENCE_PREFIX "msg"
 
-class Silence : public Plugin<Silence, URID<true>, State<true> >
+class Silence : public Instance, 
+                public State
 {
 public:
-
-    Silence (double rate)
-        : Plugin<Silence, URID<true>, State<true> > (1)
+    Silence (double rate, const std::string& path, const FeatureList& features)
+        : Instance (rate, path, features)
     {
         urids.atom_String = map (LV2_ATOM__String);
-        urids.silence_msg = map (LVTK_SILENCE_MSG);
         urids.midi_type   = map (LV2_MIDI__MidiEvent);
+        urids.silence_msg = map (LVTK_SILENCE_MSG);
     }
 
-    void
-    run(uint32_t nframes)
-    {
-        float *out = p(0);
+    void activate()  {}
+    void deactivate()  {}
 
-        check_midi();
-
-        for (int i = 0; i < nframes; i++)
-        {
-            out[i] = 0.0f;
-        }
+    void connect_port (uint32_t port, void* data)  {
+        if (port == 0)
+            audio = (float*) data;
     }
 
+    void run (uint32_t nframes)  {
+        memset (audio, 0, sizeof(float) * nframes);
+    }
 
-    StateStatus
-    save (StateStore &store, uint32_t flags, const FeatureVec &features)
+    StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) 
     {
         const char* msg = "Sorry I can't hear you. Please speak up";
-
-        return store (urids.silence_msg, (void*)msg,
-                strlen(msg), urids.atom_String,
-                STATE_IS_POD | STATE_IS_PORTABLE);
+        return store (urids.silence_msg, (void*) msg,
+                      strlen (msg) + 1, urids.atom_String,
+                      STATE_IS_POD | STATE_IS_PORTABLE);
     }
 
-
-    StateStatus
-    restore (StateRetrieve &retrieve, uint32_t flags, const FeatureVec &features)
+    StateStatus restore (StateRetrieve &retrieve, uint32_t flags, const FeatureList &features) 
     {
         size_t size;
-        uint32_t type,fs;
+        uint32_t type, fs;
 
         const void *message = retrieve (urids.silence_msg, &size, &type, &fs);
         if (message)
         {
-            std::cout << "[silence] " << (char*)message << std::endl;
+            std::cout << "[lvtk] " << (char*) message << std::endl;
             return STATE_SUCCESS;
         }
 
@@ -92,12 +91,13 @@ public:
     }
 
 private:
+    float* audio = nullptr;
 
-    void
-    check_midi ()
+    void check_midi ()
     {
+        #if 0
         const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence> (p_midi);
-        LV2_ATOM_SEQUENCE_FOREACH(midiseq, ev)
+        LV2_ATOM_SEQUENCE_FOREACH (midiseq, ev)
         {
             uint32_t frame_offset = ev->time.frames;
             if (ev->body.type == urids.midi_type)
@@ -105,6 +105,7 @@ private:
                 std::cout << "MIDI\n";
             }
         }
+        #endif
     }
 
     struct SilenceURIs {
@@ -112,7 +113,11 @@ private:
         LV2_URID silence_msg;
         LV2_URID midi_type;
     } urids;
-
 };
 
-static int _ = Silence::register_class (LVTK_SILENCE_URI);
+static Plugin<Silence> lvtk_Silence (LVTK_SILENCE_URI, { 
+    LV2_URID__map } 
+);
+
+static StateInterface<Silence>   v2_State;
+static Worker<Silence>           lv2_Worker;

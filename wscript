@@ -14,9 +14,9 @@ file COPYING for more details. '''
 
 import sys
 from subprocess import call
-
+from waflib.extras import autowaf as autowaf
 sys.path.insert(0, "tools/waf")
-import autowaf, cross, lv2, git
+import cross, git
 
 LVTK_VERSION='2.0.0'
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
@@ -38,9 +38,9 @@ top = '.'
 out = 'build'
 
 def options (opts):
-    opts.load("cross compiler_c compiler_cxx lv2")
-    autowaf.set_options(opts)
-
+    opts.load("cross compiler_c compiler_cxx lv2 autowaf")
+    autowaf.set_options (opts)
+    
     opts.add_option('--disable-ui', default=False, \
         dest="disable_ui", action='store_true', help='Disable Building UI libraries')
     opts.add_option('--disable-examples', default=False, \
@@ -49,8 +49,8 @@ def options (opts):
         dest='ziptype', type='string', help='Zip type for waf dist (gz/bz2/zip) [ Default: gz ]')
 
 def configure (conf):
-    conf.load ("cross compiler_c compiler_cxx lv2 boost")
-    conf.find_program('ttl2c', mandatory=False)
+    conf.load ("cross compiler_c compiler_cxx lv2 autowaf")
+    conf.find_program ('ttl2c', mandatory=False)
 
     conf.define ("LVTK_VERSION", VERSION)
     conf.define ("LVTK_MAJOR_VERSION", LVTK_MAJOR_VERSION)
@@ -60,7 +60,7 @@ def configure (conf):
     conf.write_config_header ('version.h')
 
     conf.check_inline()
-    conf.check_lv2 ("1.15.0")
+    autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
     autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="gtkmm", \
                        atleast_version="2.20.0", mandatory=False)
 
@@ -80,17 +80,15 @@ def configure (conf):
     conf.env.LIB_LVTK_UI        = LIB_LVTK_UI
     conf.env.APPNAME            = APPNAME
 
-    autowaf.configure (conf)
-
-    autowaf.display_header( "LV2 Toolkit Configuration")
-    autowaf.display_msg(conf,"Library Version", LVTK_VERSION)
-    autowaf.display_msg(conf,"Build Plugin Library", True)
-    autowaf.display_msg(conf,"Build UI Library", not conf.env.UI_DISABLED)
-    autowaf.display_msg(conf,"Build example plugins", not conf.env.EXAMPLES_DISABLED)
-    autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
+    # autowaf.display_header( "LV2 Toolkit Configuration")
+    # autowaf.display_msg(conf,"Library Version", LVTK_VERSION)
+    # autowaf.display_msg(conf,"Build Plugin Library", True)
+    # autowaf.display_msg(conf,"Build UI Library", not conf.env.UI_DISABLED)
+    # autowaf.display_msg(conf,"Build example plugins", not conf.env.EXAMPLES_DISABLED)
+    # autowaf.display_msg(conf,"Build example UI's", conf.env.BUILD_EXAMPLE_UIS)
 
 def build (bld):
-    for subdir in ['src','examples']:
+    for subdir in ['examples']:
         bld.recurse (subdir)
         bld.add_group()
 

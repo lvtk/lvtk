@@ -1,28 +1,39 @@
 /*
     lvtk.hpp - Support file for writing LV2 plugins in C++
-    Copyright (C) 2013  Michael Fisher <mfisher31@gmail.com>
+    Copyright (C) 2013-2019  Michael Fisher <mfisher31@gmail.com>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    @@ISC@@
 */
 
-#ifndef LVTK_HPP
-#define LVTK_HPP
+#pragma once
 
-/* include the entire lvtk library (minus the plugin and ui wrappers) */
-#include "lvtk/ext/common.h"
-#include "lvtk/ext/units.hpp"
-#include "lvtk/ext/worker.hpp"
+#include <cstdlib>
+#include <vector>
 
-#endif /* LVTK_HPP */
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
+#include <lv2/worker/worker.h>
+
+namespace lvtk {
+
+using Feature       = LV2_Feature;
+using URID          = LV2_URID;
+using String        = std::string;
+using StringArray   = std::vector<String>;
+using ExtensionMap  = std::map<String, const void*>;
+
+template<class T>
+struct DesctriptorList final : public std::vector<T>
+{
+    inline ~DesctriptorList() {
+        for (const auto& desc : *this)
+            std::free ((void*) desc.URI);
+    }
+};
+
+template<typename T>
+inline void debug (const T& msg) {
+    std::clog << "[lvtk] " << msg << std::endl;
+}
+
+}

@@ -19,8 +19,7 @@
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix lvtkp: <http://lvtoolkit.org/plugins/> .
-@prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
-
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 
 <http://lvtoolkit.org/people/mfisher>
 	a foaf:Person ;
