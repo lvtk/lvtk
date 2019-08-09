@@ -16,7 +16,7 @@ buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
 builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
-	examples = [ "silence", "workhorse" ] #, "beep", "volume" ]
+	examples = [ "silence", "workhorse", "volume" ]
 	first_plugin = True
 
 	bundle = 'lvtk-examples.lv2'
@@ -58,14 +58,26 @@ if buildme:
 		# Build the plugin gui (if able)
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
-
-		if builduis and bld.path.find_resource(uisrc):
-			ui = bld.shlib (
-				name          = uislug,
-				target        = '%s/%s' % (bundle, uislug),
-				source        = uisrc,
-				cxxflags      = ['-Wl,-z,nodelete'],
-				includes      = ["../build/examples"],
-				use           = [ bld.env.LIB_LVTK_UI, "gtkmm" ],
-				LIB_EXT		  = bld.env.pluginlib_EXT
-			)
+		if builduis and bld.path.find_resource('%s' % uisrc) != None:
+			if slug != 'volume':
+				if bld.env.HAVE_GTKMM == 1:
+					bld.shlib (
+						name          = uislug,
+						target        = '%s/%s' % (bundle, uislug),
+						source        = uisrc,
+						includes      = [ "../build/examples"],
+						use           = [ 'GTKMM' ],
+						env  		  = plugin_env
+					)
+			elif slug == 'volume':
+				print "VOL"
+				if bld.env.HAVE_JUCE_GUI_BASICS == 1:
+					print "HI %s " % uislug
+					bld.shlib (
+						name          = uislug,
+						target        = '%s/%s' % (bundle, uislug),
+						source        = uisrc,
+						includes      = [ "../build/examples"],
+						use           = [ 'JUCE_GUI_BASICS' ],
+						env  		  = plugin_env
+					)

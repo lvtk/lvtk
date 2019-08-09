@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <map>
 #include <vector>
+#include <string>
 
 #include <lv2/core/lv2.h>
 #include <lv2/urid/urid.h>

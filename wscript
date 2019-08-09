@@ -18,7 +18,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 
-import sys
+import sys, os
 from subprocess import call
 from waflib.extras import autowaf as autowaf
 sys.path.insert(0, "tools/waf")
@@ -70,22 +70,20 @@ def configure (conf):
 
     conf.check_inline()
     autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
-    autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="gtkmm", atleast_version="2.20.0", mandatory=False)
+    autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="GTKMM", atleast_version="2.20.0", mandatory=False)
     
     for module in 'audio_basics gui_basics'.split():
         pkgname = 'juce_%s-5' % module if not conf.options.debug else 'juce_%s_debug-5' % module
         uselib  = 'JUCE_%s' % module.upper()
         autowaf.check_pkg (conf, pkgname, uselib_store=uselib, atleast_version="5.4.3", mandatory=False)
-
+    
+    print conf.env.HAVE_GTKMM == 1
+    print conf.env.HAVE_JUCE_GUI_BASICS == 1
+    
     # Setup the Environment
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
     conf.env.UI_DISABLED        = conf.options.disable_ui
-
-    # Example UI's depend on Gtkmm and Plugins
-    if conf.is_defined('HAVE_GTKMM') and not conf.env.EXAMPLES_DISABLED \
-        and not conf.env.UI_DISABLED:
-        conf.env.BUILD_EXAMPLE_UIS = True
-    else: conf.env.BUILD_EXAMPLE_UIS = False
+    conf.env.BUILD_EXAMPLE_UIS  = not conf.env.EXAMPLES_DISABLED and not conf.env.UI_DISABLED
 
     conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
     conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
@@ -105,6 +103,13 @@ def build (bld):
         for subdir in ['examples']:
             bld.recurse (subdir)
             bld.add_group()
+    
+    bld (
+        features    = 'subst',
+        source      = 'lvtk.lv2/manifest.ttl',
+        target      = 'lvtk.lv2/manifest.ttl',
+        install_path = os.path.join (bld.env.LV2DIR, 'lvtk.lv2')
+    )
 
     # Build PC Files
     pcvers = LVTK_MAJOR_VERSION
@@ -127,6 +132,7 @@ def build (bld):
     bld.install_files(header_base+"/lvtk", "build/version.h")
     bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
+    bld.install_files(header_base+"/lvtk/interface", bld.path.ant_glob("lvtk/interface/*.*"))
 
 def dist(ctx):
     z=ctx.options.ziptype

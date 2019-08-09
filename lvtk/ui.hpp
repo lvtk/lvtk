@@ -54,35 +54,38 @@ private:
     LV2UI_Write_Function port_write = nullptr;
 };
 
+struct InstanceArgs {
+    InstanceArgs (const String& p, const String& b, const Controller& c, const FeatureList& f)
+        : plugin(p), bundle(b), controller(c), features (f) {}
+
+    String plugin;
+    String bundle;
+    Controller controller;
+    FeatureList features;
+};
+
+template<class S, template<class> class... E>
 class Instance {
 public:
-    struct Args {
-        Args (const String& p, const String& b, const Controller& c, const FeatureList& f)
-            : plugin(p), bundle(b), controller(c), features (f)
-        String plugin;
-        String bundle;
-        Controller controller;
-        FeatureList features;
-    };
-
-    Instance (Args& args) 
-        : controller (args.controller)
+    Instance (const InstanceArgs& args) 
+        : E<S> (args.features)...,
+          controller (args.controller)
     {
         for (const auto& f : args.features) {
-            if (strcmp (f->URI, LV2_UI__parent)) {
-                parent_widget = (LV2_Widget) f->data;
+            if (strcmp (f.URI, LV2_UI__parent)) {
+                parent_widget = (LV2UI_Widget) f.data;
             }
-            else if (strcmp (f->URI, LV2_UI__portSubscribe)) {
-                subscribe = *(LV2UI_Port_Subscribe*) f->data);
+            else if (strcmp (f.URI, LV2_UI__portSubscribe)) {
+                subscribe = *(LV2UI_Port_Subscribe*) f.data;
             }
-            else if (strcmp (f->URI, LV2_UI__touch)) {
-                ui_touch = *(LV2UI_Touch*) f->data;
+            else if (strcmp (f.URI, LV2_UI__touch)) {
+                ui_touch = *(LV2UI_Touch*) f.data;
             }
-            else if (strcmp (f->URI, LV2_UI__portMap)) {
-                port_map = *(LV2UI_Port_Map*) f->data;
+            else if (strcmp (f.URI, LV2_UI__portMap)) {
+                port_map = *(LV2UI_Port_Map*) f.data;
             }
-            else if (strcmp (f->URI, LV2_UI__resize)) {
-                ui_resize = *(LV2UI_Resize*) f->data;
+            else if (strcmp (f.URI, LV2_UI__resize)) {
+                ui_resize = *(LV2UI_Resize*) f.data;
             }
         }
     }
@@ -97,23 +100,37 @@ public:
 
     uint32_t port_index (const String& symbol) const {
         if (port_map.port_index)
-            return port_map.port_index (port_map.handle, symbol.c_str())
+            return port_map.port_index (port_map.handle, symbol.c_str());
         return LV2UI_INVALID_PORT_INDEX;
     }
 
     void port_subscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
+        LV2_Feature* f [features.size() + 1];
+        for (int i = 0; i < features.size(); ++i)
+            f[i] = (LV2_Feature*)(&features[i]);
+        f[features.size()] = nullptr;
+
         if (subscribe.subscribe)
-            subscribe.subscribe (subscribe.handle, port, protocol, features)
+            subscribe.subscribe (subscribe.handle, port, protocol, f);
     }
 
     void port_unsubscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
+        LV2_Feature* f [features.size() + 1];
+        for (int i = 0; i < features.size(); ++i)
+            f[i] = (LV2_Feature*)(&features[i]);
+        f[features.size()] = nullptr;
+    
         if (subscribe.unsubscribe)
-            subscribe.unsubscribe (subscribe.handle, port, protocol, features)
+            subscribe.unsubscribe (subscribe.handle, port, protocol, f);
     }
 
     void write (uint32_t port, uint32_t size, uint32_t proto, const void* data) {
         controller.write (port, size, proto, data);
     }
+
+    int idle() { return -1; }
+    int show() { return -1; }
+    int hide() { return -1; }
 
 protected:
     const Controller controller;
@@ -121,12 +138,12 @@ protected:
 private:
     LV2UI_Widget parent_widget = nullptr;
     LV2UI_Port_Subscribe subscribe { nullptr, nullptr, nullptr };
-    LV2UI_Port_Map port_map { nullptr, nullptr; }
-    LV2UI_Touch ui_touch = { 0, 0 }
-    LV2UI_Resize ui_resize = { 0, 0 }
+    LV2UI_Port_Map port_map { nullptr, nullptr };
+    LV2UI_Touch ui_touch = { 0, 0 };
+    LV2UI_Resize ui_resize = { 0, 0 };
 };
 
-template<class InstanceType, class...E>
+template<class InstanceType>
 class UI {
 public:
     UI (const String& uri, const StringArray& required = { }) 
@@ -140,7 +157,7 @@ public:
         descriptors().push_back (desc);
 
         for (const auto& rq : required)
-            m_required.push_back (rq);
+            s_required.push_back (rq);
     }
 
     inline static void register_extension (const std::string& uri, const void* data) {
@@ -161,26 +178,21 @@ private:
     {
         const FeatureList features (feats);
         const Controller controller (ctl, write_function);
-
-        auto instance = std::unique_ptr<InstanceType> (new InstanceType (
-            plugin_uri, bundle_path, controller, features
-        ));
+        InstanceArgs args (plugin_uri, bundle_path, controller, features);
+        auto instance = std::unique_ptr<InstanceType> (new InstanceType (args));
 
         for (const auto& rq : s_required)
         {
-            std::clog << "[lvtk] " << rq << ": ";
             bool provided = false;
             for (const auto& f : features)
-                if (strcmp (f->URI, rq.c_str()) == 0)
+                if (strcmp (f.URI, rq.c_str()) == 0)
                     { provided = true; break; }
             
             if (! provided) {
-                std::clog << "error - not provided by host\n";
                 return nullptr;
             }
             else 
             {
-                std::clog << "ok";
             }
         }
 
@@ -204,11 +216,11 @@ private:
 	                         uint32_t     format,
 	                         const void*  buffer)
     {
-        (static_cast<InstanceType*>(ui))->port_event(
+        (static_cast<InstanceType*>(ui))->port_event (
             port_index, buffer_size, format, buffer);
     }
 
-    static void _extension_data (const char* uri) {
+    static const void* _extension_data (const char* uri) {
         if (strcmp (uri, LV2_UI__idleInterface)) {
             static LV2UI_Idle_Interface idle = { _idle };
             return &idle;
@@ -223,21 +235,21 @@ private:
         return e != s_extensions.end() ? e->second : nullptr;
     }
 
-    static uint32_t _show (LV2UI_Handle ui) {
-        (static_cast<InstanceType*> (ui))->show();
+    static int _show (LV2UI_Handle ui) {
+        return (static_cast<InstanceType*> (ui))->show();
     }
 
-    static uint32_t _hide (LV2UI_Handle ui) {
-        (static_cast<InstanceType*> (ui))->hide();
+    static int _hide (LV2UI_Handle ui) {
+        return (static_cast<InstanceType*> (ui))->hide();
     }
 
-    static uint32_t _idle (LV2UI_Handle ui) {
-        (static_cast<InstanceType*> (ui))->idle();
+    static int _idle (LV2UI_Handle ui) {
+        return (static_cast<InstanceType*> (ui))->idle();
     }
 };
 
-template<class PluginType> ExtensionMap Plugin<PluginType>::s_extensions = {};
-template<class PluginType> StringArray Plugin<PluginType>::s_required;
+template<class I> ExtensionMap UI<I>::s_extensions = {};
+template<class I> StringArray  UI<I>::s_required;
 
 }}
 
