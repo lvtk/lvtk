@@ -26,22 +26,12 @@
 
 #include <iostream>
 #include <vector>
-#include <cstdlib>
 
 #include <lvtk/plugin.hpp>
-
-#include <lvtk/ext/atom.hpp>
-#include <lv2/midi/midi.h>
-#include <lvtk/feature.hpp>
-#include <lvtk/ext/state.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/ext/worker.hpp>
 
 #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 
 namespace lvtk {
-
-using std::vector;
 
 class Volume : public Instance<Volume>
 {
