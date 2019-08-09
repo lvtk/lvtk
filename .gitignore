@@ -19,3 +19,5 @@ lvtk.files
 lvtk.includes
 
 /legacy/
+
+/.vscode/settings.json

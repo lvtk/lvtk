@@ -1,48 +1,55 @@
-/*
-    This file is part of LV2 Toolkit
-    Copyright (C) 2012-2019 Michael Fisher <mfisher31@gmail.com>
+/* 
+     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
-    @@ISC@@
- */
+     Permission to use, copy, modify, and/or distribute this software for any
+     purpose with or without fee is hereby granted, provided that the above
+     copyright notice and this permission notice appear in all copies.
+
+     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+     WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+     MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+     ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+     WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
 #pragma once
 
-#include <cstring>
 #include <lv2/worker/worker.h>
 
 namespace lvtk {
 
 /** Convenience enum to get LV2_Worker_Status into a C++ namespace */
 typedef enum {
-    WORKER_SUCCESS      = LV2_WORKER_SUCCESS,      /**< Work Completed. */
-    WORKER_ERR_UNKNOWN  = LV2_WORKER_ERR_UNKNOWN,  /**< Unknown error. */
-    WORKER_ERR_NO_SPACE = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
+    WORKER_SUCCESS          = LV2_WORKER_SUCCESS,      /**< Work Completed. */
+    WORKER_ERR_UNKNOWN      = LV2_WORKER_ERR_UNKNOWN,  /**< Unknown error. */
+    WORKER_ERR_NO_SPACE     = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
 } WorkerStatus;
 
 
-/**
-    Worker reponse. This wraps an LV2_Worker_Respond_Function
-     and exeucutes via operator ()
-   */
-struct WorkerRespond {
-    WorkerRespond(LV2_Handle instance,
-                  LV2_Worker_Respond_Function wrfunc,
-                  LV2_Worker_Respond_Handle handle)
-         : p_instance(instance),
-         p_handle(handle), 
-         p_wrfunc (wrfunc) 
-   { }
+/** Worker reponse. 
+    This wraps an LV2_Worker_Respond_Function and exeucutes via operator ()
+  */
+struct WorkerRespond
+{
+     WorkerRespond (LV2_Handle                  instance,
+                    LV2_Worker_Respond_Function wrfunc,
+                    LV2_Worker_Respond_Handle   handle)
+            : p_instance (instance),
+              p_handle (handle), 
+              p_wrfunc (wrfunc) 
+    { }
 
-   /**
-       Execute the worker retrieval functor.
-         @param size
-         @param data
-         @return WORKER_SUCCESS on success
-      */
-   WorkerStatus operator () (uint32_t size, const void* data) const
-   {
-      return (WorkerStatus) p_wrfunc (p_handle, size, data);
-   }
+    /** Execute the worker retrieval functor.
+        @param size
+        @param data
+        @return WORKER_SUCCESS on success
+     */
+    WorkerStatus operator() (uint32_t size, const void* data) const
+    {
+        return (WorkerStatus) p_wrfunc (p_handle, size, data);
+    }
 
 private:
     LV2_Handle                        p_instance;
@@ -50,61 +57,21 @@ private:
     LV2_Worker_Respond_Function       p_wrfunc;
 };
 
-template<class InstanceType>
-struct Worker
+
+struct Scheduler : StackExtension<LV2_Worker_Schedule>
 {
-   Worker()
-   {
-      static const LV2_Worker_Interface worker = 
-         { _work, _work_response, _end_run };
-      
-      Plugin<InstanceType>::register_extension (
-         LV2_WORKER__interface, &worker );
-   }
+    Scheduler() : StackExtension<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}
+    
+    WorkerStatus schedule_work (uint32_t size, const void* data) const {
+        auto& ext = this->data;
+        if (ext.schedule_work)
+            return (WorkerStatus) ext.schedule_work (ext.handle, size, data);
+        return WORKER_ERR_UNKNOWN; 
+    }
 
-   /** @internal */
-   static LV2_Worker_Status _work (LV2_Handle               instance,
-                                    LV2_Worker_Respond_Function respond,
-                                    LV2_Worker_Respond_Handle   handle,
-                                    uint32_t                    size,
-                                    const void*                 data)
-   {
-      InstanceType* plugin = reinterpret_cast<InstanceType*>(instance);
-      WorkerRespond wrsp (instance, respond, handle);
-      return (LV2_Worker_Status)plugin->work(wrsp, size, data);
-   }
-
-   /** @internal */
-   static LV2_Worker_Status _work_response (LV2_Handle  instance,
-                                             uint32_t    size,
-                                             const void* body)
-   {
-      InstanceType* plugin = reinterpret_cast<InstanceType*>(instance);
-      return (LV2_Worker_Status)plugin->work_response (size, body);
-   }
-
-   /** @internal */
-   static LV2_Worker_Status _end_run (LV2_Handle instance)
-   {
-      InstanceType* plugin = reinterpret_cast<InstanceType*>(instance);
-      return (LV2_Worker_Status)plugin->end_run();
-   }
-};
-
-struct WorkerSchedule 
-{
-    WorkerStatus operator() (uint32_t size, const void* data) const {
-      if (worker.schedule_work)
-         return (WorkerStatus) worker.schedule_work (worker.handle, size, data);
-      return WORKER_ERR_UNKNOWN; 
-   }
-
-   void set_feature (const Feature& feature) {
-      worker = *(LV2_Worker_Schedule*) feature.data;
-   }
-
-private:
-   LV2_Worker_Schedule worker;
+    WorkerStatus operator() (uint32_t size, const void* buffer) const {
+        return schedule_work (size, buffer);
+    }
 };
 
 } /* namespace lvtk */

@@ -1,46 +1,44 @@
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
 #pragma once
 
 #include <lvtk/lvtk.hpp>
-#include <lvtk/feature.hpp>
-#include <lvtk/ext/bufsize.hpp>
-#include <lvtk/ext/log.hpp>
-#include <lvtk/ext/state.hpp>
-#include <lvtk/ext/worker.hpp>
+#include <lvtk/ext/atom.hpp>
 
 namespace lvtk {
 
-class Instance
+template<class S, template<class> class... E>
+class Instance : public E<S>...
 {
 protected:
-    Instance () = delete;
+    Instance () = default;
 
 public:
     Instance (double sample_rate, const String& bundle_path, const FeatureList& features)
-        : m_sample_rate (sample_rate), m_bundle_path (bundle_path)
+        : E<S> (features)...
     {
+        LV2_URID_Map* p_map = nullptr;
         for (const auto& f : features)
         {
-            if (strcmp (f->URI, LV2_URID__map) == 0 || 
-                strcmp (f->URI, LV2_URID__unmap) == 0)
-            {
-                dictionary.set_feature (*f);
+            if (strcmp (f.URI, LV2_URID__map) == 0) {
+                map.set_feature (f);
+                if (auto* const m = map.c_obj())
+                    forge.init (m);
             }
-
-            if (strcmp (f->URI, LV2_LOG__log))
-                logger.set_feature (*f);
-            
-            if (strcmp (f->URI, LV2_WORKER__schedule) == 0)
-                schedule_work_impl.set_feature (*f);
-
-           #if 0
-            if (strcmp (LV2_BUF_SIZE__boundedBlockLength, f->URI) == 0 ||
-                strcmp (LV2_BUF_SIZE__powerOf2BlockLength, f->URI) == 0 ||
-                strcmp (LV2_BUF_SIZE__fixedBlockLength, f->URI) == 0)
-            {
-                bufsize.set_feature (*f);
-            }
-           #endif
         }
     }
     
@@ -52,34 +50,25 @@ public:
     void deactivate() {}
     void cleanup() { }
 
-    //=========================================================================
-    const Dictionary& get_dictionary() const { return dictionary; }
-    URID map (const String& uri) const { return dictionary.map (uri); }
-    String unmap (URID urid) const { return dictionary.unmap (urid); }
-
-    //=========================================================================
-    StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
-    StateStatus restore (StateRetrieve &retrieve, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
-
-    //=========================================================================
-    uint32_t schedule_work (uint32_t size, const void* data) { return schedule_work_impl (size, data); }
-    WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { return WORKER_SUCCESS; }
-    WorkerStatus work_response (uint32_t size, const void* body) { return WORKER_SUCCESS; }
-    WorkerStatus end_run() { return WORKER_SUCCESS; }
-
-    //=========================================================================
-    const Log& get_log() const { return logger; }
-
 protected:
-    double sample_rate() const         { return m_sample_rate; }
-    const String& bundle_path() const  { return m_bundle_path; }
+    Map map;
+    AtomForge   forge;
 
 private:
     double m_sample_rate;
     String m_bundle_path;
-    Dictionary dictionary;
-    WorkerSchedule schedule_work_impl;
-    Log logger;
+
+    friend class Plugin<S>; //<< so this can be private
+    static void map_extension_data (ExtensionMap& em) {
+        using pack_context = std::vector<int>;
+        pack_context { (E<S>::map_extension_data (em) , 0)... };
+    }
 };
 
 }
+
+#include <lvtk/interface/interface.hpp>
+#include <lvtk/interface/bufsize.hpp>
+#include <lvtk/interface/log.hpp>
+#include <lvtk/interface/state.hpp>
+#include <lvtk/interface/worker.hpp>

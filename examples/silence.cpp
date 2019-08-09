@@ -23,28 +23,29 @@
    Demonstrates LV2 URID mapping, Log, and State Save/Restore
  */
 
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 
 #include <lvtk/plugin.hpp>
+
 #include <lvtk/ext/atom.hpp>
 #include <lv2/midi/midi.h>
-
 #include <lvtk/feature.hpp>
 #include <lvtk/ext/state.hpp>
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/worker.hpp>
 
-using namespace lvtk;
-using std::vector;
-
 #define LVTK_SILENCE_URI "http://lvtoolkit.org/plugins/silence"
 #define LVTK_SILENCE_PREFIX LVTK_SILENCE_URI "#"
 #define LVTK_SILENCE_MSG LVTK_SILENCE_PREFIX "msg"
 
-class Silence : public Instance, 
-                public State
+namespace lvtk {
+
+using std::vector;
+
+class Silence : public Instance<Silence, State, Log, BufSize>
 {
 public:
     Silence (double rate, const std::string& path, const FeatureList& features)
@@ -53,10 +54,13 @@ public:
         urids.atom_String = map (LV2_ATOM__String);
         urids.midi_type   = map (LV2_MIDI__MidiEvent);
         urids.silence_msg = map (LVTK_SILENCE_MSG);
+        auto info = buffer_details();
+        int i =0;
+        log.printf (urids.atom_String, "hello world! Could you hear me?");
     }
 
-    void activate()  {}
-    void deactivate()  {}
+    void activate()  { }
+    void deactivate()  { }
 
     void connect_port (uint32_t port, void* data)  {
         if (port == 0)
@@ -67,7 +71,7 @@ public:
         memset (audio, 0, sizeof(float) * nframes);
     }
 
-    StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) 
+    StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features)
     {
         const char* msg = "Sorry I can't hear you. Please speak up";
         return store (urids.silence_msg, (void*) msg,
@@ -115,9 +119,11 @@ private:
     } urids;
 };
 
-static Plugin<Silence> lvtk_Silence (LVTK_SILENCE_URI, { 
-    LV2_URID__map } 
+using SilencePlugin = Plugin<Silence>;
+static SilencePlugin silence (
+    LVTK_SILENCE_URI, {
+        LV2_URID__map , LV2_WORKER__schedule
+    }
 );
 
-static StateInterface<Silence>   v2_State;
-static Worker<Silence>           lv2_Worker;
+}

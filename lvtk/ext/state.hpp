@@ -1,26 +1,23 @@
-/*
-    state.hpp - support file for writing LV2 plugins in C++
-    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
- */
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
 #pragma once
 
 #include <cassert>
-#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lv2/state/state.h>
 
 namespace lvtk {
 
@@ -72,23 +69,24 @@ typedef enum {
 
 /** Wrapper struct for state retrieval. This wraps an
     LV2_State_Retrieve_Function and exeucutes via operator () */
-struct StateRetrieve {
-    StateRetrieve(LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
-        : p_handle(handle), p_srfunc(srfunc) { }
+struct StateRetrieve
+{
+    StateRetrieve (LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
+        : p_handle (handle), p_srfunc (srfunc) { }
 
-    /**
-         Execute the retrieve functor.
+    /** Execute the retrieve functor.
         @param key
         @param size
         @param type
         @param flags
         @return Associate 'value' data for the given key
-        */
-    const void* operator () (uint32_t key, size_t *size  = 0,
-            uint32_t *type  = 0,
-            uint32_t *flags = 0) const
+      */
+    const void* operator () (uint32_t key, 
+                             size_t *size = nullptr,
+                             uint32_t *type  = nullptr,
+                             uint32_t *flags = nullptr) const
     {
-        return p_srfunc(p_handle, key, size, type, flags);
+        return p_srfunc (p_handle, key, size, type, flags);
     }
 
 private:
@@ -96,10 +94,9 @@ private:
     LV2_State_Retrieve_Function   p_srfunc;
 };
 
-/* A little redundant */
-
 /**  Wrapper struct for state storage. This wraps an
-     LV2_State_Store_Function and exeucutes via operator () */
+     LV2_State_Store_Function and exeucutes via operator () 
+ */
 struct StateStore
 {
     StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
@@ -124,62 +121,6 @@ struct StateStore
 private:
     LV2_State_Handle              p_handle;
     LV2_State_Store_Function      p_ssfunc;
-};
-  
-/**
- * The State Interface
- * @headerfile lvtk/ext/state.hpp
- * @see The internal struct I for API details
- * @ingroup pluginmixins
- */
-template<class InstanceType>
-class StateInterface
-{   
-public:
-    StateInterface()
-    {
-        static const LV2_State_Interface s_state = { _save, _restore };
-        Plugin<InstanceType>::register_extension (
-            LV2_STATE__interface, &s_state);
-    }
-
-private:
-    /** @internal */
-    static LV2_State_Status _save (LV2_Handle instance,
-                LV2_State_Store_Function      store_function,
-                LV2_State_Handle              state_handle,
-                uint32_t                      flags,
-                const LV2_Feature *const * features)
-    {
-        auto* const plugin = reinterpret_cast<InstanceType*> (instance);
-        StateStore store (store_function, state_handle);
-        FeatureList flist (features);
-        return (LV2_State_Status) plugin->save (store, flags, flist);
-    }
-
-    /** @internal - called from host */
-    static LV2_State_Status _restore(LV2_Handle                  instance,
-            LV2_State_Retrieve_Function retrieve,
-            LV2_State_Handle            handle,
-            uint32_t                    flags,
-            const LV2_Feature *const *  features)
-    {
-        auto* plugin = reinterpret_cast<InstanceType*>(instance);
-        StateRetrieve sr (retrieve, handle);
-        FeatureList feature_set (features);
-        return (LV2_State_Status) plugin->restore (sr, flags, feature_set);
-    }
-};
-
-class State
-{
-protected:
-    State() = default;
-
-public:
-    virtual ~State() = default;
-    virtual StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) =0;
-    virtual StateStatus restore (StateRetrieve &retrieve, uint32_t flags, const FeatureList &features) =0;
 };
 
 } /* namespace lvtk */

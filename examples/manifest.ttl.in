@@ -65,4 +65,13 @@ lvtkp:workhorse
 	a ui:GtkUI;
 	ui:binary <beep_ui@LIB_EXT@> ;
 	rdfs:seeAlso <beep.ttl> .
- 
+
+lvtkp:volume
+	a lv2:Plugin ;
+	lv2:binary <volume@LIB_EXT@> ;
+	rdfs:seeAlso <volume.ttl> .
+
+<http://lvtoolkit.org/plugins/volume#ui>
+	a ui:GtkUI ;
+	ui:binary <volume_ui@LIB_EXT@> ;
+	rdfs:seeAlso <volume.ttl> .

@@ -8,12 +8,12 @@
 #include <lvtk/plugin.hpp>
 #include <lvtk/ext/atom.hpp>
 #include <lv2/log/log.h>
-#include <lvtk/ext/worker.hpp>
 
-using namespace lvtk;
+namespace lvtk {
+
 using std::vector;
 
-class Workhorse : public Instance
+class Workhorse : public Instance<Workhorse, Worker>
 {
 public:
     Workhorse (double rate, const String& path, const FeatureList& features)
@@ -117,5 +117,13 @@ private:
     uint32_t bufsize;
 };
 
-static lvtk::Plugin<Workhorse> lvtk_Plugin ("http://lvtoolkit.org/plugins/workhorse");
-static lvtk::Worker<Workhorse> lvtk_Worker;
+#if 1
+
+
+static Plugin<Workhorse> workhorse ("http://lvtoolkit.org/plugins/workhorse", {
+    LV2_URID__map, LV2_WORKER__schedule
+});
+
+#endif
+
+}

@@ -3,7 +3,7 @@ exec_prefix=@EXEC_PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: lvtk
+Name: LVTK
 Version: @VERSION@
 Description: LV2 Toolkit Plugin Library
 Requires: @LVTK_PKG_DEPS@

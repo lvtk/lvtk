@@ -1,26 +1,72 @@
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
 #pragma once
 
 #include <map>
-#include <lvtk/lvtk.hpp>
-#include <lvtk/dictionary.hpp>
+#include <lvtk/ext/urid.hpp>
+#include <lvtk/feature.hpp>
 
+/** LV2 Plugin Implementation
+    
+    Only include this in a file that implements an LV2 Plugin
+    via the Instance API.
+
+    Plugin descriptors are registered on the stack at the global scope.
+    For example...
+    
+    @code
+        using MyPlugin = lvtk::Plugin<MyInstance>;
+        
+        static MyPlugin silence (
+            LVTK_SILENCE_URI,           //< MyPlugin's URI String
+            {                            
+                LV2_URID__map,          //< List of required host features
+                LV2_WORKER__schedule
+            }
+        );
+    @code
+
+    If you are using this library in a host, include individual
+    headers from the ext directory.
+
+    Same policy for the interface directory, including any thing
+    there will result in a mess of compiler errors.  Interfaces
+    are for implementing features on a plugin instance only
+ */
+ 
 namespace lvtk {
 
-using PluginDescriptors = DesctriptorList<LV2_Descriptor>;
+using PluginDescriptors = DescriptorList<LV2_Descriptor>;
 
 static PluginDescriptors& descriptors() {
     static PluginDescriptors s_descriptors;
     return s_descriptors;
 }
 
-template<class InstanceType>
+template<class I>
 class Plugin
 {
 public:
-    Plugin (const char* uri, const StringArray& required = StringArray()) {
+    using PluginInstance = I;
+    
+    Plugin (const char* plugin_uri, const StringArray& required = StringArray())
+    {
         LV2_Descriptor desc;
-        desc.URI = strdup (uri);
+        desc.URI = strdup (plugin_uri);
         desc.instantiate    = _instantiate;
         desc.connect_port   = _connect_port;
         desc.activate       = _activate;
@@ -30,14 +76,22 @@ public:
         desc.extension_data = _extension_data;
         descriptors().push_back (desc);
 
-        for (const auto& req : required)
+        for (const auto& req : required) {
             s_required.push_back (req);
+        }
+
+        PluginInstance::map_extension_data (s_extensions);
     }
 
     ~Plugin() = default;
 
+    /** Helper to register extension data but not have to implement
+        the Interface API in this library.
+
+        @param uri      The uri of your feature.
+        @param data     Pointer to static extension data.
+     */
     static void register_extension (const std::string& uri, const void* data) {
-        std::clog << "reg: " << uri << std::endl;
         s_extensions[uri] = data;
     }
 
@@ -45,58 +99,53 @@ private:
     static ExtensionMap s_extensions;
     static StringArray  s_required;
 
-    LV2_Worker_Schedule worker;
-
     static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
 	                                double                         sample_rate,
 	                                const char *                   bundle_path,
 	                                const LV2_Feature *const *     features)
     {
-        const FeatureList feature_list (features);
-        auto instance = std::unique_ptr<InstanceType> (
-            new InstanceType (sample_rate, bundle_path, feature_list));
+       #ifndef NDEBUG
+        #define debug(expr) std::clog << expr
+       #else
+        #define debug(expr)
+       #endif
 
-        std::clog << "[lvtk] checking required features" << std::endl;
-        for (const auto& rq : s_required)
-        {
-            std::clog << "[lvtk] " << rq << ": ";
+        const FeatureList host_features (features);
+
+        auto instance = std::unique_ptr<PluginInstance> (
+            new PluginInstance (sample_rate, bundle_path, host_features));
+
+        for (const auto& rq : s_required) {
             bool provided = false;
-            for (const auto& f : feature_list)
-                if (strcmp (f->URI, rq.c_str()) == 0)
-                    { provided = true; break; }
+            for (const auto& f : host_features)
+                if (f == rq) { provided = true; break; }
             
-            if (! provided) {
-                std::clog << "error - not provided by host\n";
+            if (! provided)
                 return nullptr;
-            }
-            else 
-            {
-                std::clog << "ok";
-            }
         }
 
         return static_cast<LV2_Handle> (instance.release());
     }
 
     static void _connect_port (LV2_Handle handle, uint32_t port, void* data) {
-        (static_cast<InstanceType*> (handle))->connect_port (port, data);
+        (static_cast<I*> (handle))->connect_port (port, data);
     }
 
     static void _activate (LV2_Handle handle) { 
-        (static_cast<InstanceType*> (handle))->activate();
+        (static_cast<I*> (handle))->activate();
     }
 
     static void _run (LV2_Handle handle, uint32_t sample_count) {
-        (static_cast<InstanceType*> (handle))->run (sample_count);
+        (static_cast<I*> (handle))->run (sample_count);
     }
     
     inline static void _deactivate (LV2_Handle handle) {
-        (static_cast<InstanceType*> (handle))->deactivate();
+        (static_cast<I*> (handle))->deactivate();
     }
 
     inline static void _cleanup (LV2_Handle handle) {
-        (static_cast<InstanceType*> (handle))->cleanup();
-        delete static_cast<InstanceType*> (handle);
+        (static_cast<I*> (handle))->cleanup();
+        delete static_cast<I*> (handle);
     }
 
     inline static const void* _extension_data (const char* uri) {
@@ -105,20 +154,22 @@ private:
     }
 };
 
-template<class PluginType> ExtensionMap Plugin<PluginType>::s_extensions = {};
-template<class PluginType> StringArray Plugin<PluginType>::s_required;
+template<class I> ExtensionMap Plugin<I>::s_extensions = {};
+template<class I> StringArray  Plugin<I>::s_required;
 
 }
 
 #include <lvtk/instance.hpp>
 
-
 extern "C" {
+
+#ifndef LVTK_NO_SYMBOL_EXPORT
 
 LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor (uint32_t index) {
     return (index < lvtk::descriptors().size())
         ? &lvtk::descriptors()[index] : NULL;
 }
 
-}
+#endif
 
+}

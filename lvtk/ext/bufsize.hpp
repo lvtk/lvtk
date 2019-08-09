@@ -1,77 +1,66 @@
-/*
-    bufsize.hpp - Support file for writing LV2 plugins in C++
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
-    @@ISC@@
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 /** @headerfile lvtk/ext/bufsize.hpp */
 
 #pragma once
 
-#include <lvtk/feature.hpp>
-#include <lv2/buf-size/buf-size.h>
-// #include <lvtk/ext/options.hpp>
+#include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
+#include <lv2/buf-size/buf-size.h>
 
 namespace lvtk {
 
-struct BufferInfo
+struct BufferDetails
 {
-    uint32_t min;
-    uint32_t max;
-    uint32_t sequence_size;
-    bool bounded;
-    bool fixed;
-    bool power_of_two;
-};
+    uint32_t min            = 0;
+    uint32_t max            = 0;
+    uint32_t sequence_size  = 0;
+    bool bounded            = false;
+    bool fixed              = false;
+    bool power_of_two       = false;
 
-struct BufSize
-{
-    BufSize() {
-        memset (&m_info, 0, sizeof (BufferInfo));
-    }
-
-    /** @skip */
-    void set_feature (const Feature& feature)
+    void update_with (const Feature& feature)
     {
         if (strcmp (LV2_BUF_SIZE__boundedBlockLength, feature.URI) ==0) {
-            m_info.bounded = true;
+            bounded = true;
         } else if (strcmp (LV2_BUF_SIZE__powerOf2BlockLength, feature.URI) ==0) {
-            m_info.power_of_two = true;
+            power_of_two = true;
         } else if (strcmp (LV2_BUF_SIZE__fixedBlockLength, feature.URI) ==0) {
-            m_info.fixed = true;
+            fixed = true;
         }
     }
 
-    const BufferInfo& get_buffer_info() const
+    void apply_options (Map& map, const Option* options)
     {
-        if (! m_checked)
+        uint32_t min      (map (LV2_BUF_SIZE__minBlockLength));
+        uint32_t max      (map (LV2_BUF_SIZE__maxBlockLength));
+        uint32_t seq_size (map (LV2_BUF_SIZE__sequenceSize));
+
+        OptionsIterator iter (options);
+        while (const Option* opt = iter.next())
         {
-           #if 0
-            uint32_t min      (map (LV2_BUF_SIZE__minBlockLength));
-            uint32_t max      (map (LV2_BUF_SIZE__maxBlockLength));
-            uint32_t seq_size (map (LV2_BUF_SIZE__sequenceSize));
-
-            OptionsIter iter (plugin->get_supplied_options());
-            while (const Option* opt = iter.next())
-            {
-                if (min == opt->key)
-                    m_info.min = *(uint32_t*) opt->value;
-                if (max == opt->key)
-                    m_info.max = *(uint32_t*) opt->value;
-                if (seq_size == opt->key)
-                    m_info.sequence_size = *(uint32_t*) opt->value;
-            }
-           #endif
-            m_checked = true;
+            if (min == opt->key)
+                min = *(uint32_t*) opt->value;
+            if (max == opt->key)
+                max = *(uint32_t*) opt->value;
+            if (seq_size == opt->key)
+                sequence_size = *(uint32_t*) opt->value;
         }
-
-        return m_info;
     }
-
-private:
-    mutable bool m_checked = false;
-    mutable BufferInfo m_info;
 };
 
 }

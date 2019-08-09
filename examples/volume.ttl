@@ -1,4 +1,4 @@
-# LV2 Toolkit - Silence Example Plugin
+# LV2 Toolkit - volume Example Plugin
 # Copyright 2012  Michael Fisher <mfisher31@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
@@ -18,24 +18,21 @@
 @prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
-@prefix work:  <http://lv2plug.in/ns/ext/worker#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
-@prefix ll:    <http://ll-plugins.nongnu.org/lv2/namespace#> .
 @prefix ev:    <http://lv2plug.in/ns/ext/event#>.
+@prefix lvtk:  <http://lvtoolkit.org/ns/lv2#> .
 @prefix lvtkp: <http://lvtoolkit.org/plugins/> .
 
-lvtkp:silence
+lvtkp:volume
 	a lv2:Plugin ;
-	doap:name "LVTK Silence" ;
+	doap:name "Volume" ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
 	lv2:project lvtkp: ;
 	lv2:requiredFeature urid:map ;
 	lv2:optionalFeature lv2:hardRTCapable ;
-	lv2:extensionData state:interface ,
-		work:interface ;
 	ll:pegName "p" ;
-	ui:ui <http://lvtoolkit.org/plugins/silence#ui> ;
+	ui:ui <http://lvtoolkit.org/plugins/volume#ui> ;
 	lv2:port [
 		a lv2:AudioPort, lv2:OutputPort ;
 		lv2:index 0 ;
@@ -49,7 +46,6 @@ lvtkp:silence
 	    lv2:symbol "midi";
 	    lv2:name "MIDI";
 	] .
-	
-<http://lvtoolkit.org/plugins/silence#ui>
-	a ui:GtkUI ;
-	lv2:requiredFeature urid:map .
+
+<http://lvtoolkit.org/plugins/volume#ui>
+	a lvtk:GtkUI .

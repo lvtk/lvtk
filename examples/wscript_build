@@ -16,10 +16,11 @@ buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
 builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
-	examples = [ "silence", "workhorse", "beep" ]
+	examples = [ "silence", "workhorse" ] #, "beep", "volume" ]
 	first_plugin = True
 
-	install_dir = os.path.join (bld.env.LV2DIR, 'lvtk.lv2')
+	bundle = 'lvtk-examples.lv2'
+	install_dir = os.path.join (bld.env.LV2DIR, bundle)
 	module_pat = re.sub('^lib', '', bld.env.cxxshlib_PATTERN)
 	module_ext = module_pat[module_pat.rfind('.'):]
 	plugin_env = bld.env.derive()
@@ -31,7 +32,7 @@ if buildme:
 			bld (
 				features	= 'subst',
 				source		= 'manifest.ttl.in',
-				target		= 'lvtk.lv2/manifest.ttl',
+				target		= '%s/manifest.ttl' % bundle,
 				LIB_EXT		= module_ext,
 				install_path = install_dir
 			)
@@ -39,35 +40,32 @@ if buildme:
 		bld (
 			features	= 'subst',
 			source		= '%s.ttl' % slug,
-			target		= 'lvtk.lv2/%s.ttl' % slug,
+			target		= '%s/%s.ttl' % (bundle, slug),
 			install_path = install_dir
 		)
 
-		if 'silence' == slug or 'workhorse' == slug:
-			plugin = bld.shlib (
-				cxxflags      = '-std=c++14',
-				name          = slug,
-				target        = 'lvtk.lv2/%s' % slug,
-				source        = "%s.cpp" % slug,
-				includes      = [],
-				use           = bld.env.LIB_LVTK_PLUGIN,
-				install_path  = install_dir,
-				env			  = plugin_env
-			)
+		plugin = bld.shlib (
+			cxxflags      = '-std=c++14',
+			name          = slug,
+			target        = '%s/%s' % (bundle, slug),
+			source        = "%s.cpp" % slug,
+			includes      = [],
+			use           = bld.env.LIB_LVTK_PLUGIN,
+			install_path  = install_dir,
+			env			  = plugin_env
+		)
 
 		# Build the plugin gui (if able)
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
 
 		if builduis and bld.path.find_resource(uisrc):
-			ui = bld.shlib(
-				lv2_bundle	  =	True,
-				lv2_target    = "lvtk.lv2",
+			ui = bld.shlib (
 				name          = uislug,
-				target        = uislug,
+				target        = '%s/%s' % (bundle, uislug),
 				source        = uisrc,
-				cxxflags       = ['-Wl,-z,nodelete'],
+				cxxflags      = ['-Wl,-z,nodelete'],
 				includes      = ["../build/examples"],
-				use           = [bld.env.LIB_LVTK_UI, "gtkmm"],
+				use           = [ bld.env.LIB_LVTK_UI, "gtkmm" ],
 				LIB_EXT		  = bld.env.pluginlib_EXT
 			)

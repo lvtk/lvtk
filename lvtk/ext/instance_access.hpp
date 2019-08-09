@@ -16,39 +16,28 @@
 
 #pragma once
 
-#include <stdio.h>
-#include <lv2/log/log.h>
 #include <lvtk/feature.hpp>
+#include <lv2/instance-access/instance-access.h>
 
 namespace lvtk {
 
-struct Logger
+struct InstanceAccess
 {
-    void set_feature (const Feature& feature)
-    {
-        p_log = reinterpret_cast<LV2_Log_Log*> (feature.data);
-    }
-    
-    int vprintf (LV2_URID type, const char* fmt, va_list ap) const
-    {
-        if (p_log != NULL)
-            return p_log->vprintf(p_log->handle, type, fmt, ap);
-        return ::vprintf (fmt, ap);
-    }
+    InstanceAccess() = default;
 
-    int printf (LV2_URID type, const char* fmt, ...) const
-    {
-        va_list argptr;
-        va_start (argptr, fmt);
+    /** Get the plugin instance
+        @return The plugin instance or nullptr if not available */
+    Handle get_instance() const         { return p_plugin_instance; }
 
-        int res = this->vprintf(type, fmt, argptr);
-        va_end (argptr);
-
-        return res;
+    /** Assign the LV2_Handle by LV2 Feature */
+    void set_feature (const Feature& feature) {
+        if (strcmp (LV2_INSTANCE_ACCESS_URI, feature.URI) == 0)
+            p_plugin_instance = reinterpret_cast<Handle> (feature.data);
     }
 
-private:
-    LV2_Log_Log* p_log;
+    private:
+        /** @internal Feature Data passed from host */
+        Handle p_plugin_instance { nullptr };
 };
 
-}
+} /* namespace lvtk */
