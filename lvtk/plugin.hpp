@@ -22,8 +22,8 @@
 
 /** LV2 Plugin Implementation
     
-    Only include this in a file that implements an LV2 Plugin
-    via the Instance API.
+    Only include this header in a file that implements an LV2 Plugin
+    via a subclass of lvtK::Instance
 
     Plugin descriptors are registered on the stack at the global scope.
     For example...
@@ -31,7 +31,7 @@
     @code
         using MyPlugin = lvtk::Plugin<MyInstance>;
         
-        static MyPlugin silence (
+        static MyPlugin my_plugin (
             LVTK_SILENCE_URI,           //< MyPlugin's URI String
             {                            
                 LV2_URID__map,          //< List of required host features
@@ -43,7 +43,7 @@
     If you are using this library in a host, include individual
     headers from the ext directory.
 
-    Same policy for the interface directory, including any thing
+    Same policy for the interface directory, including anything
     there will result in a mess of compiler errors.  Interfaces
     are for implementing features on a plugin instance only
  */
@@ -52,17 +52,28 @@ namespace lvtk {
 
 using PluginDescriptors = DescriptorList<LV2_Descriptor>;
 
+/** Returns a global array of registered descriptors */
 static PluginDescriptors& descriptors() {
     static PluginDescriptors s_descriptors;
     return s_descriptors;
 }
 
+/** Plugin registration class
+    Create a static one of these to register your plugin instance type.
+ */
 template<class I>
-class Plugin
+class Plugin final
 {
 public:
     using PluginInstance = I;
     
+    /** Plugin Registation
+        
+        @param plugin_uri   The URI string of your plugin
+        @param required     List of required host feature URIs. If the host fails
+                            to provide any of these, instantiate will return
+                            a nullptr
+     */
     Plugin (const char* plugin_uri, const StringArray& required = StringArray())
     {
         LV2_Descriptor desc;
@@ -86,7 +97,7 @@ public:
     ~Plugin() = default;
 
     /** Helper to register extension data but not have to implement
-        the Interface API in this library.
+        the a mixin interface.
 
         @param uri      The uri of your feature.
         @param data     Pointer to static extension data.
@@ -98,7 +109,7 @@ public:
 private:
     static ExtensionMap s_extensions;
     static StringArray  s_required;
-
+    /** @internal */
     static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
 	                                double                         sample_rate,
 	                                const char *                   bundle_path,
@@ -126,28 +137,34 @@ private:
 
         return static_cast<LV2_Handle> (instance.release());
     }
-
+    
+    /** @internal */
     static void _connect_port (LV2_Handle handle, uint32_t port, void* data) {
         (static_cast<I*> (handle))->connect_port (port, data);
     }
 
+    /** @internal */
     static void _activate (LV2_Handle handle) { 
         (static_cast<I*> (handle))->activate();
     }
 
+    /** @internal */
     static void _run (LV2_Handle handle, uint32_t sample_count) {
         (static_cast<I*> (handle))->run (sample_count);
     }
     
+    /** @internal */
     inline static void _deactivate (LV2_Handle handle) {
         (static_cast<I*> (handle))->deactivate();
     }
 
+    /** @internal */
     inline static void _cleanup (LV2_Handle handle) {
         (static_cast<I*> (handle))->cleanup();
         delete static_cast<I*> (handle);
     }
 
+    /** @internal */
     inline static const void* _extension_data (const char* uri) {
         auto e = s_extensions.find (uri);
         return e != s_extensions.end() ? e->second : nullptr;
