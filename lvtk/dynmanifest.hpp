@@ -30,23 +30,25 @@ public:
     virtual ~DynManifest() { }
     virtual void subjects (StringArray& lines) =0;
     virtual void get_data (const String& uri, StringArray& lines) =0;
+    
     static void write_lines (const StringArray& lines, FILE* fp) {
-        for (const auto& line : lines) {
+        for (const auto& l : lines) {
+            std::string line = l + "\n";
             fwrite (line.c_str(), sizeof(char), line.size(), fp);
         }
     }
 };
 
-DynManifest* create_dyn_manifest();
-
 }
+
+lvtk::DynManifest* lvtk_create_dyn_manifest();
 
 extern "C" {
 
 LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle *handle, const LV2_Feature *const *features)
 {
-    auto* manifest = lvtk::create_dyn_manifest();
+    auto* manifest = lvtk_create_dyn_manifest();
     *handle = static_cast<LV2_Dyn_Manifest_Handle> (manifest);
     return 0;
 }
@@ -74,7 +76,7 @@ int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const c
 LV2_SYMBOL_EXPORT
 void lv2_dyn_manifest_close (LV2_Dyn_Manifest_Handle handle)
 {
-    delete static_cast<DynManifest*> (handle);
+    delete static_cast<lvtk::DynManifest*> (handle);
 }
 
 }
