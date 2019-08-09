@@ -57,7 +57,6 @@ private:
     LV2_Worker_Respond_Function       p_wrfunc;
 };
 
-
 struct Scheduler : StackExtension<LV2_Worker_Schedule>
 {
     Scheduler() : StackExtension<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}
