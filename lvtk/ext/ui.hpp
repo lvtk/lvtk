@@ -15,9 +15,5 @@
 */
 
 #pragma once
-
-#include <lvtk/lvtk.hpp>
-
-namespace lvtk {
-
-} /* namespace lvtk */
+#include <lv2/ui/ui.h>
+namespace lvtk { namespace ui {} }

@@ -72,19 +72,15 @@ public:
           controller (args.controller)
     {
         for (const auto& f : args.features) {
-            if (strcmp (f.URI, LV2_UI__parent)) {
+            if (f == LV2_UI__parent) {
                 parent_widget = (LV2UI_Widget) f.data;
-            }
-            else if (strcmp (f.URI, LV2_UI__portSubscribe)) {
+            } else if (f == LV2_UI__portSubscribe) {
                 subscribe = *(LV2UI_Port_Subscribe*) f.data;
-            }
-            else if (strcmp (f.URI, LV2_UI__touch)) {
+            } else if (f == LV2_UI__touch) {
                 ui_touch = *(LV2UI_Touch*) f.data;
-            }
-            else if (strcmp (f.URI, LV2_UI__portMap)) {
+            } else if (f == LV2_UI__portMap) {
                 port_map = *(LV2UI_Port_Map*) f.data;
-            }
-            else if (strcmp (f.URI, LV2_UI__resize)) {
+            } else if (f == LV2_UI__resize) {
                 ui_resize = *(LV2UI_Resize*) f.data;
             }
         }
@@ -92,18 +88,57 @@ public:
 
     virtual ~Instance() = default;
 
-    void cleanup() {}
+    /** Clean up (optional)
+        This is called immediately before the dtor
+      */
+    void cleanup() { }
 
+    /** Get the LV2UI_Widget (required) 
+        It is ok to create your widget here, but make sure
+        that it only gets allocated once. 
+    */
     LV2UI_Widget get_widget() { return nullptr; }
 
+    /** Port events (optional) 
+     
+        Called when port events are received from the host. Implement this to 
+        update the UI when properties change in the plugin.
+    */
     void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) { }
 
+    /** Write data to ports
+        
+        @param port
+        @param size
+        @param protocol
+        @param data
+     */
+    void write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) {
+        controller.write (port, size, protocol, data);
+    }
+
+    /** Port index map (optional) 
+
+        Only returns valid port indexes if the host provides LV2UI_Port_Map
+        during instantiation.
+
+        @param symbol   The symbol to return an index for
+    */
     uint32_t port_index (const String& symbol) const {
         if (port_map.port_index)
             return port_map.port_index (port_map.handle, symbol.c_str());
         return LV2UI_INVALID_PORT_INDEX;
     }
 
+    /** Subscribe to port notifications (optional)
+        
+        This method works only if the host provides LV2UI_Port_Subscribe
+        during instantiation
+
+        @param port
+        @param protocol
+        @param features
+     */
     void port_subscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
         LV2_Feature* f [features.size() + 1];
         for (int i = 0; i < features.size(); ++i)
@@ -114,6 +149,15 @@ public:
             subscribe.subscribe (subscribe.handle, port, protocol, f);
     }
 
+    /** Unsubscribe from port notifications (optional)
+        
+        This method works only if the host provides LV2UI_Port_Subscribe
+        during instantiation
+
+        @param port
+        @param protocol
+        @param features
+     */
     void port_unsubscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
         LV2_Feature* f [features.size() + 1];
         for (int i = 0; i < features.size(); ++i)
@@ -123,14 +167,6 @@ public:
         if (subscribe.unsubscribe)
             subscribe.unsubscribe (subscribe.handle, port, protocol, f);
     }
-
-    void write (uint32_t port, uint32_t size, uint32_t proto, const void* data) {
-        controller.write (port, size, proto, data);
-    }
-
-    int idle() { return -1; }
-    int show() { return -1; }
-    int hide() { return -1; }
 
 protected:
     const Controller controller;
@@ -221,30 +257,8 @@ private:
     }
 
     static const void* _extension_data (const char* uri) {
-        if (strcmp (uri, LV2_UI__idleInterface)) {
-            static LV2UI_Idle_Interface idle = { _idle };
-            return &idle;
-        }
-
-        if (strcmp (uri, LV2_UI__showInterface)) {
-            static LV2UI_Show_Interface show = { _show, _hide };
-            return &show;
-        }
-
         auto e = s_extensions.find (uri);
         return e != s_extensions.end() ? e->second : nullptr;
-    }
-
-    static int _show (LV2UI_Handle ui) {
-        return (static_cast<InstanceType*> (ui))->show();
-    }
-
-    static int _hide (LV2UI_Handle ui) {
-        return (static_cast<InstanceType*> (ui))->hide();
-    }
-
-    static int _idle (LV2UI_Handle ui) {
-        return (static_cast<InstanceType*> (ui))->idle();
     }
 };
 
@@ -252,6 +266,9 @@ template<class I> ExtensionMap UI<I>::s_extensions = {};
 template<class I> StringArray  UI<I>::s_required;
 
 }}
+
+#include <lvtk/interface/idle.hpp>
+#include <lvtk/interface/show.hpp>
 
 extern "C" {
 

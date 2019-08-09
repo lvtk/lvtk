@@ -33,6 +33,16 @@ using String        = std::string;
 using StringArray   = std::vector<String>;
 using ExtensionMap  = std::map<String, const void*>;
 
+
+template<class D>
+struct DescriptorList final : public std::vector<D>
+{
+    inline ~DescriptorList() {
+        for (const auto& desc : *this)
+            std::free ((void*) desc.URI);
+    }
+};
+
 struct Feature : LV2_Feature {
     Feature() = default;
 
@@ -46,20 +56,59 @@ struct Feature : LV2_Feature {
     inline bool operator== (const String& uri) const { return strcmp (uri.c_str(), URI) == 0; }
 };
 
-template<class D>
-struct DescriptorList final : public std::vector<D>
+/** Convenient typedef for a vector of Features. */
+struct FeatureList final : public std::vector<Feature>
 {
-    inline ~DescriptorList() {
-        for (const auto& desc : *this)
-            std::free ((void*) desc.URI);
+    FeatureList() = default;
+    FeatureList (const FeatureList& o) {
+        for (const auto& f : o)
+            push_back (f);
+    }
+
+    FeatureList (const LV2_Feature *const * features) {
+        for (int i = 0; features[i]; ++i) {
+            push_back (*features[i]);
+        }
+    }
+
+    inline void get_uris (StringArray& uris) {
+        for (const auto& f : *this)
+            uris.push_back (f.URI);
     }
 };
 
+class FeatureIterator final
+{
+public:
+    FeatureIterator (const Feature* const* features)
+        : m_index (0), p_feats (features) { }
+
+    inline const Feature* next()
+    {
+        if (nullptr == p_feats[m_index])
+            return nullptr;
+        return p_feats[m_index++];
+    }
+
+private:
+    uint32_t                 m_index;
+    const Feature* const*    p_feats;
+};
+
+struct InstanceArgs {
+    InstanceArgs (const String& p, const String& b, const FeatureList& f)
+        : plugin(p), bundle(b), features (f) {}
+
+    String plugin;
+    String bundle;
+    FeatureList features;
+};
+
 struct Extension  {
-    Extension (const std::string& _uri) 
-        : URI (_uri) {}
+    Extension (const String& _uri) 
+        : URI (_uri) { }
     virtual ~Extension() = default;
-    const std::string URI;
+    const String URI;
 
     inline bool operator== (const char* str_uri) const { return URI == str_uri; }
     inline bool operator!= (const char* str_uri) const { return URI != str_uri; }
@@ -69,10 +118,10 @@ struct Extension  {
     Typically these are used to facilitate features provided by the host 
     during plugin instantiation or in host-side callbacks to the plugin.
  */
-template<class DataType, bool StorePtr = false>
+template<class D, bool StorePtr = false>
 struct StackExtension : Extension
 {
-    using DataTypePtr  = DataType*;
+    using data_ptr_t = D*;
 
     StackExtension() = delete;
 
@@ -81,21 +130,23 @@ struct StackExtension : Extension
 
     ~StackExtension() = default;
 
+    inline bool is_for (const Feature& feature) const { return feature == URI; }
+
     inline void set_feature (const Feature& feature) {
-        if (URI == feature.URI) {
+        if (is_for (feature)) {
             if (StorePtr) {
-                data_ptr = static_cast<DataTypePtr> (feature.data);
+                data_ptr = static_cast<data_ptr_t> (feature.data);
                 data = *data_ptr;
             } else {
-                data = *static_cast<DataTypePtr> (feature.data);
+                data = *static_cast<data_ptr_t> (feature.data);
                 data_ptr = &data;
             }
         }
     }
 
 protected:
-    DataType data {};
-    DataTypePtr data_ptr { nullptr };
+    D data { };
+    data_ptr_t data_ptr { nullptr };
 };
 
 }

@@ -1,3 +1,4 @@
+
 /* 
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
@@ -16,8 +17,26 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
+#include <lvtk/ext/ui.hpp>
+#include <lvtk/interface/interface.hpp>
 
 namespace lvtk {
 
-} /* namespace lvtk */
+template<class I>
+struct Idle : Interface<I>
+{
+    Idle (const FeatureList&) { }
+    inline int idle() { return 0; }
+
+protected:
+    inline static void map_extension_data (ExtensionMap& dmap) {
+        static const LV2UI_Idle_Interface _idle_iface =  { _idle };
+        dmap[LV2_UI__idleInterface] = &_idle_iface;
+    }
+
+private:
+    /** @internal */
+    static int _idle (LV2UI_Handle ui) { return (static_cast<I*> (ui))->idle(); }
+};
+
+}
