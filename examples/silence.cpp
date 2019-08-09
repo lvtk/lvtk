@@ -23,27 +23,13 @@
    Demonstrates LV2 URID mapping, Log, and State Save/Restore
  */
 
-
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-
 #include <lvtk/plugin.hpp>
-
-#include <lvtk/ext/atom.hpp>
-#include <lv2/midi/midi.h>
-#include <lvtk/feature.hpp>
-#include <lvtk/ext/state.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/ext/worker.hpp>
 
 #define LVTK_SILENCE_URI "http://lvtoolkit.org/plugins/silence"
 #define LVTK_SILENCE_PREFIX LVTK_SILENCE_URI "#"
 #define LVTK_SILENCE_MSG LVTK_SILENCE_PREFIX "msg"
 
 namespace lvtk {
-
-using std::vector;
 
 class Silence : public Instance<Silence, State, Log, BufSize>
 {
@@ -52,7 +38,6 @@ public:
         : Instance (rate, path, features)
     {
         urids.atom_String = map (LV2_ATOM__String);
-        urids.midi_type   = map (LV2_MIDI__MidiEvent);
         urids.silence_msg = map (LVTK_SILENCE_MSG);
         auto info = buffer_details();
         int i =0;
@@ -97,32 +82,16 @@ public:
 private:
     float* audio = nullptr;
 
-    void check_midi ()
-    {
-        #if 0
-        const LV2_Atom_Sequence* midiseq = p<LV2_Atom_Sequence> (p_midi);
-        LV2_ATOM_SEQUENCE_FOREACH (midiseq, ev)
-        {
-            uint32_t frame_offset = ev->time.frames;
-            if (ev->body.type == urids.midi_type)
-            {
-                std::cout << "MIDI\n";
-            }
-        }
-        #endif
-    }
-
     struct SilenceURIs {
         LV2_URID atom_String;
         LV2_URID silence_msg;
-        LV2_URID midi_type;
     } urids;
 };
 
 using SilencePlugin = Plugin<Silence>;
 static SilencePlugin silence (
     LVTK_SILENCE_URI, {
-        LV2_URID__map , LV2_WORKER__schedule
+        LV2_URID__map, LV2_WORKER__schedule
     }
 );
 
