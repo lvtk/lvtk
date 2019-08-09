@@ -35,7 +35,6 @@ lvtkp:workhorse
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:extensionData state:interface ,
 		work:interface ;
-	ll:pegName "p" ;
 	ui:ui <http://lvtoolkit.org/plugins/workhorse#ui> ;
 	lv2:port [
 		a lv2:InputPort ,

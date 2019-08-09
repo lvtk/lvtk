@@ -20,6 +20,7 @@
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix lvtkp: <http://lvtoolkit.org/plugins/> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
+@prefix kv:    <https://kushview.net/lv2#> .
 
 <http://lvtoolkit.org/people/mfisher>
 	a foaf:Person ;
@@ -72,6 +73,6 @@ lvtkp:volume
 	rdfs:seeAlso <volume.ttl> .
 
 <http://lvtoolkit.org/plugins/volume#ui>
-	a ui:GtkUI ;
+	a kv:JUCEUI ;
 	ui:binary <volume_ui@LIB_EXT@> ;
 	rdfs:seeAlso <volume.ttl> .

@@ -23,6 +23,7 @@
 @prefix ev:    <http://lv2plug.in/ns/ext/event#>.
 @prefix lvtk:  <http://lvtoolkit.org/ns/lv2#> .
 @prefix lvtkp: <http://lvtoolkit.org/plugins/> .
+@prefix kv:    <https://kushview.net/lv2#> .
 
 lvtkp:volume
 	a lv2:Plugin ;
@@ -31,7 +32,6 @@ lvtkp:volume
 	lv2:project lvtkp: ;
 	lv2:requiredFeature urid:map ;
 	lv2:optionalFeature lv2:hardRTCapable ;
-	ll:pegName "p" ;
 	ui:ui <http://lvtoolkit.org/plugins/volume#ui> ;
 	lv2:port [
 		a lv2:AudioPort, lv2:OutputPort ;
@@ -48,4 +48,4 @@ lvtkp:volume
 	] .
 
 <http://lvtoolkit.org/plugins/volume#ui>
-	a lvtk:GtkUI .
+	a kv:JUCEUI .

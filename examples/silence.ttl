@@ -34,7 +34,6 @@ lvtkp:silence
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:extensionData state:interface ,
 		work:interface ;
-	ll:pegName "p" ;
 	ui:ui <http://lvtoolkit.org/plugins/silence#ui> ;
 	lv2:port [
 		a lv2:AudioPort, lv2:OutputPort ;

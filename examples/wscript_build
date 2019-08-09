@@ -70,9 +70,7 @@ if buildme:
 						env  		  = plugin_env
 					)
 			elif slug == 'volume':
-				print "VOL"
 				if bld.env.HAVE_JUCE_GUI_BASICS == 1:
-					print "HI %s " % uislug
 					bld.shlib (
 						name          = uislug,
 						target        = '%s/%s' % (bundle, uislug),
