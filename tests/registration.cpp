@@ -34,11 +34,14 @@ public:
 protected:
     void two_descriptors() {
         CPPUNIT_ASSERT_EQUAL(lvtk::descriptors().size(), (size_t)2);
+        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_SILENCE_URI), (int)0);
+        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, "http://lvtoolkit.org/plugins/workhorse"), (int)0);
     }
 
     void instantiation()
     {
         const auto desc = lvtk::descriptors().front();
+        
         const LV2_Feature* features[] = {
             urids.get_map_feature(),
             urids.get_unmap_feature(),
@@ -47,6 +50,7 @@ protected:
         
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
         CPPUNIT_ASSERT (handle != nullptr);
+        
         desc.activate (handle);
         float buffer [64];
         desc.connect_port (handle, 0, buffer);
