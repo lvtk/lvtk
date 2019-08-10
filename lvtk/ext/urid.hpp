@@ -24,6 +24,11 @@ namespace lvtk {
 class Map
 {
 public:
+    Map() = default;
+    Map (const Feature& f) {
+        set_feature (f);
+    }
+
     URID map (const String& uri) const {
         return p_map != nullptr ? p_map->map (p_map->handle, uri.c_str())
                                 : 0;
@@ -45,6 +50,7 @@ private:
 class Unmap
 {
 public:
+    Unmap() = default;
     Unmap (const Feature& feature) {
         set_feature (feature);
     }

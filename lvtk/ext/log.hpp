@@ -33,7 +33,7 @@ struct Logger
     {
         if (p_log != NULL)
             return p_log->vprintf(p_log->handle, type, fmt, ap);
-        return ::vprintf (fmt, ap);
+        return 0;
     }
 
     int printf (LV2_URID type, const char* fmt, ...) const

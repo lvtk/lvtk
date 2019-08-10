@@ -71,7 +71,7 @@ def configure (conf):
     conf.check_inline()
     autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
     autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="GTKMM", atleast_version="2.20.0", mandatory=False)
-    
+    autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=False)
     for module in 'audio_basics gui_basics'.split():
         pkgname = 'juce_%s-5' % module if not conf.options.debug else 'juce_%s_debug-5' % module
         uselib  = 'JUCE_%s' % module.upper()
@@ -126,6 +126,17 @@ def build (bld):
     # Documentation
     autowaf.build_dox (bld, 'LVTK', VERSION, top, out)
     bld.add_group()
+    
+    # Tests
+    bld.program (
+        features = 'cxx cxxprogram',
+        source   = bld.path.ant_glob ('tests/**/*.cpp'),
+        name     = 'testlvtk',
+        target   = 'testlvtk',
+        use      = [ 'CPPUNIT' ],
+        cxxflags = ["-DLVTK_NO_SYMBOL_EXPORT"],
+        install_path = None
+    )
 
     # Header Installation
     header_base = bld.env.INCLUDEDIR + "/"  + APPNAME + "-" + pcvers
@@ -133,6 +144,9 @@ def build (bld):
     bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
     bld.install_files(header_base+"/lvtk/interface", bld.path.ant_glob("lvtk/interface/*.*"))
+
+def check(ctx):
+    call('build/testlvtk')
 
 def dist(ctx):
     z=ctx.options.ziptype

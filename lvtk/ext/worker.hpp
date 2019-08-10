@@ -33,7 +33,7 @@ typedef enum {
   */
 struct WorkerRespond
 {
-     WorkerRespond (LV2_Handle                  instance,
+    WorkerRespond (LV2_Handle                  instance,
                     LV2_Worker_Respond_Function wrfunc,
                     LV2_Worker_Respond_Handle   handle)
             : p_instance (instance),

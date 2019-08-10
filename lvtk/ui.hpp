@@ -86,7 +86,7 @@ public:
         }
     }
 
-    virtual ~Instance() = default;
+    virtual ~Instance() {}
 
     /** Clean up (optional)
         This is called immediately before the dtor
@@ -113,8 +113,12 @@ public:
         @param protocol
         @param data
      */
-    void write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) {
+    inline void write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) const {
         controller.write (port, size, protocol, data);
+    }
+
+    inline void write (uint32_t port, float value) const {
+        write (port, sizeof (float), 0, &value);
     }
 
     /** Port index map (optional) 

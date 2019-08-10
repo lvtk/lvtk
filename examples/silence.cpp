@@ -41,7 +41,7 @@ public:
         urids.silence_msg = map (LVTK_SILENCE_MSG);
         auto info = buffer_details();
         int i =0;
-        log.printf (urids.atom_String, "hello world! Could you hear me?");
+        log.printf (urids.atom_String, "hello world! Could you hear me?\n");
     }
 
     void activate()  { }
@@ -91,7 +91,7 @@ private:
 using SilencePlugin = Plugin<Silence>;
 static SilencePlugin silence (
     LVTK_SILENCE_URI, {
-        LV2_URID__map, LV2_WORKER__schedule
+        LV2_URID__map
     }
 );
 

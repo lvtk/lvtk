@@ -64,9 +64,7 @@ static PluginDescriptors& descriptors() {
 template<class I>
 class Plugin final
 {
-public:
-    using PluginInstance = I;
-    
+public:    
     /** Plugin Registation
         
         @param plugin_uri   The URI string of your plugin
@@ -106,7 +104,8 @@ public:
         s_extensions[uri] = data;
     }
 
-private:
+private:    
+    using PluginInstance = I;
     static ExtensionMap s_extensions;
     static StringArray  s_required;
     /** @internal */
@@ -115,6 +114,7 @@ private:
 	                                const char *                   bundle_path,
 	                                const LV2_Feature *const *     features)
     {
+
        #ifndef NDEBUG
         #define debug(expr) std::clog << expr
        #else
