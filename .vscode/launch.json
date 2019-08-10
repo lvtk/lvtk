@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [ 
+        {
+            "name": "Test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/testlvtk",
+            "cwd": "${workspaceRoot}/build",
+            "args": [ ],
+            "stopAtEntry": false,
+            "environment": [ ],
+            "externalConsole": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "MIMode": "lldb",
+            "preLaunchTask": "Build"
+        }
+    ]
+}

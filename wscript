@@ -80,9 +80,6 @@ def configure (conf):
         uselib  = 'JUCE_%s' % module.upper()
         autowaf.check_pkg (conf, pkgname, uselib_store=uselib, atleast_version="5.4.3", mandatory=False)
     
-    print conf.env.HAVE_GTKMM == 1
-    print conf.env.HAVE_JUCE_GUI_BASICS == 1
-    
     # Setup the Environment
     conf.env.TESTS              = conf.options.tests
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
@@ -148,6 +145,7 @@ def build (bld):
     bld.install_files(header_base+"/lvtk", "build/version.h")
     bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
+    bld.install_files(header_base+"/lvtk/host", bld.path.ant_glob("lvtk/host/*.*"))
     bld.install_files(header_base+"/lvtk/interface", bld.path.ant_glob("lvtk/interface/*.*"))
 
 def check(ctx):
