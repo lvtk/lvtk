@@ -9,6 +9,8 @@
 #include <lvtk/ext/atom.hpp>
 #include <lv2/log/log.h>
 
+#define LVTK_WORKHORSE_URI  "http://lvtoolkit.org/plugins/workhorse"
+
 namespace lvtk {
 
 using std::vector;
@@ -120,7 +122,7 @@ private:
 #if 1
 
 
-static Plugin<Workhorse> workhorse ("http://lvtoolkit.org/plugins/workhorse", {
+static Plugin<Workhorse> workhorse (LVTK_WORKHORSE_URI, {
     LV2_URID__map, LV2_WORKER__schedule
 });
 

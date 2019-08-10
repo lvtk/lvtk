@@ -35,7 +35,7 @@ protected:
     void two_descriptors() {
         CPPUNIT_ASSERT_EQUAL(lvtk::descriptors().size(), (size_t)2);
         CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_SILENCE_URI), (int)0);
-        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, "http://lvtoolkit.org/plugins/workhorse"), (int)0);
+        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
     }
 
     void instantiation()

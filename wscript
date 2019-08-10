@@ -47,6 +47,8 @@ def options (opts):
     opts.load("cross compiler_c compiler_cxx lv2 autowaf")
     autowaf.set_options (opts)
     
+    opts.add_option('--enable-tests', default=False, \
+        dest="tests", action='store_true', help='Build the test suite')
     opts.add_option('--disable-ui', default=False, \
         dest="disable_ui", action='store_true', help='Disable Building UI libraries')
     opts.add_option('--disable-examples', default=False, \
@@ -71,7 +73,8 @@ def configure (conf):
     conf.check_inline()
     autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
     autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="GTKMM", atleast_version="2.20.0", mandatory=False)
-    autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=False)
+    autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=conf.options.tests)
+    
     for module in 'audio_basics gui_basics'.split():
         pkgname = 'juce_%s-5' % module if not conf.options.debug else 'juce_%s_debug-5' % module
         uselib  = 'JUCE_%s' % module.upper()
@@ -81,6 +84,7 @@ def configure (conf):
     print conf.env.HAVE_JUCE_GUI_BASICS == 1
     
     # Setup the Environment
+    conf.env.TESTS              = conf.options.tests
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
     conf.env.UI_DISABLED        = conf.options.disable_ui
     conf.env.BUILD_EXAMPLE_UIS  = not conf.env.EXAMPLES_DISABLED and not conf.env.UI_DISABLED
@@ -128,15 +132,16 @@ def build (bld):
     bld.add_group()
     
     # Tests
-    bld.program (
-        features = 'cxx cxxprogram',
-        source   = bld.path.ant_glob ('tests/**/*.cpp'),
-        name     = 'testlvtk',
-        target   = 'testlvtk',
-        use      = [ 'CPPUNIT' ],
-        cxxflags = ["-DLVTK_NO_SYMBOL_EXPORT"],
-        install_path = None
-    )
+    if bld.env.TESTS:
+        bld.program (
+            features = 'cxx cxxprogram',
+            source   = bld.path.ant_glob ('tests/**/*.cpp'),
+            name     = 'testlvtk',
+            target   = 'testlvtk',
+            use      = [ 'CPPUNIT' ],
+            cxxflags = ["-DLVTK_NO_SYMBOL_EXPORT"],
+            install_path = None
+        )
 
     # Header Installation
     header_base = bld.env.INCLUDEDIR + "/"  + APPNAME + "-" + pcvers
