@@ -1,105 +1,43 @@
-/**
- instance_access.hpp - support file for writing LV2 plugins in C++
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
- Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+#pragma once
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
- */
-/**
- @file instance_access.hpp
- C++ convenience header for the LV2 instance access extension.
- LV2 Support: 1.6 (2012-04-17)
- */
+#include <lvtk/feature.hpp>
+#include <lv2/instance-access/instance-access.h>
 
-#ifndef LVTK_INSTANCE_ACCESS_HPP
-#define LVTK_INSTANCE_ACCESS_HPP
+namespace lvtk {
 
-#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
-
-#include <lvtk/private/types.hpp>
-
-namespace lvtk
+struct InstanceAccess
 {
+    InstanceAccess() = default;
 
-    /** The Instance Access Mixin
-        @headerfile lvtk/ext/instance_access.hpp
-        @ingroup guimixins
-        @see The internal struct I for details.
-     */
-    template<bool Required = true>
-    struct InstanceAccess
-    {
-        template<class Derived>
-        struct I : Extension<Required>
-        {
+    /** Get the plugin instance
+        @return The plugin instance or nullptr if not available */
+    Handle get_instance() const         { return p_plugin_instance; }
 
-            I() :
-                    p_plugin_instance(NULL)
-            {
-            }
+    /** Assign the LV2_Handle by LV2 Feature */
+    void set_feature (const Feature& feature) {
+        if (strcmp (LV2_INSTANCE_ACCESS_URI, feature.URI) == 0)
+            p_plugin_instance = reinterpret_cast<Handle> (feature.data);
+    }
 
-            /** @internal */
-            static void
-            map_feature_handlers(FeatureHandlerMap& hmap)
-            {
-                hmap[LV2_INSTANCE_ACCESS_URI] =
-                        &I<Derived>::handle_feature;
-            }
+    private:
+        /** @internal Feature Data passed from host */
+        Handle p_plugin_instance { nullptr };
+};
 
-            /** @internal */
-            static void
-            handle_feature(LV2UI_Handle instance, FeatureData data)
-            {
-                Derived* derived = reinterpret_cast<Derived*>(instance);
-                I<Derived>* mixin = static_cast<I<Derived>*>(derived);
-
-                mixin->p_plugin_instance = reinterpret_cast<LV2_Handle>(data);
-                mixin->m_ok = (mixin->p_plugin_instance != NULL);
-            }
-
-            bool
-            check_ok()
-            {
-                if (! Required)
-                    this->m_ok = true;
-
-                if (LVTK_DEBUG)
-                {
-                    std::clog << "    [InstanceAccess] Validation "
-                              << (this->m_ok ? "succeeded" : "failed")
-                              << "." << std::endl;
-                }
-
-                return this->m_ok;
-            }
-
-        protected:
-
-            /** Get the plugin instance
-                @return The plugin instance or nullptr if not available */
-            LV2_Handle
-            get_instance()
-            {
-                return p_plugin_instance;
-            }
-
-        private:
-            /** @internal Feature Data passed from host */
-            LV2_Handle p_plugin_instance;
-        };
-    };
 } /* namespace lvtk */
-
-#endif /* LVTK_INSTANCE_ACCESS_HPP */

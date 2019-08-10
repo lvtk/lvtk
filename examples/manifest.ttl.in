@@ -19,8 +19,8 @@
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix lvtkp: <http://lvtoolkit.org/plugins/> .
-@prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
-
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
+@prefix kv:    <https://kushview.net/lv2#> .
 
 <http://lvtoolkit.org/people/mfisher>
 	a foaf:Person ;
@@ -66,4 +66,13 @@ lvtkp:workhorse
 	a ui:GtkUI;
 	ui:binary <beep_ui@LIB_EXT@> ;
 	rdfs:seeAlso <beep.ttl> .
- 
+
+lvtkp:volume
+	a lv2:Plugin ;
+	lv2:binary <volume@LIB_EXT@> ;
+	rdfs:seeAlso <volume.ttl> .
+
+<http://lvtoolkit.org/plugins/volume#ui>
+	a kv:JUCEUI ;
+	ui:binary <volume_ui@LIB_EXT@> ;
+	rdfs:seeAlso <volume.ttl> .

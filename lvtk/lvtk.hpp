@@ -1,28 +1,152 @@
-/*
-    lvtk.hpp - Support file for writing LV2 plugins in C++
-    Copyright (C) 2013  Michael Fisher <mfisher31@gmail.com>
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifndef LVTK_HPP
-#define LVTK_HPP
+#pragma once
 
-/* include the entire lvtk library (minus the plugin and ui wrappers) */
-#include "lvtk/ext/common.h"
-#include "lvtk/ext/units.hpp"
-#include "lvtk/ext/worker.hpp"
+#include <cstdlib>
+#include <map>
+#include <vector>
+#include <string>
 
-#endif /* LVTK_HPP */
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
+#include <lv2/worker/worker.h>
+
+namespace lvtk {
+
+using Handle        = LV2_Handle;
+using URID          = LV2_URID;
+using String        = std::string;
+using StringArray   = std::vector<String>;
+using ExtensionMap  = std::map<String, const void*>;
+
+
+template<class D>
+struct DescriptorList final : public std::vector<D>
+{
+    inline ~DescriptorList() {
+        for (const auto& desc : *this)
+            std::free ((void*) desc.URI);
+    }
+};
+
+struct Feature : LV2_Feature {
+    Feature() = default;
+
+    Feature (const LV2_Feature& feature)
+    {
+        data = feature.data;
+        URI  = feature.URI;
+    }
+
+    inline bool operator== (const char* uri)  const { return strcmp (uri, URI) == 0; }
+    inline bool operator== (const String& uri) const { return strcmp (uri.c_str(), URI) == 0; }
+};
+
+/** Convenient typedef for a vector of Features. */
+struct FeatureList final : public std::vector<Feature>
+{
+    FeatureList() = default;
+    FeatureList (const FeatureList& o) {
+        for (const auto& f : o)
+            push_back (f);
+    }
+
+    FeatureList (const LV2_Feature *const * features) {
+        for (int i = 0; features[i]; ++i) {
+            push_back (*features[i]);
+        }
+    }
+
+    inline void get_uris (StringArray& uris) {
+        for (const auto& f : *this)
+            uris.push_back (f.URI);
+    }
+};
+
+class FeatureIterator final
+{
+public:
+    FeatureIterator (const Feature* const* features)
+        : m_index (0), p_feats (features) { }
+
+    inline const Feature* next()
+    {
+        if (nullptr == p_feats[m_index])
+            return nullptr;
+        return p_feats[m_index++];
+    }
+
+private:
+    uint32_t                 m_index;
+    const Feature* const*    p_feats;
+};
+
+struct InstanceArgs {
+    InstanceArgs (const String& p, const String& b, const FeatureList& f)
+        : plugin(p), bundle(b), features (f) {}
+
+    String plugin;
+    String bundle;
+    FeatureList features;
+};
+
+struct Extension  {
+    Extension (const String& _uri) 
+        : URI (_uri) { }
+    virtual ~Extension() = default;
+    const String URI;
+
+    inline bool operator== (const char* str_uri) const { return URI == str_uri; }
+    inline bool operator!= (const char* str_uri) const { return URI != str_uri; }
+};
+
+/** Template class which can be used to assign feature data in a common way.
+    Typically these are used to facilitate features provided by the host 
+    during plugin instantiation or in host-side callbacks to the plugin.
+ */
+template<class D, bool StorePtr = false>
+struct StackExtension : Extension
+{
+    using data_ptr_t = D*;
+
+    StackExtension() = delete;
+
+    explicit StackExtension (const char* feature_uri)
+        : Extension (feature_uri) { }
+
+    ~StackExtension() = default;
+
+    inline bool is_for (const Feature& feature) const { return feature == URI; }
+
+    inline void set_feature (const Feature& feature) {
+        if (is_for (feature)) {
+            if (StorePtr) {
+                data_ptr = static_cast<data_ptr_t> (feature.data);
+                data = *data_ptr;
+            } else {
+                data = *static_cast<data_ptr_t> (feature.data);
+                data_ptr = &data;
+            }
+        }
+    }
+
+protected:
+    D data { };
+    data_ptr_t data_ptr { nullptr };
+};
+
+}

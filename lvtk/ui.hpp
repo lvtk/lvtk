@@ -1,326 +1,288 @@
-/*
-    ui.hpp - Wrapper library to make it easier to write LV2 UIs in C++
-    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA  02110-1301  USA
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifndef LVTK_UI_HPP
-#define LVTK_UI_HPP
+#pragma once
 
-#include <cstdlib>
-#include <cstring>
-#include <iomanip>
-#include <iostream>
-#include <map>
-
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
-
+#include <lvtk/lvtk.hpp>
 #include <lvtk/feature.hpp>
-#include <lvtk/ext/common.h>
-#include <lvtk/ext/data_access.hpp>
-#include <lvtk/ext/instance_access.hpp>
+#include <lv2/ui/ui.h>
 
-#include "private/debug.hpp"
-#include "private/ui_features.hpp"
+namespace lvtk {
+namespace ui {
 
-namespace lvtk
-{
+using Descriptors = DescriptorList<LV2UI_Descriptor>;
 
-    /** Cast any pointer into an LV2_Widget */
-    #define widget_cast(w) reinterpret_cast<LV2UI_Widget*> (w)
-
-    /** @internal A list of LV2UI_Descriptors. */
-    class UIDescList : public std::vector<LV2UI_Descriptor>
-    {
-    public:
-        ~UIDescList();
-    };
-
-    /** @internal This function returns the list of LV2 descriptors. It should only be
-        used internally. */
-    UIDescList& get_lv2g2g_descriptors();
-
-    /** @defgroup guimixins UI Mixins
-
-        These classes implement extra functionality that you may want to have
-        in your UI class, just like the @ref pluginmixins "plugin mixins" do
-        for plugin classes. Some of them are template classes with a boolean
-        @c Required parameter - if this is true the UI will fail to instantiate
-        unless the host supports the extension implemented by that mixin.
-     */
-
-    /** @defgroup toolkitmixins Toolkit Mixins
-        These classes implement the UI's @c widget() method for a given
-        GUI toolkit. For example, the GtkUI mixin auto-creates a base
-        container (Gtk::VBox) and returns it via @ widget(). See
-        the @ref guimixins "ui mixins" section for other UI extensions
-     */
-
-    /** This is the base class for a plugin UI. You should inherit it and
-        override any public member functions you want to provide
-        implementations for. All subclasses must have a constructor with
-        the signature
-
-        where @c plugin_uri is the URI of the plugin that this UI will
-        control (not the URI for the UI itself).
-
-        You can extend your UI classes, for example adding support for
-        UI extensions, by passing @ref guimixins "UI mixin classes" as template
-        parameters to UI (second template parameter and onwards).
-
-        @headerfile lvtk/ui.hpp
-     */
-    template<class Derived, class Ext1 = end, class Ext2 = end,
-             class Ext3 = end, class Ext4 = end, class Ext5 = end,
-             class Ext6 = end, class Ext7 = end, class Ext8 = end,
-             class Ext9 = end>
-    class UI : public MixinTree<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6,
-                                         Ext7, Ext8, Ext9>
-    {
-    public:
-
-        /** @internal
-            The constructor for the UI class. You should never use it directly.
-         */
-        inline
-        UI()
-        {
-            m_ctrl = s_ctrl;
-            m_wfunc = s_wfunc;
-            m_features = s_features;
-            m_bundle_path = s_bundle_path;
-            m_uri = s_uri;
-
-            s_ctrl = 0;
-            s_wfunc = 0;
-            s_features = 0;
-            s_bundle_path = 0;
-            s_uri = 0;
-
-            if (m_features)
-            {
-                FeatureHandlerMap hmap;
-                Derived::map_feature_handlers (hmap);
-                for (const lvtk::Feature* const * iter = m_features;
-                        *iter != 0; ++iter)
-                {
-                    FeatureHandlerMap::iterator miter;
-                    miter = hmap.find((*iter)->URI);
-                    if (miter != hmap.end())
-                    {
-                        miter->second(static_cast<Derived*>(this),
-                                (*iter)->data);
-                    }
-                }
-            }
-        }
-
-        /** Get the controller
-            @return Instance this UI is controlling
-            @remarks You only need it if you want to handle extensions
-            yourself.
-         */
-        inline void* controller() { return m_ctrl; }
-
-        /** Handle port events
-
-            Override this if you want your UI to do something when a control port
-            value changes in the plugin instance.
-
-            @param port The port index
-            @param buffer_size The port buffer size
-            @param format The data format
-            @param buffer Port data
-         */
-        inline void port_event (uint32_t /*port*/, uint32_t /*buffer_size*/,
-                                uint32_t /*format*/, void const* /*buffer*/)
-        { }
-
-        /** Get this UI's URI
-            @return The UI uri
-         */
-        inline const char* uri() const { return m_uri.c_str(); }
-
-        /** Use this template function to register a class as a LV2 UI.
-
-            @param uri The UIs URI
-            @return Descriptor index
-         */
-        static int register_class(char const* uri)
-        {
-            LV2UI_Descriptor desc;
-            std::memset (&desc, 0, sizeof(LV2UI_Descriptor));
-            desc.URI = strdup(uri);
-            desc.instantiate = &Derived::create_ui_instance;
-            desc.cleanup = &Derived::delete_ui_instance;
-            desc.port_event = &Derived::_port_event;
-            desc.extension_data = &Derived::extension_data;
-
-            get_lv2g2g_descriptors().push_back(desc);
-            return get_lv2g2g_descriptors().size() - 1;
-        }
-
-    protected:
-        /** Send a chunk of data to a plugin port. The format of the chunk is
-            determined by the port type and the transfer mechanisms used, you
-            should probably use a wrapper function instead such as write_control().
-         */
-        inline void write (uint32_t port, uint32_t buffer_size,
-                           uint32_t format, void const* buffer)
-        {
-            (*m_wfunc)(m_ctrl, port, buffer_size, format, buffer);
-        }
-
-        /** Set the value of a control input port in the plugin instance. */
-        inline void write_control (uint32_t port, float value)
-        {
-            this->write (port, sizeof(float), 0, &value);
-        }
-
-        /** Get the feature array
-
-            @return The host-passed Feature array
-            @remarks This may only be valid while the constructor
-            is running.
-        */
-        inline Feature const* const* features() { return m_features; }
-
-        /** Get the filesystem path to the bundle that contains this UI. */
-        inline char const* bundle_path() const { return m_bundle_path; }
-
-    private:
-        // This is quite ugly but needed to allow these mixins to call
-        // protected functions in the UI class, which we want.
-#if defined (LVTK_EXTRAS_ENABLED)
-        friend class WriteMIDI<true>::I<Derived>;
-        friend class WriteMIDI<false>::I<Derived>;
-        friend class WriteOSC<true>::I<Derived>;
-        friend class WriteOSC<false>::I<Derived>;
-#endif
-
-        /** @internal
-            This function creates an instance of a plugin UI. It is used
-            as the instantiate() callback in the LV2 descriptor. You should not use
-            it directly.
-         */
-        static LV2UI_Handle
-        create_ui_instance (LV2UI_Descriptor const* descriptor,
-                            char const* plugin_uri, char const* bundle_path,
-                            LV2UI_Write_Function write_func, LV2UI_Controller ctrl,
-                            LV2UI_Widget* widget, LV2_Feature const* const * features)
-        {
-            /* Copy some data to static variables so the subclasses don't have to
-               bother with it - this is threadsafe since hosts are not allowed
-               to instantiate the same plugin concurrently */
-            s_ctrl = ctrl;
-            s_wfunc = write_func;
-            s_features = features;
-            s_bundle_path = bundle_path;
-            s_uri = descriptor->URI;
-
-            /** Write some debug information */
-            if (LVTK_DEBUG)
-            {
-                std::clog << "[LV2::UI] Creating UI...\n\n"
-                        << "  Plugin URI:      \"" << plugin_uri << "\"\n"
-                        << "  Bundle path:     \"" << bundle_path << "\"\n"
-                        << "  UI Features:\n";
-                lvtk::Feature const* const * iter;
-                for (iter = features; *iter; ++iter)
-                    std::clog << "    \"" << (*iter)->URI << "\"\n";
-            }
-
-            // create the UI object
-            if (LVTK_DEBUG)
-                std::clog << "  Creating LV2 Widget..." << std::endl;
-            Derived* ui = new Derived (plugin_uri);
-            *widget = ui->widget();
-
-            /* Check all is OK */
-            if (ui->check_ok() && *widget != NULL)
-            {
-                return reinterpret_cast<LV2UI_Handle> (ui);
-            }
-
-            delete ui;
-            return 0;
-        }
-
-        /** @internal
-            This function destroys an instance of a UI. It is used as the
-            cleanup() callback in the LV2UI descriptor. You should not use it
-            directly.
-        */
-        static void
-        delete_ui_instance (LV2UI_Handle instance)
-        {
-            delete static_cast<Derived*> (instance);
-        }
-
-        /** @internal
-            This is the main port_event() callback. You should not
-            use it directly.
-         */
-        static void
-        _port_event (LV2UI_Handle instance, uint32_t port,
-                uint32_t buffer_size, uint32_t format, void const* buffer)
-        {
-            static_cast<Derived*>(instance)->port_event(port, buffer_size,
-                    format, buffer);
-        }
-
-        void* m_ctrl;
-        LV2UI_Write_Function m_wfunc;
-        lvtk::Feature const* const * m_features;
-        char const* m_bundle_path;
-        std::string m_uri;
-
-        static void* s_ctrl;
-        static LV2UI_Write_Function s_wfunc;
-        static lvtk::Feature const* const * s_features;
-        static char const* s_bundle_path;
-        static char const* s_uri;
-    };
-
-    /* Yes, static variables are messy. */
-    template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
-            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-        void* UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8, Ext9>::s_ctrl =
-                0;
-
-    template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
-            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-        LV2UI_Write_Function UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6,
-                Ext7, Ext8, Ext9>::s_wfunc = 0;
-
-    template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
-            class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-        lvtk::Feature const* const * UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5,
-                Ext6, Ext7, Ext8, Ext9>::s_features = 0;
-
-    template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
-             class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-        char const* UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8,
-                Ext9>::s_bundle_path = 0;
-
-    template<class Derived, class Ext1, class Ext2, class Ext3, class Ext4,
-             class Ext5, class Ext6, class Ext7, class Ext8, class Ext9>
-        char const* UI<Derived, Ext1, Ext2, Ext3, Ext4, Ext5, Ext6, Ext7, Ext8,
-                Ext9>::s_uri = 0;
+static Descriptors& descriptors() {
+    static Descriptors s_desc;
+    return s_desc;
 }
 
-#endif /* LVTK_UI_HPP */
+class Controller {
+public:
+    Controller (LV2UI_Controller c, LV2UI_Write_Function f)
+        : controller (c), port_write (f) { }
+    Controller (const Controller& o) { operator= (o); }
+
+    void write (uint32_t port, uint32_t size, uint32_t protocol, const void * data) const {
+        port_write (controller, port, size, protocol, data);
+    }
+
+    LV2UI_Controller c_obj() const { return controller; }
+    operator LV2UI_Controller() const { return controller; }
+
+    Controller& operator= (const Controller& o) {
+        controller = o.controller;
+        port_write = o.port_write;
+        return *this;
+    }
+
+private:
+    LV2UI_Controller controller = nullptr;
+    LV2UI_Write_Function port_write = nullptr;
+};
+
+struct InstanceArgs {
+    InstanceArgs (const String& p, const String& b, const Controller& c, const FeatureList& f)
+        : plugin(p), bundle(b), controller(c), features (f) {}
+
+    String plugin;
+    String bundle;
+    Controller controller;
+    FeatureList features;
+};
+
+template<class S, template<class> class... E>
+class Instance {
+public:
+    Instance (const InstanceArgs& args) 
+        : E<S> (args.features)...,
+          controller (args.controller)
+    {
+        for (const auto& f : args.features) {
+            if (f == LV2_UI__parent) {
+                parent_widget = (LV2UI_Widget) f.data;
+            } else if (f == LV2_UI__portSubscribe) {
+                subscribe = *(LV2UI_Port_Subscribe*) f.data;
+            } else if (f == LV2_UI__touch) {
+                ui_touch = *(LV2UI_Touch*) f.data;
+            } else if (f == LV2_UI__portMap) {
+                port_map = *(LV2UI_Port_Map*) f.data;
+            } else if (f == LV2_UI__resize) {
+                ui_resize = *(LV2UI_Resize*) f.data;
+            }
+        }
+    }
+
+    virtual ~Instance() {}
+
+    /** Clean up (optional)
+        This is called immediately before the dtor
+      */
+    void cleanup() { }
+
+    /** Get the LV2UI_Widget (required) 
+        It is ok to create your widget here, but make sure
+        that it only gets allocated once. 
+    */
+    LV2UI_Widget get_widget() { return nullptr; }
+
+    /** Port events (optional) 
+     
+        Called when port events are received from the host. Implement this to 
+        update the UI when properties change in the plugin.
+    */
+    void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) { }
+
+    /** Write data to ports
+        
+        @param port
+        @param size
+        @param protocol
+        @param data
+     */
+    inline void write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) const {
+        controller.write (port, size, protocol, data);
+    }
+
+    inline void write (uint32_t port, float value) const {
+        write (port, sizeof (float), 0, &value);
+    }
+
+    /** Port index map (optional) 
+
+        Only returns valid port indexes if the host provides LV2UI_Port_Map
+        during instantiation.
+
+        @param symbol   The symbol to return an index for
+    */
+    uint32_t port_index (const String& symbol) const {
+        if (port_map.port_index)
+            return port_map.port_index (port_map.handle, symbol.c_str());
+        return LV2UI_INVALID_PORT_INDEX;
+    }
+
+    /** Subscribe to port notifications (optional)
+        
+        This method works only if the host provides LV2UI_Port_Subscribe
+        during instantiation
+
+        @param port
+        @param protocol
+        @param features
+     */
+    void port_subscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
+        LV2_Feature* f [features.size() + 1];
+        for (int i = 0; i < features.size(); ++i)
+            f[i] = (LV2_Feature*)(&features[i]);
+        f[features.size()] = nullptr;
+
+        if (subscribe.subscribe)
+            subscribe.subscribe (subscribe.handle, port, protocol, f);
+    }
+
+    /** Unsubscribe from port notifications (optional)
+        
+        This method works only if the host provides LV2UI_Port_Subscribe
+        during instantiation
+
+        @param port
+        @param protocol
+        @param features
+     */
+    void port_unsubscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
+        LV2_Feature* f [features.size() + 1];
+        for (int i = 0; i < features.size(); ++i)
+            f[i] = (LV2_Feature*)(&features[i]);
+        f[features.size()] = nullptr;
+    
+        if (subscribe.unsubscribe)
+            subscribe.unsubscribe (subscribe.handle, port, protocol, f);
+    }
+
+protected:
+    const Controller controller;
+
+private:
+    LV2UI_Widget parent_widget = nullptr;
+    LV2UI_Port_Subscribe subscribe { nullptr, nullptr, nullptr };
+    LV2UI_Port_Map port_map { nullptr, nullptr };
+    LV2UI_Touch ui_touch = { 0, 0 };
+    LV2UI_Resize ui_resize = { 0, 0 };
+};
+
+template<class InstanceType>
+class UI {
+public:
+    UI (const String& uri, const StringArray& required = { }) 
+    {
+        LV2UI_Descriptor desc;
+        desc.URI = strdup (uri.c_str());
+        desc.instantiate = _instantiate;
+        desc.port_event = _port_event;
+        desc.cleanup = _cleanup;
+        desc.extension_data = _extension_data;
+        descriptors().push_back (desc);
+
+        for (const auto& rq : required)
+            s_required.push_back (rq);
+    }
+
+    inline static void register_extension (const std::string& uri, const void* data) {
+        s_extensions[uri] = data;
+    }
+
+private:
+    static ExtensionMap s_extensions;
+    static StringArray  s_required;
+
+    static LV2UI_Handle _instantiate (const struct _LV2UI_Descriptor* descriptor,
+	                            const char*                     plugin_uri,
+	                            const char*                     bundle_path,
+	                            LV2UI_Write_Function            write_function,
+	                            LV2UI_Controller                ctl,
+	                            LV2UI_Widget*                   widget,
+	                            const LV2_Feature* const*       feats)
+    {
+        const FeatureList features (feats);
+        const Controller controller (ctl, write_function);
+        InstanceArgs args (plugin_uri, bundle_path, controller, features);
+        auto instance = std::unique_ptr<InstanceType> (new InstanceType (args));
+
+        for (const auto& rq : s_required)
+        {
+            bool provided = false;
+            for (const auto& f : features)
+                if (strcmp (f.URI, rq.c_str()) == 0)
+                    { provided = true; break; }
+            
+            if (! provided) {
+                return nullptr;
+            }
+            else 
+            {
+            }
+        }
+
+        *widget = instance->get_widget();
+        return static_cast<LV2UI_Handle> (instance.release());
+    }
+
+	/**
+	   Destroy the UI.  The host must not try to access the widget after
+	   calling this function.
+	*/
+	static void _cleanup (LV2UI_Handle ui)
+    {
+        (static_cast<InstanceType*>(ui))->cleanup();
+        delete static_cast<InstanceType*> (ui);
+    }
+
+	static void _port_event (LV2UI_Handle ui,
+	                         uint32_t     port_index,
+	                         uint32_t     buffer_size,
+	                         uint32_t     format,
+	                         const void*  buffer)
+    {
+        (static_cast<InstanceType*>(ui))->port_event (
+            port_index, buffer_size, format, buffer);
+    }
+
+    static const void* _extension_data (const char* uri) {
+        auto e = s_extensions.find (uri);
+        return e != s_extensions.end() ? e->second : nullptr;
+    }
+};
+
+template<class I> ExtensionMap UI<I>::s_extensions = {};
+template<class I> StringArray  UI<I>::s_required;
+
+}}
+
+#include <lvtk/interface/idle.hpp>
+#include <lvtk/interface/show.hpp>
+
+extern "C" {
+
+#ifndef LVTK_NO_SYMBOL_EXPORT
+
+LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index) {
+    return (index < lvtk::ui::descriptors().size())
+        ? &lvtk::ui::descriptors()[index] : NULL;
+}
+
+#endif
+
+}

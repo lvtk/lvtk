@@ -34,7 +34,6 @@
   lv2:project lvtkp: ;
   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
   ui:ui <http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/gui> ;
-  ll:pegName "p" ;
 
   lv2:port [
     a atom:AtomPort , lv2:InputPort ;

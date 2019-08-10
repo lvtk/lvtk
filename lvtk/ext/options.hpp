@@ -22,223 +22,147 @@
     LV2 Compatibility: LV2 Options v1.0 (2012-10-14)
  */
 
-#ifndef LVTK_OPTIONS_HPP
-#define LVTK_OPTIONS_HPP
+#pragma once
 
-#include <lv2/lv2plug.in/ns/ext/options/options.h>
-
-
-#ifndef LVTK_OPTIONS_IFACE
-#define LVTK_OPTIONS_IFACE 1
-#endif
+#include <lvtk/feature.hpp>
+#include <lv2/options/options.h>
 
 namespace lvtk {
 
+/** Convenience enum to get LV2_Options_Option into a C++ namespace */
+typedef LV2_Options_Option Option;
 
-    /** Convenience enum to get LV2_Options_Option into a C++ namespace */
-    typedef LV2_Options_Option Option;
+/** Convenience enum to get LV2_Options_Context into a C++ namespace */
+typedef enum {
+    /** This option applies to the instance itself.  The subject must be
+        ignored. */
+    OPTIONS_INSTANCE    = LV2_OPTIONS_INSTANCE,
 
-    /** Convenience enum to get LV2_Options_Context into a C++ namespace */
-    typedef enum {
-        /** This option applies to the instance itself.  The subject must be
-            ignored. */
-        OPTIONS_INSTANCE    = LV2_OPTIONS_INSTANCE,
+    /** This option applies to some named resource.  The subject is a URI mapped
+        to an integer (a LV2_URID, like the key) */
+    OPTIONS_RESOURCE    = LV2_OPTIONS_RESOURCE,
 
-        /** This option applies to some named resource.  The subject is a URI mapped
-            to an integer (a LV2_URID, like the key) */
-        OPTIONS_RESOURCE    = LV2_OPTIONS_RESOURCE,
+    /** This option applies to some blank node.  The subject is a blank node
+        identifier, which is valid only within the current local scope. */
+    OPTIONS_BLANK       = LV2_OPTIONS_BLANK,
 
-        /** This option applies to some blank node.  The subject is a blank node
-            identifier, which is valid only within the current local scope. */
-        OPTIONS_BLANK       = LV2_OPTIONS_BLANK,
-
-        /** This option applies to a port on the instance.  The subject is the
-            port's index. */
-        OPTIONS_PORT        = LV2_OPTIONS_PORT
-    } OptionsContext;
-
-
-    /** Convenience enum to get LV2_Options_Status into a C++ namespace */
-    typedef enum {
-        OPTIONS_SUCCESS         = LV2_OPTIONS_SUCCESS,          /**< Completed successfully. */
-        OPTIONS_ERR_UNKNOWN     = LV2_OPTIONS_ERR_UNKNOWN,      /**< Unknown error. */
-        OPTIONS_ERR_BAD_SUBJECT = LV2_OPTIONS_ERR_BAD_SUBJECT,  /**< Invalid/unsupported subject. */
-        OPTIONS_ERR_BAD_KEY     = LV2_OPTIONS_ERR_BAD_KEY,      /**< Invalid/unsupported key. */
-        OPTIONS_ERR_BAD_VALUE   = LV2_OPTIONS_ERR_BAD_VALUE     /**< Invalid/unsupported value. */
-    } OptionsStatus;
+    /** This option applies to a port on the instance.  The subject is the
+        port's index. */
+    OPTIONS_PORT        = LV2_OPTIONS_PORT
+} OptionsContext;
 
 
-    /** An simple iterator to use with and array of LV2_Options_Option's
+/** Convenience enum to get LV2_Options_Status into a C++ namespace */
+typedef enum {
+    OPTIONS_SUCCESS         = LV2_OPTIONS_SUCCESS,          /**< Completed successfully. */
+    OPTIONS_ERR_UNKNOWN     = LV2_OPTIONS_ERR_UNKNOWN,      /**< Unknown error. */
+    OPTIONS_ERR_BAD_SUBJECT = LV2_OPTIONS_ERR_BAD_SUBJECT,  /**< Invalid/unsupported subject. */
+    OPTIONS_ERR_BAD_KEY     = LV2_OPTIONS_ERR_BAD_KEY,      /**< Invalid/unsupported key. */
+    OPTIONS_ERR_BAD_VALUE   = LV2_OPTIONS_ERR_BAD_VALUE     /**< Invalid/unsupported value. */
+} OptionsStatus;
 
-        @code
-            OptionsIter iter (get_options());
-            while (const Option* opt = iter.next())
-            {
-                // handle the option
-            }
-        @endcode
-    */
-    class OptionsIter
+/** An simple iterator to use with and array of LV2_Options_Option's
+
+    @code
+        OptionsIterator iter (get_options());
+        while (const Option* opt = iter.next())
+        {
+            // handle the option
+        }
+    @endcode
+*/
+
+class OptionsIterator
+{
+public:
+    OptionsIterator (const Option* options)
+        : index (0),m_size (0), p_opts (options)
     {
-    public:
+        while (0 != next())
+            ++m_size;
+        index = 0;
+    }
 
-        OptionsIter (const Option* options)
-            : index (0),m_size (0), p_opts (options)
-        {
-            while (0 != next())
-                ++m_size;
-            index = 0;
-        }
+    /** Returns the next option or NULL if the end of the list is reached */
+    const Option* next() const
+    {
+        if (p_opts == 0 || (p_opts[index].key   == 0 &&
+                                p_opts[index].value == 0))
+            return 0;
 
-        /** Returns the next option or NULL if the end of the list is reached */
-        const Option* next()
-        {
-            if (p_opts == 0 || (p_opts[index].key   == 0 &&
-                                   p_opts[index].value == 0))
-                return 0;
+        return &p_opts [index++];
+    }
 
-            return &p_opts[index++];
-        }
+    /** Returns the total number of options */
+    uint32_t size() const { return m_size; }
 
-        /** Returns the total number of options */
-        uint32_t size() const { return m_size; }
+private:
+    /** @internal The current option index */
+    mutable uint32_t   index;
 
-    private:
+    /** @internal The number of options in the array */
+    uint32_t           m_size;
 
-        /** @internal The current option index */
-        uint32_t           index;
+    /** @internal Non constant iteration pointer */
+    const Option*      p_opts;
+};
 
-        /** @internal The number of options in the array */
-        uint32_t           m_size;
+/** The LV2 Options Feature Mixin
 
-        /** @internal Non constant iteration pointer */
-        const Option*      p_opts;
+    This mixin provides a callback handler for the LV2 Options feature and
+    hooks up the LV2_Options_Interface as extension data.
 
-    };
+    @struct lvtk::Options lvtk/ext/options.hpp
+    @ingroup pluginmixins
+    @ingroup guimixins
+ */
+struct OptionsArray
+{
+    /** @skip */
+    OptionsArray() = default;
 
+    /** Get the options passed by the host as an LV2_Feature
 
-    /** The LV2 Options Feature Mixin
-
-        This mixin provides a callback handler for the LV2 Options feature and
-        hooks up the LV2_Options_Interface as extension data.
-
-        @struct lvtk::Options lvtk/ext/options.hpp
-        @ingroup pluginmixins
-        @ingroup guimixins
+        @note The options array MUST NOT be modified by the plugin instance
+        @return The options array or 0 if no options were supplied
      */
-    template <bool Required = false>
-    struct Options
+    const Option* get_options() const { return p_host_options; }
+    const Option* c_obj()       const { return get_options(); }
+    
+    void set_feature (const Feature& feature) {
+        if (strcmp (LV2_OPTIONS__options, feature.URI) == 0)
+            p_host_options = (Option*) feature.data;
+    }
+
+private:
+    Option* p_host_options = nullptr;
+};
+
+#if 0
+template<class InstanceType>
+struct OptionsInterface 
+{
+    OptionsInterface()
     {
+        static LV2_Options_Interface options = { _get, _set };
+        Plugin<InstanceType>::register_extension (
+            LV2_OPTIONS__interface, &options
+        );
+    }
 
-        template <class Derived>
-        struct I : Extension<Required>
-        {
+private:
+    static uint32_t _get (LV2_Handle handle, LV2_Options_Option* options)
+    {
+        auto* instance (reinterpret_cast<InstanceType*> (handle));
+        return instance->get_options (options);
+    }
 
-            /** @skip */
-            I() : p_supplied_opts (0) { }
-
-            /** @skip */
-            static void
-            map_feature_handlers (FeatureHandlerMap& hmap)
-            {
-                hmap[LV2_OPTIONS__options] = &I<Derived>::handle_feature;
-            }
-
-            /** @internal Handle the options feature */
-            static void
-            handle_feature (void* instance, FeatureData data)
-            {
-                Derived* plugin (reinterpret_cast<Derived*> (instance));
-                I<Derived>* mixin (static_cast<I<Derived>*> (plugin));
-                mixin->p_supplied_opts = (Option*) data;
-                mixin->m_ok = true;
-            }
-
-            /** @internal Sanity check the mixin */
-            bool
-            check_ok()
-            {
-                if (LVTK_DEBUG) {
-                    std::clog <<"    [Options] validation "
-                              <<(this->m_ok ? "succeeded" : "failed")<<"."<<std::endl;
-                }
-                return this->m_ok;
-            }
-
-            /** @skip */
-            static const void*
-            extension_data (const char* uri)
-            {
-               #if LVTK_OPTIONS_IFACE
-                if (! strcmp (uri, LV2_OPTIONS__interface)) {
-                    static LV2_Options_Interface options = { &I<Derived>::_get,
-                                                             &I<Derived>::_set };
-                    return &options;
-                }
-               #endif
-                return 0;
-            }
-
-            /** Get the options passed by the host as an LV2_Feature
-
-                @note The options array MUST NOT be modified by the plugin instance
-                @return The options array or 0 if no options were supplied
-             */
-            const Option* get_supplied_options()       { return p_supplied_opts; }
-
-        protected:
-
-            /** Get the given options.
-
-                Each element of the passed options array MUST have type, subject, and
-                key set.  All other fields (size, type, value) MUST be initialised to
-                zero, and are set to the option value if such an option is found.
-
-                This method corresponds with LV2_Options_Interface::get
-
-                @return Bitwise OR of OptionsStatus values.
-            */
-            uint32_t get_options (Option*)              { return OPTIONS_SUCCESS; }
-
-
-
-
-            /** Set the given options.
-
-                This function is in the "instantiation" LV2 threading class, so no other
-                instance functions may be called concurrently.
-
-                This method corresponds with LV2_Options_Interface::set
-
-                @return Bitwise OR of OptionsStatus values.
-            */
-            uint32_t set_options (const Option*)        { return OPTIONS_SUCCESS; }
-
-        private:
-
-            /** @internal Options supplied by the host.
-                This is non-const because it will be set after the ctor is
-                called
-            */
-            Option* p_supplied_opts;
-
-            /* LV2 Options Implementation */
-
-            static uint32_t _get (LV2_Handle handle, LV2_Options_Option* options)
-            {
-                Derived* plugin (reinterpret_cast<Derived*> (handle));
-                return plugin->get_options (options);
-            }
-
-            static uint32_t _set (LV2_Handle handle, const LV2_Options_Option* options)
-            {
-                Derived* plugin (reinterpret_cast<Derived*> (handle));
-                return plugin->set_options (options);
-            }
-
-        };
-    };
+    static uint32_t _set (LV2_Handle handle, const LV2_Options_Option* options)
+    {
+        auto* instance (reinterpret_cast<InstanceType*> (handle));
+        return instance->set_options (options);
+    }
+};
+#endif
 
 } /* namespace lvtk */
-
-#endif /* LVTK_OPTIONS_HPP */

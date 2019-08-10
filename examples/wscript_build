@@ -10,54 +10,72 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 file COPYING for more details. '''
 
-import os
-import lv2
+import os, re
 
 buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
 builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
-	examples = ["workhorse", "silence", "beep"]
+	examples = [ "silence", "workhorse", "volume" ]
 	first_plugin = True
 
+	bundle = 'lvtk-examples.lv2'
+	install_dir = os.path.join (bld.env.LV2DIR, bundle)
+	module_pat = re.sub('^lib', '', bld.env.cxxshlib_PATTERN)
+	module_ext = module_pat[module_pat.rfind('.'):]
+	plugin_env = bld.env.derive()
+	plugin_env.cxxshlib_PATTERN = module_pat
+
 	for slug in examples:
-
-		bld(rule="ttl2c ${SRC} ${TGT}", \
-			source=slug+'.ttl', \
-			target=slug+'.h')
-
-		bld.add_group()
-
-		res = ["%s.ttl" % slug]
-		if True == first_plugin:
-			res += ["manifest.ttl.in"]
+		if first_plugin:
 			first_plugin = False
+			bld (
+				features	= 'subst',
+				source		= 'manifest.ttl.in',
+				target		= '%s/manifest.ttl' % bundle,
+				LIB_EXT		= module_ext,
+				install_path = install_dir
+			)
+
+		bld (
+			features	= 'subst',
+			source		= '%s.ttl' % slug,
+			target		= '%s/%s.ttl' % (bundle, slug),
+			install_path = install_dir
+		)
 
 		plugin = bld.shlib (
-			lv2_bundle	  =	 True,
-			lv2_resources = res,
-			lv2_target    = "lvtk.lv2",
+			cxxflags      = '-std=c++14',
 			name          = slug,
-			target        = slug,
+			target        = '%s/%s' % (bundle, slug),
 			source        = "%s.cpp" % slug,
-			includes      = ["../build/examples"],
+			includes      = [],
 			use           = bld.env.LIB_LVTK_PLUGIN,
-			LIB_EXT		  = bld.env.pluginlib_EXT
+			install_path  = install_dir,
+			env			  = plugin_env
 		)
 
 		# Build the plugin gui (if able)
 		uislug = slug + "_ui"
 		uisrc  = uislug + ".cpp"
-
-		if builduis and bld.path.find_resource(uisrc):
-			ui = bld.shlib(
-				lv2_bundle	  =	True,
-				lv2_target    = "lvtk.lv2",
-				name          = uislug,
-				target        = uislug,
-				source        = uisrc,
-				cxxflags       = ['-Wl,-z,nodelete'],
-				includes      = ["../build/examples"],
-				use           = [bld.env.LIB_LVTK_UI, "gtkmm"],
-				LIB_EXT		  = bld.env.pluginlib_EXT
-			)
+		if builduis and bld.path.find_resource('%s' % uisrc) != None:
+			if slug != 'volume':
+				if bld.env.HAVE_GTKMM == 1:
+					bld.shlib (
+						name          = uislug,
+						target        = '%s/%s' % (bundle, uislug),
+						source        = uisrc,
+						includes      = [ "../build/examples"],
+						use           = [ 'GTKMM' ],
+						env  		  = plugin_env
+					)
+			elif slug == 'volume':
+				if bld.env.HAVE_JUCE_GUI_BASICS == 1:
+					bld.shlib (
+						name          = uislug,
+						target        = '%s/%s' % (bundle, uislug),
+						source        = uisrc,
+						includes      = [ "../build/examples"],
+						use           = [ 'JUCE_GUI_BASICS' ],
+						env  		  = plugin_env
+					)

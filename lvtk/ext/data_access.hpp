@@ -1,118 +1,71 @@
-/*
-    data_access.hpp - support file for writing LV2 plugins in C++
+/* 
+    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
-    Copyright (C) 2012 Michael Fisher <mfisher31@gmail.com>
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
- */
 /**
     @file data_access.hpp
     C++ convenience header for the LV2 data access extension.
-    LV2 C Version Support: 1.6 (2012-04-17)
-
-    This mixin implements the LV2_Extension_Data_Feature.  It provides
-    access to LV2_Descriptor::extension_data() for plugin UIs or other
-    potentially remote users of a plugin via a data_access() method.
  */
 
-#ifndef LVTK_DATA_ACCESS_HPP
-#define LVTK_DATA_ACCESS_HPP
+#pragma once
 
-#include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
+#include <lvtk/feature.hpp>
+#include <lv2/data-access/data-access.h>
 
-#include <lvtk/private/types.hpp>
+namespace lvtk {
 
-namespace lvtk
+struct DataAccess
 {
-
-    /** The Data Access Mixin
-
-        @see The internal struct I for API details
-        @headerfile lvtk/data_access.hpp
-        @ingroup guimixins
-     */
-    template<bool Required = true>
-    struct DataAccess
+    DataAccess()
     {
-        template<class Derived>
-        struct I : Extension<Required>
-        {
-            I() : p_da(NULL) { }
+        memset (&m_data_access, 0, sizeof(LV2_Extension_Data_Feature));
+    }
 
-            /** @internal */
-            static void
-            map_feature_handlers(FeatureHandlerMap& hmap)
-            {
-                hmap[LV2_DATA_ACCESS_URI] = &I<Derived>::handle_feature;
-            }
+    /** A UI can call this to get data (of a type specified by some other
+        extension) from the plugin.
 
-            /** @internal */
-            static void
-            handle_feature(LV2UI_Handle instance, FeatureData data)
-            {
-                Derived* derived = reinterpret_cast<Derived*>(instance);
-                I<Derived>* mixin = static_cast<I<Derived>*>(derived);
+        This call never is never guaranteed to return anything, UIs should
+        degrade gracefully if direct access to the plugin data is not possible
+        (in which case this function will return NULL).
 
-                mixin->p_da =
-                        reinterpret_cast<LV2_Extension_Data_Feature*>(data);
-                mixin->m_ok = (mixin->p_da != NULL);
-            }
+        This is for access to large data that can only possibly work if the UI
+        and plugin are running in the same process.  For all other things, use
+        the normal LV2 UI communication system.
 
-            bool
-            check_ok()
-            {
-                if (!Required)
-                    return true;
+        @param uri The uri string to query
+        @return Not NULL on Success
+     */
+    const void* data_access (const String& uri) const {
+        return nullptr != m_data_access.data_access 
+            ? m_data_access.data_access (uri.c_str())
+            : nullptr;
+    }
 
-                if (LVTK_DEBUG)
-                {
-                    std::clog << "    [DataAccess] Validation "
-                            << (this->m_ok ? "succeeded" : "failed")
-                            << "." << std::endl;
-                }
-                return this->m_ok;
-            }
+    /** Alias to data_access() */
+    const void* get_data (const String& uri) const {
+        return data_access (uri);
+    }
 
-            /** A UI can call this to get data (of a type specified by some other
-                extension) from the plugin.
+    /** Set extension data from an LV2 Feature */
+    void set_feature (const Feature& feature) {
+        m_data_access = *(LV2_Extension_Data_Feature*) feature.data;
+    }
 
-                This call never is never guaranteed to return anything, UIs should
-                degrade gracefully if direct access to the plugin data is not possible
-                (in which case this function will return NULL).
-
-                This is for access to large data that can only possibly work if the UI
-                and plugin are running in the same process.  For all other things, use
-                the normal LV2 UI communication system.
-
-                @param uri The uri string to query
-                @return Not NULL on Success
-             */
-            const void*
-            data_access(const char *uri)
-            {
-                if (NULL != p_da)
-                    return p_da->data_access(uri);
-                return NULL;
-            }
-
-        protected:
-            /** @internal Feature Data passed from host */
-            LV2_Extension_Data_Feature *p_da;
-        };
-    };
+private:
+    /** @internal Feature Data passed from host */
+    LV2_Extension_Data_Feature m_data_access { nullptr };
+};
 
 } /* namespace lvtk */
-
-#endif /* LVTK_DATA_ACCESS_HPP */

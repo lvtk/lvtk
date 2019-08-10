@@ -1,0 +1,73 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "python waf build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "clang",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/build"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "python waf clean",
+            "problemMatcher": []
+        },
+        {
+            "label": "Install",
+            "type": "shell",
+            "command": "python waf install",
+            "problemMatcher": []
+        },
+        {
+            "label": "Uninstall",
+            "type": "shell",
+            "command": "python waf install",
+            "problemMatcher": []
+        },
+        {
+            "label": "Rebuild",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "waf",
+                "clean",
+                "build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Configure Debug",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "waf",
+                "configure",
+                "--debug",
+                "--enable-tests",
+                "--lv2-user"
+            ],
+            "problemMatcher": [ ]
+        },
+    ]
+}
