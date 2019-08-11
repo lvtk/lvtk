@@ -26,12 +26,12 @@ namespace lvtk {
 class DynManifest
 {
 public:
-    DynManifest() { }
-    virtual ~DynManifest() { }
-    virtual void subjects (StringArray& lines) =0;
-    virtual void get_data (const String& uri, StringArray& lines) =0;
+    DynManifest() = default;
+    virtual ~DynManifest() = default;
+    virtual void subjects (std::vector<std::string>& lines) =0;
+    virtual void get_data (const std::string& uri, std::vector<std::string>& lines) =0;
     
-    static void write_lines (const StringArray& lines, FILE* fp) {
+    static void write_lines (const std::vector<std::string>& lines, FILE* fp) {
         for (const auto& l : lines) {
             std::string line = l + "\n";
             fwrite (line.c_str(), sizeof(char), line.size(), fp);
@@ -57,7 +57,7 @@ LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
-    lvtk::StringArray lines;
+    std::vector<std::string> lines;
     manifest->subjects (lines);
     lvtk::DynManifest::write_lines (lines, fp);
     return 0;
@@ -67,7 +67,7 @@ LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const char *uri)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
-    lvtk::StringArray lines;
+    std::vector<std::string> lines;
     manifest->get_data (uri, lines);
     lvtk::DynManifest::write_lines (lines, fp);
     return 0;

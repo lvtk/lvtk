@@ -18,7 +18,7 @@ using std::vector;
 class Workhorse : public Instance<Workhorse, Worker>
 {
 public:
-    Workhorse (double rate, const String& path, const FeatureList& features)
+    Workhorse (double rate, const std::string& path, const FeatureList& features)
         : Instance (rate, path, features),
           m_sleeping (false),
           log_Entry (map (LV2_LOG__Entry)),

@@ -29,12 +29,12 @@ public:
         set_feature (f);
     }
 
-    URID map (const String& uri) const {
+    URID map (const std::string& uri) const {
         return p_map != nullptr ? p_map->map (p_map->handle, uri.c_str())
                                 : 0;
     }
 
-    URID operator()(const String& uri) const { return this->map (uri); }
+    URID operator()(const std::string& uri) const { return this->map (uri); }
     
     LV2_URID_Map* c_obj() const { return p_map; }
 
@@ -55,11 +55,11 @@ public:
         set_feature (feature);
     }
 
-    String operator() (const URID urid) const { return this->unmap (urid); }
+    std::string operator() (const URID urid) const { return this->unmap (urid); }
 
-    String unmap (URID urid) const {
+    std::string unmap (URID urid) const {
         return p_unmap != nullptr ? p_unmap->unmap (p_unmap->handle, urid)
-                                  : String();
+                                  : std::string();
     }
 
     void set_feature (const Feature& map) {

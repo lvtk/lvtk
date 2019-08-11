@@ -72,7 +72,7 @@ public:
                             to provide any of these, instantiate will return
                             a nullptr
      */
-    Plugin (const char* plugin_uri, const StringArray& required = StringArray())
+    Plugin (const char* plugin_uri, const std::vector<std::string>& required = {})
     {
         LV2_Descriptor desc;
         desc.URI = strdup (plugin_uri);
@@ -107,7 +107,7 @@ public:
 private:    
     using PluginInstance = I;
     static ExtensionMap s_extensions;
-    static StringArray  s_required;
+    static std::vector<std::string>  s_required;
     /** @internal */
     static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
 	                                double                         sample_rate,
@@ -172,7 +172,7 @@ private:
 };
 
 template<class I> ExtensionMap Plugin<I>::s_extensions = {};
-template<class I> StringArray  Plugin<I>::s_required;
+template<class I> std::vector<std::string> Plugin<I>::s_required;
 
 }
 

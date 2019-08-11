@@ -47,14 +47,14 @@ struct DataAccess
         @param uri The uri string to query
         @return Not NULL on Success
      */
-    const void* data_access (const String& uri) const {
+    const void* data_access (const std::string& uri) const {
         return nullptr != m_data_access.data_access 
             ? m_data_access.data_access (uri.c_str())
             : nullptr;
     }
 
     /** Alias to data_access() */
-    const void* get_data (const String& uri) const {
+    const void* get_data (const std::string& uri) const {
         return data_access (uri);
     }
 

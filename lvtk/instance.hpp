@@ -28,7 +28,7 @@ protected:
     Instance () = default;
 
 public:
-    Instance (double sample_rate, const String& bundle_path, const FeatureList& features)
+    Instance (double sample_rate, const std::string& bundle_path, const FeatureList& features)
         : E<S> (features)...
     {
         LV2_URID_Map* p_map = nullptr;
@@ -56,7 +56,7 @@ protected:
 
 private:
     double m_sample_rate;
-    String m_bundle_path;
+    std::string m_bundle_path;
 
     friend class Plugin<S>; //<< so this can be private
     static void map_extension_data (ExtensionMap& em) {

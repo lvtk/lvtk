@@ -55,11 +55,11 @@ private:
 };
 
 struct InstanceArgs {
-    InstanceArgs (const String& p, const String& b, const Controller& c, const FeatureList& f)
+    InstanceArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
         : plugin(p), bundle(b), controller(c), features (f) {}
 
-    String plugin;
-    String bundle;
+    std::string plugin;
+    std::string bundle;
     Controller controller;
     FeatureList features;
 };
@@ -128,7 +128,7 @@ public:
 
         @param symbol   The symbol to return an index for
     */
-    uint32_t port_index (const String& symbol) const {
+    uint32_t port_index (const std::string& symbol) const {
         if (port_map.port_index)
             return port_map.port_index (port_map.handle, symbol.c_str());
         return LV2UI_INVALID_PORT_INDEX;
@@ -183,10 +183,11 @@ private:
     LV2UI_Resize ui_resize = { 0, 0 };
 };
 
-template<class InstanceType>
-class UI {
+template<class I>
+class UI final
+{
 public:
-    UI (const String& uri, const StringArray& required = { }) 
+    UI (const std::string& uri, const std::vector<std::string>& required = {}) 
     {
         LV2UI_Descriptor desc;
         desc.URI = strdup (uri.c_str());
@@ -206,20 +207,20 @@ public:
 
 private:
     static ExtensionMap s_extensions;
-    static StringArray  s_required;
+    static std::vector<std::string>  s_required;
 
     static LV2UI_Handle _instantiate (const struct _LV2UI_Descriptor* descriptor,
-	                            const char*                     plugin_uri,
-	                            const char*                     bundle_path,
-	                            LV2UI_Write_Function            write_function,
-	                            LV2UI_Controller                ctl,
-	                            LV2UI_Widget*                   widget,
-	                            const LV2_Feature* const*       feats)
+                                      const char*                     plugin_uri,
+                                      const char*                     bundle_path,
+                                      LV2UI_Write_Function            write_function,
+                                      LV2UI_Controller                ctl,
+                                      LV2UI_Widget*                   widget,
+                                      const LV2_Feature* const*       feats)
     {
         const FeatureList features (feats);
         const Controller controller (ctl, write_function);
         InstanceArgs args (plugin_uri, bundle_path, controller, features);
-        auto instance = std::unique_ptr<InstanceType> (new InstanceType (args));
+        auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : s_required)
         {
@@ -246,8 +247,8 @@ private:
 	*/
 	static void _cleanup (LV2UI_Handle ui)
     {
-        (static_cast<InstanceType*>(ui))->cleanup();
-        delete static_cast<InstanceType*> (ui);
+        (static_cast<I*>(ui))->cleanup();
+        delete static_cast<I*> (ui);
     }
 
 	static void _port_event (LV2UI_Handle ui,
@@ -256,8 +257,7 @@ private:
 	                         uint32_t     format,
 	                         const void*  buffer)
     {
-        (static_cast<InstanceType*>(ui))->port_event (
-            port_index, buffer_size, format, buffer);
+        (static_cast<I*>(ui))->port_event (port_index, buffer_size, format, buffer);
     }
 
     static const void* _extension_data (const char* uri) {
@@ -267,7 +267,7 @@ private:
 };
 
 template<class I> ExtensionMap UI<I>::s_extensions = {};
-template<class I> StringArray  UI<I>::s_required;
+template<class I> std::vector<std::string>  UI<I>::s_required;
 
 }}
 

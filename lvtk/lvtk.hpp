@@ -29,10 +29,7 @@ namespace lvtk {
 
 using Handle        = LV2_Handle;
 using URID          = LV2_URID;
-using String        = std::string;
-using StringArray   = std::vector<String>;
-using ExtensionMap  = std::map<String, const void*>;
-
+using ExtensionMap  = std::map<std::string, const void*>;
 
 template<class D>
 struct DescriptorList final : public std::vector<D>
@@ -53,7 +50,7 @@ struct Feature : LV2_Feature {
     }
 
     inline bool operator== (const char* uri)  const { return strcmp (uri, URI) == 0; }
-    inline bool operator== (const String& uri) const { return strcmp (uri.c_str(), URI) == 0; }
+    inline bool operator== (const std::string& uri) const { return strcmp (uri.c_str(), URI) == 0; }
 };
 
 /** Convenient typedef for a vector of Features. */
@@ -71,7 +68,7 @@ struct FeatureList final : public std::vector<Feature>
         }
     }
 
-    inline void get_uris (StringArray& uris) {
+    inline void get_uris (std::vector<std::string>& uris) const {
         for (const auto& f : *this)
             uris.push_back (f.URI);
     }
@@ -96,19 +93,19 @@ private:
 };
 
 struct InstanceArgs {
-    InstanceArgs (const String& p, const String& b, const FeatureList& f)
+    InstanceArgs (const std::string& p, const std::string& b, const FeatureList& f)
         : plugin(p), bundle(b), features (f) {}
 
-    String plugin;
-    String bundle;
+    std::string plugin;
+    std::string bundle;
     FeatureList features;
 };
 
 struct Extension  {
-    Extension (const String& _uri) 
+    Extension (const std::string& _uri) 
         : URI (_uri) { }
     virtual ~Extension() = default;
-    const String URI;
+    const std::string URI;
 
     inline bool operator== (const char* str_uri) const { return URI == str_uri; }
     inline bool operator!= (const char* str_uri) const { return URI != str_uri; }
