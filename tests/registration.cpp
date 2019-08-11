@@ -7,7 +7,7 @@
 #include "../examples/workhorse.cpp"
 
 #include <lvtk/ext/urid.hpp>
-#include <lvtk/host/uri_directory.hpp>
+#include <lvtk/uri_directory.hpp>
 
 using TestFixutre = CPPUNIT_NS::TestFixture;
 

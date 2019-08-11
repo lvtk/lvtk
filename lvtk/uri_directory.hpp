@@ -9,8 +9,8 @@
 namespace lvtk {
 
 /** Maintains a map of Strings/Symbols to integers
-    This class also implements LV2 URID Map/Unmap features and is fully
-    compatible with the current LV2 (1.6.0+) specification. */
+    This class also implements LV2 URID Map/Unmap features 
+ */
 class URIDirectory
 {
 public:
