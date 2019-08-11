@@ -16,9 +16,8 @@
 
 #pragma once
 
+#include <lvtk/ext/ui.hpp>
 #include <lvtk/lvtk.hpp>
-#include <lvtk/feature.hpp>
-#include <lv2/ui/ui.h>
 
 namespace lvtk {
 namespace ui {
@@ -36,7 +35,8 @@ static Descriptors& descriptors() {
     This wraps LV2UI_Controller + LV2UI_Write_Function in a single
     Object
  */
-class Controller {
+class Controller
+{
 public:
     Controller (LV2UI_Controller c, LV2UI_Write_Function f)
         : controller (c), port_write (f) { }
@@ -66,7 +66,8 @@ private:
 };
 
 /** Parameters passed to UI instances */
-struct InstanceArgs {
+struct InstanceArgs
+{
     InstanceArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
         : plugin(p), bundle(b), controller(c), features (f) {}
 
@@ -76,7 +77,11 @@ struct InstanceArgs {
     FeatureList features;
 };
 
-/** UI Instance */
+/** UI Instance 
+ 
+    Inherrit this when making an LV2 UI.  The first template parameter
+    is the type of your super class.  The rest are feature mixins.
+*/
 template<class S, template<class> class... E>
 class Instance {
 public:
@@ -196,7 +201,6 @@ private:
     LV2UI_Touch ui_touch = { 0, 0 };
     LV2UI_Resize ui_resize = { 0, 0 };
 };
-
 
 /** UI registration class
     Create a static one of these to register the descriptor for UI instance type.

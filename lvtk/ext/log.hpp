@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include <lv2/log/log.h>
-#include <lvtk/feature.hpp>
+#include <lvtk/lvtk.hpp>
 
 namespace lvtk {
 

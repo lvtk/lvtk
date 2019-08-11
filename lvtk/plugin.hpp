@@ -18,7 +18,6 @@
 
 #include <map>
 #include <lvtk/ext/urid.hpp>
-#include <lvtk/feature.hpp>
 
 /** LV2 Plugin Implementation
     
