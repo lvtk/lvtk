@@ -94,7 +94,7 @@ public:
 
     ~Plugin() = default;
 
-    /** Helper to register extension data but not have to implement
+    /** Helper to register plugin extension data but not have to implement
         the a mixin interface.
 
         @param uri      The uri of your feature.
@@ -104,7 +104,7 @@ public:
         s_extensions[uri] = data;
     }
 
-private:    
+private:
     using PluginInstance = I;
     static ExtensionMap s_extensions;
     static std::vector<std::string>  s_required;

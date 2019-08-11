@@ -25,24 +25,35 @@ namespace ui {
 
 using Descriptors = DescriptorList<LV2UI_Descriptor>;
 
+/** Returns a global array of registered descriptors */
 static Descriptors& descriptors() {
     static Descriptors s_desc;
     return s_desc;
 }
 
+/** A UI Controller
+    
+    This wraps LV2UI_Controller + LV2UI_Write_Function in a single
+    Object
+ */
 class Controller {
 public:
     Controller (LV2UI_Controller c, LV2UI_Write_Function f)
         : controller (c), port_write (f) { }
+
     Controller (const Controller& o) { operator= (o); }
 
+    /** Write data to one of the ports */
     void write (uint32_t port, uint32_t size, uint32_t protocol, const void * data) const {
         port_write (controller, port, size, protocol, data);
     }
 
+    /** Get the underlying C type controller */
     LV2UI_Controller c_obj() const { return controller; }
+
     operator LV2UI_Controller() const { return controller; }
 
+    /** Reference the underlying controller and port write function */
     Controller& operator= (const Controller& o) {
         controller = o.controller;
         port_write = o.port_write;
@@ -54,6 +65,7 @@ private:
     LV2UI_Write_Function port_write = nullptr;
 };
 
+/** Parameters passed to UI instances */
 struct InstanceArgs {
     InstanceArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
         : plugin(p), bundle(b), controller(c), features (f) {}
@@ -64,6 +76,7 @@ struct InstanceArgs {
     FeatureList features;
 };
 
+/** UI Instance */
 template<class S, template<class> class... E>
 class Instance {
 public:
@@ -117,6 +130,7 @@ public:
         controller.write (port, size, protocol, data);
     }
 
+    /** Write a float to a port */
     inline void write (uint32_t port, float value) const {
         write (port, sizeof (float), 0, &value);
     }
@@ -183,11 +197,22 @@ private:
     LV2UI_Resize ui_resize = { 0, 0 };
 };
 
+
+/** UI registration class
+    Create a static one of these to register the descriptor for UI instance type.
+ */
 template<class I>
 class UI final
 {
 public:
-    UI (const std::string& uri, const std::vector<std::string>& required = {}) 
+    /** UI Registation
+        
+        @param plugin_uri   The URI string of your UI
+        @param required     List of required host feature URIs. If the host fails
+                            to provide any of these, instantiate will return
+                            a nullptr
+     */
+    UI (const std::string& uri, const std::vector<std::string>& required = {})
     {
         LV2UI_Descriptor desc;
         desc.URI = strdup (uri.c_str());
@@ -201,6 +226,12 @@ public:
             s_required.push_back (rq);
     }
 
+    /** Helper to register UI extension data but not have to implement
+        the a mixin interface.
+
+        @param uri      The uri of your feature.
+        @param data     Pointer to static extension data.
+     */
     inline static void register_extension (const std::string& uri, const void* data) {
         s_extensions[uri] = data;
     }
