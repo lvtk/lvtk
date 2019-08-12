@@ -3,6 +3,35 @@
 
 using TestFixutre = CPPUNIT_NS::TestFixture;
 
+namespace lvtk {
+
+class Console
+{
+    Console()
+    {
+        log_feature.URI     = LV2_LOG__log;
+        log_data.handle     = this;
+        log_data.printf     = _printf;
+        log_data.vprintf    = _vprintf;;
+    }
+
+    const LV2_Feature* const get_feature() const { return &log_feature; }
+
+private:
+    LV2_Feature log_feature;
+    LV2_Log_Log log_data;
+
+    inline static int _printf (LV2_Log_Handle handle, uint32_t type, const char*, ...) {
+        return 0;
+    }
+
+    inline static int _vprintf (LV2_Log_Handle handle, uint32_t type, const char*, va_list va) {
+        return 0;
+    }
+
+};
+}
+
 class URID : public TestFixutre
 {
   CPPUNIT_TEST_SUITE (URID);
@@ -21,6 +50,8 @@ public:
     {
         urid_A = urids.map ("https://dummy.org/A");
         urid_B = urids.map ("https://dummy.org/B");
+
+
     }
 
 protected:

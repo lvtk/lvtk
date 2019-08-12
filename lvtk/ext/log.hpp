@@ -18,37 +18,53 @@
 
 #include <stdio.h>
 #include <lv2/log/log.h>
+#include <lvtk/ext/urid.hpp>
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
 
-struct Logger
+struct Logger : FeatureData<LV2_Log_Log>
 {
-    void set_feature (const Feature& feature)
-    {
-        p_log = reinterpret_cast<LV2_Log_Log*> (feature.data);
+    Logger() : FeatureData<LV2_Log_Log> (LV2_LOG__log) {}
+
+    inline void operator<< (const std::string& out) const { operator<< (out.c_str()); }
+    inline void operator<< (const char* out) const { 
+        if (log_Trace > 0)
+            this->printf (log_Trace, out);
     }
     
-    int vprintf (LV2_URID type, const char* fmt, va_list ap) const
+    inline int vprintf (URID type, const char* fmt, va_list ap) const
     {
-        if (p_log != NULL)
-            return p_log->vprintf(p_log->handle, type, fmt, ap);
+        if (data.handle != nullptr)
+            return data.vprintf (data.handle, type, fmt, ap);
         return 0;
     }
 
-    int printf (LV2_URID type, const char* fmt, ...) const
+    inline int printf (URID type, const char* fmt, ...) const
     {
         va_list argptr;
         va_start (argptr, fmt);
-
-        int res = this->vprintf(type, fmt, argptr);
+        int res = this->vprintf (type, fmt, argptr);
         va_end (argptr);
 
         return res;
     }
 
+    inline void init (LV2_URID_Map* const map) 
+    {
+        log_Entry   = map->map (map->handle, LV2_LOG__Entry);
+        log_Error   = map->map (map->handle, LV2_LOG__Error);
+        log_Note    = map->map (map->handle, LV2_LOG__Note);
+        log_Trace   = map->map (map->handle, LV2_LOG__Trace);
+        log_Warning = map->map (map->handle, LV2_LOG__Warning);
+    }
+
 private:
-    LV2_Log_Log* p_log;
+    uint32_t log_Entry = 0;
+    uint32_t log_Error = 0;
+    uint32_t log_Note  = 0;
+    uint32_t log_Trace = 0;
+    uint32_t log_Warning = 0;
 };
 
 }

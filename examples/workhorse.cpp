@@ -1,13 +1,7 @@
 
 #include <unistd.h>
-#include <iostream>
 #include <sstream>
-#include <vector>
-#include <cstdlib>
-
 #include <lvtk/plugin.hpp>
-#include <lvtk/ext/atom.hpp>
-#include <lv2/log/log.h>
 
 #define LVTK_WORKHORSE_URI  "http://lvtoolkit.org/plugins/workhorse"
 
@@ -15,7 +9,7 @@ namespace lvtk {
 
 using std::vector;
 
-class Workhorse : public Instance<Workhorse, Worker>
+class Workhorse : public Instance<Workhorse, Worker, Log, BufSize>
 {
 public:
     Workhorse (double rate, const std::string& path, const FeatureList& features)
@@ -28,21 +22,20 @@ public:
 
     void deactivate()  { }
     void connect_port (uint32_t, void* data)  {}
-    void activate() 
+    void activate()
     {
-        #if 0
         // query for buffer information.
-        const BufferInfo& info (get_buffer_info());
+        const auto& info (buffer_details());
         std::stringstream ss;
         ss << "Workhorse Buffer Information:\n";
-        ss << "\tBuffer Bounded:  " << info.bounded << std::endl
-           << "\tBuffer Fixed:    " << info.fixed << std::endl
-           << "\tBuffer Pow of 2: " << info.power_of_two << std::endl
-           << "\tBuffer Min:      " << info.min << std::endl
-           << "\tBuffer Max:      " << info.max << std::endl
+        ss << "\tBounded:  " << info.bounded << std::endl
+           << "\tFixed:    " << info.fixed << std::endl
+           << "\tPower of 2: " << info.power_of_two << std::endl
+           << "\tMin:      " << info.min << std::endl
+           << "\tMax:      " << info.max << std::endl
            << "\tSequence Size:   " << info.sequence_size << std::endl;
-        printf (log_Entry, ss.str().c_str());
-        #endif
+        log.printf (log_Entry, ss.str().c_str());
+        log << "hi there";
     }
 
     void run (uint32_t nframes) 
@@ -54,25 +47,22 @@ public:
             switch (schedule_work (strlen (msg) + 1, (void*) msg))
             {
             case WORKER_SUCCESS:
-                // printf (log_Trace, "[workhorse] scheduled a job\n");
+                log.printf (log_Trace, "scheduled a job\n");
                 m_sleeping = true;
                 break;
             default:
-                // printf (log_Trace, "[workhorse] unknown scheduling error\n");
+                log.printf (log_Trace, "unknown scheduling error\n");
                 break;
             }
         }
     }
-
-    /* ============================= Worker ============================ */
 
     /** This is executed by the host after work executes a respond
         object. */
     WorkerStatus work_response (uint32_t size, const void* body)
     {
         /** Print message with LV2 Log */
-        // printf (log_Trace, "[workhorse] woke up. message: %s\n", (char*)body);
-        std::clog << "scheduled_work \n";
+        log.printf (log_Trace, "woke up. message: %s\n", (char*)body);
         m_sleeping = false;
         return WORKER_SUCCESS;
     }
@@ -83,10 +73,8 @@ public:
     WorkerStatus work (WorkerRespond &respond, uint32_t  size, const void*  data)
     {
         /** Print message with LV2 Log's printf */
-        // printf (log_Entry, "[workhorse] taking a nap now\n");
+        log.printf (log_Entry, "taking a nap now\n");
         sleep (1);
-
-        std::clog << "working.... " << std::endl;
 
         /** Send a response */
         respond (size, data);

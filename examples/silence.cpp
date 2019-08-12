@@ -40,14 +40,12 @@ public:
         urids.atom_String = map (LV2_ATOM__String);
         urids.silence_msg = map (LVTK_SILENCE_MSG);
         auto info = buffer_details();
-        int i =0;
-        log.printf (urids.atom_String, "hello world! Could you hear me?\n");
     }
 
-    void activate()  { }
-    void deactivate()  { }
+    void activate()  {}
+    void deactivate()  {}
 
-    void connect_port (uint32_t port, void* data)  {
+    void connect_port (uint32_t port, void* data) {
         if (port == 0)
             audio = (float*) data;
     }

@@ -21,14 +21,20 @@
 
 namespace lvtk {
 
-/** Adds a Logger to your instance */
+/** Adds a Logger `log` to your instance */
 template<class I> 
 struct Log : NullInterface
 {
     Log (const FeatureList& features) { 
-        for (const auto& f : features)
+        for (const auto& f : features) {
+            int n_ok = 0;
             if (strcmp (f.URI, LV2_LOG__log) == 0)
-                { log.set_feature (f); break; }
+                { log.set_feature (f); ++n_ok; }
+            if (strcmp (f.URI, LV2_URID__map) == 0)
+                { log.init ((LV2_URID_Map*) f.data); ++n_ok; }
+            if (n_ok >= 2)
+                break;
+        }
     }
 
 protected:
