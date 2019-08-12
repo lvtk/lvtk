@@ -1,13 +1,9 @@
 
-#include <cppunit/config/SourcePrefix.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "tests.hpp"
 
 // include examples. order matters!
 #include "../examples/silence.cpp"
 #include "../examples/workhorse.cpp"
-
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/uri_directory.hpp>
 
 using TestFixutre = CPPUNIT_NS::TestFixture;
 

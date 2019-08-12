@@ -122,8 +122,7 @@ private:
 
         const FeatureList host_features (features);
 
-        auto instance = std::unique_ptr<PluginInstance> (
-            new PluginInstance (sample_rate, bundle_path, host_features));
+        auto instance = std::unique_ptr<I> (new I (sample_rate, bundle_path, host_features));
 
         for (const auto& rq : s_required) {
             bool provided = false;

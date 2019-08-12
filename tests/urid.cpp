@@ -1,12 +1,5 @@
 
-#include <cppunit/config/SourcePrefix.h>
-#include <cppunit/extensions/HelperMacros.h>
-
-#include <lv2/core/lv2.h>
-#include <lv2/urid/urid.h>
-
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/uri_directory.hpp>
+#include "tests.hpp"
 
 using TestFixutre = CPPUNIT_NS::TestFixture;
 
@@ -20,8 +13,8 @@ class URID : public TestFixutre
 
 protected:
     lvtk::URIDirectory urids;
-    uint32_t urid_A;
-    uint32_t urid_B;
+    uint32_t urid_A = 0;
+    uint32_t urid_B = 0;
 
 public:
     void setUp()
@@ -49,12 +42,21 @@ protected:
     void mapping()
     {
         lvtk::Map map (*urids.get_map_feature());
+        auto* cobj = map.c_obj();
+        CPPUNIT_ASSERT (cobj != nullptr);
+        CPPUNIT_ASSERT (cobj->handle != nullptr);
+        CPPUNIT_ASSERT (cobj->map != nullptr);
         CPPUNIT_ASSERT_EQUAL (map ("https://dummy.org/A"), urid_A);
     }
 
     void unmapping()
     {
-        lvtk::Unmap unmap (*urids.get_unmap_feature());
+        lvtk::Unmap unmap;
+        unmap.set_feature (*urids.get_unmap_feature());
+        auto* cobj = unmap.c_obj();
+        CPPUNIT_ASSERT (cobj != nullptr);
+        CPPUNIT_ASSERT (cobj->handle != nullptr);
+        CPPUNIT_ASSERT (cobj->unmap != nullptr);
         CPPUNIT_ASSERT_EQUAL (std::string (unmap (urid_A)), 
                               std::string ("https://dummy.org/A"));
     }

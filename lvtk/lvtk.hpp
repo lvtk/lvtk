@@ -92,58 +92,48 @@ private:
     const Feature* const*    p_feats;
 };
 
-struct InstanceArgs {
+/** Arguments passed to a plugin instance */
+struct InstanceArgs
+{
     InstanceArgs (const std::string& p, const std::string& b, const FeatureList& f)
-        : plugin(p), bundle(b), features (f) {}
+        : plugin(p), bundle (b), features (f) { }
 
-    std::string plugin;
-    std::string bundle;
-    FeatureList features;
-};
-
-struct Extension  {
-    Extension (const std::string& _uri) 
-        : URI (_uri) { }
-    virtual ~Extension() = default;
-    const std::string URI;
-
-    inline bool operator== (const char* str_uri) const { return URI == str_uri; }
-    inline bool operator!= (const char* str_uri) const { return URI != str_uri; }
+    std::string plugin;     ///< Plugin URI
+    std::string bundle;     ///< Bundle Path
+    FeatureList features;   ///< Host provided features
 };
 
 /** Template class which can be used to assign feature data in a common way.
     Typically these are used to facilitate features provided by the host 
     during plugin instantiation or in host-side callbacks to the plugin.
  */
-template<class D, bool StorePtr = false>
-struct StackExtension : Extension
+template<class D>
+struct FeatureData
 {
-    using data_ptr_t = D*;
+    using data_t        = D;
+    using data_ptr_t    = D*;
 
-    StackExtension() = delete;
+    const std::string URI;
 
-    explicit StackExtension (const char* feature_uri)
-        : Extension (feature_uri) { }
+    FeatureData() = delete;
 
-    ~StackExtension() = default;
+    explicit FeatureData (const char* feature_uri)
+        : URI (feature_uri) { }
+
+    ~FeatureData() = default;
 
     inline bool is_for (const Feature& feature) const { return feature == URI; }
 
+    inline data_ptr_t c_obj() const { return (data_ptr_t) &data; }
+
     inline void set_feature (const Feature& feature) {
         if (is_for (feature)) {
-            if (StorePtr) {
-                data_ptr = static_cast<data_ptr_t> (feature.data);
-                data = *data_ptr;
-            } else {
-                data = *static_cast<data_ptr_t> (feature.data);
-                data_ptr = &data;
-            }
+            data = *static_cast<data_ptr_t> (feature.data);
         }
     }
 
 protected:
-    D data { };
-    data_ptr_t data_ptr { nullptr };
+    data_t data {};
 };
 
 }

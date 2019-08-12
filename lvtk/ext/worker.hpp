@@ -57,9 +57,9 @@ private:
     LV2_Worker_Respond_Function       p_wrfunc;
 };
 
-struct Scheduler : StackExtension<LV2_Worker_Schedule>
+struct Scheduler : FeatureData<LV2_Worker_Schedule>
 {
-    Scheduler() : StackExtension<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}
+    Scheduler() : FeatureData<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}
     
     WorkerStatus schedule_work (uint32_t size, const void* data) const {
         auto& ext = this->data;

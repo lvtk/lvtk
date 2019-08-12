@@ -21,54 +21,36 @@
 
 namespace lvtk {
 
-class Map
+class Map : public FeatureData<LV2_URID_Map>
 {
 public:
-    Map() = default;
-    Map (const Feature& f) {
+    Map() : FeatureData<LV2_URID_Map> (LV2_URID__map) {}
+    Map (const Feature& f) :FeatureData<LV2_URID_Map> (LV2_URID__map) {
         set_feature (f);
     }
 
     URID map (const std::string& uri) const {
-        return p_map != nullptr ? p_map->map (p_map->handle, uri.c_str())
+        return data.map != nullptr ? data.map (data.handle, uri.c_str())
                                 : 0;
     }
 
     URID operator()(const std::string& uri) const { return this->map (uri); }
-    
-    LV2_URID_Map* c_obj() const { return p_map; }
-
-    void set_feature (const Feature& map) {
-        if (strcmp (map.URI, LV2_URID__map) == 0)
-            p_map = (LV2_URID_Map*) map.data;
-    }
-
-private:
-    LV2_URID_Map* p_map = nullptr;
 };
 
-class Unmap
+class Unmap : public FeatureData<LV2_URID_Unmap>
 {
 public:
-    Unmap() = default;
-    Unmap (const Feature& feature) {
+    Unmap() : FeatureData<LV2_URID_Unmap> (LV2_URID__unmap) {}
+    Unmap (const Feature& feature) : FeatureData<LV2_URID_Unmap> (LV2_URID__unmap) {
         set_feature (feature);
     }
 
     std::string operator() (const URID urid) const { return this->unmap (urid); }
 
     std::string unmap (URID urid) const {
-        return p_unmap != nullptr ? p_unmap->unmap (p_unmap->handle, urid)
-                                  : std::string();
+        return data.unmap != nullptr ? data.unmap (data.handle, urid)
+                                     : std::string();
     }
-
-    void set_feature (const Feature& map) {
-        if (strcmp (map.URI, LV2_URID__unmap) == 0)
-            p_unmap = (LV2_URID_Unmap*) map.data;
-    }
-
-private:
-    LV2_URID_Unmap* p_unmap = nullptr;    
 };
 
 }
