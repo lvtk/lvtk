@@ -17,7 +17,7 @@
 #pragma once
 
 #include <lvtk/lvtk.hpp>
-#include <lv2/urid/urid.h>
+#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
 namespace lvtk {
 

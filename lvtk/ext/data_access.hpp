@@ -22,7 +22,7 @@
 #pragma once
 
 #include <lvtk/lvtk.hpp>
-#include <lv2/data-access/data-access.h>
+#include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
 namespace lvtk {
 

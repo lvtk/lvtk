@@ -15,5 +15,5 @@
 */
 
 #pragma once
-#include <lv2/morph/morph.h>
+#include <lv2/lv2plug.in/ns/ext/morph/morph.h>
 namespace lvtk {}

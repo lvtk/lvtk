@@ -15,5 +15,5 @@
 */
 
 #pragma once
-#include <lv2/port-groups/port-groups.h>
+#include <lv2/lv2plug.in/ns/ext/port-groups/port-groups.h>
 namespace lvtk {}

@@ -40,5 +40,5 @@
 */
 
 #pragma once
-#include <lv2/time/time.h>
+#include <lv2/lv2plug.in/ns/ext/time/time.h>
 namespace lvtk {} 

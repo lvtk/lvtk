@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lv2/worker/worker.h>
+#include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 
 namespace lvtk {
 

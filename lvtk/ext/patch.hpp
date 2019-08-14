@@ -15,5 +15,5 @@
 */
 
 #pragma once
-#include <lv2/patch/patch.h>
+#include <lv2/lv2plug.in/ns/ext/patch/patch.h>
 namespace lvtk {}
