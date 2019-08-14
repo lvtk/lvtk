@@ -17,6 +17,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <lvtk/ext/urid.hpp>
 
 /** LV2 Plugin Implementation
@@ -85,10 +86,11 @@ public:
         descriptors().push_back (desc);
 
         for (const auto& req : required) {
-            s_required.push_back (req);
+            this->required().push_back (req);
         }
 
-        PluginInstance::map_extension_data (s_extensions);
+        auto& extmap = extensions();
+        PluginInstance::map_extension_data (extmap);
     }
 
     ~Plugin() = default;
@@ -100,13 +102,25 @@ public:
         @param data     Pointer to static extension data.
      */
     static void register_extension (const std::string& uri, const void* data) {
-        s_extensions[uri] = data;
+        extensions()[uri] = data;
     }
 
 private:
     using PluginInstance = I;
-    static ExtensionMap s_extensions;
-    static std::vector<std::string>  s_required;
+    
+    inline static ExtensionMap& extensions() {
+        static ExtensionMap s_extensions;  
+        return s_extensions; 
+    }
+
+    inline static std::vector<std::string>& required() 
+    {
+        static std::vector<std::string>  s_required;
+        return s_required;
+    }
+
+    
+
     /** @internal */
     static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
 	                                double                         sample_rate,
@@ -124,7 +138,7 @@ private:
 
         auto instance = std::unique_ptr<I> (new I (sample_rate, bundle_path, host_features));
 
-        for (const auto& rq : s_required) {
+        for (const auto& rq : required()) {
             bool provided = false;
             for (const auto& f : host_features)
                 if (f == rq) { provided = true; break; }
@@ -164,13 +178,10 @@ private:
 
     /** @internal */
     inline static const void* _extension_data (const char* uri) {
-        auto e = s_extensions.find (uri);
-        return e != s_extensions.end() ? e->second : nullptr;
+        auto e = extensions().find (uri);
+        return e != extensions().end() ? e->second : nullptr;
     }
 };
-
-template<class I> ExtensionMap Plugin<I>::s_extensions = {};
-template<class I> std::vector<std::string> Plugin<I>::s_required;
 
 }
 
