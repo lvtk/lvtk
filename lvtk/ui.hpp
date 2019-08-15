@@ -305,7 +305,7 @@ private:
 
     static const void* _extension_data (const char* uri) {
         auto e = extensions().find (uri);
-        return e != extensions.end() ? e->second : nullptr;
+        return e != extensions().end() ? e->second : nullptr;
     }
 };
 
