@@ -15,5 +15,5 @@
 */
 
 #pragma once
-#include <lv2/ui/ui.h>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 namespace lvtk { namespace ui {} }

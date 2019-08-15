@@ -15,5 +15,5 @@
 */
 
 #pragma once
-#include <lv2/parameters/parameters.h>
+#include <lv2/lv2plug.in/ns/ext/parameters/parameters.h>
 namespace lvtk {}

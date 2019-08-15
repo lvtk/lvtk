@@ -17,7 +17,7 @@
 #pragma once
 
 #include <stdio.h>
-#include <lv2/log/log.h>
+#include <lv2/lv2plug.in/ns/ext/log/log.h>
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/lvtk.hpp>
 

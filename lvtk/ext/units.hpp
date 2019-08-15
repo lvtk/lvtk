@@ -15,5 +15,7 @@
 */
 
 #pragma once
-#include <lv2/units/units.h>
+#if 0
+#include <lv2/lv2plug.in/ns/ext/units/units.h>
+#endif
 namespace lvtk {}

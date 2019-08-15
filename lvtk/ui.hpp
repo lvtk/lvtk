@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <memory>
 #include <lvtk/ext/ui.hpp>
 #include <lvtk/lvtk.hpp>
 
@@ -227,7 +228,7 @@ public:
         descriptors().push_back (desc);
 
         for (const auto& rq : required)
-            s_required.push_back (rq);
+            this->required().push_back (rq);
     }
 
     /** Helper to register UI extension data but not have to implement
@@ -237,12 +238,19 @@ public:
         @param data     Pointer to static extension data.
      */
     inline static void register_extension (const std::string& uri, const void* data) {
-        s_extensions[uri] = data;
+        extensions()[uri] = data;
     }
 
 private:
-    static ExtensionMap s_extensions;
-    static std::vector<std::string>  s_required;
+    inline static ExtensionMap& extensions() {
+        static ExtensionMap s_extensions;
+        return s_extensions;
+    }
+
+    inline static std::vector<std::string>& required() {
+        static std::vector<std::string>  s_required;
+        return s_required;
+    }
 
     static LV2UI_Handle _instantiate (const struct _LV2UI_Descriptor* descriptor,
                                       const char*                     plugin_uri,
@@ -257,7 +265,7 @@ private:
         InstanceArgs args (plugin_uri, bundle_path, controller, features);
         auto instance = std::unique_ptr<I> (new I (args));
 
-        for (const auto& rq : s_required)
+        for (const auto& rq : required())
         {
             bool provided = false;
             for (const auto& f : features)
@@ -296,13 +304,10 @@ private:
     }
 
     static const void* _extension_data (const char* uri) {
-        auto e = s_extensions.find (uri);
-        return e != s_extensions.end() ? e->second : nullptr;
+        auto e = extensions().find (uri);
+        return e != extensions().end() ? e->second : nullptr;
     }
 };
-
-template<class I> ExtensionMap UI<I>::s_extensions = {};
-template<class I> std::vector<std::string>  UI<I>::s_required;
 
 }}
 

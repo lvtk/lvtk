@@ -17,7 +17,7 @@
 #pragma once
 
 #include <cassert>
-#include <lv2/state/state.h>
+#include <lv2/lv2plug.in/ns/ext/state/state.h>
 
 namespace lvtk {
 

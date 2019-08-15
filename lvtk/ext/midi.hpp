@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lv2/midi/midi.h>
+#include <lv2/lv2plug.in/ns/ext/midi/midi.h>
 
 namespace lvtk {
 

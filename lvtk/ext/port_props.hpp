@@ -15,5 +15,5 @@
 */
 
 #pragma once
-#include <lv2/port-props/port-props.h>
+#include <lv2/lv2plug.in/ns/ext/port-props/port-props.h>
 namespace lvtk {}

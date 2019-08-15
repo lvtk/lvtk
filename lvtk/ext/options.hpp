@@ -25,7 +25,7 @@
 #pragma once
 
 #include <lvtk/lvtk.hpp>
-#include <lv2/options/options.h>
+#include <lv2/lv2plug.in/ns/ext/options/options.h>
 
 namespace lvtk {
 

@@ -17,7 +17,7 @@
 #pragma once
 
 #include <lvtk/lvtk.hpp>
-#include <lv2/instance-access/instance-access.h>
+#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
 
 namespace lvtk {
 
