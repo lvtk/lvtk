@@ -21,7 +21,7 @@ public:
     { }
 
     void deactivate()  { }
-    void connect_port (uint32_t, void* data)  {}
+    void connect_port (uint32_t, void* data)  { }
     void activate()
     {
         // query for buffer information.
@@ -34,8 +34,7 @@ public:
            << "\tMin:      " << info.min << std::endl
            << "\tMax:      " << info.max << std::endl
            << "\tSequence Size:   " << info.sequence_size << std::endl;
-        log.printf (log_Entry, ss.str().c_str());
-        log << "hi there";
+        log << ss.str();
     }
 
     void run (uint32_t nframes) 

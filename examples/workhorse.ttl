@@ -65,7 +65,7 @@ lvtkp:workhorse
 		lv2:index 3 ;
 		lv2:symbol "out" ;
 		lv2:name "Output"
-	].
+	] .
 
 <http://lvtoolkit.org/plugins/workhorse#ui>
 	a ui:GtkUI ;
