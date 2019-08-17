@@ -8,7 +8,7 @@ BUILDING
 --------
 To build and install, run
 ```
-$ ./waf conifugre
+$ ./waf configure
 $ ./waf build
 $ sudo ./waf install
 ```
