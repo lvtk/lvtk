@@ -34,9 +34,6 @@ LVTK_EXTRA_VERSION=''
 APPNAME = 'lvtk'
 VERSION = LVTK_VERSION + LVTK_EXTRA_VERSION
 
-LIB_LVTK_PLUGIN = APPNAME + '_plugin' + LVTK_MAJOR_VERSION
-LIB_LVTK_UI     = APPNAME + '_ui' + LVTK_MAJOR_VERSION
-
 # Required by waf
 top = '.'
 out = 'build'
@@ -86,8 +83,6 @@ def configure (conf):
 
     conf.env.LVTK_MAJOR_VERSION = LVTK_MAJOR_VERSION
     conf.env.LVTK_MINOR_VERSION = LVTK_MINOR_VERSION
-    conf.env.LIB_LVTK_PLUGIN    = LIB_LVTK_PLUGIN
-    conf.env.LIB_LVTK_UI        = LIB_LVTK_UI
     conf.env.APPNAME            = APPNAME
 
     print
