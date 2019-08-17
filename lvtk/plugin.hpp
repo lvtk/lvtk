@@ -20,7 +20,7 @@
 #include <memory>
 #include <lvtk/ext/urid.hpp>
 
-/** LV2 Plugin Implementation
+/** @file LV2 Plugin Implementation in C++
     
     Only include this header in a file that implements an LV2 Plugin
     via a subclass of lvtK::Instance
@@ -38,7 +38,7 @@
                 LV2_WORKER__schedule
             }
         );
-    @code
+    @endcode
 
     If you are using this library in a host, include individual
     headers from the ext directory.
@@ -58,7 +58,9 @@ static PluginDescriptors& descriptors() {
     return s_descriptors;
 }
 
-/** Plugin registration class
+/** Plugin Registration
+    @headerfile lvtk/plugin.hpp
+    
     Create a static one of these to register your plugin instance type.
  */
 template<class I>

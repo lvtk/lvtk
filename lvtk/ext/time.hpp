@@ -14,30 +14,7 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/**
-   @file time.hpp
-*/
-/**
-   @page time Time Extension
-   C++ convenience header for LV2 time<br />
-   LV2 Version Support: >= 1.0 (2012-04-17)<br />
-
-   This is a vocabulary for precisely describing a position in time and
-   the passage of time itself, in both real and musical terms.
-
-   In addition to real time (e.g. seconds), two units of time are
-   used: "frames" and "beats". A frame is a numbered quantum of time.
-   Frame time is related to real-time by the "frame rate" or
-   "sample rate", time:framesPerSecond. A beat is a single pulse of
-   musical time. Beat time is related to real-time by the "tempo",
-   time:beatsPerMinute.
-
-   Musical time additionally has a "meter" which describes passage of
-   time in terms of musical "bars". A bar is a higher level grouping of
-   beats. The meter describes how many beats are in one bar.
-
-   @link http://lv2plug.in/ns/ext/time/
-*/
+/** @headerfile lvtk/ext/time.hpp */
 
 #pragma once
 #include <lv2/lv2plug.in/ns/ext/time/time.h>

@@ -14,11 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/**
-    @file data_access.hpp
-    C++ convenience header for the LV2 data access extension.
- */
-
 #pragma once
 
 #include <lvtk/lvtk.hpp>
@@ -26,6 +21,9 @@
 
 namespace lvtk {
 
+/** Wrap Data access host feature
+    @headerfile lvtk/ext/data_access.hpp
+*/
 struct DataAccess
 {
     DataAccess()
@@ -44,8 +42,8 @@ struct DataAccess
         and plugin are running in the same process.  For all other things, use
         the normal LV2 UI communication system.
 
-        @param uri The uri string to query
-        @return Not NULL on Success
+        @param uri  The uri string to query
+        @returns    Not nullptr on Success
      */
     const void* data_access (const std::string& uri) const {
         return nullptr != m_data_access.data_access 

@@ -35,6 +35,8 @@ static Descriptors& descriptors() {
     
     This wraps LV2UI_Controller + LV2UI_Write_Function in a single
     Object
+
+    @headerfile lvtk/ui.hpp
  */
 class Controller
 {
@@ -82,6 +84,8 @@ struct InstanceArgs
  
     Inherrit this when making an LV2 UI.  The first template parameter
     is the type of your super class.  The rest are feature mixins.
+
+    @headerfile lvtk/ui.hpp
 */
 template<class S, template<class> class... E>
 class Instance {
@@ -205,6 +209,8 @@ private:
 
 /** UI registration class
     Create a static one of these to register the descriptor for UI instance type.
+
+    @headerfile lvtk/ui.hpp
  */
 template<class I>
 class UI final
@@ -229,7 +235,7 @@ public:
         register_ui (uri.c_str());
     }
 
-    /** Helper to register UI extension data but not have to implement
+    /** Register UI extension data but not having to implement
         the a mixin interface.
 
         @param uri      The uri of your feature.
@@ -292,10 +298,6 @@ private:
         return static_cast<LV2UI_Handle> (instance.release());
     }
 
-	/**
-	   Destroy the UI.  The host must not try to access the widget after
-	   calling this function.
-	*/
 	static void _cleanup (LV2UI_Handle ui)
     {
         (static_cast<I*>(ui))->cleanup();

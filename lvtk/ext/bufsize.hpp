@@ -14,8 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @headerfile lvtk/ext/bufsize.hpp */
-
 #pragma once
 
 #include <lvtk/ext/options.hpp>
@@ -24,6 +22,13 @@
 
 namespace lvtk {
 
+/** Description of buffer details
+    
+    Used by the BufSize mixin to automatically scan for buffer information
+    during instantiation. @see BufSize
+
+    @headerfile lvtk/ext/bufsize.hpp
+ */
 struct BufferDetails
 {
     uint32_t min            = 0;
@@ -33,6 +38,11 @@ struct BufferDetails
     bool fixed              = false;
     bool power_of_two       = false;
 
+    /** Update with a Feature
+     
+        Sets bufsize:boundedBlockLength, bufsize:powerOf2BlockLength, or 
+        bufsize:fixedBlockLength if the Feature's URI matches.
+     */
     void update_with (const Feature& feature)
     {
         if (strcmp (LV2_BUF_SIZE__boundedBlockLength, feature.URI) ==0) {
@@ -44,6 +54,14 @@ struct BufferDetails
         }
     }
 
+    /** Update with options
+        
+        Updates bufsize:minBlockLength, bufsize:maxBlockLength, and
+        bufsize:sequenceSize if found in the Options array
+
+        @param map      Map for getting required LV2_URIDs
+        @param options  The Options array to scan
+     */
     void apply_options (Map& map, const Option* options)
     {
         uint32_t min      (map (LV2_BUF_SIZE__minBlockLength));

@@ -16,20 +16,23 @@
 
 #pragma once
 
-#include <functional>
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
 
+/** Base class for all extension mixins */
 template<class I> struct Interface {};
 
-/** Dummy class indicating an Interface doesn't use the Instance */
+/** @Dummy class indicating an Interface doesn't use the Instance */
 struct NoInstance {};
 
 /** This is for extensions which do not provide extension data
     and/or call methods on the Instance 
  */
 struct NullInterface : Interface<NoInstance> {
+    /** Dummy extension data handler for interfaces which do not
+        provide extension data. @see BufSize
+     */
     inline static void map_extension_data (ExtensionMap&) { }
 };
 

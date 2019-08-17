@@ -137,3 +137,8 @@ protected:
 };
 
 }
+
+/** @mainpage
+    
+    LV2 c++ wrappers code reference
+ */

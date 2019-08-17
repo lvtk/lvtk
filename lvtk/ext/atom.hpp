@@ -14,11 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @headerfile lvtk/ext/atom.hpp */
-/** @page atom LVTK Atom
-    C++ convenience wrappers for LV2 Atoms<br />
- */
-
 #pragma once
 
 #include <iostream>
@@ -38,7 +33,10 @@ using ForgeRef              = LV2_Atom_Forge_Ref;
 using ObjectQuery           = LV2_Atom_Object_Query;
 
 /** Wrapper for an LV2_Atom_Object
-    This struct is intended to be created and used on the stack */
+    This struct is intended to be created and used on the stack
+    
+    @headerfile lvtk/ext/atom.hpp
+ */
 struct AtomObject
 {
     /** Create an AtomObject from raw data */
@@ -89,7 +87,7 @@ struct AtomObject
         return *this;
     }
 
-    /** A Property Iterator for an AtomObjects */
+    /** @skip */
     class iterator
     {
     public:
@@ -131,7 +129,10 @@ private:
 };
 
 /** Basic wrapper for an LV2_Atom
-    These are intended to be used on the stack */
+    These are intended to be used on the stack
+    
+    @headerfile lvtk/ext/atom.hpp
+ */
 struct Atom
 {
     /** Create a null Atom */
@@ -235,7 +236,9 @@ private:
     friend struct AtomObject;
 };
 
-/** A wrapper around LV2_Atom_Sequence  */
+/** A wrapper around LV2_Atom_Sequence
+    @headerfile lvtk/ext/atom.hpp
+*/
 struct AtomSequence
 {
     typedef AtomEvent* pointer;
@@ -318,7 +321,7 @@ struct AtomSequence
         }
     }
 
-    /** An event iterator */
+    /** @skip */
     class iterator
     {
     public:
@@ -359,7 +362,9 @@ private:
 };
 
 
-/** Class wrapper around LV2_Atom_Forge */
+/** Class wrapper around LV2_Atom_Forge
+    @headerfile lvtk/ext/atom.hpp
+*/
 class AtomForge : public LV2_Atom_Forge
 {
 public:
@@ -564,7 +569,9 @@ public:
     }
 };
 
-/** An abstraction of an LV2_Atom_Vector */
+/** Wrapper for LV2_Atom_Vector
+    @headerfile lvtk/ext/atom.hpp
+*/
 class AtomVector
 {
 public:
@@ -577,7 +584,7 @@ public:
     inline LV2_Atom_Vector* c_obj() const { return vec; }
     inline operator LV2_Atom_Vector* () const { return vec; }
 
-    /** Atom Vector Iterator */
+    /** @skip */
     class iterator
     {
     public:
