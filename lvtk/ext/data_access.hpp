@@ -21,11 +21,14 @@
 
 namespace lvtk {
 
-/** Wrap Data access host feature
+/** Wrap Data access host feature.
+ 
+    Use these on the stack and all set_feature() passing the appropriate feature.
     @headerfile lvtk/ext/data_access.hpp
 */
 struct DataAccess
 {
+    /** Construct a new DataAcces object */
     DataAccess()
     {
         memset (&m_data_access, 0, sizeof(LV2_Extension_Data_Feature));

@@ -68,7 +68,9 @@ typedef enum {
 
 
 /** Wrapper struct for state retrieval. This wraps an
-    LV2_State_Retrieve_Function and exeucutes via operator () */
+    LV2_State_Retrieve_Function and exeucutes via operator () 
+    @headerfile lvtk/ext/state.hpp
+ */
 struct StateRetrieve
 {
     StateRetrieve (LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)

@@ -21,6 +21,9 @@
 
 namespace lvtk {
 
+/** LV2_URID_Map wrapper
+    @headerfile lvtk/ext/urid.hpp
+ */
 class Map : public FeatureData<LV2_URID_Map>
 {
 public:
@@ -29,6 +32,9 @@ public:
         set_feature (f);
     }
 
+    /** Get URID integer from URI string
+        @param uri  The URI string to map
+     */
     URID map (const std::string& uri) const {
         return data.map != nullptr ? data.map (data.handle, uri.c_str())
                                 : 0;
@@ -37,6 +43,9 @@ public:
     URID operator()(const std::string& uri) const { return this->map (uri); }
 };
 
+/** LV2_URID_Unmap wrapper
+    @headerfile lvtk/ext/urid.hpp
+ */
 class Unmap : public FeatureData<LV2_URID_Unmap>
 {
 public:
@@ -45,12 +54,16 @@ public:
         set_feature (feature);
     }
 
-    std::string operator() (const URID urid) const { return this->unmap (urid); }
-
+    /** Unmap a URID to string
+        @param urid The URID integer to unmap
+     */
     std::string unmap (URID urid) const {
         return data.unmap != nullptr ? data.unmap (data.handle, urid)
                                      : std::string();
     }
+
+    /** @see unmap */
+    std::string operator() (const URID urid) const { return this->unmap (urid); }
 };
 
 }

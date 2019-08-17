@@ -23,16 +23,31 @@
 
 namespace lvtk {
 
+/** Wrapper around LV2_Log_Log
+    
+    Use this on the stack to log messages
+    @headerfile lvtk/ext/log.hpp
+ */
 struct Logger : FeatureData<LV2_Log_Log>
 {
+    /** ctor */
     Logger() : FeatureData<LV2_Log_Log> (LV2_LOG__log) {}
 
+    /** Log a log:Trace message with stream operator */
     inline void operator<< (const std::string& out) const { operator<< (out.c_str()); }
+
+    /** Log log:Trace with stream operator */
     inline void operator<< (const char* out) const { 
         if (log_Trace > 0)
             this->printf (log_Trace, out);
     }
     
+    /** Log message with va_list 
+     
+        @param type     LV2_URID type to log
+        @fmt            Format / message
+        @ap             Arguments
+    */
     inline int vprintf (URID type, const char* fmt, va_list ap) const
     {
         if (data.handle != nullptr)
@@ -40,6 +55,11 @@ struct Logger : FeatureData<LV2_Log_Log>
         return 0;
     }
 
+    /** Log message with var args
+     
+        @param type     LV2_URID type to log
+        @fmt            Format / message
+    */
     inline int printf (URID type, const char* fmt, ...) const
     {
         va_list argptr;
@@ -50,6 +70,10 @@ struct Logger : FeatureData<LV2_Log_Log>
         return res;
     }
 
+    /** Assign LV2_URIDs needed to log messages
+       
+        @param map  A LV2_URID_Map to inititialize with
+     */
     inline void init (LV2_URID_Map* const map) 
     {
         log_Entry   = map->map (map->handle, LV2_LOG__Entry);

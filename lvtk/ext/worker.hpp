@@ -57,6 +57,13 @@ private:
     LV2_Worker_Respond_Function       p_wrfunc;
 };
 
+/** Schedule jobs with the host
+
+    This wraps LV2_Worker_Schedule.  Used by the Worker interface to add
+    `schedule_work` to a plugin instance
+
+    @headerfile lvtk/ext/worker.hpp
+ */
 struct Scheduler : FeatureData<LV2_Worker_Schedule>
 {
     Scheduler() : FeatureData<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}

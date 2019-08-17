@@ -28,8 +28,12 @@ enum ResizePortStatus {
     RESIZE_PORT_ERR_NO_SPACE   = LV2_RESIZE_PORT_ERR_NO_SPACE   /**< Insufficient space */
 };
 
+/** Resize port wrapper
+    @headerfile lvtk/ext/resize_port.hpp
+ */
 struct ResizePort final
 {
+    /** ctor */
     ResizePort() = default;
 
     /** Resize a port buffer to at least @a size bytes.
@@ -57,8 +61,8 @@ struct ResizePort final
         m_port_resize = *(LV2_Resize_Port_Resize*) feature.data;
     }
 
-    private:
-        LV2_Resize_Port_Resize m_port_resize;
+private:
+    LV2_Resize_Port_Resize m_port_resize;
 };
 
 } /* namespace lvtk */

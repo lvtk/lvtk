@@ -14,8 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @headerfile lvtk/ext/time.hpp */
-
 #pragma once
 #include <lv2/lv2plug.in/ns/ext/time/time.h>
 namespace lvtk {} 

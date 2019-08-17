@@ -21,12 +21,19 @@
 
 namespace lvtk {
 
+/** Wrap the Instance Access host feature.
+ 
+    Use these on the stack and all set_feature() passing the appropriate feature.
+    @headerfile lvtk/ext/instance_access.hpp
+*/
 struct InstanceAccess
 {
+    /** ctor */
     InstanceAccess() = default;
 
     /** Get the plugin instance
-        @return The plugin instance or nullptr if not available */
+        @returns The LV2 plugin instance handle or nullptr if not available
+     */
     Handle get_instance() const         { return p_plugin_instance; }
 
     /** Assign the LV2_Handle by LV2 Feature */

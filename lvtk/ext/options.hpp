@@ -18,10 +18,6 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 */
 
-/** @file options.hpp
-    LV2 Compatibility: LV2 Options v1.0 (2012-10-14)
- */
-
 #pragma once
 
 #include <lvtk/lvtk.hpp>
@@ -71,10 +67,12 @@ typedef enum {
         }
     @endcode
 */
-
 class OptionsIterator
 {
 public:
+    /** Create a new iterator
+        @param options  The options array to scan
+     */
     OptionsIterator (const Option* options)
         : index (0),m_size (0), p_opts (options)
     {
@@ -112,9 +110,7 @@ private:
     This mixin provides a callback handler for the LV2 Options feature and
     hooks up the LV2_Options_Interface as extension data.
 
-    @struct lvtk::Options lvtk/ext/options.hpp
-    @ingroup pluginmixins
-    @ingroup guimixins
+    @headerfile lvtk/ext/options.hpp
  */
 struct OptionsArray
 {
@@ -129,6 +125,10 @@ struct OptionsArray
     const Option* get_options() const { return p_host_options; }
     const Option* c_obj()       const { return get_options(); }
     
+    /** Assign options from a feature
+        @param feature  Should be a feature with LV2_OPTIONS__options
+                        as the URI.
+     */
     void set_feature (const Feature& feature) {
         if (strcmp (LV2_OPTIONS__options, feature.URI) == 0)
             p_host_options = (Option*) feature.data;
