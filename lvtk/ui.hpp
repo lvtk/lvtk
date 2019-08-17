@@ -217,18 +217,16 @@ public:
                             to provide any of these, instantiate will return
                             a nullptr
      */
-    UI (const std::string& uri, const std::vector<std::string>& required = {})
+    UI (const std::string& uri, const std::vector<std::string>& required)
     {
-        LV2UI_Descriptor desc;
-        desc.URI = strdup (uri.c_str());
-        desc.instantiate = _instantiate;
-        desc.port_event = _port_event;
-        desc.cleanup = _cleanup;
-        desc.extension_data = _extension_data;
-        descriptors().push_back (desc);
-
+        register_ui (uri.c_str());
         for (const auto& rq : required)
-            this->required().push_back (rq);
+            UI<I>::required().push_back (rq);
+    }
+
+    UI (const std::string& uri)
+    {
+        register_ui (uri.c_str());
     }
 
     /** Helper to register UI extension data but not have to implement
@@ -242,6 +240,16 @@ public:
     }
 
 private:
+    void register_ui (const char* uri) {
+        LV2UI_Descriptor desc;
+        desc.URI = strdup (uri);
+        desc.instantiate = _instantiate;
+        desc.port_event = _port_event;
+        desc.cleanup = _cleanup;
+        desc.extension_data = _extension_data;
+        descriptors().push_back (desc);
+    }
+
     inline static ExtensionMap& extensions() {
         static ExtensionMap s_extensions;
         return s_extensions;

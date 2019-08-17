@@ -45,12 +45,11 @@ if buildme:
 		)
 
 		plugin = bld.shlib (
-			cxxflags      = '-std=c++14',
 			name          = slug,
 			target        = '%s/%s' % (bundle, slug),
 			source        = "%s.cpp" % slug,
 			includes      = [],
-			use           = bld.env.LIB_LVTK_PLUGIN,
+			use           = [ 'LV2' ],
 			install_path  = install_dir,
 			env			  = plugin_env
 		)
@@ -66,7 +65,7 @@ if buildme:
 						target        = '%s/%s' % (bundle, uislug),
 						source        = uisrc,
 						includes      = [ "../build/examples"],
-						use           = [ 'GTKMM' ],
+						use           = [ 'GTKMM', 'LV2' ],
 						env  		  = plugin_env
 					)
 			elif slug == 'volume':
@@ -76,6 +75,6 @@ if buildme:
 						target        = '%s/%s' % (bundle, uislug),
 						source        = uisrc,
 						includes      = [ "../build/examples"],
-						use           = [ 'JUCE_GUI_BASICS' ],
+						use           = [ 'JUCE_GUI_BASICS', 'LV2' ],
 						env  		  = plugin_env
 					)

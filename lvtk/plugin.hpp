@@ -72,25 +72,17 @@ public:
                             to provide any of these, instantiate will return
                             a nullptr
      */
-    Plugin (const char* plugin_uri, const std::vector<std::string>& required = {})
-    {
-        LV2_Descriptor desc;
-        desc.URI = strdup (plugin_uri);
-        desc.instantiate    = _instantiate;
-        desc.connect_port   = _connect_port;
-        desc.activate       = _activate;
-        desc.run            = _run;
-        desc.deactivate     = _deactivate;
-        desc.cleanup        = _cleanup;
-        desc.extension_data = _extension_data;
-        descriptors().push_back (desc);
+    Plugin (const char* plugin_uri, const std::vector<std::string>& required) {
+        for (const auto& req : required)
+            Plugin<I>::required().push_back (req);
+        register_plugin (plugin_uri);
+    }
 
-        for (const auto& req : required) {
-            this->required().push_back (req);
-        }
-
-        auto& extmap = extensions();
-        PluginInstance::map_extension_data (extmap);
+    /** Plugin Registation without required host features        
+        @param plugin_uri   The URI string of your plugin
+     */
+    Plugin (const char* plugin_uri) {
+        register_plugin (plugin_uri);
     }
 
     ~Plugin() = default;
@@ -108,6 +100,22 @@ public:
 private:
     using PluginInstance = I;
     
+    inline void register_plugin (const char* uri) {
+        LV2_Descriptor desc;
+        desc.URI            = strdup (uri);
+        desc.instantiate    = _instantiate;
+        desc.connect_port   = _connect_port;
+        desc.activate       = _activate;
+        desc.run            = _run;
+        desc.deactivate     = _deactivate;
+        desc.cleanup        = _cleanup;
+        desc.extension_data = _extension_data;
+        descriptors().push_back (desc);
+
+        auto& extmap = extensions();
+        PluginInstance::map_extension_data (extmap);
+    }
+
     inline static ExtensionMap& extensions() {
         static ExtensionMap s_extensions;  
         return s_extensions; 
@@ -115,11 +123,9 @@ private:
 
     inline static std::vector<std::string>& required() 
     {
-        static std::vector<std::string>  s_required;
+        static std::vector<std::string> s_required;
         return s_required;
     }
-
-    
 
     /** @internal */
     static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
