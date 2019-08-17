@@ -21,18 +21,42 @@
 
 namespace lvtk {
 
+/** Adds LV2 worker support to your instance. Add this to your instance's
+    Mixin list to activate it.
+
+    @ingroup interfaces
+*/
 template<class I> 
 struct Worker : Interface<I>
 {
+    /** @private */
     Worker (const FeatureList& features) { 
         for (const auto& f : features)
             if (strcmp (f.URI, LV2_WORKER__schedule) == 0)
                 { schedule.set_feature (f); break; }
     }
 
+    /** Schedule work with the host
+     
+        @param size Size of data
+        @param data The data to schedule
+     */
     WorkerStatus schedule_work (uint32_t size, const void* data) const { return schedule.schedule_work (size, data); }
+
+    /** Perform work as requested by schedule_work
+     
+        @param respond  Function to send responses with
+     */
     WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { return WORKER_SUCCESS; }
+
+    /** Process work responses sent with respond in the `work` callback
+     
+        @param size Size of response data
+        @param data The reponse data
+     */
     WorkerStatus work_response (uint32_t size, const void* body) { return WORKER_SUCCESS; }
+
+    /** Called at the end of a processing cycle */
     WorkerStatus end_run() { return WORKER_SUCCESS; }
 
 protected:

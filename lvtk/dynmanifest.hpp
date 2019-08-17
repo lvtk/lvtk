@@ -23,14 +23,30 @@
 
 namespace lvtk {
 
+/** Dynamic Manifest helper class
+    
+    To create a dynamic manifest, subclass this an implement it's pure virtual
+    methods. Then implement lvtk_create_dyn_manifest().
+    @headerfile lvtk/dynmanifest.hpp
+ */
 class DynManifest
 {
 public:
     DynManifest() = default;
     virtual ~DynManifest() = default;
+
+    /** Get the subjects
+        @param lines    Add each line to this string vector
+     */
     virtual void subjects (std::vector<std::string>& lines) =0;
+
+    /** Get the subjects
+        @param uri      The subject URI to get data for
+        @param lines    Add each line to this string vector
+     */
     virtual void get_data (const std::string& uri, std::vector<std::string>& lines) =0;
     
+    /** @internal used to send data back to the host */
     static void write_lines (const std::vector<std::string>& lines, FILE* fp) {
         for (const auto& l : lines) {
             std::string line = l + "\n";
@@ -41,6 +57,7 @@ public:
 
 }
 
+/** Implement this and return your subclassed DynManifest object */
 lvtk::DynManifest* lvtk_create_dyn_manifest();
 
 extern "C" {

@@ -21,28 +21,39 @@
 
 namespace lvtk {
 
-/**
- * The State Interface
- * @headerfile lvtk/ext/state.hpp
- * @see The internal struct I for API details
- * @ingroup pluginmixins
- */
+/** Adds LV2 State support to your plugin instance
+    @ingroup interfaces
+*/
 template<class I>
 struct State : Interface<I>
 {   
+    /** @private */
     State (const FeatureList&) { }
 
+    /** Called by the host to save state
+     
+        @param store    Store function object to write keys/values
+        @param flags    State flags to check
+        @param features Additional features for this operation 
+    */
     StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
+
+    /** Called by the host to restore state
+     
+        @param retrieve Retrieve function object to get keys/values
+        @param flags    State flags to check
+        @param features Additional features for this operation 
+    */
     StateStatus restore (StateRetrieve &retrieve, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
 
 protected:
+    /** @internal */
     inline static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_State_Interface _state =  { _save, _restore };
         dmap[LV2_STATE__interface] = &_state;
     }
 
 private:
-    /** @internal */
     static LV2_State_Status _save (LV2_Handle                    instance,
                                    LV2_State_Store_Function      store_function,
                                    LV2_State_Handle              state_handle,
@@ -55,7 +66,6 @@ private:
         return (LV2_State_Status) plugin->save (store, flags, flist);
     }
 
-    /** @internal - called from host */
     static LV2_State_Status _restore (LV2_Handle                  instance,
                                       LV2_State_Retrieve_Function retrieve_function,
                                       LV2_State_Handle            handle,

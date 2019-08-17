@@ -62,6 +62,8 @@ static PluginDescriptors& descriptors() {
     @headerfile lvtk/plugin.hpp
     
     Create a static one of these to register your plugin instance type.
+
+    @see Instance
  */
 template<class I>
 class Plugin final
@@ -129,7 +131,6 @@ private:
         return s_required;
     }
 
-    /** @internal */
     static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
 	                                double                         sample_rate,
 	                                const char *                   bundle_path,

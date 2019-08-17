@@ -20,10 +20,12 @@
 
 namespace lvtk {
 
-/** Base class for all extension mixins */
+/** Base class for all extension mixins
+    @headerfile lvtk/interface/interface.hpp
+*/
 template<class I> struct Interface {};
 
-/** @Dummy class indicating an Interface doesn't use the Instance */
+/** Dummy class indicating an Interface doesn't use the Instance */
 struct NoInstance {};
 
 /** This is for extensions which do not provide extension data

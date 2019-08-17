@@ -21,10 +21,18 @@
 
 namespace lvtk {
 
+/** Adds idle interface to your UI instance
+    @ingroup uinterfaces
+*/
 template<class I>
 struct Idle : Interface<I>
 {
+    /** @private */
     Idle (const FeatureList&) { }
+
+    /** Called repeatedly by the host to drive your UI.  Return non-zero
+        to stop receiving callbacks.
+    */
     inline int idle() { return 0; }
 
 protected:
@@ -34,7 +42,6 @@ protected:
     }
 
 private:
-    /** @internal */
     static int _idle (LV2UI_Handle ui) { return (static_cast<I*> (ui))->idle(); }
 };
 

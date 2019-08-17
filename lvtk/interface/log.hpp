@@ -21,10 +21,13 @@
 
 namespace lvtk {
 
-/** Adds a Logger `log` to your instance */
+/** Adds a Logger `log` to your instance
+    @ingroup interfaces
+*/
 template<class I> 
 struct Log : NullInterface
 {
+    /** @private */
     Log (const FeatureList& features) { 
         for (const auto& f : features) {
             int n_ok = 0;
@@ -38,6 +41,7 @@ struct Log : NullInterface
     }
 
 protected:
+    /** Use this logger to log messages with the host. @see Logger */
     Logger log;
 };
 

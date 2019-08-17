@@ -25,11 +25,13 @@ namespace lvtk {
     
     Scans for buffer information provided by the host. @see buffer_details().
     To use it, add BufSize to the template parameters of your Instance
+
+    @ingroup interfaces
  */
 template<class I>
 struct BufSize : NullInterface
 {
-    /** @internal */
+    /** @private */
     BufSize (const FeatureList& features)
     {
         memset (&m_details, 0, sizeof (BufferDetails));

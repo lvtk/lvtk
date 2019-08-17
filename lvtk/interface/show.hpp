@@ -23,13 +23,19 @@ namespace lvtk {
 
 /** Adds LV2UI_Show support to your UI instance.  This interface inherits 
     from Idle. In other words, don't use Idle + Show together, just use Show.
+
+    @ingroup uinterfaces
  */
 template<class I>
 struct Show : Idle<I>
-{   
+{
+    /** @private */
     Show (const FeatureList& f) : Idle<I> (f) { }
 
+    /** Called by the host to show your UI. Return non-zero on error */
     int show() { return 0; }
+
+    /** Called by the host to hide your UI. Return non-zero on error */
     int hide() { return 0; }
 
 protected:
@@ -40,9 +46,7 @@ protected:
     }
 
 private:
-    /** @internal */
     static int _show (LV2UI_Handle ui) { return (static_cast<I*> (ui))->show(); }
-    /** @internal */
     static int _hide (LV2UI_Handle ui) { return (static_cast<I*> (ui))->hide(); }
 };
 

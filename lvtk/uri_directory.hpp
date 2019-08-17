@@ -24,7 +24,12 @@
 namespace lvtk {
 
 /** Maintains a map of Strings/Symbols to integers
-    This class also implements LV2 URID Map/Unmap features 
+    
+    This class also implements LV2 URID Map/Unmap features.  Instance 
+    implementations don't need to use this.  You can, however, use this in a 
+    LV2 host to easily provide URID map/unmaping features to plugins.
+
+    @headerfile lvtk/uri_directory.hpp
  */
 class URIDirectory
 {
@@ -50,7 +55,7 @@ public:
 
     /** Map a symbol/uri to an unsigned integer
         @param key The symbol to map
-        @return A mapped URID, a return of 0 indicates failure */
+        @returns A mapped URID, a return of 0 indicates failure */
     inline uint32_t map (const char* key)
     {
         if (! contains (key))
@@ -67,7 +72,7 @@ public:
     /** Containment test of a URI
         
         @param uri The URI to test
-        @return True if found */
+        @returns True if found */
     inline bool contains (const char* uri) {
         return mapped.find (uri) != mapped.end();
     }
@@ -81,8 +86,10 @@ public:
     }
 
     /** Unmap an already mapped id to its symbol
+        
         @param urid The URID to unmap
-        @return The previously mapped symbol or 0 if the urid isn't in the cache */
+        @return The previously mapped symbol or 0 if the urid isn't in the cache
+     */
     inline const char* unmap (uint32_t urid) {
         if (contains (urid))
             return (const char*) unmapped [urid].c_str();
@@ -96,7 +103,9 @@ public:
         unmapped.clear();
     }
 
+    /** @returns a LV2_Feature with LV2_URID_Map as the data member */
     const LV2_Feature *const get_map_feature()      const { return &map_feature; }
+    /** @returns a LV2_Feature with LV2_URID_Unmap as the data member */
     const LV2_Feature *const get_unmap_feature()    const { return &unmap_feature; }
 
 private:
