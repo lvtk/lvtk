@@ -29,10 +29,15 @@ template<class I>
 struct URID : NullExtension
 {
     /** @private */
-    URID (const FeatureList& features) { 
+    URID (const FeatureList& features) {
+        bool have_map = false, have_unmap = false;
         for (const auto& f : features) {
-            map.set_feature (f);
-            unmap.set_feature (f);
+            if (! have_map)
+                have_map = map.set_feature (f);
+            if (! have_unmap)
+                have_unmap = unmap.set_feature (f);
+            if (have_map && have_unmap)
+                break;
         }
     }
 
