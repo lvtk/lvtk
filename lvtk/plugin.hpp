@@ -79,14 +79,14 @@ public:
     Plugin (const char* plugin_uri, const std::vector<std::string>& required) {
         for (const auto& req : required)
             Plugin<I>::required().push_back (req);
-        register_plugin (plugin_uri);
+        register_instance (plugin_uri);
     }
 
     /** Plugin Registation without required host features        
         @param plugin_uri   The URI string of your plugin
      */
     Plugin (const char* plugin_uri) {
-        register_plugin (plugin_uri);
+        register_instance (plugin_uri);
     }
 
     ~Plugin() = default;
@@ -101,10 +101,8 @@ public:
         extensions()[uri] = data;
     }
 
-private:
-    using PluginInstance = I;
-    
-    inline void register_plugin (const char* uri) {
+private:    
+    inline void register_instance (const char* uri) {
         LV2_Descriptor desc;
         desc.URI            = strdup (uri);
         desc.instantiate    = _instantiate;
@@ -117,7 +115,7 @@ private:
         descriptors().push_back (desc);
 
         auto& extmap = extensions();
-        PluginInstance::map_extension_data (extmap);
+        I::map_extension_data (extmap);
     }
 
     inline static ExtensionMap& extensions() {

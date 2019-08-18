@@ -162,10 +162,12 @@ public:
     /** Sets the data from a feature
         @param feature  The Feature to check and set
      */
-    inline void set_feature (const Feature& feature) {
+    inline bool set_feature (const Feature& feature) {
         if (is_for (feature)) {
             data = *static_cast<data_ptr_t> (feature.data);
+            return true;
         }
+        return false;
     }
 
 protected:

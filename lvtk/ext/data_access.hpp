@@ -23,12 +23,12 @@ namespace lvtk {
 
 /** Wrap Data access host feature.
  
-    Use these on the stack and all set_feature() passing the appropriate feature.
+    Use these on the stack and call set_feature() passing the appropriate feature.
     @headerfile lvtk/ext/data_access.hpp
 */
-struct DataAccess final : FeatureData<LV2_Extension_Data_Feature> {
+struct InstanceData final : FeatureData<LV2_Extension_Data_Feature> {
     /** Construct a new DataAcces object */
-    DataAccess() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
+    InstanceData() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
 
     /** A UI can call this to get data (of a type specified by some other
         extension) from the plugin.
@@ -47,11 +47,6 @@ struct DataAccess final : FeatureData<LV2_Extension_Data_Feature> {
     const void* data_access (const std::string& uri) const {
         return nullptr != data.data_access ? data.data_access (uri.c_str())
                                            : nullptr;
-    }
-
-    /** Alias to data_access() */
-    const void* get_data (const std::string& uri) const {
-        return data_access (uri);
     }
 };
 

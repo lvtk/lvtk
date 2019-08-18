@@ -169,7 +169,7 @@ struct Atom
     }
 
     /** Returns true if this atom is an otype when casted to AtomObject */
-    inline bool  has_object_type (uint32_t otype) const {
+    inline bool has_object_type (uint32_t otype) const {
         return as_object().otype() == otype;
     }
 
