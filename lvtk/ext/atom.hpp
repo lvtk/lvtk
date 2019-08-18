@@ -87,7 +87,7 @@ struct AtomObject
         return *this;
     }
 
-    /** @skip */
+    /** @private */
     class iterator
     {
     public:
@@ -275,13 +275,13 @@ struct AtomSequence
     /** Return the sequence's c-type */
     inline LV2_Atom_Sequence* c_obj()   { return p_seq; }
 
-    /** @skip */
+    /** @private */
     inline operator bool() const        { return p_seq != 0; }
 
-    /** @skip */
+    /** @private */
     inline operator LV2_Atom_Sequence*() const { return p_seq; }
 
-    /** @skip */
+    /** @private */
     inline operator uint8_t*() const    { return (uint8_t*) p_seq; }
 
     /** Append an AtomEvent to the end of the sequence
@@ -321,7 +321,7 @@ struct AtomSequence
         }
     }
 
-    /** @skip */
+    /** @private */
     class iterator
     {
     public:
@@ -584,7 +584,7 @@ public:
     inline LV2_Atom_Vector* c_obj() const { return vec; }
     inline operator LV2_Atom_Vector* () const { return vec; }
 
-    /** @skip */
+    /** @private */
     class iterator
     {
     public:

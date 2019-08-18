@@ -27,18 +27,19 @@ typedef enum {
     WORKER_ERR_NO_SPACE     = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
 } WorkerStatus;
 
+/** Worker reponse function
 
-/** Worker reponse. 
-    This wraps an LV2_Worker_Respond_Function and exeucutes via operator ()
-  */
+    This wraps an LV2_Worker_Respond_Function.  It is passed to
+    the work method on your Instance
+ */
 struct WorkerRespond
 {
     WorkerRespond (LV2_Handle                  instance,
-                    LV2_Worker_Respond_Function wrfunc,
-                    LV2_Worker_Respond_Handle   handle)
-            : p_instance (instance),
-              p_handle (handle), 
-              p_wrfunc (wrfunc) 
+                   LV2_Worker_Respond_Function wrfunc,
+                   LV2_Worker_Respond_Handle   handle)
+        : p_instance (instance),
+          p_handle (handle), 
+          p_wrfunc (wrfunc) 
     { }
 
     /** Execute the worker retrieval functor.
@@ -46,8 +47,7 @@ struct WorkerRespond
         @param data
         @return WORKER_SUCCESS on success
      */
-    WorkerStatus operator() (uint32_t size, const void* data) const
-    {
+    WorkerStatus operator() (uint32_t size, const void* data) const {
         return (WorkerStatus) p_wrfunc (p_handle, size, data);
     }
 
@@ -64,10 +64,14 @@ private:
 
     @headerfile lvtk/ext/worker.hpp
  */
-struct Scheduler : FeatureData<LV2_Worker_Schedule>
-{
+struct Scheduler : FeatureData<LV2_Worker_Schedule> {
     Scheduler() : FeatureData<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}
     
+    /** Schedule work with the host
+        
+        @param size Size of the data
+        @param data The data to write
+     */
     WorkerStatus schedule_work (uint32_t size, const void* data) const {
         auto& ext = this->data;
         if (ext.schedule_work)
@@ -75,6 +79,7 @@ struct Scheduler : FeatureData<LV2_Worker_Schedule>
         return WORKER_ERR_UNKNOWN; 
     }
 
+    /** Function operator is alias to `schedule_work` */
     WorkerStatus operator() (uint32_t size, const void* buffer) const {
         return schedule_work (size, buffer);
     }

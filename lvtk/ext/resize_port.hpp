@@ -31,10 +31,9 @@ enum ResizePortStatus {
 /** Resize port wrapper
     @headerfile lvtk/ext/resize_port.hpp
  */
-struct ResizePort final
-{
+struct ResizePort final : FeatureData<LV2_Resize_Port_Resize> {
     /** ctor */
-    ResizePort() = default;
+    ResizePort() : FeatureData<LV2_Resize_Port_Resize> (LV2_RESIZE_PORT__resize) {}
 
     /** Resize a port buffer to at least @a size bytes.
 
@@ -51,18 +50,11 @@ struct ResizePort final
      */
     ResizePortStatus resize (uint32_t index, size_t size) const
     {
-        if (nullptr == m_port_resize.resize)
+        if (nullptr == data.resize)
             return RESIZE_PORT_ERR_UNKNOWN;
-        return static_cast<ResizePortStatus> (m_port_resize.resize (
-            m_port_resize.data, index, size));
+        return static_cast<ResizePortStatus> (data.resize (
+            data.data, index, size));
     }
-
-    void set_feature (const Feature& feature) {
-        m_port_resize = *(LV2_Resize_Port_Resize*) feature.data;
-    }
-
-private:
-    LV2_Resize_Port_Resize m_port_resize;
 };
 
 } /* namespace lvtk */

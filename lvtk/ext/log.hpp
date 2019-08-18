@@ -28,8 +28,7 @@ namespace lvtk {
     Use this on the stack to log messages
     @headerfile lvtk/ext/log.hpp
  */
-struct Logger : FeatureData<LV2_Log_Log>
-{
+struct Logger : FeatureData<LV2_Log_Log> {
     /** ctor */
     Logger() : FeatureData<LV2_Log_Log> (LV2_LOG__log) {}
 

@@ -103,7 +103,7 @@ public:
         : index (0), feats (features) { }
 
     /** @returns the next feature in the list */
-    inline const Feature* next()
+    inline const LV2_Feature* next() const
     {
         if (nullptr == feats [index])
             return nullptr;
@@ -111,7 +111,7 @@ public:
     }
 
 private:
-    uint32_t                    index = 0;
+    mutable uint32_t            index = 0;
     const LV2_Feature* const*   feats = nullptr;
 };
 
@@ -127,6 +127,7 @@ struct InstanceArgs
 };
 
 /** Template class which can be used to assign feature data in a common way.
+    
     Typically these are used to facilitate features provided by the host 
     during plugin instantiation or in host-side callbacks to the plugin.
 

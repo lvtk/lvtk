@@ -39,13 +39,12 @@ public:
     Instance (double sample_rate, const std::string& bundle_path, const FeatureList& features)
         : E<S> (features)...
     {
-        LV2_URID_Map* p_map = nullptr;
-        for (const auto& f : features)
-        {
+        for (const auto& f : features) {
             if (strcmp (f.URI, LV2_URID__map) == 0) {
                 map.set_feature (f);
                 if (auto* const m = map.c_obj())
                     forge.init (m);
+                break;
             }
         }
     }
@@ -89,5 +88,6 @@ private:
 #include <lvtk/interface/interface.hpp>
 #include <lvtk/interface/bufsize.hpp>
 #include <lvtk/interface/log.hpp>
+#include <lvtk/interface/options.hpp>
 #include <lvtk/interface/state.hpp>
 #include <lvtk/interface/worker.hpp>

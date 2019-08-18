@@ -26,13 +26,9 @@ namespace lvtk {
     Use these on the stack and all set_feature() passing the appropriate feature.
     @headerfile lvtk/ext/data_access.hpp
 */
-struct DataAccess
-{
+struct DataAccess final : FeatureData<LV2_Extension_Data_Feature> {
     /** Construct a new DataAcces object */
-    DataAccess()
-    {
-        memset (&m_data_access, 0, sizeof(LV2_Extension_Data_Feature));
-    }
+    DataAccess() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
 
     /** A UI can call this to get data (of a type specified by some other
         extension) from the plugin.
@@ -49,24 +45,14 @@ struct DataAccess
         @returns    Not nullptr on Success
      */
     const void* data_access (const std::string& uri) const {
-        return nullptr != m_data_access.data_access 
-            ? m_data_access.data_access (uri.c_str())
-            : nullptr;
+        return nullptr != data.data_access ? data.data_access (uri.c_str())
+                                           : nullptr;
     }
 
     /** Alias to data_access() */
     const void* get_data (const std::string& uri) const {
         return data_access (uri);
     }
-
-    /** Set extension data from an LV2 Feature */
-    void set_feature (const Feature& feature) {
-        m_data_access = *(LV2_Extension_Data_Feature*) feature.data;
-    }
-
-private:
-    /** @internal Feature Data passed from host */
-    LV2_Extension_Data_Feature m_data_access { nullptr };
 };
 
 } /* namespace lvtk */

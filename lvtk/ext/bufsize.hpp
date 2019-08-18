@@ -24,13 +24,12 @@ namespace lvtk {
 
 /** Description of buffer details
     
-    Used by the BufSize mixin to automatically scan for buffer information
+    Used by the BufSize interface to automatically scan for buffer information
     during instantiation. @see BufSize
 
     @headerfile lvtk/ext/bufsize.hpp
  */
-struct BufferDetails
-{
+struct BufferDetails final {
     uint32_t min            = 0;
     uint32_t max            = 0;
     uint32_t sequence_size  = 0;

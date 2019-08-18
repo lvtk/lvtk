@@ -36,7 +36,7 @@ struct BufSize : NullInterface
     {
         memset (&m_details, 0, sizeof (BufferDetails));
         
-        Map map; OptionsArray options;
+        Map map; HostOptions options;
         for (const auto& f : features)
         {
             m_details.update_with (f);
@@ -44,8 +44,8 @@ struct BufSize : NullInterface
             options.set_feature (f);
         }
 
-        if (map.c_obj() != nullptr && options.c_obj() != nullptr)
-            m_details.apply_options (map, options.c_obj());
+        if (map.c_obj() != nullptr && options.get_options() != nullptr)
+            m_details.apply_options (map, options.get_options());
     }
 
     /** Get the buffer details

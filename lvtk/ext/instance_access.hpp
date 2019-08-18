@@ -26,25 +26,24 @@ namespace lvtk {
     Use these on the stack and all set_feature() passing the appropriate feature.
     @headerfile lvtk/ext/instance_access.hpp
 */
-struct InstanceAccess
-{
+struct InstanceAccess {
     /** ctor */
     InstanceAccess() = default;
 
     /** Get the plugin instance
         @returns The LV2 plugin instance handle or nullptr if not available
      */
-    Handle get_instance() const         { return p_plugin_instance; }
+    Handle get_instance() const { return handle; }
 
     /** Assign the LV2_Handle by LV2 Feature */
     void set_feature (const Feature& feature) {
         if (strcmp (LV2_INSTANCE_ACCESS_URI, feature.URI) == 0)
-            p_plugin_instance = reinterpret_cast<Handle> (feature.data);
+            handle = reinterpret_cast<Handle> (feature.data);
     }
 
     private:
         /** @internal Feature Data passed from host */
-        Handle p_plugin_instance { nullptr };
+        Handle handle { nullptr };
 };
 
 } /* namespace lvtk */

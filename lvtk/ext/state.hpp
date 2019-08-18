@@ -66,17 +66,16 @@ typedef enum {
     STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
 } StateStatus;
 
-
 /** Wrapper struct for state retrieval. This wraps an
     LV2_State_Retrieve_Function and exeucutes via operator () 
     @headerfile lvtk/ext/state.hpp
  */
-struct StateRetrieve
-{
+struct StateRetrieve {
     StateRetrieve (LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
         : p_handle (handle), p_srfunc (srfunc) { }
 
-    /** Execute the retrieve functor.
+    /** Call the retrieve function
+
         @param key
         @param size
         @param type
@@ -99,8 +98,7 @@ private:
 /**  Wrapper struct for state storage. This wraps an
      LV2_State_Store_Function and exeucutes via operator () 
  */
-struct StateStore
-{
+struct StateStore {
     StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
         : p_handle(handle), p_ssfunc(ssfunc) { }
 
