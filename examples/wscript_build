@@ -59,17 +59,17 @@ if buildme:
 		uisrc  = uislug + ".cpp"
 		if builduis and bld.path.find_resource('%s' % uisrc) != None:
 			if slug != 'volume':
-				if bld.env.HAVE_GTKMM == 1:
+				if bool(bld.env.HAVE_GTKMM2):
 					bld.shlib (
 						name          = uislug,
 						target        = '%s/%s' % (bundle, uislug),
 						source        = uisrc,
 						includes      = [ "../build/examples"],
-						use           = [ 'GTKMM', 'LV2' ],
+						use           = [ 'GTKMM2', 'LV2' ],
 						env  		  = plugin_env
 					)
 			elif slug == 'volume':
-				if bld.env.HAVE_JUCE_GUI_BASICS == 1:
+				if bool(bld.env.HAVE_JUCE_GUI_BASICS):
 					bld.shlib (
 						name          = uislug,
 						target        = '%s/%s' % (bundle, uislug),

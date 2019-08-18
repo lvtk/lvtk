@@ -24,9 +24,10 @@
  */
 
 #include <gtkmm.h>
+#include <lv2/lv2plug.in/ns/ext/midi/midi.h>
+#include <lvtk/atom.hpp>
+#include <lvtk/map.hpp>
 #include <lvtk/ui.hpp>
-
-#include "silence.h"
 
 using namespace lvtk;
 using namespace Gtk;
@@ -41,17 +42,17 @@ struct midi_t {
     uint8_t midi[3];
 };
 
-
-/* The Silence UI- Notice GtkUI<true> is not added here. The
-   required widget() method impl is done manually without
-   a toolkit mixin */
-class SilenceGtk : public UI<SilenceGtk, URID<true> >
+class SilenceGtk : public ui::Instance<SilenceGtk>
 {
 public:
-
-    SilenceGtk (const char* plugin_uri)
+    SilenceGtk (const ui::InstanceArgs& args)
+        : Instance (args)
     {
-        /*  Required before creating widgets */
+        for (const auto& f : args.features)
+            if (map.set_feature (f))
+                break;
+        
+        /* Required before creating widgets */
         Gtk::Main::init_gtkmm_internals();
 
         /*  Create the container with @c new because we don't
@@ -59,7 +60,7 @@ public:
         p_hbox = new Gtk::HBox();
 
         if (p_hbox) {
-            Button *btn = manage (new Button(ustring("Silence")));
+            Button *btn = manage (new Button (ustring ("Silence")));
 
             btn->signal_pressed().connect(
                     mem_fun(*this, &SilenceGtk::send_note_on));
@@ -67,61 +68,40 @@ public:
                     mem_fun(*this, &SilenceGtk::send_note_off));
 
             p_hbox->pack_start (*btn);
-        } else {
-            p_hbox = 0;
         }
     }
 
-
-    /*  Required implementation by the UI class. The UI library will ALWAYS
-        try to execute a @c widget() method during instantiation. The
-        toolkit mixins implement this method. Since we aren't using a mixin,
-        we have to do it ourselves.
-
-        This is really easy for gtkmm. However, you can return ANY pointer here
-        as the host supports the 'widget type' you are returning. */
-    LV2UI_Widget*
-    widget()
+    LV2UI_Widget get_widget()
     {
-        /* If the HBox is NULL at this point, it  will prevent the UI from
-           instantiating */
-
         if (p_hbox) {
-            /* LV2 GtkUI expects a Gtk C Object. cast one to an LV2UI_Widget */
-            return widget_cast (p_hbox->gobj());
+            return (LV2UI_Widget) p_hbox->gobj();
         }
 
-        return NULL;
+        return nullptr;
     }
 
 protected:
-
-    /* Raw MIDI Senders */
-
-    void
-    send_note_on()
+    lvtk::Map map;
+    void send_note_on()
     {
         LV2_URID xfer = map(LV2_ATOM__eventTransfer);
         LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
 
         midi_t midi = {{3, midiEvent}, { 0x90, 0x40, 0x40 }};
-        write (p_midi, sizeof(midi), xfer, (void*)&midi);
+        write (0, sizeof(midi), xfer, (void*)&midi);
     }
 
-    void
-    send_note_off()
+    void send_note_off()
     {
-        LV2_URID xfer = map(LV2_ATOM__eventTransfer);
-        LV2_URID midiEvent = map(LV2_MIDI__MidiEvent);
+        LV2_URID xfer = map (LV2_ATOM__eventTransfer);
+        LV2_URID midiEvent = map (LV2_MIDI__MidiEvent);
 
         midi_t midi = {{3, midiEvent},{ 0x80, 0x40, 0x40 }};
-        write (p_midi, sizeof(midi), xfer, (void*)&midi);
+        write (0, sizeof(midi), xfer, (void*)&midi);
     }
 
 private:
-    /* The container object */
-    Gtk::HBox *p_hbox;
-
+    Gtk::HBox *p_hbox = nullptr;
 };
 
-int _ = SilenceGtk::register_class ("http://lvtoolkit.org/plugins/silence#ui");
+static const ui::UI<SilenceGtk> silence_gtk ("http://lvtoolkit.org/plugins/silence#ui");

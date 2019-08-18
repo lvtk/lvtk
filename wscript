@@ -67,7 +67,8 @@ def configure (conf):
 
     conf.check_inline()
     autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
-    autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="GTKMM", atleast_version="2.20.0", mandatory=False)
+    autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="GTKMM2", atleast_version="2.20.0", mandatory=False)
+    autowaf.check_pkg (conf, "gtkmm-3.0", uselib_store="GTKMM3", atleast_version="3.0.0", mandatory=False)
     autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=conf.options.tests)
     
     for module in 'audio_basics gui_basics'.split():
