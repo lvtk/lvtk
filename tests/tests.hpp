@@ -7,7 +7,6 @@
 #include <lvtk/ext/bufsize.hpp>
 #include <lvtk/ext/data_access.hpp>
 #include <lvtk/ext/instance_access.hpp>
-#include <lvtk/ext/log.hpp>
 #include <lvtk/ext/midi.hpp>
 #include <lvtk/ext/morph.hpp>
 #include <lvtk/ext/options.hpp>
@@ -24,4 +23,5 @@
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/worker.hpp>
 
+#include <lvtk/logger.hpp>
 #include <lvtk/uri_directory.hpp>

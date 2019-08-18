@@ -17,7 +17,7 @@
 #pragma once
 
 #include <lvtk/interface/interface.hpp>
-#include <lvtk/ext/log.hpp>
+#include <lvtk/logger.hpp>
 
 namespace lvtk {
 
