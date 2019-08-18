@@ -9,29 +9,23 @@ using TestFixutre = CPPUNIT_NS::TestFixture;
 class Registration : public TestFixutre
 {
   CPPUNIT_TEST_SUITE (Registration);
-  CPPUNIT_TEST (two_descriptors);
+  CPPUNIT_TEST (total_descriptors);
   CPPUNIT_TEST (instantiation);
   CPPUNIT_TEST (missing_host_feature);
   CPPUNIT_TEST_SUITE_END();
 
 protected:
     lvtk::URIDirectory urids;
-    uint32_t urid_A;
-    uint32_t urid_B;
 
 public:
-    void setUp()
-    {
-        urid_A = urids.map ("https://dummy.org/A");
-        urid_B = urids.map ("https://dummy.org/B");
-    }
+    void setUp() { }
 
 protected:
-    void two_descriptors() {
+    void total_descriptors() {
         CPPUNIT_ASSERT_EQUAL (lvtk::descriptors().size(), (size_t) 1);
         CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_VOLUME_URI), (int)0);
         // CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
-    }
+    }   
 
     void instantiation()
     {
@@ -50,12 +44,10 @@ protected:
             desc.activate (handle);
             
             float control = 0.0f;
-            float audio [2][64];
+            float audio [4][64];
 
-            desc.connect_port (handle, 0, audio[0]);
-            desc.connect_port (handle, 1, audio[1]);
-            desc.connect_port (handle, 2, audio[0]);
-            desc.connect_port (handle, 3, audio[1]);
+            for (uint32_t port = 0; port < 4; ++port)
+                desc.connect_port (handle, port, audio [port]);
             desc.connect_port (handle, 4, &control);
 
             desc.run (handle, 64);

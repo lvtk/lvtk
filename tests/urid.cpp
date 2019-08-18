@@ -50,8 +50,6 @@ public:
     {
         urid_A = urids.map ("https://dummy.org/A");
         urid_B = urids.map ("https://dummy.org/B");
-
-
     }
 
 protected:

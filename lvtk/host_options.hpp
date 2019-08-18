@@ -47,7 +47,6 @@ enum OptionsContext {
     OPTIONS_PORT        = LV2_OPTIONS_PORT
 };
 
-
 /** Equivalent to LV2_Options_Status */
 enum OptionsStatus {
     OPTIONS_SUCCESS         = LV2_OPTIONS_SUCCESS,          /**< Completed successfully. */
@@ -57,23 +56,80 @@ enum OptionsStatus {
     OPTIONS_ERR_BAD_VALUE   = LV2_OPTIONS_ERR_BAD_VALUE     /**< Invalid/unsupported value. */
 };
 
-/** An simple iterator to use with and array of LV2_Options_Option's
+class OptionArray
+{
+public:
+    OptionArray() {
+        opts = (Option*) malloc (sizeof (Option));
+        memset (&opts[0], 0, sizeof (Option));
+        allocated = true;
+        count = 1;
+    }
+
+    ~OptionArray() {
+        if (allocated && opts != nullptr) {
+            std::free (opts);
+            opts = nullptr;
+        }
+    }
+
+    void add (lvtk::OptionsContext  context, 
+              uint32_t              subject, 
+              LV2_URID              key,
+              uint32_t              size, 
+              LV2_URID              type,
+              const void*           value)
+    {
+        add (static_cast<LV2_Options_Context> (context),
+             subject, key, size, type, value);
+    }
+
+    void add (LV2_Options_Context   context, 
+              uint32_t              subject, 
+              LV2_URID              key,
+              uint32_t              size, 
+              LV2_URID              type,
+              const void*           value)
+    {
+        if (! allocated)
+            return;
+        opts = (Option*) realloc (opts, ++count * sizeof (Option));
+        memset (&opts[count - 1], 0, sizeof (Option));
+        auto& opt = opts [count - 2];
+        opt.context     = context;
+        opt.subject     = subject;
+        opt.key         = key;
+        opt.size        = size;
+        opt.type        = type;
+        opt.value       = value;
+    }
+
+    size_t size() const { return count - 1; }
+    const Option* c_obj() const { return opts; }
+
+private:
+    bool allocated = false;
+    uint32_t count = 0;
+    Option* opts = nullptr;
+};
+
+/** An simple iterator to use with a plain array of LV2_Options_Option's
 
     @code
-        OptionsIterator iter (get_options());
+        OptionIterator iter (get_options());
         while (const Option* opt = iter.next())
         {
             // handle the option
         }
     @endcode
 */
-class OptionsIterator
+class OptionIterator
 {
 public:
     /** Create a new iterator
         @param options  The options array to scan
      */
-    OptionsIterator (const Option* options)
+    OptionIterator (const Option* options)
         : index (0),m_size (0), p_opts (options)
     {
         while (0 != next())

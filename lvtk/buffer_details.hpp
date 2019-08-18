@@ -30,12 +30,12 @@ namespace lvtk {
     @headerfile lvtk/buffer_details.hpp
  */
 struct BufferDetails final {
-    uint32_t min            = 0;
-    uint32_t max            = 0;
-    uint32_t sequence_size  = 0;
     bool bounded            = false;
     bool fixed              = false;
     bool power_of_two       = false;
+    uint32_t min_length     = 0;
+    uint32_t max_length     = 0;
+    uint32_t sequence_size  = 0;
 
     /** Update with a Feature
      
@@ -67,16 +67,16 @@ struct BufferDetails final {
         uint32_t max      (map (LV2_BUF_SIZE__maxBlockLength));
         uint32_t seq_size (map (LV2_BUF_SIZE__sequenceSize));
 
-        OptionsIterator iter (options);
+        OptionIterator iter (options);
         while (const Option* opt = iter.next())
         {
             if (min == opt->key)
-                min = *(uint32_t*) opt->value;
+                min_length = *(uint32_t*) opt->value;
             if (max == opt->key)
-                max = *(uint32_t*) opt->value;
+                max_length = *(uint32_t*) opt->value;
             if (seq_size == opt->key)
                 sequence_size = *(uint32_t*) opt->value;
-        }
+        }        
     }
 };
 
