@@ -25,12 +25,13 @@
 
 #include <math.h>
 #include <lvtk/plugin.hpp>
+#include <lvtk/ext/urid.hpp>
 
 #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 
 namespace lvtk {
 
-class Volume : public Instance<Volume>
+class Volume : public Instance<Volume, URID>
 {
 public:
    #if LVTK_STATIC_ARGS

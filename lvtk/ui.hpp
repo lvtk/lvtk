@@ -377,11 +377,6 @@ private:
 
 }
 
-#include <lvtk/ext/data_access.hpp>
-#include <lvtk/ext/instance_access.hpp>
-#include <lvtk/ext/idle.hpp>
-#include <lvtk/ext/show.hpp>
-
 extern "C" {
 
 #ifndef LVTK_NO_SYMBOL_EXPORT

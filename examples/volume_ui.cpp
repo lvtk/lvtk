@@ -1,6 +1,10 @@
 
 #include <lvtk/ui.hpp>
 #include <lvtk/ext/urid.hpp>
+#include <lvtk/ext/idle.hpp>
+#include <lvtk/ext/data_access.hpp>
+#include <lvtk/ext/instance_access.hpp>
+
 #include <juce/gui_basics.h>
 
 using namespace lvtk;

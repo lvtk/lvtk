@@ -75,10 +75,3 @@ private:
 };
 
 }
-
-#include <lvtk/ext/extension.hpp>
-#include <lvtk/ext/bufsize.hpp>
-#include <lvtk/ext/log.hpp>
-#include <lvtk/ext/options.hpp>
-#include <lvtk/ext/state.hpp>
-#include <lvtk/ext/worker.hpp>
