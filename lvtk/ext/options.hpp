@@ -26,7 +26,7 @@
 namespace lvtk {
 
 /** Convenience enum to get LV2_Options_Option into a C++ namespace */
-typedef LV2_Options_Option Option;
+using Option = LV2_Options_Option;
 
 /** Convenience enum to get LV2_Options_Context into a C++ namespace */
 typedef enum {
@@ -95,27 +95,18 @@ public:
     uint32_t size() const { return m_size; }
 
 private:
-    /** @internal The current option index */
-    mutable uint32_t   index;
-
-    /** @internal The number of options in the array */
-    uint32_t           m_size;
-
-    /** @internal Non constant iteration pointer */
-    const Option*      p_opts;
+    mutable uint32_t   index = 0;
+    uint32_t           m_size = 0;
+    const Option*      p_opts = nullptr;
 };
 
-/** The LV2 Options Feature Mixin
-
-    This mixin provides a callback handler for the LV2 Options feature and
-    hooks up the LV2_Options_Interface as extension data.
-
+/** The LV2 Options Feature
+ 
     @headerfile lvtk/ext/options.hpp
  */
-struct OptionsArray
-{
+struct HostOptions final {
     /** @skip */
-    OptionsArray() = default;
+    HostOptions() = default;
 
     /** Get the options passed by the host as an LV2_Feature
 
@@ -123,46 +114,23 @@ struct OptionsArray
         @return The options array or 0 if no options were supplied
      */
     const Option* get_options() const { return p_host_options; }
-    const Option* c_obj()       const { return get_options(); }
-    
+
     /** Assign options from a feature
         @param feature  Should be a feature with LV2_OPTIONS__options
                         as the URI.
+        
+        @returns True if the feature data was set
      */
-    void set_feature (const Feature& feature) {
-        if (strcmp (LV2_OPTIONS__options, feature.URI) == 0)
+    bool set_feature (const Feature& feature) {
+        if (strcmp (LV2_OPTIONS__options, feature.URI) == 0) {
             p_host_options = (Option*) feature.data;
+            return true;
+        }
+        return false;
     }
 
 private:
     Option* p_host_options = nullptr;
 };
-
-#if 0
-template<class InstanceType>
-struct OptionsInterface 
-{
-    OptionsInterface()
-    {
-        static LV2_Options_Interface options = { _get, _set };
-        Plugin<InstanceType>::register_extension (
-            LV2_OPTIONS__interface, &options
-        );
-    }
-
-private:
-    static uint32_t _get (LV2_Handle handle, LV2_Options_Option* options)
-    {
-        auto* instance (reinterpret_cast<InstanceType*> (handle));
-        return instance->get_options (options);
-    }
-
-    static uint32_t _set (LV2_Handle handle, const LV2_Options_Option* options)
-    {
-        auto* instance (reinterpret_cast<InstanceType*> (handle));
-        return instance->set_options (options);
-    }
-};
-#endif
 
 } /* namespace lvtk */
