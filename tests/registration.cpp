@@ -2,8 +2,7 @@
 #include "tests.hpp"
 
 // include examples. order matters!
-#include "../examples/silence.cpp"
-#include "../examples/workhorse.cpp"
+#include "../examples/volume.cpp"
 
 using TestFixutre = CPPUNIT_NS::TestFixture;
 
@@ -30,8 +29,8 @@ public:
 protected:
     void two_descriptors() {
         CPPUNIT_ASSERT_EQUAL(lvtk::descriptors().size(), (size_t)2);
-        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_SILENCE_URI), (int)0);
-        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
+        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_VOLUME_URI), (int)0);
+        // CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
     }
 
     void instantiation()
@@ -57,7 +56,7 @@ protected:
 
     void missing_host_feature()
     {
-        const auto& desc = lvtk::descriptors()[1];
+        const auto& desc = lvtk::descriptors()[0];
         const LV2_Feature* features[] = { nullptr };
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
         CPPUNIT_ASSERT (handle == nullptr);

@@ -21,13 +21,12 @@
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
-namespace ui {
 
-using Descriptors = DescriptorList<LV2UI_Descriptor>;
+using UIDescriptors = DescriptorList<LV2UI_Descriptor>;
 
 /** Returns a global array of registered descriptors */
-static Descriptors& descriptors() {
-    static Descriptors s_desc;
+static UIDescriptors& ui_descriptors() {
+    static UIDescriptors s_desc;
     return s_desc;
 }
 
@@ -69,9 +68,9 @@ private:
 };
 
 /** Parameters passed to UI instances */
-struct InstanceArgs
+struct UIArgs
 {
-    InstanceArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
+    UIArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
         : plugin(p), bundle(b), controller(c), features (f) {}
 
     std::string plugin;
@@ -131,7 +130,7 @@ private:
         desc.port_event = _port_event;
         desc.cleanup = _cleanup;
         desc.extension_data = _extension_data;
-        descriptors().push_back (desc);
+        ui_descriptors().push_back (desc);
 
         auto& extmap = extensions();
         I::map_extension_data (extmap);
@@ -157,7 +156,7 @@ private:
     {
         const FeatureList features (feats);
         const Controller controller (ctl, write_function);
-        InstanceArgs args (plugin_uri, bundle_path, controller, features);
+        UIArgs args (plugin_uri, bundle_path, controller, features);
         auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required())
@@ -208,10 +207,10 @@ private:
     @headerfile lvtk/ui.hpp
 */
 template<class S, template<class> class... E>
-class Instance : public E<S>... 
+class UIInstance : public E<S>...
 {
 public:
-    Instance (const InstanceArgs& args) 
+    UIInstance (const UIArgs& args) 
         : E<S> (args.features)...,
           controller (args.controller)
     {
@@ -230,7 +229,7 @@ public:
         }
     }
 
-    virtual ~Instance() {}
+    virtual ~UIInstance() {}
 
     /** Clean up (optional)
         This is called immediately before the dtor
@@ -334,7 +333,7 @@ private:
     }
 };
 
-}}
+}
 
 #include <lvtk/ext/data_access.hpp>
 #include <lvtk/ext/instance_access.hpp>
@@ -346,8 +345,8 @@ extern "C" {
 #ifndef LVTK_NO_SYMBOL_EXPORT
 
 LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index) {
-    return (index < lvtk::ui::descriptors().size())
-        ? &lvtk::ui::descriptors()[index] : NULL;
+    return (index < lvtk::ui_descriptors().size())
+        ? &lvtk::ui_descriptors()[index] : NULL;
 }
 
 #endif

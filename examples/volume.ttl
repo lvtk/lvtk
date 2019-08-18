@@ -15,37 +15,73 @@
 
 @prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
 @prefix doap:  <http://usefulinc.com/ns/doap#> .
-@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
-@prefix ev:    <http://lv2plug.in/ns/ext/event#>.
-@prefix lvtk:  <http://lvtoolkit.org/ns/lv2#> .
-@prefix lvtkp: <http://lvtoolkit.org/plugins/> .
-@prefix kv:    <https://kushview.net/lv2#> .
+@prefix units: <http://lv2plug.in/ns/ext/units#> .
+@prefix lvtk:  <http://lvtoolkit.org/ns/lvtk#> .
+@prefix midi:  <http://lv2plug.in/ns/ext/midi#> .
 
-lvtkp:volume
-	a lv2:Plugin ;
+<http://lvtoolkit.org/plugins/volume>
+	a lv2:Plugin , lv2:AmplifierPlugin ;
 	doap:name "Volume" ;
-	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-	lv2:project lvtkp: ;
+	doap:license <http://usefulinc.com/doap/licenses/isc> ;
 	lv2:requiredFeature urid:map ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	ui:ui <http://lvtoolkit.org/plugins/volume#ui> ;
 	lv2:port [
-		a lv2:AudioPort, lv2:OutputPort ;
+		a lv2:AudioPort, lv2:InputPort ;
 		lv2:index 0 ;
-		lv2:symbol "ouput" ;
-		lv2:name "Output"
+		lv2:symbol "input_1" ;
+		lv2:name "In 1"
+	] , [
+		a lv2:AudioPort, lv2:InputPort ;
+		lv2:index 1 ;
+		lv2:symbol "input_2" ;
+		lv2:name "In 2"
+	] , [
+		a lv2:AudioPort, lv2:OutputPort ;
+		lv2:index 2 ;
+		lv2:symbol "output_1" ;
+		lv2:name "Out 1"
+	] , [
+		a lv2:AudioPort, lv2:OutputPort ;
+		lv2:index 3 ;
+		lv2:symbol "output_2" ;
+		lv2:name "Out 2"
+	] , [
+		a lv2:ControlPort , lv2:InputPort ;
+		lv2:index 4 ;
+		lv2:symbol "gain" ;
+		lv2:name "Gain" ;
+		lv2:minimum -90.0 ;
+		lv2:maximum 24.0 ;
+		lv2:default 0.0 ;
+		units:unit units:db ;
+		lv2:scalePoint [
+			rdfs:label "+5" ;
+			rdf:value 5.0
+		] , [
+			rdfs:label "0" ;
+			rdf:value 0.0
+		] , [
+			rdfs:label "-5" ;
+			rdf:value -5.0
+		] , [
+			rdfs:label "-10" ;
+			rdf:value -10.0
+		] ;
 	] , [
 		a atom:AtomPort, lv2:InputPort;
-	    lv2:index 1;
+	    lv2:index 5;
 	    atom:bufferType atom:Sequence ;
-	    atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ;
+	    atom:supports midi:MidiEvent ;
 	    lv2:symbol "midi";
 	    lv2:name "MIDI";
 	] .
 
 <http://lvtoolkit.org/plugins/volume#ui>
-	a kv:JUCEUI .
+	a lvtk:JUCEUI .

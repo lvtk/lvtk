@@ -25,15 +25,15 @@ public:
     }
 };
 
-class VolumeUI : public ui::Instance<VolumeUI, Idle, DataAccess, InstanceAccess> {
+class VolumeUI : public UIInstance<VolumeUI, Idle, DataAccess, InstanceAccess> {
 public:
-    VolumeUI (const ui::InstanceArgs& args)
-        : Instance (args)
+    VolumeUI (const UIArgs& args)
+        : UIInstance (args)
     {
         if (auto* const instance = plugin_instance())
             std::clog << "VolumeUI got the plugin instance\n";
-        if (const void* data = plugin_extension_data ("http://dummy.org/ext/data"))
-            std::clog << "VolumeUI got extension data\n";
+        if (const void* data = plugin_extension_data (LV2_URID__map))
+            std::clog << "VolumeUI got " << LV2_URID__map << " extension data\n";
     }
 
     void cleanup() {
@@ -50,4 +50,4 @@ private:
     std::unique_ptr<VolumeComponent> widget;
 };
 
-static const ui::UI<VolumeUI> volume_ui ("http://lvtoolkit.org/plugins/volume#ui");
+static const UI<VolumeUI> volume_ui ("http://lvtoolkit.org/plugins/volume#ui");

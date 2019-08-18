@@ -31,6 +31,8 @@ typedef enum {
 
     This wraps an LV2_Worker_Respond_Function.  It is passed to
     the work method on your Instance
+
+    @headerfile lvtk/scheduler.hpp
  */
 struct WorkerRespond
 {

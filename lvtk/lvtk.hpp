@@ -229,12 +229,6 @@ protected:
     way with Instances.
 */
 
-/** @example workhorse.cpp
-    @example workhorse_ui.cpp
-    @example silence.cpp
-    @example silence_ui.cpp
-    @example volume.cpp
+/** @example volume.cpp
     @example volume_ui.cpp
-    @example beep.cpp
-    @example beep_ui.cpp 
  */

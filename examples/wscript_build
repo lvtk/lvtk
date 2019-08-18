@@ -16,7 +16,7 @@ buildme = not bld.env.TOOLS_DISABLED and not bld.env.EXAMPLES_DISABLED
 builduis = bld.env.BUILD_EXAMPLE_UIS
 
 if buildme:
-	examples = [ "silence", "workhorse", "volume" ]
+	examples = [ "volume" ]
 	first_plugin = True
 
 	bundle = 'lvtk-examples.lv2'
@@ -66,6 +66,7 @@ if buildme:
 						source        = uisrc,
 						includes      = [ "../build/examples"],
 						use           = [ 'GTKMM2', 'LV2' ],
+						install_path  = install_dir,
 						env  		  = plugin_env
 					)
 			elif slug == 'volume':
@@ -76,5 +77,6 @@ if buildme:
 						source        = uisrc,
 						includes      = [ "../build/examples"],
 						use           = [ 'JUCE_GUI_BASICS', 'LV2' ],
+						install_path  = install_dir,
 						env  		  = plugin_env
 					)
