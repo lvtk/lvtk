@@ -27,7 +27,7 @@ namespace lvtk {
     @headerfile lvtk/instance_data.hpp
 */
 struct InstanceData final : FeatureData<LV2_Extension_Data_Feature> {
-    /** Construct a new DataAcces object */
+    /** Construct a InstanceData object */
     InstanceData() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
 
     /** A UI can call this to get data (of a type specified by some other

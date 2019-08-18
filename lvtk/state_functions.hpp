@@ -56,14 +56,14 @@ enum StateFlags {
     STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
 };
 
-typedef enum {
+enum StateStatus {
     STATE_SUCCESS         = LV2_STATE_SUCCESS,          /**< Completed successfully. */
     STATE_ERR_UNKNOWN     = LV2_STATE_ERR_UNKNOWN,      /**< Unknown error. */
     STATE_ERR_BAD_TYPE    = LV2_STATE_ERR_BAD_TYPE,     /**< Failed due to unsupported type. */
     STATE_ERR_BAD_FLAGS   = LV2_STATE_ERR_BAD_FLAGS,    /**< Failed due to unsupported flags. */
     STATE_ERR_NO_FEATURE  = LV2_STATE_ERR_NO_FEATURE,   /**< Failed due to missing features. */
     STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
-} StateStatus;
+};
 
 /** Wrapper struct for state retrieval. This wraps an
     LV2_State_Retrieve_Function and exeucutes via operator () 
@@ -79,7 +79,7 @@ struct StateRetrieve {
         @param size
         @param type
         @param flags
-        @return Associate 'value' data for the given key
+        @returns Associated 'value' data for the given key
       */
     const void* operator () (uint32_t key, 
                              size_t *size = nullptr,
