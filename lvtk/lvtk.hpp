@@ -116,9 +116,9 @@ private:
 };
 
 /** Arguments passed to a plugin instance */
-struct InstanceArgs
+struct Args
 {
-    InstanceArgs (const std::string& p, const std::string& b, const FeatureList& f)
+    Args (const std::string& p, const std::string& b, const FeatureList& f)
         : plugin(p), bundle (b), features (f) { }
 
     std::string plugin;     ///< Plugin URI
@@ -197,7 +197,9 @@ protected:
     @author Michael Fisher <mfisher@kushview.net>
  */
 
-/** @defgroup interfaces Plugin Interfaces
+/** @defgroup hostfeatures Host Features */
+
+/** @defgroup interfaces Plugin Extensions
     
     These template classes implement extra functionality that you may
     want to have in your Instance class, usually features. You add them
@@ -213,7 +215,7 @@ protected:
     way with UIs.
 */
 
-/** @defgroup uinterfaces UI Interfaces 
+/** @defgroup uinterfaces UI Extensions 
 
     These template classes implement extra functionality that you may
     want to have in your ui::Instance class, usually features. You add them

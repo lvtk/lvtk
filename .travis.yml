@@ -1,0 +1,3 @@
+dist: xenial
+language: cpp
+script: python waf configure --docs --lv2-user --disable-ui build check
