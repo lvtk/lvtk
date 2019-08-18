@@ -16,32 +16,30 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
-#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
+#include <lvtk/ext/extension.hpp>
+#include <lvtk/map.hpp>
+#include <lvtk/unmap.hpp>
 
 namespace lvtk {
 
-/** LV2_URID_Unmap wrapper
-    @headerfile lvtk/unmap.hpp
- */
-class Unmap : public FeatureData<LV2_URID_Unmap>
+/** Adds URID `map` and `unmap` to your instance
+    @ingroup interfaces
+*/
+template<class I> 
+struct URID : NullExtension
 {
-public:
-    Unmap() : FeatureData<LV2_URID_Unmap> (LV2_URID__unmap) {}
-    Unmap (const Feature& feature) : FeatureData<LV2_URID_Unmap> (LV2_URID__unmap) {
-        set_feature (feature);
+    /** @private */
+    URID (const FeatureList& features) { 
+        for (const auto& f : features) {
+            map.set_feature (f);
+            unmap.set_feature (f);
+        }
     }
 
-    /** Unmap a URID to string
-        @param urid The URID integer to unmap
-     */
-    std::string unmap (uint32_t urid) const {
-        return data.unmap != nullptr ? data.unmap (data.handle, urid)
-                                     : std::string();
-    }
-
-    /** @see unmap */
-    std::string operator() (const uint32_t urid) const { return this->unmap (urid); }
+protected:
+    /** Use this logger to log messages with the host. @see Logger */
+    Map map;
+    Unmap unmap;
 };
 
 }

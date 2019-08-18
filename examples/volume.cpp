@@ -33,11 +33,14 @@ namespace lvtk {
 class Volume : public Instance<Volume>
 {
 public:
-    Volume (double rate, const std::string& path, const FeatureList& features)
-        : Instance (rate, path, features) { }
+   #if LVTK_STATIC_ARGS
+    Volume (const Args& args) { }
+   #else
+    Volume (const Args& args) : Instance (args) { }
+   #endif
 
-    void activate()  { }
-    void deactivate()  { }
+    void activate() { }
+    void deactivate() { }
 
     void connect_port (uint32_t port, void* data)  {
         if (port == 0)
@@ -65,7 +68,6 @@ private:
     float db = 0.0;
 };
 
-using VolumePlugin = Plugin<Volume>;
-static VolumePlugin silence (LVTK_VOLUME_URI);
+static Plugin<Volume> volume (LVTK_VOLUME_URI);
 
 }

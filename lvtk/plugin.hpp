@@ -140,14 +140,23 @@ private:
        #else
         #define debug(expr)
        #endif
+    
+       #if LVTK_STATIC_ARGS
+        auto& args = I::args();
+        Args::Cleared sr (args);
+        args.sample_rate = sample_rate;
+        args.bundle = bundle_path;
+        for (int i = 0; features[i]; ++i)
+            args.features.push_back (*features[i]);
+       #else
+        Args args (sample_rate, bundle_path, features);
+       #endif
 
-        const FeatureList host_features (features);
-
-        auto instance = std::unique_ptr<I> (new I (sample_rate, bundle_path, host_features));
+        auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required()) {
             bool provided = false;
-            for (const auto& f : host_features)
+            for (const auto& f : args.features)
                 if (f == rq) { provided = true; break; }
             
             if (! provided)

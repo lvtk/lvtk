@@ -35,12 +35,12 @@ public:
     /** Get URID integer from URI string
         @param uri  The URI string to map
      */
-    URID map (const std::string& uri) const {
+    uint32_t map (const std::string& uri) const {
         return data.map != nullptr ? data.map (data.handle, uri.c_str())
                                 : 0;
     }
 
-    URID operator()(const std::string& uri) const { return this->map (uri); }
+    uint32_t operator()(const std::string& uri) const { return this->map (uri); }
 };
 
 }

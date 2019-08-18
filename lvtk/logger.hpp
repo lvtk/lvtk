@@ -46,7 +46,7 @@ struct Logger : FeatureData<LV2_Log_Log> {
         @fmt            Format / message
         @ap             Arguments
     */
-    inline int vprintf (URID type, const char* fmt, va_list ap) const
+    inline int vprintf (uint32_t type, const char* fmt, va_list ap) const
     {
         if (data.handle != nullptr)
             return data.vprintf (data.handle, type, fmt, ap);
@@ -58,7 +58,7 @@ struct Logger : FeatureData<LV2_Log_Log> {
         @param type     LV2_URID type to log
         @fmt            Format / message
     */
-    inline int printf (URID type, const char* fmt, ...) const
+    inline int printf (uint32_t type, const char* fmt, ...) const
     {
         va_list argptr;
         va_start (argptr, fmt);

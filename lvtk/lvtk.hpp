@@ -30,9 +30,6 @@ namespace lvtk {
 /** @typedef Alias to LV2_Handle */
 using Handle        = LV2_Handle;
 
-/** @typedef Alias to LV2_URID */
-using URID          = LV2_URID;
-
 /** @typdef Map of extension data */
 using ExtensionMap  = std::map<std::string, const void*>;
 
@@ -118,12 +115,29 @@ private:
 /** Arguments passed to a plugin instance */
 struct Args
 {
-    Args (const std::string& p, const std::string& b, const FeatureList& f)
-        : plugin(p), bundle (b), features (f) { }
+    Args() : sample_rate(0.0), bundle(), features() {}
+    Args (double r, const std::string& b, const FeatureList& f)
+        : sample_rate(r), bundle (b), features (f) { }
 
-    std::string plugin;     ///< Plugin URI
+    double sample_rate;     ///< Sample Rate
     std::string bundle;     ///< Bundle Path
     FeatureList features;   ///< Host provided features
+
+    void clear() {
+        sample_rate = 0.0;
+        bundle = {};
+        features.clear();
+    }
+    
+    /** Ensures args are initially clear, and also cleared
+        when it has gone out of scope
+     */
+    struct Cleared final
+    {
+        Cleared (Args& a) : args (a) { args.clear(); }
+        ~Cleared() { args.clear(); }
+        Args& args;
+    };
 };
 
 /** Template class which can be used to assign feature data in a common way.

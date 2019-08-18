@@ -33,23 +33,13 @@ template<class S, template<class> class... E>
 class Instance : public E<S>...
 {
 protected:
-    Instance () = default;
+   #if LVTK_STATIC_ARGS
+    explicit Instance() : E<S> (args().features)... {}
+   #else
+    explicit Instance (const Args& args) : E<S> (args.features)... {} 
+   #endif
 
 public:
-    /** Default instance constructor */
-    Instance (double sample_rate, const std::string& bundle_path, const FeatureList& features)
-        : E<S> (features)...
-    {
-        for (const auto& f : features) {
-            if (strcmp (f.URI, LV2_URID__map) == 0) {
-                map.set_feature (f);
-                if (auto* const m = map.c_obj())
-                    forge.init (m);
-                break;
-            }
-        }
-    }
-    
     virtual ~Instance() = default;
 
     /** Override this to handle activate */
@@ -69,19 +59,19 @@ public:
      */
     void cleanup() { }
 
-protected:
-    Map         map;
-    AtomForge   forge;
-
 private:
-    double m_sample_rate;
-    std::string m_bundle_path;
-
     friend class Plugin<S>; // so this can be private
     static void map_extension_data (ExtensionMap& em) {
         using pack_context = std::vector<int>;
         pack_context { (E<S>::map_extension_data (em) , 0)... };
     }
+
+   #if LVTK_STATIC_ARGS
+    static Args& args() {
+        static Args s_args;
+        return s_args;
+    }
+   #endif
 };
 
 }

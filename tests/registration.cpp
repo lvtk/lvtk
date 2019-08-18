@@ -28,7 +28,7 @@ public:
 
 protected:
     void two_descriptors() {
-        CPPUNIT_ASSERT_EQUAL(lvtk::descriptors().size(), (size_t)2);
+        CPPUNIT_ASSERT_EQUAL (lvtk::descriptors().size(), (size_t) 1);
         CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_VOLUME_URI), (int)0);
         // CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
     }
@@ -36,7 +36,8 @@ protected:
     void instantiation()
     {
         const auto desc = lvtk::descriptors().front();
-        
+        CPPUNIT_ASSERT (strcmp (LVTK_VOLUME_URI, desc.URI) == 0);
+
         const LV2_Feature* features[] = {
             urids.get_map_feature(),
             urids.get_unmap_feature(),
@@ -45,13 +46,22 @@ protected:
         
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
         CPPUNIT_ASSERT (handle != nullptr);
-        
-        desc.activate (handle);
-        float buffer [64];
-        desc.connect_port (handle, 0, buffer);
-        desc.run (handle, 64);
-        desc.deactivate (handle);
-        desc.cleanup (handle);
+        if (handle != nullptr) {
+            desc.activate (handle);
+            
+            float control = 0.0f;
+            float audio [2][64];
+
+            desc.connect_port (handle, 0, audio[0]);
+            desc.connect_port (handle, 1, audio[1]);
+            desc.connect_port (handle, 2, audio[0]);
+            desc.connect_port (handle, 3, audio[1]);
+            desc.connect_port (handle, 4, &control);
+
+            desc.run (handle, 64);
+            desc.deactivate (handle);
+            desc.cleanup (handle);
+        }
     }
 
     void missing_host_feature()

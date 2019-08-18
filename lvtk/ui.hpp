@@ -40,6 +40,7 @@ static UIDescriptors& ui_descriptors() {
 class Controller
 {
 public:
+    Controller() = default;
     Controller (LV2UI_Controller c, LV2UI_Write_Function f)
         : controller (c), port_write (f) { }
 
@@ -70,6 +71,7 @@ private:
 /** Parameters passed to UI instances */
 struct UIArgs
 {
+    UIArgs() = default;
     UIArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
         : plugin(p), bundle(b), controller(c), features (f) {}
 
@@ -77,6 +79,23 @@ struct UIArgs
     std::string bundle;
     Controller controller;
     FeatureList features;
+
+     void clear() {
+        plugin = {};
+        bundle = {};
+        controller = { nullptr, nullptr };
+        features.clear();
+    }
+    
+    /** Ensures args are initially clear, and also cleared
+        when it has gone out of scope
+     */
+    struct Cleared final
+    {
+        Cleared (UIArgs& a) : args (a) { args.clear(); }
+        ~Cleared() { args.clear(); }
+        UIArgs& args;
+    };
 };
 
 
@@ -152,17 +171,25 @@ private:
                                       LV2UI_Write_Function            write_function,
                                       LV2UI_Controller                ctl,
                                       LV2UI_Widget*                   widget,
-                                      const LV2_Feature* const*       feats)
+                                      const LV2_Feature* const*       features)
     {
-        const FeatureList features (feats);
-        const Controller controller (ctl, write_function);
-        UIArgs args (plugin_uri, bundle_path, controller, features);
+       #if LVTK_STATIC_ARGS
+        auto& args = I::args();
+        UIArgs::Cleared sc (args);
+        args.plugin     = plugin_uri;
+        args.bundle     = bundle_path;
+        args.controller = { ctl, write_function };
+        for (int i = 0; features[i]; ++i)
+            args.features.push_back (*features[i]);
+       #else
+        UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
+       #endif
         auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required())
         {
             bool provided = false;
-            for (const auto& f : features)
+            for (const auto& f : args.features)
                 if (strcmp (f.URI, rq.c_str()) == 0)
                     { provided = true; break; }
             
@@ -210,11 +237,17 @@ template<class S, template<class> class... E>
 class UIInstance : public E<S>...
 {
 public:
-    UIInstance (const UIArgs& args) 
-        : E<S> (args.features)...,
-          controller (args.controller)
+   #if LVTK_STATIC_ARGS
+    explicit UIInstance() : E<S> (args().features)..., controller (args().controller)
+   #else
+    explicit UIInstance (const UIArgs& args) : E<S> (args.features)..., controller (args.controller)
+   #endif
     {
+       #if LVTK_STATIC_ARGS
+        for (const auto& f : args().features) {
+       #else
         for (const auto& f : args.features) {
+       #endif
             if (f == LV2_UI__parent) {
                 parent_widget = (LV2UI_Widget) f.data;
             } else if (f == LV2_UI__portSubscribe) {
@@ -327,10 +360,19 @@ private:
     LV2UI_Resize ui_resize = { 0, 0 };
 
     friend class UI<S>; // so this can be private
+    /** @private */
     static void map_extension_data (ExtensionMap& em) {
         using pack_context = std::vector<int>;
         pack_context { (E<S>::map_extension_data (em) , 0)... };
     }
+
+   #if LVTK_STATIC_ARGS
+    /** @private */
+    static UIArgs& args() {
+        static UIArgs s_args;
+        return s_args;
+    }
+   #endif
 };
 
 }
