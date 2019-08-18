@@ -29,11 +29,11 @@ enum ResizePortStatus {
 };
 
 /** Resize port wrapper
-    @headerfile lvtk/ext/resize_port.hpp
+    @headerfile lvtk/port_resizer.hpp
  */
-struct ResizePort final : FeatureData<LV2_Resize_Port_Resize> {
+struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
     /** ctor */
-    ResizePort() : FeatureData<LV2_Resize_Port_Resize> (LV2_RESIZE_PORT__resize) {}
+    PortResizer() : FeatureData<LV2_Resize_Port_Resize> (LV2_RESIZE_PORT__resize) {}
 
     /** Resize a port buffer to at least @a size bytes.
 

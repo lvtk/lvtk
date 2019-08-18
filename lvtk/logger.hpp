@@ -18,8 +18,7 @@
 
 #include <stdio.h>
 #include <lv2/lv2plug.in/ns/ext/log/log.h>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/lvtk.hpp>
+#include <lvtk/map.hpp>
 
 namespace lvtk {
 

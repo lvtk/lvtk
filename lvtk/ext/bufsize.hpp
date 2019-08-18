@@ -16,68 +16,49 @@
 
 #pragma once
 
-#include <lvtk/ext/options.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
+#include <lvtk/buffer_details.hpp>
+#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
-/** Description of buffer details
+/** BufSize Handler
     
-    Used by the BufSize interface to automatically scan for buffer information
-    during instantiation. @see BufSize
+    Scans for buffer information provided by the host. @see buffer_details().
+    To use it, add BufSize to the template parameters of your Instance
 
-    @headerfile lvtk/ext/bufsize.hpp
+    @ingroup interfaces
  */
-struct BufferDetails final {
-    uint32_t min            = 0;
-    uint32_t max            = 0;
-    uint32_t sequence_size  = 0;
-    bool bounded            = false;
-    bool fixed              = false;
-    bool power_of_two       = false;
-
-    /** Update with a Feature
-     
-        Sets bufsize:boundedBlockLength, bufsize:powerOf2BlockLength, or 
-        bufsize:fixedBlockLength if the Feature's URI matches.
-     */
-    void update_with (const Feature& feature)
+template<class I>
+struct BufSize : NullExtension
+{
+    /** @private */
+    BufSize (const FeatureList& features)
     {
-        if (strcmp (LV2_BUF_SIZE__boundedBlockLength, feature.URI) ==0) {
-            bounded = true;
-        } else if (strcmp (LV2_BUF_SIZE__powerOf2BlockLength, feature.URI) ==0) {
-            power_of_two = true;
-        } else if (strcmp (LV2_BUF_SIZE__fixedBlockLength, feature.URI) ==0) {
-            fixed = true;
-        }
-    }
-
-    /** Update with options
+        memset (&m_details, 0, sizeof (BufferDetails));
         
-        Updates bufsize:minBlockLength, bufsize:maxBlockLength, and
-        bufsize:sequenceSize if found in the Options array
-
-        @param map      Map for getting required LV2_URIDs
-        @param options  The Options array to scan
-     */
-    void apply_options (Map& map, const Option* options)
-    {
-        uint32_t min      (map (LV2_BUF_SIZE__minBlockLength));
-        uint32_t max      (map (LV2_BUF_SIZE__maxBlockLength));
-        uint32_t seq_size (map (LV2_BUF_SIZE__sequenceSize));
-
-        OptionsIterator iter (options);
-        while (const Option* opt = iter.next())
+        Map map; HostOptions options;
+        for (const auto& f : features)
         {
-            if (min == opt->key)
-                min = *(uint32_t*) opt->value;
-            if (max == opt->key)
-                max = *(uint32_t*) opt->value;
-            if (seq_size == opt->key)
-                sequence_size = *(uint32_t*) opt->value;
+            m_details.update_with (f);
+            map.set_feature (f);
+            options.set_feature (f);
         }
+
+        if (map.c_obj() != nullptr && options.get_options() != nullptr)
+            m_details.apply_options (map, options.get_options());
     }
+
+    /** Get the buffer details
+        
+        If the required features and options were available when instantiated,
+        This will be populated with host buffer information
+     
+        @returns The host provided buffer details
+     */
+    const BufferDetails& buffer_details() const { return m_details; }
+
+private:
+    BufferDetails m_details;
 };
 
 }

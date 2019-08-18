@@ -657,7 +657,7 @@ WARN_LOGFILE           = doxy.log
 
 INPUT                  = @LVTK_SRCDIR@/lvtk \
 						 @LVTK_SRCDIR@/lvtk/ext \
-                         @LVTK_SRCDIR@/lvtk/interface \
+                         @LVTK_SRCDIR@/lvtk/ext \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

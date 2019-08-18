@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <lvtk/ext/ui.hpp>
-#include <lvtk/interface/interface.hpp>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
@@ -25,7 +25,7 @@ namespace lvtk {
     @ingroup uinterfaces
 */
 template<class I>
-struct Idle : Interface<I>
+struct Idle : Extension<I>
 {
     /** @private */
     Idle (const FeatureList&) { }

@@ -18,7 +18,7 @@
 
 #include <map>
 #include <memory>
-#include <lvtk/ext/urid.hpp>
+#include <lvtk/lvtk.hpp>
 
 /** @file LV2 Plugin Implementation in C++
     

@@ -3,25 +3,17 @@
 #include <cppunit/config/SourcePrefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <lvtk/ext/atom.hpp>
-#include <lvtk/ext/bufsize.hpp>
-#include <lvtk/ext/data_access.hpp>
-#include <lvtk/ext/instance_access.hpp>
-#include <lvtk/ext/midi.hpp>
-#include <lvtk/ext/morph.hpp>
-#include <lvtk/ext/options.hpp>
-#include <lvtk/ext/parameters.hpp>
-#include <lvtk/ext/patch.hpp>
-#include <lvtk/ext/port_groups.hpp>
-#include <lvtk/ext/port_props.hpp>
-#include <lvtk/ext/presets.hpp>
-#include <lvtk/ext/resize_port.hpp>
-#include <lvtk/ext/state.hpp>
-#include <lvtk/ext/time.hpp>
-#include <lvtk/ext/ui.hpp>
-#include <lvtk/ext/units.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/ext/worker.hpp>
+#include <lvtk/host_options.hpp>
+#include <lvtk/port_resizer.hpp>
+#include <lvtk/state_functions.hpp>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
+#include <lvtk/atom.hpp>
+#include <lvtk/buffer_details.hpp>
+#include <lvtk/instance_data.hpp>
+#include <lvtk/instance_handle.hpp>
 #include <lvtk/logger.hpp>
+#include <lvtk/map.hpp>
+#include <lvtk/scheduler.hpp>
+#include <lvtk/unmap.hpp>
 #include <lvtk/uri_directory.hpp>

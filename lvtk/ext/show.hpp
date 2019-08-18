@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <lvtk/ext/ui.hpp>
-#include <lvtk/interface/idle.hpp>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lvtk/ext/idle.hpp>
 
 namespace lvtk {
 

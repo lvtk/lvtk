@@ -17,7 +17,7 @@
 #pragma once
 
 #include <memory>
-#include <lvtk/ext/ui.hpp>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
@@ -336,10 +336,10 @@ private:
 
 }}
 
-#include <lvtk/interface/data_access.hpp>
-#include <lvtk/interface/instance_access.hpp>
-#include <lvtk/interface/idle.hpp>
-#include <lvtk/interface/show.hpp>
+#include <lvtk/ext/data_access.hpp>
+#include <lvtk/ext/instance_access.hpp>
+#include <lvtk/ext/idle.hpp>
+#include <lvtk/ext/show.hpp>
 
 extern "C" {
 

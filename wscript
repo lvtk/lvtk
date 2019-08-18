@@ -139,7 +139,7 @@ def build (bld):
     bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
     bld.install_files(header_base+"/lvtk/host", bld.path.ant_glob("lvtk/host/*.*"))
-    bld.install_files(header_base+"/lvtk/interface", bld.path.ant_glob("lvtk/interface/*.*"))
+    bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
 
 def check(ctx):
     call('build/testlvtk')

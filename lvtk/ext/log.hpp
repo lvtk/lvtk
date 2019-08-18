@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lvtk/interface/interface.hpp>
+#include <lvtk/ext/extension.hpp>
 #include <lvtk/logger.hpp>
 
 namespace lvtk {
@@ -25,7 +25,7 @@ namespace lvtk {
     @ingroup interfaces
 */
 template<class I> 
-struct Log : NullInterface
+struct Log : NullExtension
 {
     /** @private */
     Log (const FeatureList& features) { 

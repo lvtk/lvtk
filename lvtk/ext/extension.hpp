@@ -16,34 +16,26 @@
 
 #pragma once
 
-#include <lvtk/ext/data_access.hpp>
-#include <lvtk/interface/interface.hpp>
+#include <lvtk/lvtk.hpp>
 
 namespace lvtk {
 
-/** Adds Access to plugin extension data to your UI instance
-    @ingroup uinterfaces
+/** Base class for all extension mixins
+    @headerfile lvtk/ext/extension.hpp
 */
-template<class I>
-struct DataAccess : NullInterface
-{
-    /** @private */
-    DataAccess (const FeatureList& features) {
-        for (const auto& f : features)
-            if (instance_data.set_feature (f))
-                break;
-    }
+template<class I> struct Extension {};
 
-    /** Calls extension_data on the plugin if supported by the host.
-        @param uri  URI of the extension
-        @returns extension data or nullptr if not available
+/** Dummy class indicating an Extension doesn't use the Instance */
+struct NoInstance {};
+
+/** This is for extensions which do not provide extension data
+    and/or call methods on the Instance 
+ */
+struct NullExtension : Extension<NoInstance> {
+    /** Dummy extension data handler for interfaces which do not
+        provide extension data. @see BufSize
      */
-    inline const void* plugin_extension_data (const std::string& uri) const {
-        return instance_data.data_access (uri.c_str());
-    }
-
-private:
-    InstanceData instance_data;
+    inline static void map_extension_data (ExtensionMap&) {}
 };
 
 }

@@ -17,25 +17,30 @@
 #pragma once
 
 #include <lvtk/lvtk.hpp>
+#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
 namespace lvtk {
 
-/** Base class for all extension mixins
-    @headerfile lvtk/interface/interface.hpp
-*/
-template<class I> struct Interface {};
-
-/** Dummy class indicating an Interface doesn't use the Instance */
-struct NoInstance {};
-
-/** This is for extensions which do not provide extension data
-    and/or call methods on the Instance 
+/** LV2_URID_Map wrapper
+    @headerfile lvtk/map.hpp
  */
-struct NullInterface : Interface<NoInstance> {
-    /** Dummy extension data handler for interfaces which do not
-        provide extension data. @see BufSize
+class Map : public FeatureData<LV2_URID_Map>
+{
+public:
+    Map() : FeatureData<LV2_URID_Map> (LV2_URID__map) {}
+    Map (const Feature& f) :FeatureData<LV2_URID_Map> (LV2_URID__map) {
+        set_feature (f);
+    }
+
+    /** Get URID integer from URI string
+        @param uri  The URI string to map
      */
-    inline static void map_extension_data (ExtensionMap&) { }
+    URID map (const std::string& uri) const {
+        return data.map != nullptr ? data.map (data.handle, uri.c_str())
+                                : 0;
+    }
+
+    URID operator()(const std::string& uri) const { return this->map (uri); }
 };
 
 }

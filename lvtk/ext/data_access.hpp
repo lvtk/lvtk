@@ -16,38 +16,34 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
-#include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
+#include <lvtk/instance_data.hpp>
+#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
-/** Wrap Data access host feature.
- 
-    Use these on the stack and call set_feature() passing the appropriate feature.
-    @headerfile lvtk/ext/data_access.hpp
+/** Adds Access to plugin extension data to your UI instance
+    @ingroup uinterfaces
 */
-struct InstanceData final : FeatureData<LV2_Extension_Data_Feature> {
-    /** Construct a new DataAcces object */
-    InstanceData() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
-
-    /** A UI can call this to get data (of a type specified by some other
-        extension) from the plugin.
-
-        This call never is never guaranteed to return anything, UIs should
-        degrade gracefully if direct access to the plugin data is not possible
-        (in which case this function will return NULL).
-
-        This is for access to large data that can only possibly work if the UI
-        and plugin are running in the same process.  For all other things, use
-        the normal LV2 UI communication system.
-
-        @param uri  The uri string to query
-        @returns    Not nullptr on Success
-     */
-    const void* data_access (const std::string& uri) const {
-        return nullptr != data.data_access ? data.data_access (uri.c_str())
-                                           : nullptr;
+template<class I>
+struct DataAccess : NullExtension
+{
+    /** @private */
+    DataAccess (const FeatureList& features) {
+        for (const auto& f : features)
+            if (instance_data.set_feature (f))
+                break;
     }
+
+    /** Calls extension_data on the plugin if supported by the host.
+        @param uri  URI of the extension
+        @returns extension data or nullptr if not available
+     */
+    inline const void* plugin_extension_data (const std::string& uri) const {
+        return instance_data.data_access (uri.c_str());
+    }
+
+private:
+    InstanceData instance_data;
 };
 
-} /* namespace lvtk */
+}

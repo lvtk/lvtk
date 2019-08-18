@@ -16,37 +16,29 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
-#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
+#include <lvtk/instance_handle.hpp>
+#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
-/** Wrap the Instance Access host feature.
- 
-    Use these on the stack and all set_feature() passing the appropriate feature.
-    @headerfile lvtk/ext/instance_access.hpp
+/** Adds idle interface to your UI instance
+    @ingroup uinterfaces
 */
-struct InstanceHandle final {
-    /** ctor */
-    InstanceHandle() = default;
-
-    /** Get the plugin instance
-        @returns The LV2 plugin instance handle or nullptr if not available
-     */
-    Handle handle() const { return p_handle; }
-
-    /** Assign the LV2_Handle by LV2 Feature */
-    bool set_feature (const Feature& feature) {
-        if (strcmp (LV2_INSTANCE_ACCESS_URI, feature.URI) == 0) {
-            p_handle = reinterpret_cast<Handle> (feature.data);
-            return true;
-        }
-        return false;
+template<class I>
+struct InstanceAccess : NullExtension
+{
+    /** @private */
+    InstanceAccess (const FeatureList& features) {
+        for (const auto& f : features)
+            if (m_instance.set_feature (f))
+                break;
     }
 
-    private:
-        /** @internal Feature Data passed from host */
-        Handle p_handle { nullptr };
+    /** @returns the LV2_Handle of the plugin if available, otherwise nullptr */
+    Handle plugin_instance() const { return m_instance.handle(); }
+
+private:
+    InstanceHandle m_instance;
 };
 
-} /* namespace lvtk */
+}

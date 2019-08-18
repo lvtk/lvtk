@@ -17,7 +17,8 @@
 #pragma once
 
 #include <lvtk/lvtk.hpp>
-#include <lvtk/ext/atom.hpp>
+#include <lvtk/atom.hpp>
+#include <lvtk/map.hpp>
 
 namespace lvtk {
 
@@ -85,9 +86,9 @@ private:
 
 }
 
-#include <lvtk/interface/interface.hpp>
-#include <lvtk/interface/bufsize.hpp>
-#include <lvtk/interface/log.hpp>
-#include <lvtk/interface/options.hpp>
-#include <lvtk/interface/state.hpp>
-#include <lvtk/interface/worker.hpp>
+#include <lvtk/ext/extension.hpp>
+#include <lvtk/ext/bufsize.hpp>
+#include <lvtk/ext/log.hpp>
+#include <lvtk/ext/options.hpp>
+#include <lvtk/ext/state.hpp>
+#include <lvtk/ext/worker.hpp>

@@ -16,111 +16,67 @@
 
 #pragma once
 
-#include <cassert>
-#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lvtk/state_functions.hpp>
+#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
-typedef enum {
-    /** Plain Old Data.
+/** Adds LV2 State support to your plugin instance
+    @ingroup interfaces
+*/
+template<class I>
+struct State : Extension<I>
+{   
+    /** @private */
+    State (const FeatureList&) { }
 
-        Values with this flag contain no pointers or references to other areas
-        of memory.  It is safe to copy POD values with a simple memcpy and store
-        them for the duration of the process.  A POD value is not necessarily
-        safe to trasmit between processes or machines (e.g. filenames are POD),
-        see STATE_IS_PORTABLE for details.
+    /** Called by the host to save state
+     
+        @param store    Store function object to write keys/values
+        @param flags    State flags to check
+        @param features Additional features for this operation 
+    */
+    StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
 
-        Implementations MUST NOT attempt to copy or serialise a non-POD value if
-        they do not understand its type (and thus know how to correctly do so).
-        */
+    /** Called by the host to restore state
+     
+        @param retrieve Retrieve function object to get keys/values
+        @param flags    State flags to check
+        @param features Additional features for this operation 
+    */
+    StateStatus restore (StateRetrieve &retrieve, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
 
-    STATE_IS_POD = LV2_STATE_IS_POD,
-
-    /** Portable (architecture independent) data.
-
-        Values with this flag are in a format that is usable on any
-        architecture.  A portable value saved on one machine can be restored on
-        another machine regardless of architecture.  The format of portable
-        values MUST NOT depend on architecture-specific properties like
-        endianness or alignment.  Portable values MUST NOT contain filenames.
-        */
-    STATE_IS_PORTABLE = LV2_STATE_IS_PORTABLE,
-
-    /** Native data.
-
-        This flag is used by the host to indicate that the saved data is only
-        going to be used locally in the currently running process (e.g. for
-        instance duplication or snapshots), so the plugin should use the most
-        efficient representation possible and not worry about serialisation
-        and portability.
-        */
-    STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
-} StateFlags;
-
-typedef enum {
-    STATE_SUCCESS         = LV2_STATE_SUCCESS,          /**< Completed successfully. */
-    STATE_ERR_UNKNOWN     = LV2_STATE_ERR_UNKNOWN,      /**< Unknown error. */
-    STATE_ERR_BAD_TYPE    = LV2_STATE_ERR_BAD_TYPE,     /**< Failed due to unsupported type. */
-    STATE_ERR_BAD_FLAGS   = LV2_STATE_ERR_BAD_FLAGS,    /**< Failed due to unsupported flags. */
-    STATE_ERR_NO_FEATURE  = LV2_STATE_ERR_NO_FEATURE,   /**< Failed due to missing features. */
-    STATE_ERR_NO_PROPERTY = LV2_STATE_ERR_NO_PROPERTY   /**< Failed due to missing property. */
-} StateStatus;
-
-/** Wrapper struct for state retrieval. This wraps an
-    LV2_State_Retrieve_Function and exeucutes via operator () 
-    @headerfile lvtk/ext/state.hpp
- */
-struct StateRetrieve {
-    StateRetrieve (LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
-        : p_handle (handle), p_srfunc (srfunc) { }
-
-    /** Call the retrieve function
-
-        @param key
-        @param size
-        @param type
-        @param flags
-        @return Associate 'value' data for the given key
-      */
-    const void* operator () (uint32_t key, 
-                             size_t *size = nullptr,
-                             uint32_t *type  = nullptr,
-                             uint32_t *flags = nullptr) const
-    {
-        return p_srfunc (p_handle, key, size, type, flags);
+protected:
+    /** @internal */
+    inline static void map_extension_data (ExtensionMap& dmap) {
+        static const LV2_State_Interface _state =  { _save, _restore };
+        dmap[LV2_STATE__interface] = &_state;
     }
 
 private:
-    LV2_State_Handle              p_handle;
-    LV2_State_Retrieve_Function   p_srfunc;
-};
-
-/**  Wrapper struct for state storage. This wraps an
-     LV2_State_Store_Function and exeucutes via operator () 
- */
-struct StateStore {
-    StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
-        : p_handle(handle), p_ssfunc(ssfunc) { }
-
-    /** Execute the store functor.
-
-        @param key
-        @param value
-        @param size
-        @param type
-        @param flags
-        @return STATE_SUCCESS on Success
-        */
-    inline StateStatus operator() (uint32_t key, const void* value,
-                                    size_t size, uint32_t type,
-                                    uint32_t flags = 0) const
+    static LV2_State_Status _save (LV2_Handle                    instance,
+                                   LV2_State_Store_Function      store_function,
+                                   LV2_State_Handle              state_handle,
+                                   uint32_t                      flags,
+                                   const LV2_Feature *const *    features)
     {
-        return (StateStatus) p_ssfunc (p_handle, key, value, size, type, flags);
+        auto* const plugin = reinterpret_cast<I*> (instance);
+        StateStore store (store_function, state_handle);
+        FeatureList flist (features);
+        return (LV2_State_Status) plugin->save (store, flags, flist);
     }
 
-private:
-    LV2_State_Handle              p_handle;
-    LV2_State_Store_Function      p_ssfunc;
+    static LV2_State_Status _restore (LV2_Handle                  instance,
+                                      LV2_State_Retrieve_Function retrieve_function,
+                                      LV2_State_Handle            handle,
+                                      uint32_t                    flags,
+                                      const LV2_Feature *const *  features)
+    {
+        auto* const plugin = static_cast<I*> (instance);
+        StateRetrieve retrieve (retrieve_function, handle);
+        FeatureList feature_set (features);
+        return (LV2_State_Status) plugin->restore (retrieve, flags, feature_set);
+    }
 };
 
-} /* namespace lvtk */
+}

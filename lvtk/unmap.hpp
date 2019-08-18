@@ -21,30 +21,8 @@
 
 namespace lvtk {
 
-/** LV2_URID_Map wrapper
-    @headerfile lvtk/ext/urid.hpp
- */
-class Map : public FeatureData<LV2_URID_Map>
-{
-public:
-    Map() : FeatureData<LV2_URID_Map> (LV2_URID__map) {}
-    Map (const Feature& f) :FeatureData<LV2_URID_Map> (LV2_URID__map) {
-        set_feature (f);
-    }
-
-    /** Get URID integer from URI string
-        @param uri  The URI string to map
-     */
-    URID map (const std::string& uri) const {
-        return data.map != nullptr ? data.map (data.handle, uri.c_str())
-                                : 0;
-    }
-
-    URID operator()(const std::string& uri) const { return this->map (uri); }
-};
-
 /** LV2_URID_Unmap wrapper
-    @headerfile lvtk/ext/urid.hpp
+    @headerfile lvtk/unmap.hpp
  */
 class Unmap : public FeatureData<LV2_URID_Unmap>
 {

@@ -16,73 +16,81 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/worker/worker.h>
+#include <lvtk/ext/extension.hpp>
+#include <lvtk/scheduler.hpp>
 
 namespace lvtk {
 
-/** Convenience enum to get LV2_Worker_Status into a C++ namespace */
-typedef enum {
-    WORKER_SUCCESS          = LV2_WORKER_SUCCESS,      /**< Work Completed. */
-    WORKER_ERR_UNKNOWN      = LV2_WORKER_ERR_UNKNOWN,  /**< Unknown error. */
-    WORKER_ERR_NO_SPACE     = LV2_WORKER_ERR_NO_SPACE  /**< Fail due to Lack of Space. */
-} WorkerStatus;
+/** Adds LV2 worker support to your instance. Add this to your instance's
+    Mixin list to activate it.
 
-/** Worker reponse function
-
-    This wraps an LV2_Worker_Respond_Function.  It is passed to
-    the work method on your Instance
- */
-struct WorkerRespond
+    @ingroup interfaces
+*/
+template<class I> 
+struct Worker : Extension<I>
 {
-    WorkerRespond (LV2_Handle                  instance,
-                   LV2_Worker_Respond_Function wrfunc,
-                   LV2_Worker_Respond_Handle   handle)
-        : p_instance (instance),
-          p_handle (handle), 
-          p_wrfunc (wrfunc) 
-    { }
+    /** @private */
+    Worker (const FeatureList& features) { 
+        for (const auto& f : features)
+            if (strcmp (f.URI, LV2_WORKER__schedule) == 0)
+                { schedule.set_feature (f); break; }
+    }
 
-    /** Execute the worker retrieval functor.
-        @param size
-        @param data
-        @return WORKER_SUCCESS on success
+    /** Schedule work with the host
+     
+        @param size Size of data
+        @param data The data to schedule
      */
-    WorkerStatus operator() (uint32_t size, const void* data) const {
-        return (WorkerStatus) p_wrfunc (p_handle, size, data);
+    WorkerStatus schedule_work (uint32_t size, const void* data) const { return schedule.schedule_work (size, data); }
+
+    /** Perform work as requested by schedule_work
+     
+        @param respond  Function to send responses with
+     */
+    WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { return WORKER_SUCCESS; }
+
+    /** Process work responses sent with respond in the `work` callback
+     
+        @param size Size of response data
+        @param data The reponse data
+     */
+    WorkerStatus work_response (uint32_t size, const void* body) { return WORKER_SUCCESS; }
+
+    /** Called at the end of a processing cycle */
+    WorkerStatus end_run() { return WORKER_SUCCESS; }
+
+protected:
+    static void map_extension_data (ExtensionMap& dmap) {
+        static const LV2_Worker_Interface _worker = { _work, _work_response, _end_run  };
+        dmap[LV2_WORKER__interface] = &_worker;
     }
 
 private:
-    LV2_Handle                        p_instance;
-    LV2_Worker_Respond_Handle         p_handle;
-    LV2_Worker_Respond_Function       p_wrfunc;
-};
-
-/** Schedule jobs with the host
-
-    This wraps LV2_Worker_Schedule.  Used by the Worker interface to add
-    `schedule_work` to a plugin instance
-
-    @headerfile lvtk/ext/worker.hpp
- */
-struct Scheduler : FeatureData<LV2_Worker_Schedule> {
-    Scheduler() : FeatureData<LV2_Worker_Schedule> (LV2_WORKER__schedule) {}
-    
-    /** Schedule work with the host
-        
-        @param size Size of the data
-        @param data The data to write
-     */
-    WorkerStatus schedule_work (uint32_t size, const void* data) const {
-        auto& ext = this->data;
-        if (ext.schedule_work)
-            return (WorkerStatus) ext.schedule_work (ext.handle, size, data);
-        return WORKER_ERR_UNKNOWN; 
+    Scheduler schedule;
+    /** @internal */
+    static LV2_Worker_Status _work (LV2_Handle					instance,
+                                    LV2_Worker_Respond_Function respond,
+                                    LV2_Worker_Respond_Handle   handle,
+                                    uint32_t                    size,
+                                    const void*                 data)
+    {
+        WorkerRespond wrsp (instance, respond, handle);
+        return (LV2_Worker_Status) (static_cast<I*> (instance))->work (wrsp, size, data);
     }
 
-    /** Function operator is alias to `schedule_work` */
-    WorkerStatus operator() (uint32_t size, const void* buffer) const {
-        return schedule_work (size, buffer);
+    /** @internal */
+    static LV2_Worker_Status _work_response (LV2_Handle  instance,
+                                             uint32_t    size,
+                                             const void* body)
+    {
+        return (LV2_Worker_Status)(static_cast<I*>(instance))->work_response (size, body);
+    }
+
+    /** @internal */
+    static LV2_Worker_Status _end_run (LV2_Handle instance)
+    {
+        return (LV2_Worker_Status)(static_cast<I*> (instance))->end_run();
     }
 };
 
-} /* namespace lvtk */
+}
