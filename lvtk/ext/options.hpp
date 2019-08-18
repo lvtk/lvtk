@@ -17,7 +17,7 @@
 #pragma once
 
 #include <lvtk/ext/extension.hpp>
-#include <lvtk/host_options.hpp>
+#include <lvtk/option.hpp>
 
 namespace lvtk {
 
@@ -49,7 +49,7 @@ protected:
 
         @returns Bitwise OR of OptionsStatus values.
      */
-    uint32_t get (const Option* options) const {}
+    uint32_t get (const Option* options) const { return OPTIONS_SUCCESS; }
 
     /** Set the given options.
 
@@ -58,7 +58,7 @@ protected:
 
         @returns Bitwise OR of OptionsStatus values.
      */
-    uint32_t set (const Option* options) const {}
+    uint32_t set (const Option* options) const { return OPTIONS_SUCCESS; }
 
     /** @private */
     inline static void map_extension_data (ExtensionMap& dmap) {
@@ -67,7 +67,7 @@ protected:
     }
 
 private:
-    HostOptions m_host_options;
+    OptionsFeature m_host_options;
     
     static uint32_t _get (LV2_Handle handle, LV2_Options_Option* options) {
         return (static_cast<I*> (handle))->get (options);

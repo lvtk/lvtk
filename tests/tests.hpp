@@ -3,7 +3,7 @@
 #include <cppunit/config/SourcePrefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <lvtk/host_options.hpp>
+#include <lvtk/option.hpp>
 #include <lvtk/port_resizer.hpp>
 #include <lvtk/state_functions.hpp>
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>

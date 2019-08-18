@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lvtk/host_options.hpp>
+#include <lvtk/option.hpp>
 #include <lvtk/map.hpp>
 #include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
 

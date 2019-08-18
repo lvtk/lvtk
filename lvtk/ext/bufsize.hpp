@@ -36,7 +36,7 @@ struct BufSize : NullExtension
     {
         memset (&m_details, 0, sizeof (BufferDetails));
         
-        Map map; HostOptions options;
+        Map map; OptionsFeature options;
         for (const auto& f : features)
         {
             m_details.update_with (f);
