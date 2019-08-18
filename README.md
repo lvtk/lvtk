@@ -4,7 +4,11 @@ LV2 Toolkit
 This software package contains libraries that wrap the LV2 C API and
 extensions into easy to use C++ classes.
 
-BUILDING
+Status
+------
+[![Build Status](https://travis-ci.org/lvtk/lvtk.svg?branch=master)](https://travis-ci.org/lvtk/lvtk)
+
+Building
 --------
 To build and install, run
 ```
