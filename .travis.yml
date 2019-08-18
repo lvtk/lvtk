@@ -5,7 +5,7 @@ language: cpp
 script: python waf configure --docs --lv2-user --disable-ui --enable-tests clean build check
 
 before_install:
-  - sudo apt-get install -y lv2-dev
+  - sudo apt-get install -y lv2-dev libcppunit-dev
 
 addons:
   apt:  
