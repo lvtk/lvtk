@@ -63,11 +63,13 @@ public:
     }
 
 private:
-    float* input[2];
-    float* output[2];
+    float* input[2] { 0, 0 };
+    float* output[2] { 0, 0 };
     float db = 0.0;
 };
 
-static Plugin<Volume> volume (LVTK_VOLUME_URI);
+static Plugin<Volume> volume (LVTK_VOLUME_URI, {
+    LV2_URID__map ///* < required host feature
+});
 
 }

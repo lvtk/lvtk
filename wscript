@@ -140,8 +140,14 @@ def build (bld):
     bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
 
-def check(ctx):
-    call('build/testlvtk')
+def check (ctx):
+    if 0 != call ('build/testlvtk'):
+        ctx.fatal ("Tests Failed")
+
+# from waflib.Build import BuildContext
+# class CheckContext (BuildContext):
+#     cmd = 'check'
+#     fun = 'check'
 
 def dist(ctx):
     z=ctx.options.ziptype
