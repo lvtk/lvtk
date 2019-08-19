@@ -25,6 +25,7 @@ namespace lvtk {
  
     Use these on the stack and all set_feature() passing the appropriate feature.
     @headerfile lvtk/instance_handle.hpp
+    @ingroup instance_access
 */
 struct InstanceHandle final {
     /** ctor */

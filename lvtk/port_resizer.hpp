@@ -21,7 +21,10 @@
 
 namespace lvtk {
 
-/** Resize port status codes */
+/** Resize port status codes
+    @ingroup resize_port
+    @headerfile lvtk/port_resizer.hpp
+*/
 enum ResizePortStatus {
     RESIZE_PORT_SUCCESS        = LV2_RESIZE_PORT_SUCCESS,       /**< Completed successfully. */
     RESIZE_PORT_ERR_UNKNOWN    = LV2_RESIZE_PORT_ERR_UNKNOWN,   /**< Unknown Error */
@@ -29,6 +32,7 @@ enum ResizePortStatus {
 };
 
 /** Resize port wrapper
+    @ingroup resize_port
     @headerfile lvtk/port_resizer.hpp
  */
 struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {

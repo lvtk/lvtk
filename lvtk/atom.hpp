@@ -14,6 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup atom Atom 
+    Dealing with LV2 Atoms
+*/
+
 #pragma once
 
 #include <iostream>
@@ -24,12 +28,16 @@
 #include <lv2/lv2plug.in/ns/ext/atom/util.h>
 
 namespace lvtk {
-
-/** Typedefs for an Atom data types */
+/* @{ */
+/** Alias to `LV2_Atom_Event`  */
 using AtomEvent             = LV2_Atom_Event;
+/** Alias to `LV2_Atom_Property_Body` */
 using PropertyBody          = LV2_Atom_Property_Body ;
+/** Alias to `LV2_Atom_Forge_Frame` */
 using ForgeFrame            = LV2_Atom_Forge_Frame;
+/** Alias to `LV2_Atom_Forge_Ref` */
 using ForgeRef              = LV2_Atom_Forge_Ref;
+/** Alias to `LV2_Atom_Object_Query` */
 using ObjectQuery           = LV2_Atom_Object_Query;
 
 /** Wrapper for an LV2_Atom_Object
@@ -39,7 +47,12 @@ using ObjectQuery           = LV2_Atom_Object_Query;
  */
 struct AtomObject
 {
-    /** Create an AtomObject from raw data */
+    /** Create an AtomObject from raw data.
+        
+        The data passed in will be casted to a LV2_Atom_Object pointer
+        @param atom
+        @see Atom
+     */
     AtomObject (const void* atom) : p_obj ((LV2_Atom_Object*) atom) { }
 
     /** Create an AtomObject from a ForgeRef */
@@ -632,5 +645,6 @@ public:
 private:
     LV2_Atom_Vector* vec;
 };
-
+/* @} */
 }  /* namespace lvtk */
+

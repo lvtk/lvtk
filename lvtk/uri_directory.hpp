@@ -30,6 +30,7 @@ namespace lvtk {
     LV2 host to easily provide URID map/unmaping features to plugins.
 
     @headerfile lvtk/uri_directory.hpp
+    @ingroup urid
  */
 class URIDirectory
 {

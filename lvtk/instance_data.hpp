@@ -25,6 +25,7 @@ namespace lvtk {
  
     Use these on the stack and call set_feature() passing the appropriate feature.
     @headerfile lvtk/instance_data.hpp
+    @ingroup data_access
 */
 struct InstanceData final : FeatureData<LV2_Extension_Data_Feature> {
     /** Construct a InstanceData object */

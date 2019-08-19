@@ -14,17 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#pragma once
-
-#include <map>
-#include <memory>
-#include <lvtk/lvtk.hpp>
-
-/** @file LV2 Plugin Implementation in C++
-    
-    Only include this header in a file that implements an LV2 Plugin
-    via a subclass of lvtK::Instance
-
+/** @defgroup plugin Plugin
+ 
+    Writing an LV2 Plugin
+   
     Plugin descriptors are registered on the stack at the global scope.
     For example...
     
@@ -46,30 +39,50 @@
     Same policy for the interface directory, including anything
     there will result in a mess of compiler errors.  Interfaces
     are for implementing features on a plugin instance only
- */
+    @{
+*/
+
+#pragma once
+
+#include <map>
+#include <memory>
+#include <lvtk/lvtk.hpp>
  
 namespace lvtk {
-
+/** A list of LV2_Descriptors. Used internally to manage registered plugins */
 using PluginDescriptors = DescriptorList<LV2_Descriptor>;
 
-/** Returns a global array of registered descriptors */
+/** @fn Access to registered plugin descriptors
+    @returns Plugin descriptor list
+ */
 static PluginDescriptors& descriptors() {
     static PluginDescriptors s_descriptors;
     return s_descriptors;
 }
 
-/** Plugin Registration
-    @headerfile lvtk/plugin.hpp
-    
+/** Registers a plugin instance of type @em`I`
+        
     Create a static one of these to register your plugin instance type.
+    
+    @code
+        using MyPlugin = lvtk::Plugin<MyInstance>;
+        static MyPlugin my_plugin (
+            MY_PLUGIN_URI,           //< MyPlugin's URI String
+            {                            
+                LV2_URID__map,       //< List of required host features
+                LV2_WORKER__schedule
+            }
+        );
+    @endcode
 
-    @see Instance
+    @headerfile lvtk/plugin.hpp
+    @see @ref Instance
  */
 template<class I>
 class Plugin final
 {
 public:    
-    /** Plugin Registation
+    /** Plugin registration with required host features
         
         @param plugin_uri   The URI string of your plugin
         @param required     List of required host feature URIs. If the host fails
@@ -198,7 +211,7 @@ private:
         return e != extensions().end() ? e->second : nullptr;
     }
 };
-
+/* @} */
 }
 
 #include <lvtk/instance.hpp>

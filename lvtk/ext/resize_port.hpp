@@ -14,6 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup resize_port Resize Port 
+    LV2 Resize Port support
+*/
+
 #pragma once
 
 #include <lvtk/ext/extension.hpp>
@@ -22,7 +26,7 @@
 namespace lvtk {
 
 /** Adds a Logger `log` to your instance
-    @ingroup interfaces
+    @ingroup resize_port
 */
 template<class I> 
 struct ResizePort : NullExtension
@@ -40,7 +44,6 @@ struct ResizePort : NullExtension
     }
 
 private:
-    /** Use this logger to log messages with the host. @see Logger */
     PortResizer resizer;
 };
 

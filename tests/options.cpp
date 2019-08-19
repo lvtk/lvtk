@@ -24,7 +24,7 @@ public:
 
 protected:
     void array() {
-        lvtk::OptionArray opts;
+        lvtk::OptionsArray opts;
         const int num_opts = 4;
         uint32_t values [num_opts];
 
@@ -41,7 +41,7 @@ protected:
         }
 
         CPPUNIT_ASSERT_EQUAL(opts.size(), (size_t) num_opts);
-        lvtk::OptionIterator iter (opts.c_obj());
+        lvtk::OptionsIterator iter (opts.c_obj());
         while (auto* opt = iter.next()) {
             CPPUNIT_ASSERT_EQUAL (1024, (int) *(uint32_t*) opt->value);
         }

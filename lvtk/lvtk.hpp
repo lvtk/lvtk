@@ -14,6 +14,29 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @mainpage LV2 Toolkit
+    @section intro Introduction
+    These documents describe some C++ classes that may be of use if you want
+    to write LV2 plugins in C++. They implement most of the boilerplate code
+    so you only have to write the parts that matter, and hide the low-level
+    C API.
+
+    <b>Interfaces</b><br>
+    For both the Instance and the ui::Instance class there are other helper 
+    classes called @ref interfaces "interfaces" that you can use to add extra 
+    functionality to your plugin or UI, for example support for LV2 extensions.
+    
+    <b>Versioning</b><br>
+    This library is available as a header only, thus ABI stability is not an
+    issue. The API will be stable between major version bumps, at which the
+    pkg-config name would change to prevent plugins from building against an
+    incompatible version.
+
+    @author Michael Fisher <mfisher@kushview.net>
+    @example volume.cpp
+    @example volume_ui.cpp
+ */
+
 #pragma once
 
 #include <cstdlib>
@@ -26,11 +49,16 @@
 #include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
 namespace lvtk {
+/** @defgroup lvtk Core
+ 
+    Miscelaneous classes used by the rest of LVTK.
+    @{
+ */
 
-/** @typedef Alias to LV2_Handle */
+/** Alias to LV2_Handle */
 using Handle        = LV2_Handle;
 
-/** @typdef Map of extension data */
+/** Map of extension data */
 using ExtensionMap  = std::map<std::string, const void*>;
 
 /** Internal class which maintains a list of descriptors */
@@ -62,27 +90,36 @@ struct Feature : LV2_Feature {
 /** A Vector of Features.
     
     This is used to prepare LV2_Feature arrays for use by instances
-    and mixins during instantiation of Plugins and UIs.
+    and extensions during instantiation of Plugins and UIs.
 
     @note This usually contains external data from the host and should never
     itself be referenced by your plugin
  */
 struct FeatureList final : public std::vector<Feature>
 {
+    /** Construct an empty feature list */
     FeatureList() = default;
+
+    /** Copy features. Data pointers are referenced */
     FeatureList (const FeatureList& o) {
         for (const auto& f : o)
             push_back (f);
     }
 
-    /** Contstruct from raw LV2_Feature array */
+    /** Contstruct from raw LV2_Feature array
+        
+        @param feature  LV2_Feature array to reference
+    */
     FeatureList (const LV2_Feature *const * features) {
         for (int i = 0; features[i]; ++i) {
             push_back (*features[i]);
         }
     }
 
-    /** Populate a string vector with URIs contained in this list */
+    /** Populate a string vector with URIs contained in this list
+        
+        @param uris The vector to fill
+    */
     inline void get_uris (std::vector<std::string>& uris) const {
         for (const auto& f : *this)
             uris.push_back (f.URI);
@@ -187,64 +224,5 @@ public:
 protected:
     data_t data {};
 };
-
+/* @} */
 }
-
-/** @mainpage LV2 Toolkit
-    @section intro Introduction
-    These documents describe some C++ classes that may be of use if you want
-    to write LV2 plugins in C++. They implement most of the boilerplate code
-    so you only have to write the parts that matter, and hide the low-level
-    C API.
-
-    <b>Interfaces</b><br>
-    For both the Instance and the ui::Instance class there are other helper 
-    classes called @ref interfaces "interfaces" that you can use to add extra 
-    functionality to your plugin or UI, for example support for LV2 extensions.
-    
-    <b>Versioning</b><br>
-    This library is available as a header only, thus ABI stability is not an
-    issue. The API will be stable between major version bumps, at which the
-    pkg-config name would change to prevent plugins from building against an
-    incompatible version.
-
-    @author Michael Fisher <mfisher@kushview.net>
- */
-
-/** @defgroup hostfeatures Host Features */
-
-/** @defgroup interfaces Plugin Extensions
-    
-    These template classes implement extra functionality that you may
-    want to have in your Instance class, usually features. You add them
-    to your class by passing them as template parameters to plugin
-    when inheriting it. The internal structs of the mixin template classes
-    will then be inherited by your plugin class, so that any public and 
-    protected members they have will be available to your
-    plugin as if they were declared in your plugin class.
-
-    They are done as separate template classes so they won't add to the
-    code size of your plugin if you don't need them. There are also 
-    @ref uinterfaces "UI Interfaces" that you can use in the same
-    way with UIs.
-*/
-
-/** @defgroup uinterfaces UI Extensions 
-
-    These template classes implement extra functionality that you may
-    want to have in your ui::Instance class, usually features. You add them
-    to your class by passing them as template parameters to plugin
-    when inheriting it. The internal structs of the mixin template classes
-    will then be inherited by your plugin class, so that any public and 
-    protected members they have will be available to your
-    plugin as if they were declared in your plugin class.
-
-    They are done as separate template classes so they won't add to the
-    code size of your plugin if you don't need them. There are also 
-    @ref interfaces "Plugin Interfaces" that you can use in the same
-    way with Instances.
-*/
-
-/** @example volume.cpp
-    @example volume_ui.cpp
- */

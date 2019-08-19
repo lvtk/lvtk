@@ -20,6 +20,10 @@
 
 namespace lvtk {
 
+/** Alias of LV2_State_Flags
+    @ingroup state
+    @headerfile lvtk/state_functions.hpp
+*/
 enum StateFlags {
     /** Plain Old Data.
 
@@ -56,6 +60,10 @@ enum StateFlags {
     STATE_IS_NATIVE = LV2_STATE_IS_NATIVE
 };
 
+/** Alias of LV2_State_Status
+    @ingroup state
+    @headerfile lvtk/state_functions.hpp
+ */
 enum StateStatus {
     STATE_SUCCESS         = LV2_STATE_SUCCESS,          /**< Completed successfully. */
     STATE_ERR_UNKNOWN     = LV2_STATE_ERR_UNKNOWN,      /**< Unknown error. */
@@ -67,6 +75,7 @@ enum StateStatus {
 
 /** Wrapper struct for state retrieval. This wraps an
     LV2_State_Retrieve_Function and exeucutes via operator () 
+    @ingroup state
     @headerfile lvtk/state_functions.hpp
  */
 struct StateRetrieve {
@@ -94,8 +103,10 @@ private:
     LV2_State_Retrieve_Function   p_srfunc;
 };
 
-/**  Wrapper struct for state storage. This wraps an
-     LV2_State_Store_Function and exeucutes via operator () 
+/** Wrapper struct for state storage. This wraps an
+    LV2_State_Store_Function and exeucutes via operator () 
+    @ingroup state
+    @headerfile lvtk/state_functions.hpp
  */
 struct StateStore {
     StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
@@ -109,7 +120,7 @@ struct StateStore {
         @param type
         @param flags
         @return STATE_SUCCESS on Success
-        */
+     */
     inline StateStatus operator() (uint32_t key, const void* value,
                                     size_t size, uint32_t type,
                                     uint32_t flags = 0) const

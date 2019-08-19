@@ -14,6 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup urid URID 
+    LV2 URID support
+*/
+
 #pragma once
 
 #include <lvtk/ext/extension.hpp>
@@ -23,7 +27,7 @@
 namespace lvtk {
 
 /** Adds URID `map` and `unmap` to your instance
-    @ingroup interfaces
+    @ingroup urid
 */
 template<class I> 
 struct URID : NullExtension

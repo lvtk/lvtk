@@ -14,6 +14,8 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+
+
 #pragma once
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
@@ -22,8 +24,8 @@
 namespace lvtk {
 
 /** Adds idle interface to your UI instance
-    @ingroup uinterfaces
-*/
+    @ingroup ui
+ */
 template<class I>
 struct Idle : Extension<I>
 {
@@ -45,4 +47,5 @@ private:
     static int _idle (LV2UI_Handle ui) { return (static_cast<I*> (ui))->idle(); }
 };
 
+/* @} */
 }

@@ -20,8 +20,13 @@
 
 namespace lvtk {
 
-/** Base class for all extension mixins
+/** Base class for all extension mixins.
+
+    You shouldn't need to use this directly, unless you'd like to write your
+    own Extension mixins.
+    
     @headerfile lvtk/ext/extension.hpp
+    @ingroup lvtk
 */
 template<class I> struct Extension {};
 

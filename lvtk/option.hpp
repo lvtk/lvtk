@@ -20,11 +20,16 @@
 #include <lv2/lv2plug.in/ns/ext/options/options.h>
 
 namespace lvtk {
-
-/** Convenience enum to get LV2_Options_Option into a C++ namespace */
+/** Alias to `LV2_Options_Option`
+    @headerfile lvtk/option.hpp
+    @ingroup options
+*/
 using Option = LV2_Options_Option;
 
-/** Equivalent to LV2_Options_Context */
+/** Equivalent to LV2_Options_Context
+    @headerfile lvtk/option.hpp
+    @ingroup options
+*/
 enum OptionsContext {
     /** This option applies to the instance itself.  The subject must be
         ignored. */
@@ -52,18 +57,21 @@ enum OptionsStatus {
     OPTIONS_ERR_BAD_VALUE   = LV2_OPTIONS_ERR_BAD_VALUE     /**< Invalid/unsupported value. */
 };
 
-/** An array of Options */
-class OptionArray
+/** An array of Options
+    @headerfile lvtk/option.hpp
+    @ingroup options
+*/
+class OptionsArray
 {
 public:
-    OptionArray() {
+    OptionsArray() {
         opts = (Option*) malloc (sizeof (Option));
         memset (&opts[0], 0, sizeof (Option));
         allocated = true;
         count = 1;
     }
 
-    ~OptionArray() {
+    ~OptionsArray() {
         if (allocated && opts != nullptr) {
             std::free (opts);
             opts = nullptr;
@@ -113,20 +121,22 @@ private:
 /** An simple iterator to use with a plain array of LV2_Options_Option's
 
     @code
-        OptionIterator iter (get_options());
+        OptionsIterator iter (get_options());
         while (const Option* opt = iter.next())
         {
             // handle the option
         }
     @endcode
+    @headerfile lvtk/option.hpp
+    @ingroup options
 */
-class OptionIterator
+class OptionsIterator
 {
 public:
     /** Create a new iterator
         @param options  The options array to scan
      */
-    OptionIterator (const Option* options)
+    OptionsIterator (const Option* options)
         : index (0),m_size (0), p_opts (options)
     {
         while (0 != next())
@@ -156,6 +166,7 @@ private:
 /** The LV2 Options Feature
  
     @headerfile lvtk/option.hpp
+    @ingroup options
  */
 struct OptionsFeature final {
     OptionsFeature() = default;

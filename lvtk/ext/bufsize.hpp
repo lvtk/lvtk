@@ -14,19 +14,24 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup bufsize Buf Size 
+    LV2 Buf Size support
+*/
+
 #pragma once
 
 #include <lvtk/buffer_details.hpp>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-
-/** BufSize Handler
+/* @{ */
+/** Adds LV2 BufSize support to your plugin
     
-    Scans for buffer information provided by the host. @see buffer_details().
-    To use it, add BufSize to the template parameters of your Instance
+    Scans for buffer information provided by the host, and populates a
+    @ref BufferDetails accordingly. To use it, add BufSize to the template 
+    parameters of your Instance
 
-    @ingroup interfaces
+    @headerfile lvtk/ext/bufsize.hpp
  */
 template<class I>
 struct BufSize : NullExtension
@@ -60,5 +65,5 @@ struct BufSize : NullExtension
 private:
     BufferDetails m_details;
 };
-
+/* @} */
 }

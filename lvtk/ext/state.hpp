@@ -14,6 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup state State
+    LV2 State support
+*/
+
 #pragma once
 
 #include <lvtk/state_functions.hpp>
@@ -22,7 +26,7 @@
 namespace lvtk {
 
 /** Adds LV2 State support to your plugin instance
-    @ingroup interfaces
+    @ingroup state
 */
 template<class I>
 struct State : Extension<I>

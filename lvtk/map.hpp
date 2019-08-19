@@ -23,6 +23,7 @@ namespace lvtk {
 
 /** LV2_URID_Map wrapper
     @headerfile lvtk/map.hpp
+    @ingroup urid
  */
 class Map : public FeatureData<LV2_URID_Map>
 {

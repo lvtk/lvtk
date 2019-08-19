@@ -14,6 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup options Options 
+    LV2 Options support
+*/
+
 #pragma once
 
 #include <lvtk/ext/extension.hpp>
@@ -23,6 +27,7 @@ namespace lvtk {
 
 /** Adds support for LV2 options on your instance
     @headerfile lvtk/ext/options.hpp
+    @ingroup options
  */
 template<class I>
 struct Options : Extension<I>

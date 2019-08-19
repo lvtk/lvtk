@@ -14,16 +14,18 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup data_access Data Access 
+    LV2 Data Access support
+*/
+
 #pragma once
 
 #include <lvtk/instance_data.hpp>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-
-/** Adds Access to plugin extension data to your UI instance
-    @ingroup uinterfaces
-*/
+/* @{ */
+/** Give access to plugin extension data to your @ref UIInstance */
 template<class I>
 struct DataAccess : NullExtension
 {
@@ -45,5 +47,5 @@ struct DataAccess : NullExtension
 private:
     InstanceData instance_data;
 };
-
+/* @} */
 }

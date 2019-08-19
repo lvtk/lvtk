@@ -21,7 +21,29 @@
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
+/** @defgroup ui UI 
+    Writing an LV2 UI
 
+    UI descriptors are registered on the stack at the global scope.
+    For example...
+    
+    @code
+        using MyPluginUI = lvtk::UI<MyInstanceUI>;        
+        static MyPluginUI my_plugin (MY_PUGIN_UI_URI);
+    @endcode
+
+    If you are using this library in a host, include individual
+    headers from the ext directory.
+
+    Same policy for the interface directory, including anything
+    there will result in a mess of compiler errors.  Interfaces
+    are for implementing features on a plugin instance only
+
+    @see @ref UIInstance
+    @{ 
+ */
+
+/** Vector of LV2UI_Descriptor's */
 using UIDescriptors = DescriptorList<LV2UI_Descriptor>;
 
 /** Returns a global array of registered descriptors */
@@ -265,11 +287,13 @@ public:
     virtual ~UIInstance() {}
 
     /** Clean up (optional)
-        This is called immediately before the dtor
-      */
+         
+        This is called immediately before the dtor 
+     */
     void cleanup() { }
 
-    /** Get the LV2UI_Widget (required) 
+    /** Get the LV2UI_Widget (required)
+        
         It is ok to create your widget here, but make sure
         that it only gets allocated once. 
     */
@@ -375,6 +399,7 @@ private:
    #endif
 };
 
+/* @} */
 }
 
 extern "C" {

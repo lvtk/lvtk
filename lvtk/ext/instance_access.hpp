@@ -14,15 +14,18 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup instance_access Instance Access 
+    LV2 Instance Access support
+*/
+
 #pragma once
 
 #include <lvtk/instance_handle.hpp>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-
-/** Adds idle interface to your UI instance
-    @ingroup uinterfaces
+/** Adds LV2 Instance Access support to your UI    
+    @ingroup instance_access
 */
 template<class I>
 struct InstanceAccess : NullExtension

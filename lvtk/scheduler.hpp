@@ -20,7 +20,10 @@
 
 namespace lvtk {
 
-/** Convenience enum to get LV2_Worker_Status into a C++ namespace */
+/** Convenience enum to get LV2_Worker_Status into a C++ namespace 
+    @ingroup worker
+    @headerfile lvtk/scheduler.hpp
+*/
 typedef enum {
     WORKER_SUCCESS          = LV2_WORKER_SUCCESS,      /**< Work Completed. */
     WORKER_ERR_UNKNOWN      = LV2_WORKER_ERR_UNKNOWN,  /**< Unknown error. */
@@ -32,6 +35,7 @@ typedef enum {
     This wraps an LV2_Worker_Respond_Function.  It is passed to
     the work method on your Instance
 
+    @ingroup worker
     @headerfile lvtk/scheduler.hpp
  */
 struct WorkerRespond
@@ -64,6 +68,7 @@ private:
     This wraps LV2_Worker_Schedule.  Used by the Worker interface to add
     `schedule_work` to a plugin instance
 
+    @ingroup worker
     @headerfile lvtk/scheduler.hpp
  */
 struct Scheduler : FeatureData<LV2_Worker_Schedule> {

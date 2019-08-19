@@ -26,6 +26,7 @@ namespace lvtk {
     
     Use this on the stack to log messages
     @headerfile lvtk/ext/log.hpp
+    @ingroup log
  */
 struct Logger : FeatureData<LV2_Log_Log> {
     /** ctor */

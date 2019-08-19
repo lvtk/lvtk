@@ -28,6 +28,7 @@ namespace lvtk {
     Add interface mixins to extend functionality.
 
     @headerfile lvtk/instance.hpp
+    @ingroup plugin
  */
 template<class S, template<class> class... E>
 class Instance : public E<S>...

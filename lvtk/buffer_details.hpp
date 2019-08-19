@@ -25,8 +25,9 @@ namespace lvtk {
 /** Description of buffer details
     
     Used by the BufSize interface to automatically scan for buffer information
-    during instantiation. @see BufSize
+    during instantiation. @see @ref BufSize
 
+    @ingroup bufsize
     @headerfile lvtk/buffer_details.hpp
  */
 struct BufferDetails final {
@@ -67,7 +68,7 @@ struct BufferDetails final {
         uint32_t max      (map (LV2_BUF_SIZE__maxBlockLength));
         uint32_t seq_size (map (LV2_BUF_SIZE__sequenceSize));
 
-        OptionIterator iter (options);
+        OptionsIterator iter (options);
         while (const Option* opt = iter.next())
         {
             if (min == opt->key)

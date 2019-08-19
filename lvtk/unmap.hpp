@@ -23,6 +23,7 @@ namespace lvtk {
 
 /** LV2_URID_Unmap wrapper
     @headerfile lvtk/unmap.hpp
+    @ingroup urid
  */
 class Unmap : public FeatureData<LV2_URID_Unmap>
 {

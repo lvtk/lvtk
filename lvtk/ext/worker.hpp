@@ -14,6 +14,10 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup worker Worker 
+    LV2 Worker support
+*/
+
 #pragma once
 
 #include <lvtk/ext/extension.hpp>
@@ -24,7 +28,7 @@ namespace lvtk {
 /** Adds LV2 worker support to your instance. Add this to your instance's
     Mixin list to activate it.
 
-    @ingroup interfaces
+    @ingroup worker
 */
 template<class I> 
 struct Worker : Extension<I>
