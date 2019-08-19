@@ -21,8 +21,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import sys, os
 from subprocess import call
 from waflib.extras import autowaf as autowaf
-sys.path.insert(0, "tools/waf")
-import cross, git
 
 LVTK_VERSION='2.0.0'
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
@@ -39,7 +37,7 @@ top = '.'
 out = 'build'
 
 def options (opts):
-    opts.load("cross compiler_c compiler_cxx lv2 autowaf")
+    opts.load("compiler_c compiler_cxx lv2 autowaf")
     autowaf.set_options (opts)
     
     opts.add_option('--enable-tests', default=False, \
@@ -52,7 +50,7 @@ def options (opts):
         dest='ziptype', type='string', help='Zip type for waf dist (gz/bz2/zip) [ Default: gz ]')
 
 def configure (conf):
-    conf.load ("cross compiler_c compiler_cxx lv2 autowaf")
+    conf.load ("compiler_c compiler_cxx lv2 autowaf")
     conf.find_program ('ttl2c', mandatory=False)
 
     conf.define ("LVTK_VERSION", VERSION)
@@ -143,11 +141,6 @@ def build (bld):
 def check (ctx):
     if 0 != call ('build/testlvtk'):
         ctx.fatal ("Tests Failed")
-
-# from waflib.Build import BuildContext
-# class CheckContext (BuildContext):
-#     cmd = 'check'
-#     fun = 'check'
 
 def dist(ctx):
     z=ctx.options.ziptype
