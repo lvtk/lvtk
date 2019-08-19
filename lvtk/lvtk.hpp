@@ -15,16 +15,17 @@
 */
 
 /** @mainpage LV2 Toolkit
+    
     @section intro Introduction
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
     so you only have to write the parts that matter, and hide the low-level
     C API.
 
-    <b>Interfaces</b><br>
-    For both the Instance and the ui::Instance class there are other helper 
-    classes called @ref interfaces "interfaces" that you can use to add extra 
-    functionality to your plugin or UI, for example support for LV2 extensions.
+    <b>Extension Mixins</b><br>
+    For both the Instance and the UIInstance classes there are other helper 
+    classes called @ref Extension "Extensions" that you can use to add extra 
+    functionality to your plugin or UI.
     
     <b>Versioning</b><br>
     This library is available as a header only, thus ABI stability is not an
