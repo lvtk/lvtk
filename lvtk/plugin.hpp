@@ -147,24 +147,7 @@ private:
 	                                const char *                   bundle_path,
 	                                const LV2_Feature *const *     features)
     {
-
-       #ifndef NDEBUG
-        #define debug(expr) std::clog << expr
-       #else
-        #define debug(expr)
-       #endif
-    
-       #if LVTK_STATIC_ARGS
-        auto& args = I::args();
-        Args::Cleared sr (args);
-        args.sample_rate = sample_rate;
-        args.bundle = bundle_path;
-        for (int i = 0; features[i]; ++i)
-            args.features.push_back (*features[i]);
-       #else
         Args args (sample_rate, bundle_path, features);
-       #endif
-
         auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required()) {

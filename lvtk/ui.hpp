@@ -93,33 +93,17 @@ private:
 /** Parameters passed to UI instances */
 struct UIArgs
 {
+    /** @private */
     UIArgs() = default;
+    /** @private */
     UIArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
         : plugin(p), bundle(b), controller(c), features (f) {}
 
-    std::string plugin;
-    std::string bundle;
-    Controller controller;
-    FeatureList features;
-
-     void clear() {
-        plugin = {};
-        bundle = {};
-        controller = { nullptr, nullptr };
-        features.clear();
-    }
-    
-    /** Ensures args are initially clear, and also cleared
-        when it has gone out of scope
-     */
-    struct Cleared final
-    {
-        Cleared (UIArgs& a) : args (a) { args.clear(); }
-        ~Cleared() { args.clear(); }
-        UIArgs& args;
-    };
+    std::string plugin;     /**< Plugin URI */
+    std::string bundle;     /**< UI Bundle Path */
+    Controller controller;  /**< The @ref Controller */
+    FeatureList features;   /**< Feature List */
 };
-
 
 /** UI registration class
     Create a static one of these to register the descriptor for UI instance type.
@@ -195,17 +179,7 @@ private:
                                       LV2UI_Widget*                   widget,
                                       const LV2_Feature* const*       features)
     {
-       #if LVTK_STATIC_ARGS
-        auto& args = I::args();
-        UIArgs::Cleared sc (args);
-        args.plugin     = plugin_uri;
-        args.bundle     = bundle_path;
-        args.controller = { ctl, write_function };
-        for (int i = 0; features[i]; ++i)
-            args.features.push_back (*features[i]);
-       #else
         UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
-       #endif
         auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required())
@@ -259,17 +233,9 @@ template<class S, template<class> class... E>
 class UIInstance : public E<S>...
 {
 public:
-   #if LVTK_STATIC_ARGS
-    explicit UIInstance() : E<S> (args().features)..., controller (args().controller)
-   #else
     explicit UIInstance (const UIArgs& args) : E<S> (args.features)..., controller (args.controller)
-   #endif
     {
-       #if LVTK_STATIC_ARGS
-        for (const auto& f : args().features) {
-       #else
         for (const auto& f : args.features) {
-       #endif
             if (f == LV2_UI__parent) {
                 parent_widget = (LV2UI_Widget) f.data;
             } else if (f == LV2_UI__portSubscribe) {
@@ -389,14 +355,6 @@ private:
         using pack_context = std::vector<int>;
         pack_context { (E<S>::map_extension_data (em) , 0)... };
     }
-
-   #if LVTK_STATIC_ARGS
-    /** @private */
-    static UIArgs& args() {
-        static UIArgs s_args;
-        return s_args;
-    }
-   #endif
 };
 
 /* @} */

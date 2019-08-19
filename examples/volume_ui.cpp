@@ -41,12 +41,8 @@ class VolumeUI : public UIInstance<VolumeUI, URID, DataAccess, InstanceAccess> {
     uint32_t midi_MidiEvent = 0;
 
 public:
-   #if LVTK_STATIC_ARGS
-    VolumeUI (const UIArgs& args)
-   #else
     VolumeUI (const UIArgs& args)
         : UIInstance (args)
-   #endif
     {
         midi_MidiEvent = map ("http://lv2plug.in/ns/ext/midi#MidiEvent");
         if (auto* const instance = plugin_instance())

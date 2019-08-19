@@ -27,11 +27,7 @@ namespace lvtk {
 class Volume : public Instance<Volume, URID>
 {
 public:
-   #if LVTK_STATIC_ARGS
-    Volume (const Args& args) { }
-   #else
     Volume (const Args& args) : Instance (args) { }
-   #endif
 
     void activate() { }
     void deactivate() { }

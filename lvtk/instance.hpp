@@ -34,11 +34,12 @@ template<class S, template<class> class... E>
 class Instance : public E<S>...
 {
 protected:
-   #if LVTK_STATIC_ARGS
-    explicit Instance() : E<S> (args().features)... {}
-   #else
-    explicit Instance (const Args& args) : E<S> (args.features)... {} 
-   #endif
+    /** Instance with Arguments
+        
+        @param args  Arguments created at instantiation.  Your subclass
+                     must pass the @ref Args here
+     */
+    explicit Instance (const Args& args) : E<S> (args.features)... {}
 
 public:
     virtual ~Instance() = default;
@@ -66,13 +67,6 @@ private:
         using pack_context = std::vector<int>;
         pack_context { (E<S>::map_extension_data (em) , 0)... };
     }
-
-   #if LVTK_STATIC_ARGS
-    static Args& args() {
-        static Args s_args;
-        return s_args;
-    }
-   #endif
 };
 
 }

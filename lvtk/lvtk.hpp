@@ -153,29 +153,15 @@ private:
 /** Arguments passed to a plugin instance */
 struct Args
 {
+    /** @private */
     Args() : sample_rate(0.0), bundle(), features() {}
+    /** @private */
     Args (double r, const std::string& b, const FeatureList& f)
         : sample_rate(r), bundle (b), features (f) { }
 
-    double sample_rate;     ///< Sample Rate
-    std::string bundle;     ///< Bundle Path
-    FeatureList features;   ///< Host provided features
-
-    void clear() {
-        sample_rate = 0.0;
-        bundle = {};
-        features.clear();
-    }
-    
-    /** Ensures args are initially clear, and also cleared
-        when it has gone out of scope
-     */
-    struct Cleared final
-    {
-        Cleared (Args& a) : args (a) { args.clear(); }
-        ~Cleared() { args.clear(); }
-        Args& args;
-    };
+    double sample_rate;     /**< Sample Rate */
+    std::string bundle;     /**< Bundle Path */
+    FeatureList features;   /**< Host provided features */
 };
 
 /** Template class which can be used to assign feature data in a common way.
