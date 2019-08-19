@@ -35,7 +35,7 @@ using ObjectQuery           = LV2_Atom_Object_Query;
 /** Wrapper for an LV2_Atom_Object
     This struct is intended to be created and used on the stack
     
-    @headerfile lvtk/adom.hpp
+    @headerfile lvtk/atom.hpp
  */
 struct AtomObject
 {
@@ -131,7 +131,7 @@ private:
 /** Basic wrapper for an LV2_Atom
     These are intended to be used on the stack
     
-    @headerfile lvtk/adom.hpp
+    @headerfile lvtk/atom.hpp
  */
 struct Atom
 {
@@ -237,7 +237,7 @@ private:
 };
 
 /** A wrapper around LV2_Atom_Sequence
-    @headerfile lvtk/adom.hpp
+    @headerfile lvtk/atom.hpp
 */
 struct AtomSequence
 {
@@ -363,7 +363,7 @@ private:
 
 
 /** Class wrapper around LV2_Atom_Forge
-    @headerfile lvtk/adom.hpp
+    @headerfile lvtk/atom.hpp
 */
 class AtomForge : public LV2_Atom_Forge
 {
@@ -570,7 +570,7 @@ public:
 };
 
 /** Wrapper for LV2_Atom_Vector
-    @headerfile lvtk/adom.hpp
+    @headerfile lvtk/atom.hpp
 */
 class AtomVector
 {
