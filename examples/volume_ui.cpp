@@ -6,6 +6,8 @@
 
 #include <juce/gui_basics.h>
 
+#define LVTK_VOLUME_UI_URI "http://lvtoolkit.org/plugins/volume#ui"
+
 using namespace lvtk;
 using namespace juce;
 
@@ -76,4 +78,4 @@ private:
     std::unique_ptr<VolumeComponent> widget;
 };
 
-static const UI<VolumeUI> volume_ui ("http://lvtoolkit.org/plugins/volume#ui");
+static const UI<VolumeUI> volume_ui (LVTK_VOLUME_UI_URI);

@@ -51,7 +51,6 @@ def options (opts):
 
 def configure (conf):
     conf.load ("compiler_c compiler_cxx lv2 autowaf")
-    conf.find_program ('ttl2c', mandatory=False)
 
     conf.define ("LVTK_VERSION", VERSION)
     conf.define ("LVTK_MAJOR_VERSION", LVTK_MAJOR_VERSION)
@@ -60,7 +59,6 @@ def configure (conf):
     conf.define ("LVTK_EXTRA_VERSION", LVTK_EXTRA_VERSION)
     conf.write_config_header ('version.h')
 
-    autowaf.set_cxx_lang (conf, 'c++14')
     autowaf.set_modern_cxx_flags (conf, True)
 
     conf.check_inline()
@@ -69,7 +67,7 @@ def configure (conf):
     autowaf.check_pkg (conf, "gtkmm-3.0", uselib_store="GTKMM3", atleast_version="3.0.0", mandatory=False)
     autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=conf.options.tests)
     
-    for module in 'audio_basics gui_basics'.split():
+    for module in 'gui_basics'.split():
         pkgname = 'juce_%s-5' % module if not conf.options.debug else 'juce_%s_debug-5' % module
         uselib  = 'JUCE_%s' % module.upper()
         autowaf.check_pkg (conf, pkgname, uselib_store=uselib, atleast_version="5.4.3", mandatory=False)

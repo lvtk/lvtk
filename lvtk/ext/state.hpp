@@ -32,7 +32,7 @@ template<class I>
 struct State : Extension<I>
 {   
     /** @private */
-    State (const FeatureList&) { }
+    State (const FeatureList&) {}
 
     /** Called by the host to save state
      

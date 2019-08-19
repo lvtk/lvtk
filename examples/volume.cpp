@@ -43,7 +43,7 @@ public:
     void activate() { }
     void deactivate() { }
 
-    void connect_port (uint32_t port, void* data)  {
+    void connect_port (uint32_t port, void* data) {
         if (port == 0)
             input[0] = (float*) data;
         else if (port == 1)
