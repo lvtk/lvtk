@@ -16,16 +16,20 @@ public:
         setOpaque (true);
         addAndMakeVisible (slider);
         slider.setRange (-90.f, 24.f);
-        setSize (300, 220);
+        slider.setSliderStyle (Slider::Rotary);
+        slider.setTextBoxStyle (Slider::TextBoxBelow, true,
+                                slider.getTextBoxWidth(),
+                                slider.getTextBoxHeight());
+        setSize (220, 220);
     }
     
     void paint (Graphics& g) override
     {
-        g.fillAll (Colours::black);
+        g.fillAll (findColour (DocumentWindow::backgroundColourId));
     }
 
     void resized() override {
-        slider.setBounds (getLocalBounds());
+        slider.setBounds (getLocalBounds().reduced (6));
     }
 
     Slider slider;
@@ -47,6 +51,11 @@ public:
             std::clog << "VolumeUI got the plugin instance\n";
         if (const void* data = plugin_extension_data (LV2_URID__map))
             std::clog << "VolumeUI got " << LV2_URID__map << " extension data\n";
+
+        widget.reset (new VolumeComponent());
+        widget->slider.onValueChange = [this]() {
+            write (4, static_cast<float> (widget->slider.getValue()));
+        };
     }
 
     void cleanup() {
@@ -60,12 +69,6 @@ public:
     }
     
     LV2UI_Widget get_widget() {
-        if (! widget) {
-            widget.reset (new VolumeComponent());
-            widget->slider.onValueChange = [this]() {
-                write (4, static_cast<float> (widget->slider.getValue()));
-            };
-        }
         return (LV2UI_Widget) widget.get();
     }
 
