@@ -1,7 +1,6 @@
 
 #include <lvtk/ui.hpp>
 #include <lvtk/ext/urid.hpp>
-#include <lvtk/ext/idle.hpp>
 #include <lvtk/ext/data_access.hpp>
 #include <lvtk/ext/instance_access.hpp>
 
@@ -15,22 +14,24 @@ public:
     VolumeComponent()
     {
         setOpaque (true);
+        addAndMakeVisible (slider);
+        slider.setRange (-90.f, 24.f);
         setSize (300, 220);
     }
     
     void paint (Graphics& g) override
     {
-        g.fillAll (Colours::white);
-        g.setColour (Colours::black);
-        g.drawText ("Volume", getLocalBounds().toFloat(), Justification::centred);
+        g.fillAll (Colours::black);
     }
 
     void resized() override {
-        // noop
+        slider.setBounds (getLocalBounds());
     }
+
+    Slider slider;
 };
 
-class VolumeUI : public UIInstance<VolumeUI, URID, Idle, DataAccess, InstanceAccess> {
+class VolumeUI : public UIInstance<VolumeUI, URID, DataAccess, InstanceAccess> {
     uint32_t midi_MidiEvent = 0;
 
 public:
@@ -52,9 +53,19 @@ public:
         widget.reset();
     }
 
+    void port_event (uint32_t port, uint32_t size, uint32_t protocol, const void* data) {
+        if (port == 4 && protocol == 0) {
+            widget->slider.setValue (*(float*) data, dontSendNotification);
+        }
+    }
+    
     LV2UI_Widget get_widget() {
-        if (! widget)
+        if (! widget) {
             widget.reset (new VolumeComponent());
+            widget->slider.onValueChange = [this]() {
+                write (4, static_cast<float> (widget->slider.getValue()));
+            };
+        }
         return (LV2UI_Widget) widget.get();
     }
 
