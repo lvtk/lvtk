@@ -260,7 +260,7 @@ struct AtomSequence
     typedef const AtomEvent& const_reference;
 
     /** Create an AtomSequence from raw data
-         @param seq Sequence Pointer (castable to LV2_Atom_Sequence) */
+        @param seq Sequence Pointer (castable to LV2_Atom_Sequence) */
     AtomSequence (const void* seq) : p_seq ((LV2_Atom_Sequence*) seq) { }
 
     /** Create an AtomSequnce from an LV2_Atom_Sequence
@@ -301,11 +301,10 @@ struct AtomSequence
         @param ev The event to add */
     inline void append (const AtomEvent& ev)
     {
-        if (AtomEvent* pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size))
-        {
-            memcpy (pos, &ev, sizeof (AtomEvent));
-            memcpy (pos + 1, LV2_ATOM_BODY_CONST (&ev.body), ev.body.size);
-            ((LV2_Atom*) p_seq)->size += sizeof (LV2_Atom_Event) + lv2_atom_pad_size (ev.body.size);
+        if (AtomEvent* const pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)) {
+            auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
+            memcpy (pos, &ev, total_size);
+            p_seq->atom.size += lv2_atom_pad_size (total_size);
         }
     }
 
@@ -313,14 +312,16 @@ struct AtomSequence
         @param ev The event to insert */
     inline void insert (const AtomEvent& ev)
     {
-        const uint32_t evsize = sizeof (LV2_Atom_Event) + lv2_atom_pad_size (ev.body.size);
+       #if 0
+        auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
+        const uint32_t evsize = lv2_atom_pad_size (total_size);
         AtomEvent* pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size);
         LV2_ATOM_SEQUENCE_FOREACH (p_seq, iter)
         {
             if (iter->time.frames > ev.time.frames)
             {
-                memmove ((uint8_t*)iter + evsize, iter,
-                        (uint8_t*)pos - (uint8_t*)iter);
+                memmove ((uint8_t*) iter, ((uint8_t*) iter) + evsize
+                         (uint8_t*) pos - (uint8_t*) iter);
                 pos = iter;
                 break;
             }
@@ -328,10 +329,11 @@ struct AtomSequence
 
         if (pos)
         {
-            memcpy (pos, &ev, sizeof (AtomEvent));
-            memcpy (pos + 1, LV2_ATOM_BODY_CONST (&ev.body), ev.body.size);
-            ((LV2_Atom*) p_seq)->size += evsize;
+            
+            memcpy (pos, &ev, total_size);
+            p_seq.atom.size += evsize;
         }
+       #endif
     }
 
     /** @private */
@@ -526,7 +528,7 @@ public:
     }
 
     /** Forge a blank object
-         @param frame
+        @param frame
         @param id
         @param otype
     */
@@ -536,7 +538,7 @@ public:
     }
 
     /** Forge a boolean value
-         @param val The value to write
+        @param val The value to write
     */
     inline ForgeRef write_bool (const bool val)
     {
