@@ -15,7 +15,7 @@
 */
 
 /** @defgroup resize_port Resize Port 
-    LV2 Resize Port support
+    Resizing plugin ports
 */
 
 #pragma once
