@@ -51,8 +51,7 @@
 
 namespace lvtk {
 /** @defgroup lvtk Core
- 
-    Miscelaneous classes used by the rest of LVTK.
+    Misc classes and types
     @{
  */
 
