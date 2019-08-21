@@ -19,17 +19,19 @@
 
     <h3>Example</h3>
     @code
-    
+
         #include <lvtk/dynmanifest.hpp>
 
         class MyManifest : public lvtk::DynManifest {
         public:
-            void get_subjects (std::vector<std::string>& lines) {
-                lines.push_back ("http://myplugin.org a lv2:Plugin ;");
+            void get_subjects (std::stringstream& lines) {
+                lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
+                      << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
+                      << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
             }
     
             void get_data (const std::string& uri, std::vector<std::string>& lines) {
-                lines.push_back ("http://myplugin.org a lv2:Plugin ;");
+                lines << "doap:name \"My Plugin\"" ;" << std::endl;
             }
         };
 
@@ -42,8 +44,7 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
-#include <lv2/dynmanifest/dynmanifest.h>
+#include <lv2/lv2plug.in/ns/ext/dynmanifest/dynmanifest.h>
 #include <sstream>
 #include <cstdio>
 
@@ -62,15 +63,15 @@ public:
     virtual ~DynManifest() = default;
 
     /** Get the subjects
-        @param lines    Add each line to this string vector
+        @param lines    Add each line to this stream
      */
-    virtual void get_subjects (std::vector<std::string>& lines) =0;
+    virtual void get_subjects (std::stringstream& lines) =0;
 
-    /** Get the subjects
+    /** Get the data
         @param uri      The subject URI to get data for
-        @param lines    Add each line to this string vector
+        @param lines    Add each line to this stream
      */
-    virtual void get_data (const std::string& uri, std::vector<std::string>& lines) =0;
+    virtual void get_data (std::stringstream& lines, const std::string& uri) =0;
 };
 
 /** Write a string vector `lines` as lines to `FILE` 
@@ -80,16 +81,18 @@ public:
 
     @ingroup dynmanifest
 */
-static void write_lines (const std::vector<std::string>& lines, FILE* fp) {
-    for (const auto& l : lines) {
-        std::string line = l + "\n";
-        fwrite (line.c_str(), sizeof(char), line.size(), fp);
-    }
+static void write_lines (const std::stringstream& lines, FILE* fp) {
+    const auto data = lines.str();
+    fwrite (data.c_str(), sizeof(char), data.size(), fp);
 }
 
 }
 
-using DynManifestHandle = void*;
+/** Alias of LV2_Dyn_Manifest_Handle
+    @ingroup dynmanifest
+    @headerfile lvtk/dynmanifest.hpp
+ */
+using DynManifestHandle = LV2_Dyn_Manifest_Handle;
 
 /** Implement this and return your subclassed @ref DynManifest object
     @ingroup dynmanifest
@@ -113,7 +116,7 @@ LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
-    std::vector<std::string> lines;
+    std::stringstream lines;
     manifest->get_subjects (lines);
     lvtk::write_lines (lines, fp);
     return 0;
@@ -124,8 +127,8 @@ LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const char *uri)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
-    std::vector<std::string> lines;
-    manifest->get_data (uri, lines);
+    std::stringstream lines;
+    manifest->get_data (lines, uri);
     lvtk::write_lines (lines, fp);
     return 0;
 }
