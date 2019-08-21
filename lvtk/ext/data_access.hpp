@@ -15,7 +15,7 @@
 */
 
 /** @defgroup data_access Data Access 
-    LV2 Data Access support
+    Access to plugin extension data
 */
 
 #pragma once

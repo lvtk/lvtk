@@ -15,7 +15,7 @@
 */
 
 /** @defgroup urid URID 
-    LV2 URID support
+    Working with URIDs
 */
 
 #pragma once

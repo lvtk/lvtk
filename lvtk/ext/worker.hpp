@@ -15,7 +15,7 @@
 */
 
 /** @defgroup worker Worker 
-    LV2 Worker support
+    Scheduling work
 */
 
 #pragma once
@@ -28,6 +28,7 @@ namespace lvtk {
 /** Adds LV2 worker support to your instance. Add this to your instance's
     Mixin list to activate it.
 
+    @headerfile lvtk/ext/worker.hpp
     @ingroup worker
 */
 template<class I> 
@@ -36,8 +37,8 @@ struct Worker : Extension<I>
     /** @private */
     Worker (const FeatureList& features) { 
         for (const auto& f : features)
-            if (strcmp (f.URI, LV2_WORKER__schedule) == 0)
-                { schedule.set_feature (f); break; }
+            if (schedule.set_feature (f))
+                break;
     }
 
     /** Schedule work with the host
@@ -64,6 +65,7 @@ struct Worker : Extension<I>
     WorkerStatus end_run() { return WORKER_SUCCESS; }
 
 protected:
+    /** @private */
     static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_Worker_Interface _worker = { _work, _work_response, _end_run  };
         dmap[LV2_WORKER__interface] = &_worker;

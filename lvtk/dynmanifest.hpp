@@ -16,6 +16,28 @@
 
 /** @defgroup dynmanifest Dynamic Manifest 
     Dynamic Manifest support
+
+    <h3>Example</h3>
+    @code
+    
+        #include <lvtk/dynmanifest.hpp>
+
+        class MyManifest : public lvtk::DynManifest {
+        public:
+            void get_subjects (std::vector<std::string>& lines) {
+                lines.push_back ("http://myplugin.org a lv2:Plugin ;");
+            }
+    
+            void get_data (const std::string& uri, std::vector<std::string>& lines) {
+                lines.push_back ("http://myplugin.org a lv2:Plugin ;");
+            }
+        };
+
+        DynManifestHandle lvtk_create_dyn_manifest() {
+            return new MyManifest();
+        }
+
+    @endcode
 */
 
 #pragma once
@@ -67,11 +89,13 @@ static void write_lines (const std::vector<std::string>& lines, FILE* fp) {
 
 }
 
+using DynManifestHandle = void*;
+
 /** Implement this and return your subclassed @ref DynManifest object
     @ingroup dynmanifest
     @headerfile lvtk/dynmanifest.hpp
 */
-lvtk::DynManifest* lvtk_create_dyn_manifest();
+DynManifestHandle lvtk_create_dyn_manifest();
 
 extern "C" {
 
@@ -79,7 +103,7 @@ extern "C" {
 LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle *handle, const LV2_Feature *const *features)
 {
-    auto* manifest = lvtk_create_dyn_manifest();
+    auto* manifest = (lvtk::DynManifest*) lvtk_create_dyn_manifest();
     *handle = static_cast<LV2_Dyn_Manifest_Handle> (manifest);
     return 0;
 }

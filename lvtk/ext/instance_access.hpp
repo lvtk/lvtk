@@ -15,7 +15,7 @@
 */
 
 /** @defgroup instance_access Instance Access 
-    LV2 Instance Access support
+    Access to the plugin instance
 */
 
 #pragma once

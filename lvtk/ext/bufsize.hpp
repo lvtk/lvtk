@@ -15,7 +15,7 @@
 */
 
 /** @defgroup bufsize Buf Size 
-    LV2 Buf Size support
+    Access to buffer information
 */
 
 #pragma once
@@ -25,7 +25,7 @@
 
 namespace lvtk {
 /* @{ */
-/** Adds LV2 BufSize support to your plugin
+/** LV2 Buf Size support
     
     Scans for buffer information provided by the host, and populates a
     @ref BufferDetails accordingly. To use it, add BufSize to the template 

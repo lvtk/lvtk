@@ -15,7 +15,7 @@
 */
 
 /** @defgroup state State
-    LV2 State support
+    Save and restore state
 */
 
 #pragma once

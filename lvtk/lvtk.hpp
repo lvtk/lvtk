@@ -150,14 +150,16 @@ private:
     const LV2_Feature* const*   feats = nullptr;
 };
 
-/** Arguments passed to a plugin instance */
+/** Arguments passed to a plugin @ref Instance "instance". 
+    @see @ref Instance
+ */
 struct Args
 {
     /** @private */
     Args() : sample_rate(0.0), bundle(), features() {}
     /** @private */
     Args (double r, const std::string& b, const FeatureList& f)
-        : sample_rate(r), bundle (b), features (f) { }
+        : sample_rate (r), bundle (b), features (f) { }
 
     double sample_rate;     /**< Sample Rate */
     std::string bundle;     /**< Bundle Path */
@@ -169,7 +171,7 @@ struct Args
     Typically these are used to facilitate features provided by the host 
     during plugin instantiation or in host-side callbacks to the plugin.
 
-    @see Scheduler
+    @see @ref Scheduler, @ref Map, @ref Unmap, @ref Logger
  */
 template<class D>
 struct FeatureData

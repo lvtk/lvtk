@@ -20,7 +20,7 @@
 #include <lvtk/logger.hpp>
 
 /** @defgroup log Log
-    LV2 Log support
+    Enable logging
 */
 
 namespace lvtk {

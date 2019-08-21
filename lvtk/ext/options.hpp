@@ -15,7 +15,7 @@
 */
 
 /** @defgroup options Options 
-    LV2 Options support
+    Dealing with LV2 Options
 */
 
 #pragma once
