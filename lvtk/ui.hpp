@@ -179,7 +179,7 @@ private:
                                       LV2UI_Widget*                   widget,
                                       const LV2_Feature* const*       features)
     {
-        UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
+        const UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
         auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required())

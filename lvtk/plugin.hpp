@@ -81,7 +81,7 @@ static PluginDescriptors& descriptors() {
 template<class I>
 class Plugin final
 {
-public:    
+public:
     /** Plugin registration with required host features
         
         @param plugin_uri   The URI string of your plugin
@@ -147,7 +147,7 @@ private:
 	                                const char *                   bundle_path,
 	                                const LV2_Feature *const *     features)
     {
-        Args args (sample_rate, bundle_path, features);
+        const Args args (sample_rate, bundle_path, features);
         auto instance = std::unique_ptr<I> (new I (args));
 
         for (const auto& rq : required()) {
