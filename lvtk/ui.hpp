@@ -111,7 +111,7 @@ struct UIArgs
     @headerfile lvtk/ui.hpp
  */
 template<class I>
-class UI final
+class UIDescriptor final
 {
 public:
     /** UI Registation
@@ -121,20 +121,20 @@ public:
                             to provide any of these, instantiate will return
                             a nullptr
      */
-    UI (const std::string& uri, const std::vector<std::string>& required)
+    UIDescriptor (const std::string& uri, const std::vector<std::string>& required)
     {
-        register_instance (uri.c_str());
+        register_ui (uri.c_str());
         for (const auto& rq : required)
-            UI<I>::required().push_back (rq);
+            UIDescriptor<I>::required().push_back (rq);
     }
 
     /** UI Registation
         
         @param uri          The URI string of your UI
      */
-    UI (const std::string& uri)
+    UIDescriptor (const std::string& uri)
     {
-        register_instance (uri.c_str());
+        register_ui (uri.c_str());
     }
 
     /** Register UI extension data but not having to implement
@@ -148,7 +148,7 @@ public:
     }
 
 private:
-    void register_instance (const char* uri) {
+    void register_ui (const char* uri) {
         LV2UI_Descriptor desc;
         desc.URI = strdup (uri);
         desc.instantiate = _instantiate;
@@ -230,10 +230,11 @@ private:
     @headerfile lvtk/ui.hpp
 */
 template<class S, template<class> class... E>
-class UIInstance : public E<S>...
+class UI : public E<S>...
 {
-public:
-    explicit UIInstance (const UIArgs& args) : E<S> (args.features)..., controller (args.controller)
+protected:
+    explicit UI (const UIArgs& args) 
+        : E<S> (args.features)..., controller (args.controller)
     {
         for (const auto& f : args.features) {
             if (f == LV2_UI__parent) {
@@ -250,7 +251,8 @@ public:
         }
     }
 
-    virtual ~UIInstance() {}
+public:
+    virtual ~UI() = default;
 
     /** Clean up (optional)
          
@@ -349,7 +351,7 @@ private:
     LV2UI_Touch ui_touch = { 0, 0 };
     LV2UI_Resize ui_resize = { 0, 0 };
 
-    friend class UI<S>; // so this can be private
+    friend class UIDescriptor<S>; // so this can be private
     /** @private */
     static void map_extension_data (ExtensionMap& em) {
         using pack_context = std::vector<int>;

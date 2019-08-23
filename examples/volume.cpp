@@ -24,10 +24,10 @@
 
 namespace lvtk {
 
-class Volume : public Instance<Volume, URID>
+class Volume : public Plugin<Volume, URID>
 {
 public:
-    Volume (const Args& args) : Instance (args) { }
+    Volume (const Args& args) : Plugin (args) { }
 
     void activate() { }
     void deactivate() { }
@@ -58,7 +58,7 @@ private:
     float db = 0.0;
 };
 
-static Plugin<Volume> volume (LVTK_VOLUME_URI, {
+static Descriptor<Volume> volume (LVTK_VOLUME_URI, {
     LV2_URID__map ///* < required host feature
 });
 
