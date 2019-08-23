@@ -44,7 +44,7 @@ static PluginDescriptors& descriptors() {
     return s_descriptors;
 }
 
-/** Registers a plugin instance of type @em`I`
+/** Registers a plugin instance of type @em`P`
         
     Create a static one of these to register your plugin instance type.
     
