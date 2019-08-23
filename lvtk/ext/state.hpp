@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds LV2 State support to your plugin instance
     @ingroup state
+    @headerfile lvtk/ext/state.hpp
 */
 template<class I>
 struct State : Extension<I>

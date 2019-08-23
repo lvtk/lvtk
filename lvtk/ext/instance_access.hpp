@@ -26,6 +26,7 @@
 namespace lvtk {
 /** Adds LV2 Instance Access support to your UI    
     @ingroup instance_access
+    @headerfile lvtk/ext/instance_access.hpp
 */
 template<class I>
 struct InstanceAccess : NullExtension

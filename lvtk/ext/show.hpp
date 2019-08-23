@@ -29,7 +29,7 @@ namespace lvtk {
     from Idle. In other words, don't use Idle + Show together, just use Show.
     
     @ingroup show
-    @headerfile lvtk/ext/worker.hpp
+    @headerfile lvtk/ext/show.hpp
  */
 template<class I>
 struct Show : Idle<I>

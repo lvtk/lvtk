@@ -25,7 +25,9 @@
 
 namespace lvtk {
 /* @{ */
-/** Give access to plugin extension data to your @ref UIInstance */
+/** Give access to plugin extension data to your @ref UI
+    @headerfile lvtk/ext/data_access.hpp
+*/
 template<class I>
 struct DataAccess : NullExtension
 {

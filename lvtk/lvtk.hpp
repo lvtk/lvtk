@@ -23,7 +23,7 @@
     C API.
 
     <b>Extension Mixins</b><br>
-    For both the Instance and the UIInstance classes there are other helper 
+    For both the @ref Plugin and the @ref UI classes there are other helper 
     classes called @ref Extension "Extensions" that you can use to add extra 
     functionality to your plugin or UI.
     

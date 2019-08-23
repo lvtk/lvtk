@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds a Logger `log` to your instance
     @ingroup resize_port
+    @headerfile lvtk/ext/resize_port.hpp
 */
 template<class I> 
 struct ResizePort : NullExtension

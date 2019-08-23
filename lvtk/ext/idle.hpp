@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds the idle interface to your UI instance
     @ingroup idle
+    @headerfile lvtk/ext/idle.hpp
  */
 template<class I>
 struct Idle : Extension<I>

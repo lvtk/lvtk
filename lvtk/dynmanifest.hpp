@@ -24,14 +24,16 @@
 
         class MyManifest : public lvtk::DynManifest {
         public:
-            void get_subjects (std::stringstream& lines) {
+            bool get_subjects (std::stringstream& lines) override {
                 lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
                       << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
                       << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
+                return true;
             }
     
-            void get_data (const std::string& uri, std::vector<std::string>& lines) {
-                lines << "doap:name \"My Plugin\"" ;" << std::endl;
+            bool get_data (const std::string& uri, std::vector<std::string>& lines) override {
+                lines << "doap:name \"My Plugin\" ;" << std::endl;
+                return true;
             }
         };
 

@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds a @ref Logger `log` to your instance.
     @ingroup log
+    @headerfile lvtk/ext/log.hpp
 */
 template<class I> 
 struct Log : NullExtension
