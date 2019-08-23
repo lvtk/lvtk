@@ -17,3 +17,5 @@
 #include <lvtk/scheduler.hpp>
 #include <lvtk/unmap.hpp>
 #include <lvtk/uri_directory.hpp>
+
+using TestFixutre = CPPUNIT_NS::TestFixture;
