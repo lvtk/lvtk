@@ -64,14 +64,16 @@ public:
 
     /** Get the subjects
         @param lines    Add each line to this stream
+        @return false if problems getting subjects
      */
-    virtual void get_subjects (std::stringstream& lines) =0;
+    virtual bool get_subjects (std::stringstream& lines) =0;
 
     /** Get the data
         @param uri      The subject URI to get data for
         @param lines    Add each line to this stream
+        @return false if problems getting data
      */
-    virtual void get_data (std::stringstream& lines, const std::string& uri) =0;
+    virtual bool get_data (std::stringstream& lines, const std::string& uri) =0;
 };
 
 /** Write a string vector `lines` as lines to `FILE` 
@@ -106,7 +108,9 @@ extern "C" {
 LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle *handle, const LV2_Feature *const *features)
 {
-    auto* manifest = (lvtk::DynManifest*) lvtk_create_dyn_manifest();
+    auto* const manifest = lvtk_create_dyn_manifest();
+    if (nullptr == manifest)
+        return 1;
     *handle = static_cast<LV2_Dyn_Manifest_Handle> (manifest);
     return 0;
 }
@@ -117,7 +121,8 @@ int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
     std::stringstream lines;
-    manifest->get_subjects (lines);
+    if (! manifest->get_subjects (lines))
+        return 1;
     lvtk::write_lines (lines, fp);
     return 0;
 }
@@ -128,7 +133,8 @@ int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const c
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
     std::stringstream lines;
-    manifest->get_data (lines, uri);
+    if (! manifest->get_data (lines, uri))
+        return 1;
     lvtk::write_lines (lines, fp);
     return 0;
 }
