@@ -1,12 +1,6 @@
 
 #include "tests.hpp"
 
-using TestFixutre = CPPUNIT_NS::TestFixture;
-
-namespace lvtk {
-
-}
-
 class Opts : public TestFixutre
 {
   CPPUNIT_TEST_SUITE (Opts);
