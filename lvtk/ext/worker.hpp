@@ -15,7 +15,39 @@
 */
 
 /** @defgroup worker Worker 
-    Scheduling work
+    Scheduling work.
+    <h3>Example</h3>
+    @code
+        #include <lvtk/plugin.hpp>
+        #include <lvtk/ext/worker.hpp>
+
+        using namespace lvtk;
+        
+        class WorkPlugin : public Plugin<WorkPlugin, Worker> {
+        public:
+            WorkPlugin (const Args& args) : Plugin (args) {}
+
+            void run (uint32_t nframes) {
+                // schedule some work. This just writes a string which isn't that useful
+                schedule_work ("workmsg", strlen("workmsg") + 1);
+            }
+
+            WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { 
+                // perform work
+                // send responses with @c respond
+                return WORKER_SUCCESS; 
+            }
+
+            WorkerStatus work_response (uint32_t size, const void* body) {
+                // handle responses send in @c work
+                return WORKER_SUCCESS;
+            }
+
+            WorkerStatus end_run() {
+                // optional: do anything needed at the end of the run cycle    
+            }
+        };
+    @endcode
 */
 
 #pragma once

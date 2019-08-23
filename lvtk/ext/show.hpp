@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds LV2UI_Show support to your UI instance.  This interface inherits 
     from Idle. In other words, don't use Idle + Show together, just use Show.
+    
     @ingroup show
     @headerfile lvtk/ext/worker.hpp
  */

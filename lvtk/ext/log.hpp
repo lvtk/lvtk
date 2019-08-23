@@ -25,7 +25,7 @@
 
 namespace lvtk {
 
-/** Adds a @ref Logger `log` to your instance
+/** Adds a @ref Logger `log` to your instance.
     @ingroup log
 */
 template<class I> 

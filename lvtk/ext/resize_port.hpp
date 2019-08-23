@@ -39,6 +39,7 @@ struct ResizePort : NullExtension
         }
     }
 
+    /** Call this to request the host resize a port */
     inline ResizePortStatus resize_port (uint32_t index, uint32_t size) {
         return resizer.resize (index, size);
     }
