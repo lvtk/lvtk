@@ -149,22 +149,6 @@ private:
     const LV2_Feature* const*   feats = nullptr;
 };
 
-/** Arguments passed to a plugin @ref Instance "instance". 
-    @see @ref Instance
- */
-struct Args
-{
-    /** @private */
-    Args() : sample_rate(0.0), bundle(), features() {}
-    /** @private */
-    Args (double r, const std::string& b, const FeatureList& f)
-        : sample_rate (r), bundle (b), features (f) { }
-
-    double sample_rate;     /**< Sample Rate */
-    std::string bundle;     /**< Bundle Path */
-    FeatureList features;   /**< Host provided features */
-};
-
 /** Template class which can be used to assign feature data in a common way.
     
     Typically these are used to facilitate features provided by the host 
