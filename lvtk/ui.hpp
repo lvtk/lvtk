@@ -21,25 +21,16 @@
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
-/** @defgroup ui UI 
+/** @defgroup ui UI
     Writing an LV2 UI
-
-    UI descriptors are registered on the stack at the global scope.
-    For example...
+   
+    UI descriptors are registered on the stack at the global scope. First
+    make a sublcass of @ref UI, then register it with @ref UIDescriptor.
     
-    @code
-        using MyPluginUI = lvtk::UI<MyInstanceUI>;        
-        static MyPluginUI my_plugin (MY_PUGIN_UI_URI);
-    @endcode
+    <h3>Example</h3>
+    @include volume_ui.cpp
 
-    If you are using this library in a host, include individual
-    headers from the ext directory.
-
-    Same policy for the interface directory, including anything
-    there will result in a mess of compiler errors.  Interfaces
-    are for implementing features on a plugin instance only
-
-    @see @ref UIInstance
+    @see @ref UI
     @{ 
  */
 
@@ -110,7 +101,7 @@ struct UIArgs
 
     @headerfile lvtk/ui.hpp
  */
-template<class I>
+template<class U>
 class UIDescriptor final
 {
 public:
@@ -121,111 +112,40 @@ public:
                             to provide any of these, instantiate will return
                             a nullptr
      */
-    UIDescriptor (const std::string& uri, const std::vector<std::string>& required)
-    {
-        register_ui (uri.c_str());
+    UIDescriptor (const std::string& uri, const std::vector<std::string>& required) {
+        register_ui (uri);
         for (const auto& rq : required)
-            UIDescriptor<I>::required().push_back (rq);
+            U::required().push_back (rq);
     }
 
     /** UI Registation
         
-        @param uri          The URI string of your UI
+        @param uri  The URI string of your UI
      */
-    UIDescriptor (const std::string& uri)
-    {
+    UIDescriptor (const std::string& uri) {
         register_ui (uri.c_str());
     }
 
-    /** Register UI extension data but not having to implement
-        the a mixin interface.
-
-        @param uri      The uri of your feature.
-        @param data     Pointer to static extension data.
-     */
-    inline static void register_extension (const std::string& uri, const void* data) {
-        extensions()[uri] = data;
-    }
-
 private:
-    void register_ui (const char* uri) {
+    void register_ui (const std::string& uri) {
         LV2UI_Descriptor desc;
-        desc.URI = strdup (uri);
-        desc.instantiate = _instantiate;
-        desc.port_event = _port_event;
-        desc.cleanup = _cleanup;
-        desc.extension_data = _extension_data;
+        desc.URI            = strdup (uri.c_str());
+        desc.instantiate    = U::_instantiate;
+        desc.port_event     = U::_port_event;
+        desc.cleanup        = U::_cleanup;
+        desc.extension_data = U::_extension_data;
         ui_descriptors().push_back (desc);
-
-        auto& extmap = extensions();
-        I::map_extension_data (extmap);
-    }
-
-    inline static ExtensionMap& extensions() {
-        static ExtensionMap s_extensions;
-        return s_extensions;
-    }
-
-    inline static std::vector<std::string>& required() {
-        static std::vector<std::string>  s_required;
-        return s_required;
-    }
-
-    static LV2UI_Handle _instantiate (const struct _LV2UI_Descriptor* descriptor,
-                                      const char*                     plugin_uri,
-                                      const char*                     bundle_path,
-                                      LV2UI_Write_Function            write_function,
-                                      LV2UI_Controller                ctl,
-                                      LV2UI_Widget*                   widget,
-                                      const LV2_Feature* const*       features)
-    {
-        const UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
-        auto instance = std::unique_ptr<I> (new I (args));
-
-        for (const auto& rq : required())
-        {
-            bool provided = false;
-            for (const auto& f : args.features)
-                if (strcmp (f.URI, rq.c_str()) == 0)
-                    { provided = true; break; }
-            
-            if (! provided) {
-                return nullptr;
-            }
-            else 
-            {
-            }
-        }
-
-        *widget = instance->get_widget();
-        return static_cast<LV2UI_Handle> (instance.release());
-    }
-
-	static void _cleanup (LV2UI_Handle ui)
-    {
-        (static_cast<I*>(ui))->cleanup();
-        delete static_cast<I*> (ui);
-    }
-
-	static void _port_event (LV2UI_Handle ui,
-	                         uint32_t     port_index,
-	                         uint32_t     buffer_size,
-	                         uint32_t     format,
-	                         const void*  buffer)
-    {
-        (static_cast<I*>(ui))->port_event (port_index, buffer_size, format, buffer);
-    }
-
-    static const void* _extension_data (const char* uri) {
-        auto e = extensions().find (uri);
-        return e != extensions().end() ? e->second : nullptr;
+        U::map_extension_data();
     }
 };
 
 /** UI Instance 
  
     Inherrit this when making an LV2 UI.  The first template parameter
-    is the type of your super class.  The rest are feature mixins.
+    is the type of your super class.  The rest are @ref Extension mixins.
+
+    @tparam S    Your super class
+    @tparam E    List of Extension mixins
 
     @headerfile lvtk/ui.hpp
 */
@@ -233,6 +153,10 @@ template<class S, template<class> class... E>
 class UI : public E<S>...
 {
 protected:
+    /** Default constructor not allowed */
+    UI() = delete;
+
+    /** A UI with Arguments */
     explicit UI (const UIArgs& args) 
         : E<S> (args.features)..., controller (args.controller)
     {
@@ -254,18 +178,19 @@ protected:
 public:
     virtual ~UI() = default;
 
-    /** Clean up (optional)
-         
-        This is called immediately before the dtor 
-     */
-    void cleanup() { }
-
     /** Get the LV2UI_Widget (required)
         
         It is ok to create your widget here, but make sure
         that it only gets allocated once. 
     */
     LV2UI_Widget get_widget() { return nullptr; }
+
+    /** Clean up (optional)
+         
+        This is called immediately before the destructor. Override it if you 
+        need to do something special beforehand.
+     */
+    void cleanup() { }
 
     /** Port events (optional) 
      
@@ -342,6 +267,9 @@ public:
     }
 
 protected:
+    /** Controller access. This is handy if you want to use port-writing
+        in client code, but not necessarily expose your UI class
+     */
     const Controller controller;
 
 private:
@@ -352,10 +280,67 @@ private:
     LV2UI_Resize ui_resize = { 0, 0 };
 
     friend class UIDescriptor<S>; // so this can be private
-    /** @private */
-    static void map_extension_data (ExtensionMap& em) {
+    
+    inline static ExtensionMap& extensions() {
+        static ExtensionMap s_extensions;
+        return s_extensions;
+    }
+
+    inline static std::vector<std::string>& required() {
+        static std::vector<std::string>  s_required;
+        return s_required;
+    }
+
+    static void map_extension_data() {
         using pack_context = std::vector<int>;
-        pack_context { (E<S>::map_extension_data (em) , 0)... };
+        pack_context { (E<S>::map_extension_data (extensions()) , 0)... };
+    }
+
+    static LV2UI_Handle _instantiate (const struct _LV2UI_Descriptor* descriptor,
+                                      const char*                     plugin_uri,
+                                      const char*                     bundle_path,
+                                      LV2UI_Write_Function            write_function,
+                                      LV2UI_Controller                ctl,
+                                      LV2UI_Widget*                   widget,
+                                      const LV2_Feature* const*       features)
+    {
+        const UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
+        auto instance = std::unique_ptr<S> (new S (args));
+
+        for (const auto& rq : required())
+        {
+            bool provided = false;
+            for (const auto& f : args.features)
+                if (strcmp (f.URI, rq.c_str()) == 0)
+                    { provided = true; break; }
+            
+            if (! provided) {
+                return nullptr;
+            }
+        }
+
+        *widget = instance->get_widget();
+        return static_cast<LV2UI_Handle> (instance.release());
+    }
+
+	static void _cleanup (LV2UI_Handle ui)
+    {
+        (static_cast<S*>(ui))->cleanup();
+        delete static_cast<S*> (ui);
+    }
+
+	static void _port_event (LV2UI_Handle ui,
+	                         uint32_t     port_index,
+	                         uint32_t     buffer_size,
+	                         uint32_t     format,
+	                         const void*  buffer)
+    {
+        (static_cast<S*>(ui))->port_event (port_index, buffer_size, format, buffer);
+    }
+
+    static const void* _extension_data (const char* uri) {
+        auto e = extensions().find (uri);
+        return e != extensions().end() ? e->second : nullptr;
     }
 };
 
