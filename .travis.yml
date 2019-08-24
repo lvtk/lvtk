@@ -2,7 +2,7 @@ dist: xenial
 
 language: cpp
 
-script: python waf configure --docs --lv2-user --disable-ui --enable-tests clean build check
+script: python waf configure --docs --lv2-user --disable-ui --tests clean build check
 
 before_install:
   - sudo apt-get install -y lv2-dev libcppunit-dev
