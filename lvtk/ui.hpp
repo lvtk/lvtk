@@ -157,8 +157,9 @@ protected:
     UI() = delete;
 
     /** A UI with Arguments */
-    explicit UI (const UIArgs& args) 
-        : E<S> (args.features)..., controller (args.controller)
+    explicit UI (const UIArgs& args)
+        : E<S> (args.features)...,
+          controller (args.controller)
     {
         for (const auto& f : args.features) {
             if (f == LV2_UI__parent) {
@@ -169,8 +170,6 @@ protected:
                 ui_touch = *(LV2UI_Touch*) f.data;
             } else if (f == LV2_UI__portMap) {
                 port_map = *(LV2UI_Port_Map*) f.data;
-            } else if (f == LV2_UI__resize) {
-                ui_resize = *(LV2UI_Resize*) f.data;
             }
         }
     }
@@ -266,6 +265,15 @@ public:
             subscribe.unsubscribe (subscribe.handle, port, protocol, f);
     }
 
+    /** Call UI touch on the host.  If not provided in features,
+        this will do nothing and is safe to call when the host doesn't
+        provide the feature
+     */
+    void touch (uint32_t port, bool grabbed) {
+        if (ui_touch.handle != nullptr)
+            ui_touch.touch (ui_touch.handle, port, grabbed);
+    }
+
 protected:
     /** Controller access. This is handy if you want to use port-writing
         in client code, but not necessarily expose your UI class
@@ -277,7 +285,6 @@ private:
     LV2UI_Port_Subscribe subscribe { nullptr, nullptr, nullptr };
     LV2UI_Port_Map port_map { nullptr, nullptr };
     LV2UI_Touch ui_touch = { 0, 0 };
-    LV2UI_Resize ui_resize = { 0, 0 };
 
     friend class UIDescriptor<S>; // so this can be private
     

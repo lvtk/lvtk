@@ -3,6 +3,7 @@
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/data_access.hpp>
 #include <lvtk/ext/instance_access.hpp>
+#include <lvtk/ext/resize.hpp>
 
 #include <juce/gui_basics.h>
 
@@ -37,17 +38,19 @@ public:
     Slider slider;
 };
 
-class VolumeUI : public UI<VolumeUI, URID, DataAccess, InstanceAccess> {
+class VolumeUI : public UI<VolumeUI, DataAccess, InstanceAccess, Resize> {
 public:
     VolumeUI (const UIArgs& args) : UI (args) {
-        midi_MidiEvent = map ("http://lv2plug.in/ns/ext/midi#MidiEvent");
         if (auto* const instance = plugin_instance())
             std::clog << "VolumeUI got the plugin instance\n";
         if (const void* data = plugin_extension_data (LV2_URID__map))
             std::clog << "VolumeUI got " << LV2_URID__map << " extension data\n";
 
         widget.reset (new VolumeComponent());
-        widget->slider.onValueChange = [this]() {
+        auto& slider = widget->slider;
+        slider.onDragStart = [this]() { touch (4, true); };
+        slider.onDragEnd = [this]() { touch (4, false); };
+        slider.onValueChange = [this]() {
             write (4, static_cast<float> (widget->slider.getValue()));
         };
     }

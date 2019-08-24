@@ -1,18 +1,16 @@
 
 #include <math.h>
 #include <lvtk/plugin.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/ext/log.hpp>
 
 #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 
 using namespace lvtk;
 
-class Volume : public Plugin<Volume, URID, Log>
+class Volume : public Plugin<Volume>
 {
 public:
-    Volume (const Args& args) : Plugin (args) { }
-    
+    Volume (const Args& args) : Plugin (args) {}
+
     void connect_port (uint32_t port, void* data) {
         if (port == 0)
             input[0] = (float*) data;
@@ -26,8 +24,8 @@ public:
             db = (float*) data;
     }
 
-    void run (uint32_t nframes) { 
-        const float gain = *db > -90.0f ? powf (10.0f, *db * 0.05f) : 0.0f;
+    void run (uint32_t nframes) {
+        gain = *db > -90.0f ? powf (10.0f, *db * 0.05f) : 0.0f;
         for (uint32_t f = 0; f < nframes; ++f)
             for (uint32_t c = 0; c < 2; ++c)
                 output[c][f] = input[c][f] * gain;
@@ -37,6 +35,7 @@ private:
     float* input[2] { 0, 0 };
     float* output[2] { 0, 0 };
     float* db = nullptr;
+    float gain = 0.f;
 };
 
 static const Descriptor<Volume> volume (LVTK_VOLUME_URI, {

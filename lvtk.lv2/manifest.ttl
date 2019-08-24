@@ -12,7 +12,7 @@
 	foaf:mbox <mailto:mfisher31@gmail.com> ;
 	rdfs:seeAlso <http://lvtoolkit.org> .
 
-lvtk:JUCEUI 
+lvtk:JUCEUI
     a rdfs:Class ,
 		owl:Class ;
 	rdfs:subClassOf ui:UI ;
