@@ -263,7 +263,17 @@ private:
     inline bool operator== (const double& f)   const { return (((LV2_Atom_Double*)p_atom)->body == f); }
 };
 
-/** A wrapper around LV2_Atom_Sequence
+/** An LV2_Atom_Sequence wrapper.
+        
+    Since this implements an STL style container, you can use it as follows:
+    @code
+
+        Sequence seq (my_lv2_sequence_ptr());
+        for (const auto& ev : seq) {
+            // handle event
+        }
+
+    @endcode
     @headerfile lvtk/atom.hpp
 */
 struct Sequence
@@ -274,39 +284,49 @@ struct Sequence
     typedef const AtomEvent& const_reference;
 
     /** Create an Sequence from raw data
-        @param seq Sequence Pointer (castable to LV2_Atom_Sequence) */
-    Sequence (const void* seq) : p_seq ((LV2_Atom_Sequence*) seq) { }
+        @param seq  Pointer to an LV2_Atom_Sequence 
+     */
+    Sequence (const void* seq)
+        : sequence ((LV2_Atom_Sequence*) seq) { }
 
     /** Create an AtomSequnce from an LV2_Atom_Sequence
-         @param seq The sequence to wrap */
-    Sequence (LV2_Atom_Sequence* seq) : p_seq (seq) { }
-
+        @param seq The sequence to wrap 
+     */
+    Sequence (LV2_Atom_Sequence* seq)
+        : sequence (seq) { }
+    
     /** Create an Sequence from a ForgeRef */
-    Sequence (ForgeRef ref) : p_seq ((LV2_Atom_Sequence*) ref) { }
+    Sequence (ForgeRef ref)
+        : sequence ((LV2_Atom_Sequence*) ref) { }
 
-    /** Return the sequence body's pad */
-    inline uint32_t pad() const         { return p_seq->body.pad; }
+    /** Reset for writing */
+    inline void reset() {
+        sequence->atom.size = sizeof (LV2_Atom_Sequence_Body);
+    }
+
+    /** Return the sequence body's pad. Currently unused per LV2 spec. */
+    inline uint32_t pad() const { return sequence->body.pad; }
 
     /** Return the sequence's body size 
         @note This method does NOT return the number of events contained in
               the Sequence.  It is the size in terms of bytes.
     */
-    inline uint32_t size() const        { return p_seq->atom.size; }
+    inline uint32_t size() const        { return sequence->atom.size; }
 
     /** Return the sequence's unit */
-    inline uint32_t unit() const        { return p_seq->body.unit; }
+    inline uint32_t unit() const        { return sequence->body.unit; }
 
     /** Return the sequence's c-type */
-    inline LV2_Atom_Sequence* c_obj()   { return p_seq; }
+    inline LV2_Atom_Sequence* c_obj()   { return sequence; }
+
+    /** Castable to bool. True if the sequence isn't nullptr */
+    inline operator bool() const        { return sequence != 0; }
+
+    /** Castable to LV2_Atom_Sequence */
+    inline operator LV2_Atom_Sequence*() const { return sequence; }
 
     /** @private */
-    inline operator bool() const        { return p_seq != 0; }
-
-    /** @private */
-    inline operator LV2_Atom_Sequence*() const { return p_seq; }
-
-    /** @private */
-    inline operator uint8_t*() const    { return (uint8_t*) p_seq; }
+    inline operator uint8_t*() const    { return (uint8_t*) sequence; }
 
     /** Append an AtomEvent to the end of the sequence.
 
@@ -317,10 +337,10 @@ struct Sequence
      */
     inline void append (const AtomEvent& ev)
     {
-        if (AtomEvent* const pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)) {
+        if (AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size)) {
             auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
             memcpy (pos, &ev, total_size);
-            p_seq->atom.size += lv2_atom_pad_size (total_size);
+            sequence->atom.size += lv2_atom_pad_size (total_size);
         }
     }
 
@@ -335,8 +355,8 @@ struct Sequence
        #if 0
         auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
         const uint32_t evsize = lv2_atom_pad_size (total_size);
-        AtomEvent* pos = lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size);
-        LV2_ATOM_SEQUENCE_FOREACH (p_seq, iter)
+        AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
+        LV2_ATOM_SEQUENCE_FOREACH (sequence, iter)
         {
             if (iter->time.frames > ev.time.frames)
             {
@@ -351,7 +371,7 @@ struct Sequence
         {
             
             memcpy (pos, &ev, total_size);
-            p_seq.atom.size += evsize;
+            sequence.atom.size += evsize;
         }
        #endif
     }
@@ -360,7 +380,7 @@ struct Sequence
     class iterator
     {
     public:
-        iterator (LV2_Atom_Sequence *seq, AtomEvent* ev) : p_event (ev), p_seq (seq) { }
+        iterator (LV2_Atom_Sequence *seq, AtomEvent* ev) : p_event (ev), sequence (seq) { }
         AtomEvent&  operator*()  { return *p_event; }
         const AtomEvent* operator->() const { return p_event; }
 
@@ -372,7 +392,7 @@ struct Sequence
 
         iterator operator++(int)
         {
-            iterator res (p_seq, p_event);
+            iterator res (sequence, p_event);
             ++(*this);
             return res;
         }
@@ -383,17 +403,22 @@ struct Sequence
     private:
         friend struct Sequence;
         LV2_Atom_Event* p_event;
-        LV2_Atom_Sequence* p_seq;
+        LV2_Atom_Sequence* sequence;
     };
 
     /** @returns an iterator starting at the first event */
-    inline iterator begin() const { return iterator (p_seq, lv2_atom_sequence_begin (&p_seq->body)); }
+    inline iterator begin() const { 
+        return iterator (sequence, lv2_atom_sequence_begin (&sequence->body)); 
+    }
 
     /** @returns the end iterator of this sequence */
-    inline iterator end()   const { return iterator (p_seq, lv2_atom_sequence_end (&p_seq->body, p_seq->atom.size)); }
+    inline iterator end()   const { 
+        return iterator (sequence, lv2_atom_sequence_end (&sequence->body, sequence->atom.size)); 
+    }
 
 private:
-    LV2_Atom_Sequence* p_seq = nullptr;
+    LV2_Atom_Sequence* sequence = nullptr;
+    uint32_t capacity = 0;
 };
 
 /** Class wrapper around LV2_Atom_Forge
@@ -406,7 +431,7 @@ public:
         Client code must call Forge::init() before using otherwise
         written output will be unpredictable and likely cause a nasty crash
     */
-    Forge() {}
+    Forge() = default;
 
     /** Initialized Forge.
         @param map The LV2_URID_Map to use for initialization    
