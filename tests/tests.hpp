@@ -3,19 +3,29 @@
 #include <cppunit/config/SourcePrefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <lvtk/option.hpp>
-#include <lvtk/port_resizer.hpp>
-#include <lvtk/state_functions.hpp>
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lvtk/ext/ui/data_access.hpp>
+#include <lvtk/ext/ui/idle.hpp>
+#include <lvtk/ext/ui/instance_access.hpp>
+#include <lvtk/ext/ui/resize.hpp>
+#include <lvtk/ext/ui/show.hpp>
+#include <lvtk/ext/ui/touch.hpp>
 
-#include <lvtk/atom.hpp>
-#include <lvtk/buffer_details.hpp>
-#include <lvtk/instance_data.hpp>
-#include <lvtk/instance_handle.hpp>
-#include <lvtk/logger.hpp>
-#include <lvtk/map.hpp>
-#include <lvtk/scheduler.hpp>
-#include <lvtk/unmap.hpp>
+#include <lvtk/ext/bufsize.hpp>
+#include <lvtk/ext/log.hpp>
+#include <lvtk/ext/options.hpp>
+#include <lvtk/ext/resize_port.hpp>
+#include <lvtk/ext/state.hpp>
+#include <lvtk/ext/urid.hpp>
+#include <lvtk/ext/worker.hpp>
+
+#include <lvtk/ext/atom.hpp>
+#include <lvtk/option_array.hpp>
+#include <lvtk/plugin.hpp>
+#include <lvtk/ui.hpp>
 #include <lvtk/uri_directory.hpp>
 
-using TestFixutre = CPPUNIT_NS::TestFixture;
+#ifndef LVTK_VOLUME_URI
+ #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
+#endif
+
+class TestFixutre : public CPPUNIT_NS::TestFixture {};

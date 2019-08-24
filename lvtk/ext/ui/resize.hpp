@@ -27,29 +27,13 @@ namespace lvtk {
 
 /** Support for UI Resizing
     @ingroup resize
-    @headerfile lvtk/ext/resize.hpp
+    @headerfile lvtk/ext/ui/resize.hpp
 */
 template<class I> 
 struct Resize : Extension<I>
 {
     /** @private */
-    Resize (const FeatureList& features) { 
-        for (const auto& f : features) {
-            if (f == LV2_UI__resize) {
-                resize = *(LV2UI_Resize*) f.data;
-                break;
-            }
-        }
-    }
-
-    /** Call this to notify the host your UI's size 
-        @returns non-zero on error
-    */
-    int notify_size (int width, int height) {
-        return (resize.handle != nullptr)
-            ? resize.ui_resize (resize.handle, width, height)
-            : 1;
-    }
+    Resize (const FeatureList& features) {}
     
     /** Called by the host to request a new UI size
         @return non-zero on error
@@ -64,7 +48,6 @@ protected:
     }
 
 private:
-    LV2UI_Resize resize = { nullptr, nullptr };
     inline static int _ui_resize (LV2UI_Feature_Handle handle, int width, int height) {
         return (static_cast<I*>(handle))->size_requested (width, height);
     }

@@ -20,10 +20,61 @@
 
 #pragma once
 
+#include <lv2/lv2plug.in/ns/ext/options/options.h>
 #include <lvtk/ext/extension.hpp>
-#include <lvtk/option.hpp>
 
 namespace lvtk {
+
+/** Alias to `LV2_Options_Option`
+    @headerfile lvtk/option.hpp
+    @ingroup options
+*/
+using Option = LV2_Options_Option;
+
+/** Equivalent to LV2_Options_Context
+    @headerfile lvtk/option.hpp
+    @ingroup options
+*/
+using OptionsContext = LV2_Options_Context;
+
+/** Equivalent to LV2_Options_Status 
+    @headerfile lvtk/option.hpp
+    @ingroup options
+*/
+using OptionsStatus = LV2_Options_Status;
+
+/** The LV2 Options Feature
+ 
+    @headerfile lvtk/option.hpp
+    @ingroup options
+ */
+struct OptionsData final {
+    OptionsData() = default;
+
+    /** Get the options passed by the host as an LV2_Feature
+
+        @note The options array MUST NOT be modified by the plugin instance
+        @return The options array or 0 if no options were supplied
+     */
+    const Option* get() const { return options; }
+
+    /** Assign options from a feature
+        @param feature  Should be a feature with LV2_OPTIONS__options
+                        as the URI.
+        
+        @returns True if the feature data was set
+     */
+    bool set (const Feature& feature) {
+        if (feature == LV2_OPTIONS__options) {
+            options = (Option*) feature.data;
+            return true;
+        }
+        return false;
+    }
+
+private:
+    Option* options = nullptr;
+};
 
 /** Adds support for LV2 options on your instance
     @headerfile lvtk/ext/options.hpp
@@ -35,12 +86,12 @@ struct Options : Extension<I>
     /** @private */
     Options (const FeatureList& features) {
         for (const auto& f : features)
-            if (m_host_options.set_feature (f))
+            if (host_options.set (f))
                 break;
     }
 
     /** @returns Options provided by the host or nullptr if not available */
-    const Option* host_options() const { return m_host_options.get_options(); }
+    const Option* options() const { return host_options.get(); }
 
     /** Get the given options.
 
@@ -53,7 +104,7 @@ struct Options : Extension<I>
 
         @returns Bitwise OR of OptionsStatus values.
      */
-    uint32_t get (const Option* options) const { return OPTIONS_SUCCESS; }
+    uint32_t get (const Option* opts) const { return LV2_OPTIONS_SUCCESS; }
 
     /** Set the given options.
 
@@ -62,7 +113,7 @@ struct Options : Extension<I>
 
         @returns Bitwise OR of OptionsStatus values.
      */
-    uint32_t set (const Option* options) const { return OPTIONS_SUCCESS; }
+    uint32_t set (const Option* opts) const { return LV2_OPTIONS_SUCCESS; }
 
 protected:
     /** @private */
@@ -72,7 +123,7 @@ protected:
     }
 
 private:
-    OptionsFeature m_host_options;
+    OptionsData host_options;
     
     static uint32_t _get (LV2_Handle handle, LV2_Options_Option* options) {
         return (static_cast<I*> (handle))->get (options);

@@ -1,9 +1,9 @@
 
 #include "tests.hpp"
 
-class Opts : public TestFixutre
+class Options : public TestFixutre
 {
-  CPPUNIT_TEST_SUITE (Opts);
+  CPPUNIT_TEST_SUITE (Options);
   CPPUNIT_TEST (array);
   CPPUNIT_TEST_SUITE_END();
 
@@ -18,11 +18,11 @@ public:
 
 protected:
     void array() {
-        lvtk::OptionsArray opts;
-        const int num_opts = 4;
+        lvtk::OptionArray opts;
+        const uint32_t num_opts = 4;
         uint32_t values [num_opts];
 
-        for (int i = 0; i < 4; ++i)
+        for (uint32_t i = 0; i < num_opts; ++i)
         {
             values [i] = 1024;
             opts.add (LV2_OPTIONS_BLANK,
@@ -34,12 +34,17 @@ protected:
             );
         }
 
-        CPPUNIT_ASSERT_EQUAL(opts.size(), (size_t) num_opts);
-        lvtk::OptionsIterator iter (opts.c_obj());
-        while (auto* opt = iter.next()) {
-            CPPUNIT_ASSERT_EQUAL (1024, (int) *(uint32_t*) opt->value);
+        CPPUNIT_ASSERT_EQUAL(opts.size(), num_opts);
+        
+        uint32_t c = 0;
+        for (const auto& opt : opts)
+        {
+            ++c;
+            CPPUNIT_ASSERT_EQUAL (1024, (int) *(uint32_t*) opt.value);
         }
+
+        CPPUNIT_ASSERT_EQUAL (opts.size(), c);
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(Opts);
+CPPUNIT_TEST_SUITE_REGISTRATION(Options);

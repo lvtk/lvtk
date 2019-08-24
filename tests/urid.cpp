@@ -1,8 +1,6 @@
 
 #include "tests.hpp"
 
-using TestFixutre = CPPUNIT_NS::TestFixture;
-
 namespace lvtk {
 
 class Console

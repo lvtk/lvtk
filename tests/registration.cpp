@@ -1,32 +1,30 @@
 
 #include "tests.hpp"
 
-// include examples. order matters!
-#include "../examples/volume.cpp"
-
 class Registration : public TestFixutre
 {
-  CPPUNIT_TEST_SUITE (Registration);
-  CPPUNIT_TEST (total_descriptors);
-  CPPUNIT_TEST (instantiation);
-  CPPUNIT_TEST (missing_host_feature);
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE (Registration);
+    CPPUNIT_TEST (total_descriptors);
+    CPPUNIT_TEST (instantiation);
+    CPPUNIT_TEST (missing_host_feature);
+    CPPUNIT_TEST_SUITE_END();
 
-protected:
-    lvtk::URIDirectory urids;
 
 public:
     void setUp() { }
 
 protected:
     void total_descriptors() {
-        CPPUNIT_ASSERT_EQUAL (lvtk::descriptors().size(), (size_t) 1);
+        CPPUNIT_ASSERT_EQUAL ((size_t) 1, lvtk::descriptors().size());
         CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_VOLUME_URI), (int)0);
         // CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
-    }   
+    }
 
     void instantiation()
     {
+        if (0 == lvtk::descriptors().size())
+            return;
+        
         const auto desc = lvtk::descriptors().front();
         CPPUNIT_ASSERT (strcmp (LVTK_VOLUME_URI, desc.URI) == 0);
 
@@ -56,11 +54,16 @@ protected:
 
     void missing_host_feature()
     {
+        if (0 == lvtk::descriptors().size())
+            return;
+        
         const auto& desc = lvtk::descriptors()[0];
         const LV2_Feature* features[] = { nullptr };
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
         CPPUNIT_ASSERT (handle == nullptr);
     }
+private:
+    lvtk::URIDirectory urids;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(Registration);

@@ -25,7 +25,7 @@ namespace lvtk {
 
 /** Maintains a map of Strings/Symbols to integers
     
-    This class also implements LV2 URID Map/Unmap features.  Instance 
+    This class also implements LV2 URID Map/Unmap features.  Plugin 
     implementations don't need to use this.  You can, however, use this in a 
     LV2 host to easily provide URID map/unmaping features to plugins.
 

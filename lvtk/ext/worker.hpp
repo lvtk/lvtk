@@ -15,7 +15,7 @@
 */
 
 /** @defgroup worker Worker 
-    Scheduling work.
+    Scheduling work and processing jobs
     <h3>Example</h3>
     @code
         #include <lvtk/plugin.hpp>
@@ -52,10 +52,73 @@
 
 #pragma once
 
+#include <lv2/lv2plug.in/ns/ext/worker/worker.h>
 #include <lvtk/ext/extension.hpp>
-#include <lvtk/scheduler.hpp>
 
 namespace lvtk {
+
+/** Alias of LV2_Worker_Status
+    @ingroup worker
+    @headerfile lvtk/ext/worker.hpp
+*/
+using WorkerStatus = LV2_Worker_Status;
+
+/** Worker reponse function
+
+    This wraps an LV2_Worker_Respond_Function.  It is passed to
+    the work method on your Instance
+
+    @ingroup worker
+    @headerfile lvtk/scheduler.hpp
+ */
+struct WorkerRespond
+{
+    WorkerRespond (LV2_Handle                  instance,
+                   LV2_Worker_Respond_Function wrfunc,
+                   LV2_Worker_Respond_Handle   handle)
+        : p_instance (instance),
+          p_handle (handle), 
+          p_wrfunc (wrfunc) 
+    { }
+
+    /** Execute the worker respond function.
+        @param size
+        @param data
+        @return WORKER_SUCCESS on success
+     */
+    WorkerStatus operator() (uint32_t size, const void* data) const {
+        return p_wrfunc (p_handle, size, data);
+    }
+
+private:
+    LV2_Handle                        p_instance;
+    LV2_Worker_Respond_Handle         p_handle;
+    LV2_Worker_Respond_Function       p_wrfunc;
+};
+
+/** Schedule jobs with the host.
+
+    This wraps LV2_Worker_Schedule.  Used by the Worker interface to add
+    `schedule_work` to a plugin instance.  You shouldn't need to use it
+    directly. @see @ref Worker
+
+    @ingroup worker
+    @headerfile lvtk/scheduler.hpp
+ */
+struct WorkerSchedule : FeatureData<LV2_Worker_Schedule> {
+    WorkerSchedule() : FeatureData (LV2_WORKER__schedule) {}
+    
+    /** Schedule work with the host
+        
+        @param size Size of the data
+        @param job  The data to write
+     */
+    WorkerStatus operator() (uint32_t size, const void* job) const {
+        if (data.schedule_work)
+            return data.schedule_work (data.handle, size, job);
+        return LV2_WORKER_ERR_UNKNOWN;
+    }
+};
 
 /** Adds LV2 worker support to your instance. Add this to your instance's
     Mixin list to activate it.
@@ -69,32 +132,43 @@ struct Worker : Extension<I>
     /** @private */
     Worker (const FeatureList& features) { 
         for (const auto& f : features)
-            if (schedule.set_feature (f))
+            if (schedule_work.set_feature (f))
                 break;
     }
-
-    /** Schedule work with the host
-     
-        @param size Size of data
-        @param data The data to schedule
-     */
-    WorkerStatus schedule_work (uint32_t size, const void* data) const { return schedule.schedule_work (size, data); }
 
     /** Perform work as requested by schedule_work
      
         @param respond  Function to send responses with
      */
-    WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { return WORKER_SUCCESS; }
+    WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { return LV2_WORKER_SUCCESS; }
 
     /** Process work responses sent with respond in the `work` callback
      
         @param size Size of response data
         @param data The reponse data
      */
-    WorkerStatus work_response (uint32_t size, const void* body) { return WORKER_SUCCESS; }
+    WorkerStatus work_response (uint32_t size, const void* body) { return LV2_WORKER_SUCCESS; }
 
     /** Called at the end of a processing cycle */
-    WorkerStatus end_run() { return WORKER_SUCCESS; }
+    WorkerStatus end_run() { return LV2_WORKER_SUCCESS; }
+
+    /** Use this to schedule a job with the host.  This is a function object so
+        it can be called directly.
+        
+        Example:
+        @code
+            void run (uint32_t nframes) {
+                // ...
+                
+                schedule_work (strlen ("non_rt_job"), "non_rt_job"));
+                
+                // ...
+            }
+        @endcode
+        The above code would result in `work` being called where "non_rt_job"
+        is the data parameter
+     */
+    WorkerSchedule schedule_work;
 
 protected:
     /** @private */
@@ -104,7 +178,7 @@ protected:
     }
 
 private:
-    Scheduler schedule;
+
     /** @internal */
     static LV2_Worker_Status _work (LV2_Handle					instance,
                                     LV2_Worker_Respond_Function respond,

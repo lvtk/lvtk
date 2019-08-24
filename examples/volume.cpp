@@ -4,12 +4,10 @@
 
 #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 
-using namespace lvtk;
-
-class Volume : public Plugin<Volume>
+class Volume : public lvtk::Plugin<Volume>
 {
 public:
-    Volume (const Args& args) : Plugin (args) {}
+    Volume (const lvtk::Args& args) : Plugin (args) {}
 
     void connect_port (uint32_t port, void* data) {
         if (port == 0)
@@ -38,6 +36,6 @@ private:
     float gain = 0.f;
 };
 
-static const Descriptor<Volume> volume (LVTK_VOLUME_URI, {
+static const lvtk::Descriptor<Volume> volume (LVTK_VOLUME_URI, {
     LV2_URID__map // << required host feature
 });

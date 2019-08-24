@@ -21,7 +21,7 @@
 */
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
-#include <lvtk/ext/idle.hpp>
+#include <lvtk/ext/ui/idle.hpp>
 
 namespace lvtk {
 

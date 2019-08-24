@@ -41,7 +41,7 @@ using ForgeRef              = LV2_Atom_Forge_Ref;
 using ObjectQuery           = LV2_Atom_Object_Query;
 
 /** An LV2_Atom_Object wrapper
-    @headerfile lvtk/atom.hpp
+    @headerfile lvtk/ext/atom.hpp
  */
 struct Object
 {
@@ -149,7 +149,7 @@ private:
 /** An LV2_Atom wrapper
     These are intended to be used on the stack
     
-    @headerfile lvtk/atom.hpp
+    @headerfile lvtk/ext/atom.hpp
  */
 struct Atom
 {
@@ -274,7 +274,7 @@ private:
         }
 
     @endcode
-    @headerfile lvtk/atom.hpp
+    @headerfile lvtk/ext/atom.hpp
 */
 struct Sequence
 {
@@ -335,8 +335,7 @@ struct Sequence
 
         @param ev The event to add 
      */
-    inline void append (const AtomEvent& ev)
-    {
+    inline void append (const AtomEvent& ev) {
         if (AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size)) {
             auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
             memcpy (pos, &ev, total_size);
@@ -348,8 +347,7 @@ struct Sequence
         
         @param ev The event to insert 
      */
-    inline void insert (const AtomEvent& ev)
-    {
+    inline void insert (const AtomEvent& ev) {
         AtomEvent* e = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
         LV2_ATOM_SEQUENCE_FOREACH (sequence, iter) {
             if (iter->time.frames > ev.time.frames) {
@@ -414,7 +412,7 @@ private:
 };
 
 /** Class wrapper around LV2_Atom_Forge
-    @headerfile lvtk/atom.hpp
+    @headerfile lvtk/ext/atom.hpp
 */
 class Forge : public LV2_Atom_Forge
 {
@@ -602,7 +600,7 @@ public:
 };
 
 /** An LV2_Atom_Vector Wrapper 
-    @headerfile lvtk/atom.hpp
+    @headerfile lvtk/ext/atom.hpp
 */
 class Vector
 {

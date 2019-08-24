@@ -14,40 +14,44 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup data_access Data Access 
-    Access to plugin extension data
+/** @defgroup resize UI Resize
+    Resizing plugin UIs
 */
 
 #pragma once
 
-#include <lvtk/instance_data.hpp>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-/* @{ */
-/** Give access to plugin extension data to your @ref UI
-    @headerfile lvtk/ext/data_access.hpp
+
+/** Support for UI Touch
+    @ingroup touch
+    @headerfile lvtk/ext/touch.hpp
 */
-template<class I>
-struct DataAccess : NullExtension
+template<class I> 
+struct Touch : NullExtension
 {
     /** @private */
-    DataAccess (const FeatureList& features) {
-        for (const auto& f : features)
-            if (instance_data.set_feature (f))
+    Touch (const FeatureList& features) { 
+        for (const auto& f : features) {
+            if (f == LV2_UI__touch) {
+                ui_touch = *(LV2UI_Touch*) f.data;
                 break;
+            }
+        }
     }
 
-    /** Calls extension_data on the plugin if supported by the host.
-        @param uri  URI of the extension
-        @returns extension data or nullptr if not available
+    /** Call this to notify the host of gesture changes.
+        @returns non-zero on error
      */
-    inline const void* plugin_extension_data (const std::string& uri) const {
-        return instance_data.data_access (uri.c_str());
+    int touch (uint32_t port, bool grabbed) {
+        if (ui_touch.handle != nullptr)
+            ui_touch.touch (ui_touch.handle, grabbed);
     }
 
 private:
-    InstanceData instance_data;
+    LV2UI_Touch ui_touch = { nullptr, nullptr };
 };
-/* @} */
+
 }

@@ -14,22 +14,26 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+/** @defgroup data_access Data Access 
+    Access to plugin extension data
+*/
+
 #pragma once
 
-#include <lvtk/lvtk.hpp>
 #include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
+#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-
-/** Wrap Data access host feature.
+/* @{ */
+/** An LV2_Extension_Data_Feature function wrapper
  
     Use these on the stack and call set_feature() passing the appropriate feature.
     @headerfile lvtk/instance_data.hpp
     @ingroup data_access
 */
-struct InstanceData final : FeatureData<LV2_Extension_Data_Feature> {
+struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
     /** Construct a InstanceData object */
-    InstanceData() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
+    ExtensionData() : FeatureData<LV2_Extension_Data_Feature> (LV2_DATA_ACCESS_URI) { }
 
     /** A UI can call this to get data (of a type specified by some other
         extension) from the plugin.
@@ -45,10 +49,39 @@ struct InstanceData final : FeatureData<LV2_Extension_Data_Feature> {
         @param uri  The uri string to query
         @returns    Not nullptr on Success
      */
-    const void* data_access (const std::string& uri) const {
+    const void* operator() (const std::string& uri) const {
         return nullptr != data.data_access ? data.data_access (uri.c_str())
                                            : nullptr;
     }
 };
 
-} /* namespace lvtk */
+/** Give access to plugin extension data to your @ref UI
+    @headerfile lvtk/ext/ui/data_access.hpp
+*/
+template<class I>
+struct DataAccess : NullExtension
+{
+    /** @private */
+    DataAccess (const FeatureList& features) {
+        for (const auto& f : features)
+            if (data_access.set_feature (f))
+                break;
+    }
+
+    /** Calls extension_data on the plugin if supported by the host.
+        
+        @param uri  URI of the extension
+        @note This is an alias to `data_access`
+
+        @returns extension data or nullptr if not available
+     */
+    inline const void* plugin_extension_data (const std::string& uri) const {
+        return data_access (uri);
+    }
+
+protected:
+    /** The data access function */
+    ExtensionData data_access;
+};
+/* @} */
+}

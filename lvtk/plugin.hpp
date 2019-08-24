@@ -39,7 +39,7 @@ using PluginDescriptors = DescriptorList<LV2_Descriptor>;
 /** @fn Access to registered plugin descriptors
     @returns Plugin descriptor list
  */
-static PluginDescriptors& descriptors() {
+inline PluginDescriptors& descriptors() {
     static PluginDescriptors s_descriptors;
     return s_descriptors;
 }
@@ -102,7 +102,6 @@ private:
         P::initialize_extensions();
     }
 };
-
 
 /** Arguments passed to a @ref Plugin "plugin" instance */
 struct Args
@@ -309,13 +308,11 @@ private:
 extern "C" {
 
 #ifndef LVTK_NO_SYMBOL_EXPORT
-
 /** @private */
 LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor (uint32_t index) {
     return (index < lvtk::descriptors().size())
         ? &lvtk::descriptors()[index] : NULL;
 }
-
 #endif
 
 }

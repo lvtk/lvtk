@@ -168,6 +168,8 @@ protected:
                 subscribe = *(LV2UI_Port_Subscribe*) f.data;
             } else if (f == LV2_UI__touch) {
                 ui_touch = *(LV2UI_Touch*) f.data;
+            } else if (f == LV2_UI__resize) {
+                resize = *(LV2UI_Resize*) f.data;
             } else if (f == LV2_UI__portMap) {
                 port_map = *(LV2UI_Port_Map*) f.data;
             }
@@ -274,6 +276,15 @@ public:
             ui_touch.touch (ui_touch.handle, port, grabbed);
     }
 
+    /** Call this to notify the host your UI's size 
+        @returns non-zero on error
+     */
+    int notify_size (int width, int height) {
+        return (resize.handle != nullptr)
+            ? resize.ui_resize (resize.handle, width, height)
+            : 1;
+    }
+
 protected:
     /** Controller access. This is handy if you want to use port-writing
         in client code, but not necessarily expose your UI class
@@ -285,6 +296,7 @@ private:
     LV2UI_Port_Subscribe subscribe { nullptr, nullptr, nullptr };
     LV2UI_Port_Map port_map { nullptr, nullptr };
     LV2UI_Touch ui_touch = { 0, 0 };
+    LV2UI_Resize resize = { 0, 0 };
 
     friend class UIDescriptor<S>; // so this can be private
     

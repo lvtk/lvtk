@@ -126,29 +126,6 @@ struct FeatureList final : public std::vector<Feature>
     }
 };
 
-/** Helper which makes iterating LV2_Features easy */
-class FeatureIterator final
-{
-public:
-    /** Iterate the given feature array
-        @param features  The LV2_Feature array
-     */
-    FeatureIterator (const LV2_Feature* const* features)
-        : index (0), feats (features) { }
-
-    /** @returns the next feature in the list */
-    inline const LV2_Feature* next() const
-    {
-        if (nullptr == feats [index])
-            return nullptr;
-        return feats [index++];
-    }
-
-private:
-    mutable uint32_t            index = 0;
-    const LV2_Feature* const*   feats = nullptr;
-};
-
 /** Template class which can be used to assign feature data in a common way.
     
     Typically these are used to facilitate features provided by the host 

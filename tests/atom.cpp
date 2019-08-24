@@ -6,16 +6,11 @@
 
 class Atom : public TestFixutre
 {
-  CPPUNIT_TEST_SUITE (Atom);
-  CPPUNIT_TEST (atom);
-  CPPUNIT_TEST (sequence);
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE (Atom);
+    CPPUNIT_TEST (atom);
+    CPPUNIT_TEST (sequence);
+    CPPUNIT_TEST_SUITE_END();
 
-protected:
-    lvtk::URIDirectory urids;
-    lvtk::Forge forge;
-    std::unique_ptr<uint8_t[]> buffer;
-    uint32_t buffer_size = 4096 * 2;
 public:
     void setUp()
     {
@@ -23,13 +18,6 @@ public:
         clear_buffer();
         forge.init ((LV2_URID_Map*) urids.get_map_feature()->data);
     }
-
-    void clear_buffer() {
-        memset (buffer.get(), 0, (size_t) buffer_size);
-    }
-
-    template<class T>
-    T* buffer_as() const { return (T*) buffer.get(); }
 
 protected:
     void atom() {
@@ -134,6 +122,15 @@ protected:
 
         CPPUNIT_ASSERT_EQUAL (nev + 1, cnt);
     }
+
+private:
+    lvtk::URIDirectory urids;
+    lvtk::Forge forge;
+    std::unique_ptr<uint8_t[]> buffer;
+    uint32_t buffer_size = 4096 * 2;
+
+    void clear_buffer() { memset (buffer.get(), 0, (size_t) buffer_size) ;}
+    template<class T> T* buffer_as() const { return (T*) buffer.get(); }
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION (Atom);

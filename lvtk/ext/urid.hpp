@@ -20,11 +20,57 @@
 
 #pragma once
 
+#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 #include <lvtk/ext/extension.hpp>
-#include <lvtk/map.hpp>
-#include <lvtk/unmap.hpp>
 
 namespace lvtk {
+
+/** LV2_URID_Map wrapper
+    @headerfile lvtk/map.hpp
+    @ingroup urid
+ */
+class Map : public FeatureData<LV2_URID_Map>
+{
+public:
+    Map() : FeatureData<LV2_URID_Map> (LV2_URID__map) {}
+    Map (const Feature& f) :FeatureData<LV2_URID_Map> (LV2_URID__map) {
+        set_feature (f);
+    }
+
+    /** Get URID integer from URI string
+        @param uri  The URI string to map
+     */
+    uint32_t map (const std::string& uri) const {
+        return data.map != nullptr ? data.map (data.handle, uri.c_str())
+                                : 0;
+    }
+
+    uint32_t operator()(const std::string& uri) const { return this->map (uri); }
+};
+
+/** LV2_URID_Unmap wrapper
+    @headerfile lvtk/unmap.hpp
+    @ingroup urid
+ */
+class Unmap : public FeatureData<LV2_URID_Unmap>
+{
+public:
+    Unmap() : FeatureData<LV2_URID_Unmap> (LV2_URID__unmap) {}
+    Unmap (const Feature& feature) : FeatureData<LV2_URID_Unmap> (LV2_URID__unmap) {
+        set_feature (feature);
+    }
+
+    /** Unmap a URID to string
+        @param urid The URID integer to unmap
+     */
+    std::string unmap (uint32_t urid) const {
+        return data.unmap != nullptr ? data.unmap (data.handle, urid)
+                                     : std::string();
+    }
+
+    /** @see unmap */
+    std::string operator() (const uint32_t urid) const { return this->unmap (urid); }
+};
 
 /** Adds URID `map` and `unmap` to your instance
     @ingroup urid

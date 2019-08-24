@@ -122,7 +122,8 @@ def build (bld):
     if bld.env.TESTS:
         bld.program (
             features = 'cxx cxxprogram',
-            source   = bld.path.ant_glob ('tests/**/*.cpp'),
+            source   = bld.path.ant_glob ('tests/**/*.cpp') + \
+                       [ 'examples/volume.cpp' ],
             name     = 'testlvtk',
             target   = 'testlvtk',
             use      = [ 'CPPUNIT' ],
