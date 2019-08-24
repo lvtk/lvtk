@@ -40,7 +40,7 @@ def options (opts):
     opts.load("compiler_c compiler_cxx lv2 autowaf")
     autowaf.set_options (opts)
     
-    opts.add_option('--enable-tests', default=False, \
+    opts.add_option('--tests', default=False, \
         dest="tests", action='store_true', help='Build the test suite')
     opts.add_option('--disable-ui', default=False, \
         dest="disable_ui", action='store_true', help='Disable Building UI libraries')
