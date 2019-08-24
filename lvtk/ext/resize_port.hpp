@@ -25,7 +25,7 @@
 
 namespace lvtk {
 
-/** Adds a Logger `log` to your instance
+/** Adds Port Resize support
     @ingroup resize_port
     @headerfile lvtk/ext/resize_port.hpp
 */
