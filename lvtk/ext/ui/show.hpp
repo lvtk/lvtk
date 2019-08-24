@@ -16,10 +16,6 @@
 
 #pragma once
 
-/** @defgroup show
-    UI Show Interface implementation
-*/
-
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 #include <lvtk/ext/ui/idle.hpp>
 
@@ -28,8 +24,8 @@ namespace lvtk {
 /** Adds LV2UI_Show support to your UI instance.  This interface inherits 
     from Idle. In other words, don't use Idle + Show together, just use Show.
     
-    @ingroup show
-    @headerfile lvtk/ext/show.hpp
+    @ingroup ui
+    @headerfile lvtk/ext/ui/show.hpp
  */
 template<class I>
 struct Show : Idle<I>

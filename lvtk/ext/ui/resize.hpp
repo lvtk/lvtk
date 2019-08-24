@@ -14,10 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup resize UI Resize
-    Resizing plugin UIs
-*/
-
 #pragma once
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
@@ -26,8 +22,8 @@
 namespace lvtk {
 
 /** Support for UI Resizing
-    @ingroup resize
     @headerfile lvtk/ext/ui/resize.hpp
+    @ingroup ui
 */
 template<class I> 
 struct Resize : Extension<I>

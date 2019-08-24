@@ -27,20 +27,20 @@ namespace lvtk {
 
 /** Alias of LV2_State_Flags
     @ingroup state
-    @headerfile lvtk/state_functions.hpp
+    @headerfile lvtk/ext/state.hpp
 */
 using StateFlags = LV2_State_Flags;
 
 /** Alias of LV2_State_Status
     @ingroup state
-    @headerfile lvtk/state_functions.hpp
+    @headerfile lvtk/ext/state.hpp
  */
 using StateStatus = LV2_State_Status;
 
 /** Wrapper struct for state retrieval. This wraps an
     LV2_State_Retrieve_Function and exeucutes via operator () 
     @ingroup state
-    @headerfile lvtk/state_functions.hpp
+    @headerfile lvtk/ext/state.hpp
  */
 struct StateRetrieve {
     StateRetrieve (LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
@@ -70,7 +70,7 @@ private:
 /** Wrapper struct for state storage. This wraps an
     LV2_State_Store_Function and exeucutes via operator () 
     @ingroup state
-    @headerfile lvtk/state_functions.hpp
+    @headerfile lvtk/ext/state.hpp
  */
 struct StateStore {
     StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)

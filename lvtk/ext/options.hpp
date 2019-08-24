@@ -26,26 +26,26 @@
 namespace lvtk {
 
 /** Alias to `LV2_Options_Option`
-    @headerfile lvtk/option.hpp
+    @headerfile lvtk/ext/options.hpp
     @ingroup options
 */
 using Option = LV2_Options_Option;
 
 /** Equivalent to LV2_Options_Context
-    @headerfile lvtk/option.hpp
+    @headerfile lvtk/ext/options.hpp
     @ingroup options
 */
 using OptionsContext = LV2_Options_Context;
 
 /** Equivalent to LV2_Options_Status 
-    @headerfile lvtk/option.hpp
+    @headerfile lvtk/ext/options.hpp
     @ingroup options
 */
 using OptionsStatus = LV2_Options_Status;
 
 /** The LV2 Options Feature
  
-    @headerfile lvtk/option.hpp
+    @headerfile lvtk/ext/options.hpp
     @ingroup options
  */
 struct OptionsData final {

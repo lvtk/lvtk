@@ -54,9 +54,9 @@ struct InstanceHandle final {
         Handle p_handle { nullptr };
 };
 
-/** Adds LV2 Instance Access support to your UI    
-    @ingroup instance_access
-    @headerfile lvtk/ext/ui/instance_access.hpp
+/** Adds LV2 Instance Access support to your UI
+    @headerfile lvtk/ext/instance_access.hpp
+    @ingroup instance_access 
 */
 template<class I>
 struct InstanceAccess : NullExtension

@@ -14,10 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup resize UI Resize
-    Resizing plugin UIs
-*/
-
 #pragma once
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
@@ -26,8 +22,8 @@
 namespace lvtk {
 
 /** Support for UI Touch
-    @ingroup touch
-    @headerfile lvtk/ext/touch.hpp
+    @ingroup ui
+    @headerfile lvtk/ext/ui/touch.hpp
 */
 template<class I> 
 struct Touch : NullExtension

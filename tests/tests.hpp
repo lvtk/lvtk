@@ -3,14 +3,15 @@
 #include <cppunit/config/SourcePrefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <lvtk/ext/ui/data_access.hpp>
 #include <lvtk/ext/ui/idle.hpp>
-#include <lvtk/ext/ui/instance_access.hpp>
 #include <lvtk/ext/ui/resize.hpp>
 #include <lvtk/ext/ui/show.hpp>
 #include <lvtk/ext/ui/touch.hpp>
 
+#include <lvtk/ext/atom.hpp>
 #include <lvtk/ext/bufsize.hpp>
+#include <lvtk/ext/data_access.hpp>
+#include <lvtk/ext/instance_access.hpp>
 #include <lvtk/ext/log.hpp>
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/resize_port.hpp>
@@ -18,7 +19,7 @@
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/worker.hpp>
 
-#include <lvtk/ext/atom.hpp>
+
 #include <lvtk/option_array.hpp>
 #include <lvtk/plugin.hpp>
 #include <lvtk/ui.hpp>

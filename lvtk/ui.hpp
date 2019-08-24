@@ -14,13 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#pragma once
-
-#include <memory>
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
-#include <lvtk/lvtk.hpp>
-
-namespace lvtk {
 /** @defgroup ui UI
     Writing an LV2 UI
    
@@ -31,13 +24,25 @@ namespace lvtk {
     @include volume_ui.cpp
 
     @see @ref UI
-    @{ 
  */
 
-/** Vector of LV2UI_Descriptor's */
+#pragma once
+
+#include <memory>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lvtk/lvtk.hpp>
+
+namespace lvtk {
+/** Vector of LV2UI_Descriptor's
+    @headerfile lvtk/ui.hpp
+    @ingroup ui
+ */
 using UIDescriptors = DescriptorList<LV2UI_Descriptor>;
 
-/** Returns a global array of registered descriptors */
+/** Returns a global array of registered descriptors
+    @headerfile lvtk/ui.hpp
+    @ingroup ui
+*/
 static UIDescriptors& ui_descriptors() {
     static UIDescriptors s_desc;
     return s_desc;
@@ -48,6 +53,7 @@ static UIDescriptors& ui_descriptors() {
     This wraps LV2UI_Controller + LV2UI_Write_Function in a single
     Object
 
+    @ingroup ui
     @headerfile lvtk/ui.hpp
  */
 class Controller
@@ -81,7 +87,10 @@ private:
     LV2UI_Write_Function port_write = nullptr;
 };
 
-/** Parameters passed to UI instances */
+/** Parameters passed to UI instances
+    @headerfile lvtk/ui.hpp
+    @ingroup ui
+*/
 struct UIArgs
 {
     /** @private */
@@ -97,8 +106,8 @@ struct UIArgs
 };
 
 /** UI registration class
-    Create a static one of these to register the descriptor for UI instance type.
-
+    Create a static one of these to register the descriptor for UI instance type.    
+    @ingroup ui
     @headerfile lvtk/ui.hpp
  */
 template<class U>
@@ -147,6 +156,7 @@ private:
     @tparam S    Your super class
     @tparam E    List of Extension mixins
 
+    @ingroup ui
     @headerfile lvtk/ui.hpp
 */
 template<class S, template<class> class... E>
@@ -363,7 +373,6 @@ private:
     }
 };
 
-/* @} */
 }
 
 extern "C" {

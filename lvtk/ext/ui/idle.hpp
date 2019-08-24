@@ -14,10 +14,6 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup idle
-    UI Idle Interface implementation
-*/
-
 #pragma once
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
@@ -26,8 +22,8 @@
 namespace lvtk {
 
 /** Adds the idle interface to your UI instance
-    @ingroup idle
-    @headerfile lvtk/ext/idle.hpp
+    @headerfile lvtk/ext/ui/idle.hpp
+    @ingroup ui
  */
 template<class I>
 struct Idle : Extension<I>

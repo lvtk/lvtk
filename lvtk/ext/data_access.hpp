@@ -24,11 +24,10 @@
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-/* @{ */
 /** An LV2_Extension_Data_Feature function wrapper
  
     Use these on the stack and call set_feature() passing the appropriate feature.
-    @headerfile lvtk/instance_data.hpp
+    @headerfile lvtk/ext/data_access.hpp
     @ingroup data_access
 */
 struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
@@ -56,7 +55,8 @@ struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
 };
 
 /** Give access to plugin extension data to your @ref UI
-    @headerfile lvtk/ext/ui/data_access.hpp
+    @headerfile lvtk/ext/data_access.hpp
+    @ingroup data_access
 */
 template<class I>
 struct DataAccess : NullExtension

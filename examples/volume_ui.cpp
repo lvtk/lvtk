@@ -1,8 +1,8 @@
 
 #include <lvtk/ui.hpp>
 #include <lvtk/ext/urid.hpp>
-#include <lvtk/ext/ui/data_access.hpp>
-#include <lvtk/ext/ui/instance_access.hpp>
+#include <lvtk/ext/data_access.hpp>
+#include <lvtk/ext/instance_access.hpp>
 #include <lvtk/ext/ui/resize.hpp>
 
 #include <juce/gui_basics.h>

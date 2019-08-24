@@ -69,7 +69,7 @@ using WorkerStatus = LV2_Worker_Status;
     the work method on your Instance
 
     @ingroup worker
-    @headerfile lvtk/scheduler.hpp
+    @headerfile lvtk/ext/worker.hpp
  */
 struct WorkerRespond
 {
@@ -103,7 +103,7 @@ private:
     directly. @see @ref Worker
 
     @ingroup worker
-    @headerfile lvtk/scheduler.hpp
+    @headerfile lvtk/ext/worker.hpp
  */
 struct WorkerSchedule : FeatureData<LV2_Worker_Schedule> {
     WorkerSchedule() : FeatureData (LV2_WORKER__schedule) {}

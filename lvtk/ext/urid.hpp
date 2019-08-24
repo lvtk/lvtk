@@ -26,7 +26,7 @@
 namespace lvtk {
 
 /** LV2_URID_Map wrapper
-    @headerfile lvtk/map.hpp
+    @headerfile lvtk/ext/urid.hpp
     @ingroup urid
  */
 class Map : public FeatureData<LV2_URID_Map>
@@ -49,7 +49,7 @@ public:
 };
 
 /** LV2_URID_Unmap wrapper
-    @headerfile lvtk/unmap.hpp
+    @headerfile lvtk/ext/urid.hpp
     @ingroup urid
  */
 class Unmap : public FeatureData<LV2_URID_Unmap>

@@ -32,7 +32,7 @@ namespace lvtk {
     during instantiation. @see @ref BufSize
 
     @ingroup bufsize
-    @headerfile lvtk/buffer_details.hpp
+    @headerfile lvtk/ext/bufsize.hpp
  */
 struct BufferDetails final {
     bool bounded            = false;
