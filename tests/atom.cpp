@@ -41,14 +41,14 @@ protected:
         CPPUNIT_ASSERT_EQUAL ((bool) atom, false);
         CPPUNIT_ASSERT_EQUAL (atom.c_obj(), (const LV2_Atom*) nullptr);
 
-        const LV2_Atom_Float afloat = { { sizeof(float), 1 }, 100.f };
+        const LV2_Atom_Float afloat = { { sizeof(float), urids.map(LV2_ATOM__Float) }, 100.f };
         atom = lvtk::Atom ((void*) &afloat);
-        CPPUNIT_ASSERT (atom.has_type_and_equals (1, 100.f));
+        CPPUNIT_ASSERT (atom.has_type_and_equals (urids.map(LV2_ATOM__Float), 100.f));
         CPPUNIT_ASSERT (atom.total_size() == sizeof(float) + sizeof (*atom.c_obj()));
         CPPUNIT_ASSERT (atom.size() == sizeof (float));
-        CPPUNIT_ASSERT (atom.type() == 1);
+        CPPUNIT_ASSERT (atom.type() == urids.map(LV2_ATOM__Float));
 
-        const LV2_Atom_Float bfloat = { { sizeof(float), 1 }, 101.f };
+        const LV2_Atom_Float bfloat = { { sizeof(float), urids.map(LV2_ATOM__Float) }, 101.f };
         lvtk::Atom batom ((void*) &bfloat);
         CPPUNIT_ASSERT (atom != batom);
         batom = atom;
