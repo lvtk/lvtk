@@ -346,34 +346,29 @@ struct Sequence
 
     /** Insert an AtomEvent into the middle of the sequence
         
-        Method is currently disabled, until further testing can be performed
-
         @param ev The event to insert 
      */
     inline void insert (const AtomEvent& ev)
     {
-       #if 0
         auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
-        const uint32_t evsize = lv2_atom_pad_size (total_size);
-        AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
+        AtomEvent* e = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
         LV2_ATOM_SEQUENCE_FOREACH (sequence, iter)
         {
             if (iter->time.frames > ev.time.frames)
             {
-                memmove ((uint8_t*) iter, ((uint8_t*) iter) + evsize
-                         (uint8_t*) pos - (uint8_t*) iter);
-                pos = iter;
+                memmove (((uint8_t*) iter) + lv2_atom_pad_size ((uint32_t) sizeof(*iter) + iter->body.size),
+                         (uint8_t*) iter,
+                         (uint8_t*) e - (uint8_t*) iter);
+                e = iter;
                 break;
             }
         }
 
-        if (pos)
+        if (e)
         {
-            
-            memcpy (pos, &ev, total_size);
-            sequence.atom.size += evsize;
+            memcpy (e, &ev, total_size);
+            sequence->atom.size += lv2_atom_pad_size (total_size);
         }
-       #endif
     }
 
     /** @private */

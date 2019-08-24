@@ -111,6 +111,28 @@ protected:
         }
 
         CPPUNIT_ASSERT_EQUAL (nev, cnt);
+        
+        event->body.size = 3;
+        event->body.type = 111;
+        event->time.frames = 10;
+        seq.insert (*event);
+        cnt = 0;
+        frame = 0;
+        for (const auto& ev : seq) {
+            if (cnt == 1) {
+                CPPUNIT_ASSERT_EQUAL ((uint32_t) 111, ev.body.type);
+                CPPUNIT_ASSERT_EQUAL ((int64_t) 10, ev.time.frames);
+                frame += 10;
+            } else {
+                CPPUNIT_ASSERT_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
+                CPPUNIT_ASSERT_EQUAL ((uint32_t)3, ev.body.size);
+                CPPUNIT_ASSERT_EQUAL (frame, ev.time.frames);
+                frame += cnt == 0 ? 10 : 20;
+            }
+            ++cnt;
+        }
+
+        CPPUNIT_ASSERT_EQUAL (nev + 1, cnt);
     }
 };
 
