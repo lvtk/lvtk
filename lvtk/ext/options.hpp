@@ -15,7 +15,7 @@
 */
 
 /** @defgroup options Options 
-    LV2 Options support
+    Dealing with LV2 Options
 */
 
 #pragma once
@@ -39,7 +39,6 @@ struct Options : Extension<I>
                 break;
     }
 
-protected:
     /** @returns Options provided by the host or nullptr if not available */
     const Option* host_options() const { return m_host_options.get_options(); }
 
@@ -65,6 +64,7 @@ protected:
      */
     uint32_t set (const Option* options) const { return OPTIONS_SUCCESS; }
 
+protected:
     /** @private */
     inline static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_Options_Interface _options = { _get, _set };

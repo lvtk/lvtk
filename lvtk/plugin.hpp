@@ -18,27 +18,11 @@
  
     Writing an LV2 Plugin
    
-    Plugin descriptors are registered on the stack at the global scope.
-    For example...
-    
-    @code
-        using MyPlugin = lvtk::Plugin<MyInstance>;
-        
-        static MyPlugin my_plugin (
-            LVTK_SILENCE_URI,           //< MyPlugin's URI String
-            {                            
-                LV2_URID__map,          //< List of required host features
-                LV2_WORKER__schedule
-            }
-        );
-    @endcode
+    Plugin descriptors are registered on the stack at the global scope. First
+    make a sublcass of @ref Plugin, then register it with @ref Descriptor.
 
-    If you are using this library in a host, include individual
-    headers from the ext directory.
-
-    Same policy for the interface directory, including anything
-    there will result in a mess of compiler errors.  Interfaces
-    are for implementing features on a plugin instance only
+    <h3>Example</h3>
+    @include "volume.cpp"
     @{
 */
 
@@ -60,13 +44,12 @@ static PluginDescriptors& descriptors() {
     return s_descriptors;
 }
 
-/** Registers a plugin instance of type @em`I`
+/** Registers a plugin instance of type @em`P`
         
     Create a static one of these to register your plugin instance type.
     
     @code
-        using MyPlugin = lvtk::Plugin<MyInstance>;
-        static MyPlugin my_plugin (
+        static lvtk::Descriptor<MyPlugin> my_plugin (
             MY_PLUGIN_URI,           //< MyPlugin's URI String
             {                            
                 LV2_URID__map,       //< List of required host features
@@ -76,12 +59,12 @@ static PluginDescriptors& descriptors() {
     @endcode
 
     @headerfile lvtk/plugin.hpp
-    @see @ref Instance
+    @see @ref Plugin
  */
-template<class I>
-class Plugin final
+template<class P>
+class Descriptor final
 {
-public:    
+public:
     /** Plugin registration with required host features
         
         @param plugin_uri   The URI string of your plugin
@@ -89,66 +72,197 @@ public:
                             to provide any of these, instantiate will return
                             a nullptr
      */
-    Plugin (const char* plugin_uri, const std::vector<std::string>& required) {
+    Descriptor (const char* plugin_uri, const std::vector<std::string>& required) {
         for (const auto& req : required)
-            Plugin<I>::required().push_back (req);
-        register_instance (plugin_uri);
+            P::required().push_back (req);
+        register_plugin (plugin_uri);
     }
 
     /** Plugin Registation without required host features        
         @param plugin_uri   The URI string of your plugin
      */
-    Plugin (const char* plugin_uri) {
-        register_instance (plugin_uri);
+    Descriptor (const char* plugin_uri) {
+        register_plugin (plugin_uri);
     }
 
-    ~Plugin() = default;
-
-    /** Helper to register plugin extension data but not have to implement
-        the a mixin interface.
-
-        @param uri      The uri of your feature.
-        @param data     Pointer to static extension data.
-     */
-    static void register_extension (const std::string& uri, const void* data) {
-        extensions()[uri] = data;
-    }
+    ~Descriptor() = default;
 
 private:    
-    inline void register_instance (const char* uri) {
+    inline void register_plugin (const char* uri) {
         LV2_Descriptor desc;
         desc.URI            = strdup (uri);
-        desc.instantiate    = _instantiate;
-        desc.connect_port   = _connect_port;
-        desc.activate       = _activate;
-        desc.run            = _run;
-        desc.deactivate     = _deactivate;
-        desc.cleanup        = _cleanup;
-        desc.extension_data = _extension_data;
+        desc.instantiate    = P::_instantiate;
+        desc.activate       = P::_activate;
+        desc.connect_port   = P::_connect_port;
+        desc.run            = P::_run;
+        desc.deactivate     = P::_deactivate;
+        desc.cleanup        = P::_cleanup;
+        desc.extension_data = P::_extension_data;
         descriptors().push_back (desc);
-
-        auto& extmap = extensions();
-        I::map_extension_data (extmap);
+        P::initialize_extensions();
     }
+};
+
+
+/** Arguments passed to a @ref Plugin "plugin" instance */
+struct Args
+{
+    /** @private */
+    Args() : sample_rate(0.0), bundle(), features() {}
+    /** @private */
+    Args (double r, const std::string& b, const FeatureList& f)
+        : sample_rate (r), bundle (b), features (f) { }
+
+    double sample_rate;     /**< Sample Rate */
+    std::string bundle;     /**< Bundle Path */
+    FeatureList features;   /**< Host provided features */
+};
+
+/** A template base class for LV2 plugin instances. Default implementations 
+    exist for most methods, so you only have to implement @ref connect_port() 
+    and @ref run().
+    
+    The signature of subclass must match the one in the example code below. The 
+    @c args should be used in your constructor to get "details" about instantiation.
+
+    Since this is a template, simulated dynamic binding is used for the callbacks. 
+    When using @ref Extension "Extensions" no vtable lookups are invoked, like normal 
+    dynamic binding would.
+
+    <h3>Copy Audio Example</h3>
+    @code
+        #include <cstring>
+        #include <lvtk/plugin.hpp>
+
+        using namespace lvtk;
+
+        class CopyAudio : public Plugin<CopyAudio>
+        {
+        public:
+            CopyAudio (const Args& args) : Instance (args) { }
+
+            void connect_port (uint32_t port, void* data) {
+                audio[port] = data;
+            }
+
+            void run (uint32_t sample_count) {
+                std::memcpy (audio[1], audio[0], sample_count * sizeof (float));
+            }
+        
+        private:
+            float* audio[2];
+        };
+
+        // Register a descriptor for this plugin type
+        static Descriptor<CopyAudio> copyaudio ("http://lvtoolkit.org/plugins/CopyAudio");
+
+    @endcode
+
+    If the above code is compiled into a shared module, it could form the binary 
+    part of a fully functional LV2 plugin with one audio input port and one audio 
+    output port that just copies the input to the output.
+
+    You can extend your instance by passing @ref Extension "Extensions" as 
+    template parameters to Instance (second template parameter and onwards).
+    
+    @tparam S   Your super class
+    @tparam E   List of Extension mixins
+
+    @see \ref BufSize, \ref Log, \ref Options, \ref ResizePort, \ref State, 
+         \ref URID, \ref Worker,
+
+    @headerfile lvtk/plugin.hpp
+    @ingroup plugin
+ */
+template<class S, template<class> class... E>
+class Plugin : public E<S>...
+{
+protected:
+    /** Default constructor not allowed */
+    Plugin() = delete;
+
+    /** Plugin with Arguments.
+      
+        @param args  Arguments created during instantiation.  Your subclass
+                     must pass the @ref Args here
+     */
+    explicit Plugin (const Args& args) : E<S> (args.features)... {}
+
+public:
+    ~Plugin() = default;
+
+    /** Override this function if you need to do anything on activation.
+        This is always called before the host starts using the @ref run() 
+        function. You should reset your plugin to it's initial state here. 
+     */
+    void activate() {}
+
+    /** Override this to connect to your own port buffers.
+
+        Remember that if you want your plugin to be realtime safe this function
+        may not block, allocate memory or otherwise take a long time to return.
+
+        @param port The index of the port to connect.
+        @param data The buffer to connect it to.
+     */
+    void connect_port (uint32_t port, void* data) {}
+
+    /** This is the process callback which should fill all output port buffers.
+        You most likely want to override it - the default implementation does
+        nothing.
+        
+        Remember that if you want your plugin to be realtime safe, this function
+        may not block, allocate memory or take more than `sample_count` time
+        to execute.
+        
+        @param sample_count The number of audio frames to process.
+     */
+    void run (uint32_t sample_count) {}
+
+    /** Override this function if you need to do anything on deactivation.
+        The host calls this when it does not plan to make any more calls to
+        @ref run() unless it calls @ref activate() again.
+     */
+    void deactivate() {}
+
+    /** Override this to handle cleanup. Is called immediately before the 
+        instance is deleted.  You only need to implement this if you'd like 
+        to do something special before the destructor.
+     */
+    void cleanup() {}
+
+    /** Override this to add custom extension data without having to implement
+        an @ref Extension mixin.  Also, it will be called after the the mixins,
+        so if needed you can effectively override mixin extension data.
+     */
+    static void map_extension_data (ExtensionMap&) {}
+
+private:
+    friend class Descriptor<S>; // so this can be private
 
     inline static ExtensionMap& extensions() {
-        static ExtensionMap s_extensions;  
-        return s_extensions; 
+        static ExtensionMap s_extensions;
+        return s_extensions;
     }
 
-    inline static std::vector<std::string>& required() 
-    {
+    inline static void initialize_extensions() {
+        using pack_context = std::vector<int>;
+        pack_context { (E<S>::map_extension_data (extensions()), 0)... };
+        S::map_extension_data (extensions());
+    }
+
+    inline static std::vector<std::string>& required()  {
         static std::vector<std::string> s_required;
         return s_required;
     }
 
-    static LV2_Handle _instantiate (const struct _LV2_Descriptor * descriptor,
-	                                double                         sample_rate,
-	                                const char *                   bundle_path,
-	                                const LV2_Feature *const *     features)
+    inline static LV2_Handle _instantiate (const struct _LV2_Descriptor* descriptor,
+                                           double                        sample_rate,
+                                           const char*                   bundle_path,
+                                           const LV2_Feature *const*     features)
     {
-        Args args (sample_rate, bundle_path, features);
-        auto instance = std::unique_ptr<I> (new I (args));
+        const Args args (sample_rate, bundle_path, features);
+        auto instance = std::unique_ptr<S> (new S (args));
 
         for (const auto& rq : required()) {
             bool provided = false;
@@ -161,48 +275,42 @@ private:
 
         return static_cast<LV2_Handle> (instance.release());
     }
-    
-    /** @internal */
-    static void _connect_port (LV2_Handle handle, uint32_t port, void* data) {
-        (static_cast<I*> (handle))->connect_port (port, data);
+
+    inline static void _activate (LV2_Handle handle) {
+        (static_cast<S*> (handle))->activate();
     }
 
-    /** @internal */
-    static void _activate (LV2_Handle handle) { 
-        (static_cast<I*> (handle))->activate();
+    inline static void _connect_port (LV2_Handle handle, uint32_t port, void* data) { 
+        (static_cast<S*> (handle))->connect_port (port, data); 
     }
 
-    /** @internal */
-    static void _run (LV2_Handle handle, uint32_t sample_count) {
-        (static_cast<I*> (handle))->run (sample_count);
+    inline static void _run (LV2_Handle handle, uint32_t sample_count) {
+        (static_cast<S*> (handle))->run (sample_count);
     }
-    
-    /** @internal */
+
     inline static void _deactivate (LV2_Handle handle) {
-        (static_cast<I*> (handle))->deactivate();
+        (static_cast<S*> (handle))->deactivate();
     }
 
-    /** @internal */
     inline static void _cleanup (LV2_Handle handle) {
-        (static_cast<I*> (handle))->cleanup();
-        delete static_cast<I*> (handle);
+        (static_cast<S*> (handle))->cleanup();
+        delete static_cast<S*> (handle);
     }
 
-    /** @internal */
     inline static const void* _extension_data (const char* uri) {
         auto e = extensions().find (uri);
         return e != extensions().end() ? e->second : nullptr;
     }
 };
+
 /* @} */
 }
-
-#include <lvtk/instance.hpp>
 
 extern "C" {
 
 #ifndef LVTK_NO_SYMBOL_EXPORT
 
+/** @private */
 LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor (uint32_t index) {
     return (index < lvtk::descriptors().size())
         ? &lvtk::descriptors()[index] : NULL;

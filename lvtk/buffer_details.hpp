@@ -22,9 +22,9 @@
 
 namespace lvtk {
 
-/** Description of buffer details
+/** Description of buffer information.
     
-    Used by the BufSize interface to automatically scan for buffer information
+    Used by the @ref BufSize extension to automatically scan for buffer details
     during instantiation. @see @ref BufSize
 
     @ingroup bufsize
@@ -38,10 +38,8 @@ struct BufferDetails final {
     uint32_t max_length     = 0;
     uint32_t sequence_size  = 0;
 
-    /** Update with a Feature
-     
-        Sets bufsize:boundedBlockLength, bufsize:powerOf2BlockLength, or 
-        bufsize:fixedBlockLength if the Feature's URI matches.
+    /** Update with a Feature. Sets `bounded`, `power_of_two`, or `fixed` if 
+        the Feature's URI matches.
      */
     void update_with (const Feature& feature)
     {
@@ -54,10 +52,8 @@ struct BufferDetails final {
         }
     }
 
-    /** Update with options
-        
-        Updates bufsize:minBlockLength, bufsize:maxBlockLength, and
-        bufsize:sequenceSize if found in the Options array
+    /** Update with Options. Updates `min_length`, `max_length`, and 
+        `sequence_size` if found in the Options array
 
         @param map      Map for getting required LV2_URIDs
         @param options  The Options array to scan

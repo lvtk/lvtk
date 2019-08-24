@@ -15,7 +15,39 @@
 */
 
 /** @defgroup worker Worker 
-    LV2 Worker support
+    Scheduling work.
+    <h3>Example</h3>
+    @code
+        #include <lvtk/plugin.hpp>
+        #include <lvtk/ext/worker.hpp>
+
+        using namespace lvtk;
+        
+        class WorkPlugin : public Plugin<WorkPlugin, Worker> {
+        public:
+            WorkPlugin (const Args& args) : Plugin (args) {}
+
+            void run (uint32_t nframes) {
+                // schedule some work. This just writes a string which isn't that useful
+                schedule_work ("workmsg", strlen("workmsg") + 1);
+            }
+
+            WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { 
+                // perform work
+                // send responses with @c respond
+                return WORKER_SUCCESS; 
+            }
+
+            WorkerStatus work_response (uint32_t size, const void* body) {
+                // handle responses send in @c work
+                return WORKER_SUCCESS;
+            }
+
+            WorkerStatus end_run() {
+                // optional: do anything needed at the end of the run cycle    
+            }
+        };
+    @endcode
 */
 
 #pragma once
@@ -28,6 +60,7 @@ namespace lvtk {
 /** Adds LV2 worker support to your instance. Add this to your instance's
     Mixin list to activate it.
 
+    @headerfile lvtk/ext/worker.hpp
     @ingroup worker
 */
 template<class I> 
@@ -36,8 +69,8 @@ struct Worker : Extension<I>
     /** @private */
     Worker (const FeatureList& features) { 
         for (const auto& f : features)
-            if (strcmp (f.URI, LV2_WORKER__schedule) == 0)
-                { schedule.set_feature (f); break; }
+            if (schedule.set_feature (f))
+                break;
     }
 
     /** Schedule work with the host
@@ -64,6 +97,7 @@ struct Worker : Extension<I>
     WorkerStatus end_run() { return WORKER_SUCCESS; }
 
 protected:
+    /** @private */
     static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_Worker_Interface _worker = { _work, _work_response, _end_run  };
         dmap[LV2_WORKER__interface] = &_worker;

@@ -15,7 +15,7 @@
 */
 
 /** @defgroup data_access Data Access 
-    LV2 Data Access support
+    Access to plugin extension data
 */
 
 #pragma once
@@ -25,7 +25,9 @@
 
 namespace lvtk {
 /* @{ */
-/** Give access to plugin extension data to your @ref UIInstance */
+/** Give access to plugin extension data to your @ref UI
+    @headerfile lvtk/ext/data_access.hpp
+*/
 template<class I>
 struct DataAccess : NullExtension
 {

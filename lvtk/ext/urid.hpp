@@ -15,7 +15,7 @@
 */
 
 /** @defgroup urid URID 
-    LV2 URID support
+    Working with URIDs
 */
 
 #pragma once
@@ -28,6 +28,7 @@ namespace lvtk {
 
 /** Adds URID `map` and `unmap` to your instance
     @ingroup urid
+    @headerfile lvtk/ext/urid.hpp
 */
 template<class I> 
 struct URID : NullExtension
@@ -46,8 +47,14 @@ struct URID : NullExtension
     }
 
 protected:
-    /** Use this logger to log messages with the host. @see Logger */
+    /** The Map is exposed as protected function object. You can call it as such. 
+        e.g. `map ("http://someuri.com/#somekey");`
+     */
     Map map;
+
+    /** The Unmap is exposed as protected function object. You can call it as such. 
+        e.g. `unmap (a_mapped_uri_int);`
+     */
     Unmap unmap;
 };
 

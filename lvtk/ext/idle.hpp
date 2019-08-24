@@ -14,7 +14,9 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-
+/** @defgroup idle
+    UI Idle Interface implementation
+*/
 
 #pragma once
 
@@ -23,19 +25,22 @@
 
 namespace lvtk {
 
-/** Adds idle interface to your UI instance
-    @ingroup ui
+/** Adds the idle interface to your UI instance
+    @ingroup idle
+    @headerfile lvtk/ext/idle.hpp
  */
 template<class I>
 struct Idle : Extension<I>
 {
     /** @private */
-    Idle (const FeatureList&) { }
+    Idle (const FeatureList&) {}
 
     /** Called repeatedly by the host to drive your UI.  Return non-zero
         to stop receiving callbacks.
-    */
-    inline int idle() { return 0; }
+        
+        @returns one by default, so you must override this to be useful.
+     */
+    inline int idle() { return 1; }
 
 protected:
     inline static void map_extension_data (ExtensionMap& dmap) {
@@ -47,5 +52,4 @@ private:
     static int _idle (LV2UI_Handle ui) { return (static_cast<I*> (ui))->idle(); }
 };
 
-/* @} */
 }

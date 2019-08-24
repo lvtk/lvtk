@@ -37,9 +37,7 @@ struct NoInstance {};
     and/or call methods on the Instance 
  */
 struct NullExtension : Extension<NoInstance> {
-    /** Dummy extension data handler for interfaces which do not
-        provide extension data. @see BufSize
-     */
+    /** @private */
     inline static void map_extension_data (ExtensionMap&) {}
 };
 

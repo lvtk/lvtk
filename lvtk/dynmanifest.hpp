@@ -16,12 +16,37 @@
 
 /** @defgroup dynmanifest Dynamic Manifest 
     Dynamic Manifest support
+
+    <h3>Example</h3>
+    @code
+
+        #include <lvtk/dynmanifest.hpp>
+
+        class MyManifest : public lvtk::DynManifest {
+        public:
+            bool get_subjects (std::stringstream& lines) override {
+                lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
+                      << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
+                      << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
+                return true;
+            }
+    
+            bool get_data (const std::string& uri, std::vector<std::string>& lines) override {
+                lines << "doap:name \"My Plugin\" ;" << std::endl;
+                return true;
+            }
+        };
+
+        DynManifestHandle lvtk_create_dyn_manifest() {
+            return new MyManifest();
+        }
+
+    @endcode
 */
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
-#include <lv2/dynmanifest/dynmanifest.h>
+#include <lv2/lv2plug.in/ns/ext/dynmanifest/dynmanifest.h>
 #include <sstream>
 #include <cstdio>
 
@@ -40,15 +65,17 @@ public:
     virtual ~DynManifest() = default;
 
     /** Get the subjects
-        @param lines    Add each line to this string vector
+        @param lines    Add each line to this stream
+        @return false if problems getting subjects
      */
-    virtual void get_subjects (std::vector<std::string>& lines) =0;
+    virtual bool get_subjects (std::stringstream& lines) =0;
 
-    /** Get the subjects
+    /** Get the data
         @param uri      The subject URI to get data for
-        @param lines    Add each line to this string vector
+        @param lines    Add each line to this stream
+        @return false if problems getting data
      */
-    virtual void get_data (const std::string& uri, std::vector<std::string>& lines) =0;
+    virtual bool get_data (std::stringstream& lines, const std::string& uri) =0;
 };
 
 /** Write a string vector `lines` as lines to `FILE` 
@@ -58,20 +85,24 @@ public:
 
     @ingroup dynmanifest
 */
-static void write_lines (const std::vector<std::string>& lines, FILE* fp) {
-    for (const auto& l : lines) {
-        std::string line = l + "\n";
-        fwrite (line.c_str(), sizeof(char), line.size(), fp);
-    }
+static void write_lines (const std::stringstream& lines, FILE* fp) {
+    const auto data = lines.str();
+    fwrite (data.c_str(), sizeof(char), data.size(), fp);
 }
 
 }
+
+/** Alias of LV2_Dyn_Manifest_Handle
+    @ingroup dynmanifest
+    @headerfile lvtk/dynmanifest.hpp
+ */
+using DynManifestHandle = LV2_Dyn_Manifest_Handle;
 
 /** Implement this and return your subclassed @ref DynManifest object
     @ingroup dynmanifest
     @headerfile lvtk/dynmanifest.hpp
 */
-lvtk::DynManifest* lvtk_create_dyn_manifest();
+DynManifestHandle lvtk_create_dyn_manifest();
 
 extern "C" {
 
@@ -79,7 +110,9 @@ extern "C" {
 LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle *handle, const LV2_Feature *const *features)
 {
-    auto* manifest = lvtk_create_dyn_manifest();
+    auto* const manifest = lvtk_create_dyn_manifest();
+    if (nullptr == manifest)
+        return 1;
     *handle = static_cast<LV2_Dyn_Manifest_Handle> (manifest);
     return 0;
 }
@@ -89,8 +122,9 @@ LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
-    std::vector<std::string> lines;
-    manifest->get_subjects (lines);
+    std::stringstream lines;
+    if (! manifest->get_subjects (lines))
+        return 1;
     lvtk::write_lines (lines, fp);
     return 0;
 }
@@ -100,8 +134,9 @@ LV2_SYMBOL_EXPORT
 int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const char *uri)
 {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
-    std::vector<std::string> lines;
-    manifest->get_data (uri, lines);
+    std::stringstream lines;
+    if (! manifest->get_data (lines, uri))
+        return 1;
     lvtk::write_lines (lines, fp);
     return 0;
 }

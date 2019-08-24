@@ -40,7 +40,7 @@ def options (opts):
     opts.load("compiler_c compiler_cxx lv2 autowaf")
     autowaf.set_options (opts)
     
-    opts.add_option('--enable-tests', default=False, \
+    opts.add_option('--tests', default=False, \
         dest="tests", action='store_true', help='Build the test suite')
     opts.add_option('--disable-ui', default=False, \
         dest="disable_ui", action='store_true', help='Disable Building UI libraries')
@@ -137,6 +137,9 @@ def build (bld):
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
 
 def check (ctx):
+    if not os.path.exists ('build/testlvtk'):
+        ctx.fatal ("Tests were not compiled")
+        return
     if 0 != call ('build/testlvtk'):
         ctx.fatal ("Tests Failed")
 

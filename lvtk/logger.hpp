@@ -37,8 +37,8 @@ struct Logger : FeatureData<LV2_Log_Log> {
 
     /** Log log:Trace with stream operator */
     inline void operator<< (const char* out) const { 
-        if (log_Trace > 0)
-            this->printf (log_Trace, out);
+        if (Trace > 0)
+            this->printf (Trace, out);
     }
     
     /** Log message with va_list 
@@ -75,19 +75,19 @@ struct Logger : FeatureData<LV2_Log_Log> {
      */
     inline void init (LV2_URID_Map* const map)
     {
-        log_Entry   = map->map (map->handle, LV2_LOG__Entry);
-        log_Error   = map->map (map->handle, LV2_LOG__Error);
-        log_Note    = map->map (map->handle, LV2_LOG__Note);
-        log_Trace   = map->map (map->handle, LV2_LOG__Trace);
-        log_Warning = map->map (map->handle, LV2_LOG__Warning);
+        Entry   = map->map (map->handle, LV2_LOG__Entry);
+        Error   = map->map (map->handle, LV2_LOG__Error);
+        Note    = map->map (map->handle, LV2_LOG__Note);
+        Trace   = map->map (map->handle, LV2_LOG__Trace);
+        Warning = map->map (map->handle, LV2_LOG__Warning);
     }
 
 private:
-    uint32_t log_Entry = 0;
-    uint32_t log_Error = 0;
-    uint32_t log_Note  = 0;
-    uint32_t log_Trace = 0;
-    uint32_t log_Warning = 0;
+    uint32_t Entry = 0;
+    uint32_t Error = 0;
+    uint32_t Note  = 0;
+    uint32_t Trace = 0;
+    uint32_t Warning = 0;
 };
 
 }

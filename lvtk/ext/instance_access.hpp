@@ -15,7 +15,7 @@
 */
 
 /** @defgroup instance_access Instance Access 
-    LV2 Instance Access support
+    Access to the plugin instance
 */
 
 #pragma once
@@ -26,6 +26,7 @@
 namespace lvtk {
 /** Adds LV2 Instance Access support to your UI    
     @ingroup instance_access
+    @headerfile lvtk/ext/instance_access.hpp
 */
 template<class I>
 struct InstanceAccess : NullExtension

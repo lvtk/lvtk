@@ -15,7 +15,7 @@
 */
 
 /** @defgroup state State
-    LV2 State support
+    Save and restore state
 */
 
 #pragma once
@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds LV2 State support to your plugin instance
     @ingroup state
+    @headerfile lvtk/ext/state.hpp
 */
 template<class I>
 struct State : Extension<I>
@@ -34,7 +35,7 @@ struct State : Extension<I>
     /** @private */
     State (const FeatureList&) {}
 
-    /** Called by the host to save state
+    /** Called by the host when saving state
      
         @param store    Store function object to write keys/values
         @param flags    State flags to check
@@ -42,7 +43,7 @@ struct State : Extension<I>
     */
     StateStatus save (StateStore &store, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
 
-    /** Called by the host to restore state
+    /** Called by the host when restoring state
      
         @param retrieve Retrieve function object to get keys/values
         @param flags    State flags to check
@@ -51,7 +52,7 @@ struct State : Extension<I>
     StateStatus restore (StateRetrieve &retrieve, uint32_t flags, const FeatureList &features) {  return STATE_SUCCESS; }
 
 protected:
-    /** @internal */
+    /** @private */
     inline static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_State_Interface _state =  { _save, _restore };
         dmap[LV2_STATE__interface] = &_state;

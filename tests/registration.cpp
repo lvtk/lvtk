@@ -4,8 +4,6 @@
 // include examples. order matters!
 #include "../examples/volume.cpp"
 
-using TestFixutre = CPPUNIT_NS::TestFixture;
-
 class Registration : public TestFixutre
 {
   CPPUNIT_TEST_SUITE (Registration);

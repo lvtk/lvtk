@@ -63,10 +63,11 @@ private:
     LV2_Worker_Respond_Function       p_wrfunc;
 };
 
-/** Schedule jobs with the host
+/** Schedule jobs with the host.
 
     This wraps LV2_Worker_Schedule.  Used by the Worker interface to add
-    `schedule_work` to a plugin instance
+    `schedule_work` to a plugin instance.  You shouldn't need to use it
+    directly. @see @ref Worker
 
     @ingroup worker
     @headerfile lvtk/scheduler.hpp

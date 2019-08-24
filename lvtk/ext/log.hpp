@@ -20,13 +20,14 @@
 #include <lvtk/logger.hpp>
 
 /** @defgroup log Log
-    LV2 Log support
+    Logging support
 */
 
 namespace lvtk {
 
-/** Adds a @ref Logger `log` to your instance
+/** Adds a @ref Logger `log` to your instance.
     @ingroup log
+    @headerfile lvtk/ext/log.hpp
 */
 template<class I> 
 struct Log : NullExtension

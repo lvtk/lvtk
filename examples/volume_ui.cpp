@@ -37,13 +37,9 @@ public:
     Slider slider;
 };
 
-class VolumeUI : public UIInstance<VolumeUI, URID, DataAccess, InstanceAccess> {
-    uint32_t midi_MidiEvent = 0;
-
+class VolumeUI : public UI<VolumeUI, URID, DataAccess, InstanceAccess> {
 public:
-    VolumeUI (const UIArgs& args)
-        : UIInstance (args)
-    {
+    VolumeUI (const UIArgs& args) : UI (args) {
         midi_MidiEvent = map ("http://lv2plug.in/ns/ext/midi#MidiEvent");
         if (auto* const instance = plugin_instance())
             std::clog << "VolumeUI got the plugin instance\n";
@@ -65,13 +61,14 @@ public:
             widget->slider.setValue (*(float*) data, dontSendNotification);
         }
     }
-    
+
     LV2UI_Widget get_widget() {
         return (LV2UI_Widget) widget.get();
     }
 
 private:
     std::unique_ptr<VolumeComponent> widget;
+    uint32_t midi_MidiEvent = 0;
 };
 
-static const UI<VolumeUI> volume_ui (LVTK_VOLUME_UI_URI);
+static const UIDescriptor<VolumeUI> volume_ui (LVTK_VOLUME_UI_URI);

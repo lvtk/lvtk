@@ -15,7 +15,7 @@
 */
 
 /** @defgroup resize_port Resize Port 
-    LV2 Resize Port support
+    Resizing plugin ports
 */
 
 #pragma once
@@ -27,6 +27,7 @@ namespace lvtk {
 
 /** Adds a Logger `log` to your instance
     @ingroup resize_port
+    @headerfile lvtk/ext/resize_port.hpp
 */
 template<class I> 
 struct ResizePort : NullExtension
@@ -39,6 +40,7 @@ struct ResizePort : NullExtension
         }
     }
 
+    /** Call this to request the host resize a port */
     inline ResizePortStatus resize_port (uint32_t index, uint32_t size) {
         return resizer.resize (index, size);
     }
