@@ -137,6 +137,9 @@ def build (bld):
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
 
 def check (ctx):
+    if not os.path.exists ('build/testlvtk'):
+        ctx.fatal ("Tests were not compiled")
+        return
     if 0 != call ('build/testlvtk'):
         ctx.fatal ("Tests Failed")
 
