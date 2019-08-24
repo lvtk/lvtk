@@ -7,6 +7,9 @@
 #include <lvtk/ext/ui/resize.hpp>
 #include <lvtk/ext/ui/show.hpp>
 #include <lvtk/ext/ui/touch.hpp>
+#include <lvtk/ext/ui/parent.hpp>
+#include <lvtk/ext/ui/port_map.hpp>
+#include <lvtk/ext/ui/port_subscribe.hpp>
 
 #include <lvtk/ext/atom.hpp>
 #include <lvtk/ext/bufsize.hpp>
@@ -18,7 +21,6 @@
 #include <lvtk/ext/state.hpp>
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/worker.hpp>
-
 
 #include <lvtk/option_array.hpp>
 #include <lvtk/plugin.hpp>

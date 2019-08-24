@@ -20,34 +20,38 @@
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
-
-/** Support for UI Touch
+/** Support for UI Port Subscribe
     @ingroup ui
-    @headerfile lvtk/ext/ui/touch.hpp
+    @headerfile lvtk/ext/ui/port_subscribe.hpp
 */
 template<class I> 
-struct Touch : NullExtension
+struct PortSubscribe : NullExtension
 {
     /** @private */
-    Touch (const FeatureList& features) { 
+    PortSubscribe (const FeatureList& features) {
         for (const auto& f : features) {
-            if (f == LV2_UI__touch) {
-                ui_touch = *(LV2UI_Touch*) f.data;
+            if (f == LV2_UI__portSubscribe) {
+                port_subscribe = *(LV2UI_Port_Subscribe*) f.data;
                 break;
             }
         }
     }
 
-    /** Call this to notify the host of gesture changes.
-        @returns non-zero on error
-     */
-    void touch (uint32_t port, bool grabbed) {
-        if (ui_touch.handle != nullptr)
-            ui_touch.touch (ui_touch.handle, port, grabbed);
+    uint32_t subscribe (uint32_t port, uint32_t protocol, const LV2_Feature *const *features) const {
+        return (port_subscribe.handle != nullptr)
+            ? port_subscribe.subscribe (port_subscribe.handle, port, protocol, features)
+            : 1;
+    }
+
+    uint32_t unsubscribe (uint32_t port, uint32_t protocol, const LV2_Feature *const *features) const {
+        return (port_subscribe.handle != nullptr)
+            ? port_subscribe.unsubscribe (port_subscribe.handle, port, protocol, features)
+            : 1;
     }
 
 private:
-    LV2UI_Touch ui_touch = { nullptr, nullptr };
+    LV2UI_Port_Subscribe port_subscribe { nullptr, nullptr, nullptr };
 };
+
 
 }

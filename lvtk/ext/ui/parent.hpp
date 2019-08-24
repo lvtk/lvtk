@@ -21,33 +21,28 @@
 
 namespace lvtk {
 
-/** Support for UI Touch
+/** Support for UI Parent
     @ingroup ui
-    @headerfile lvtk/ext/ui/touch.hpp
+    @headerfile lvtk/ext/ui/parent.hpp
 */
 template<class I> 
-struct Touch : NullExtension
+struct Parent : NullExtension
 {
     /** @private */
-    Touch (const FeatureList& features) { 
+    Parent (const FeatureList& features) { 
         for (const auto& f : features) {
-            if (f == LV2_UI__touch) {
-                ui_touch = *(LV2UI_Touch*) f.data;
+            if (f == LV2_UI__parent) {
+                parent_widget = (LV2UI_Widget) f.data;
                 break;
             }
         }
     }
 
-    /** Call this to notify the host of gesture changes.
-        @returns non-zero on error
-     */
-    void touch (uint32_t port, bool grabbed) {
-        if (ui_touch.handle != nullptr)
-            ui_touch.touch (ui_touch.handle, port, grabbed);
-    }
+    /** Returns the parent widget if provided by the host */
+    LV2UI_Widget parent() const { return parent_widget; }
 
 private:
-    LV2UI_Touch ui_touch = { nullptr, nullptr };
+    LV2UI_Widget parent_widget = nullptr;
 };
 
 }

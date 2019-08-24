@@ -4,6 +4,7 @@
 #include <lvtk/ext/data_access.hpp>
 #include <lvtk/ext/instance_access.hpp>
 #include <lvtk/ext/ui/resize.hpp>
+#include <lvtk/ext/ui/touch.hpp>
 
 #include <juce/gui_basics.h>
 
@@ -38,7 +39,7 @@ public:
     Slider slider;
 };
 
-class VolumeUI : public UI<VolumeUI, DataAccess, InstanceAccess, Resize> {
+class VolumeUI : public UI<VolumeUI, DataAccess, InstanceAccess, Resize, Touch> {
 public:
     VolumeUI (const UIArgs& args) : UI (args) {
         if (auto* const instance = plugin_instance())

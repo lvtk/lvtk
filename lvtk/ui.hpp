@@ -168,23 +168,8 @@ protected:
 
     /** A UI with Arguments */
     explicit UI (const UIArgs& args)
-        : E<S> (args.features)...,
-          controller (args.controller)
-    {
-        for (const auto& f : args.features) {
-            if (f == LV2_UI__parent) {
-                parent_widget = (LV2UI_Widget) f.data;
-            } else if (f == LV2_UI__portSubscribe) {
-                subscribe = *(LV2UI_Port_Subscribe*) f.data;
-            } else if (f == LV2_UI__touch) {
-                ui_touch = *(LV2UI_Touch*) f.data;
-            } else if (f == LV2_UI__resize) {
-                resize = *(LV2UI_Resize*) f.data;
-            } else if (f == LV2_UI__portMap) {
-                port_map = *(LV2UI_Port_Map*) f.data;
-            }
-        }
-    }
+        : E<S> (args.features)..., controller (args.controller)
+    {}
 
 public:
     virtual ~UI() = default;
@@ -226,75 +211,6 @@ public:
         write (port, sizeof (float), 0, &value);
     }
 
-    /** Port index map (optional) 
-
-        Only returns valid port indexes if the host provides LV2UI_Port_Map
-        during instantiation.
-
-        @param symbol   The symbol to return an index for
-    */
-    uint32_t port_index (const std::string& symbol) const {
-        if (port_map.port_index)
-            return port_map.port_index (port_map.handle, symbol.c_str());
-        return LV2UI_INVALID_PORT_INDEX;
-    }
-
-    /** Subscribe to port notifications (optional)
-        
-        This method works only if the host provides LV2UI_Port_Subscribe
-        during instantiation
-
-        @param port
-        @param protocol
-        @param features
-     */
-    void port_subscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
-        LV2_Feature* f [features.size() + 1];
-        for (int i = 0; i < features.size(); ++i)
-            f[i] = (LV2_Feature*)(&features[i]);
-        f[features.size()] = nullptr;
-
-        if (subscribe.subscribe)
-            subscribe.subscribe (subscribe.handle, port, protocol, f);
-    }
-
-    /** Unsubscribe from port notifications (optional)
-        
-        This method works only if the host provides LV2UI_Port_Subscribe
-        during instantiation
-
-        @param port
-        @param protocol
-        @param features
-     */
-    void port_unsubscribe (uint32_t port, uint32_t protocol, const FeatureList& features = FeatureList()) {
-        LV2_Feature* f [features.size() + 1];
-        for (int i = 0; i < features.size(); ++i)
-            f[i] = (LV2_Feature*)(&features[i]);
-        f[features.size()] = nullptr;
-    
-        if (subscribe.unsubscribe)
-            subscribe.unsubscribe (subscribe.handle, port, protocol, f);
-    }
-
-    /** Call UI touch on the host.  If not provided in features,
-        this will do nothing and is safe to call when the host doesn't
-        provide the feature
-     */
-    void touch (uint32_t port, bool grabbed) {
-        if (ui_touch.handle != nullptr)
-            ui_touch.touch (ui_touch.handle, port, grabbed);
-    }
-
-    /** Call this to notify the host your UI's size 
-        @returns non-zero on error
-     */
-    int notify_size (int width, int height) {
-        return (resize.handle != nullptr)
-            ? resize.ui_resize (resize.handle, width, height)
-            : 1;
-    }
-
 protected:
     /** Controller access. This is handy if you want to use port-writing
         in client code, but not necessarily expose your UI class
@@ -302,12 +218,6 @@ protected:
     const Controller controller;
 
 private:
-    LV2UI_Widget parent_widget = nullptr;
-    LV2UI_Port_Subscribe subscribe { nullptr, nullptr, nullptr };
-    LV2UI_Port_Map port_map { nullptr, nullptr };
-    LV2UI_Touch ui_touch = { 0, 0 };
-    LV2UI_Resize resize = { 0, 0 };
-
     friend class UIDescriptor<S>; // so this can be private
     
     inline static ExtensionMap& extensions() {

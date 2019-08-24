@@ -21,33 +21,31 @@
 
 namespace lvtk {
 
-/** Support for UI Touch
+/** Support for UI Port Map
     @ingroup ui
-    @headerfile lvtk/ext/ui/touch.hpp
+    @headerfile lvtk/ext/ui/port_map.hpp
 */
 template<class I> 
-struct Touch : NullExtension
+struct PortMap : NullExtension
 {
     /** @private */
-    Touch (const FeatureList& features) { 
+    PortMap (const FeatureList& features) {
         for (const auto& f : features) {
-            if (f == LV2_UI__touch) {
-                ui_touch = *(LV2UI_Touch*) f.data;
+            if (f == LV2_UI__portMap) {
+                port_map = *(LV2UI_Port_Map*) f.data;
                 break;
             }
         }
     }
 
-    /** Call this to notify the host of gesture changes.
-        @returns non-zero on error
-     */
-    void touch (uint32_t port, bool grabbed) {
-        if (ui_touch.handle != nullptr)
-            ui_touch.touch (ui_touch.handle, port, grabbed);
+    uint32_t port_index (const std::string& symbol) const {
+        return (port_map.handle != nullptr)
+            ? port_map.port_index (port_map.handle, symbol.c_str())
+            : LV2UI_INVALID_PORT_INDEX;
     }
 
 private:
-    LV2UI_Touch ui_touch = { nullptr, nullptr };
+    LV2UI_Port_Map port_map { nullptr, nullptr };
 };
 
 }
