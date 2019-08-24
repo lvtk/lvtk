@@ -350,12 +350,9 @@ struct Sequence
      */
     inline void insert (const AtomEvent& ev)
     {
-        auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
         AtomEvent* e = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
-        LV2_ATOM_SEQUENCE_FOREACH (sequence, iter)
-        {
-            if (iter->time.frames > ev.time.frames)
-            {
+        LV2_ATOM_SEQUENCE_FOREACH (sequence, iter) {
+            if (iter->time.frames > ev.time.frames) {
                 memmove (((uint8_t*) iter) + lv2_atom_pad_size ((uint32_t) sizeof(*iter) + iter->body.size),
                          (uint8_t*) iter,
                          (uint8_t*) e - (uint8_t*) iter);
@@ -364,8 +361,8 @@ struct Sequence
             }
         }
 
-        if (e)
-        {
+        if (e) {
+            auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
             memcpy (e, &ev, total_size);
             sequence->atom.size += lv2_atom_pad_size (total_size);
         }
