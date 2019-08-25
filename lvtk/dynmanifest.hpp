@@ -26,18 +26,18 @@
         public:
             bool get_subjects (std::stringstream& lines) override {
                 lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
-                      << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
-                      << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
+                        << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
+                        << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
                 return true;
             }
-    
-            bool get_data (const std::string& uri, std::vector<std::string>& lines) override {
+
+            bool get_data (std::stringstream& lines, const std::string& uri) override {
                 lines << "doap:name \"My Plugin\" ;" << std::endl;
                 return true;
             }
         };
 
-        DynManifestHandle lvtk_create_dyn_manifest() {
+        void* lvtk_create_dyn_manifest() {
             return new MyManifest();
         }
 
@@ -92,17 +92,11 @@ static bool write_lines (const std::stringstream& lines, FILE* fp) {
 
 }
 
-/** Alias of LV2_Dyn_Manifest_Handle
-    @ingroup dynmanifest
-    @headerfile lvtk/dynmanifest.hpp
- */
-using DynManifestHandle = LV2_Dyn_Manifest_Handle;
-
 /** Implement this and return your subclassed @ref DynManifest object
     @ingroup dynmanifest
     @headerfile lvtk/dynmanifest.hpp
 */
-DynManifestHandle lvtk_create_dyn_manifest();
+static void* lvtk_create_dyn_manifest();
 
 extern "C" {
 

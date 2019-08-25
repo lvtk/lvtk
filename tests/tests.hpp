@@ -22,6 +22,7 @@
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/ext/worker.hpp>
 
+#include <lvtk/lvtk.hpp>
 #include <lvtk/option_array.hpp>
 #include <lvtk/plugin.hpp>
 #include <lvtk/ui.hpp>
