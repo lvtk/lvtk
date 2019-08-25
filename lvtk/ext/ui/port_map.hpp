@@ -20,6 +20,19 @@
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
+/** Port index function. LV2_UI__portMap wrapper
+    <http://lv2plug.in/ns/extensions/ui#portMap>
+    @headerfile lvtk/ext/ui/port_map.hpp
+    @ingroup ui
+*/
+struct PortIndex : FeatureData<LV2UI_Port_Map> {
+    PortIndex() : FeatureData (LV2_UI__portMap) {}
+    /** Call the port index function */
+    inline uint32_t operator() (const std::string& symbol) const {
+        return (data != nullptr) ? data->port_index (data->handle, symbol.c_str())
+                                 : LV2UI_INVALID_PORT_INDEX;
+    }
+};
 
 /** Support for UI Port Map
     @ingroup ui
@@ -30,23 +43,23 @@ struct PortMap : NullExtension
 {
     /** @private */
     PortMap (const FeatureList& features) {
-        for (const auto& f : features) {
-            if (f == LV2_UI__portMap) {
-                port_map = *(LV2UI_Port_Map*) f.data;
+        for (const auto& f : features)
+            if (port_index.set (f))
                 break;
-            }
-        }
     }
 
-    /** Returns a port index for a symbol */
-    uint32_t port_index (const std::string& symbol) const {
-        return (port_map.handle != nullptr)
-            ? port_map.port_index (port_map.handle, symbol.c_str())
-            : LV2UI_INVALID_PORT_INDEX;
-    }
+protected:
+    /** Returns a port index for a symbol, or LV2UI_INVALID_PORT_INDEX
+        if not found. It is a function object, so....
+        @code
+        // ...
+        
+        const auto index = port_index ("port_symbol");
 
-private:
-    LV2UI_Port_Map port_map { nullptr, nullptr };
+        // ...
+        @endcode
+     */
+    PortIndex port_index;
 };
 
 }

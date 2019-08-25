@@ -79,15 +79,15 @@ struct BufferDetails final {
         `sequence_size` if found in the Option array
 
         @param map      Map for getting required LV2_URIDs
-        @param options  The Options array to scan and MUST be valid with a
+        @param options  The Options array to scan. MUST be valid with a
                         zeroed option at the end.
      */
     void apply_options (Map& map, const Option* options)
     {
-        uint32_t minlen   = map (LV2_BUF_SIZE__minBlockLength);
-        uint32_t maxlen   = map (LV2_BUF_SIZE__maxBlockLength);
-        uint32_t seq_size = map (LV2_BUF_SIZE__sequenceSize);
-        uint32_t nomkey   = map (LV2_BUF_SIZE__nominalBlockLength);
+        uint32_t minkey = map (LV2_BUF_SIZE__minBlockLength);
+        uint32_t maxkey = map (LV2_BUF_SIZE__maxBlockLength);
+        uint32_t seqkey = map (LV2_BUF_SIZE__sequenceSize);
+        uint32_t nomkey = map (LV2_BUF_SIZE__nominalBlockLength);
         
         for (uint32_t i = 0;;++i)
         {
@@ -95,11 +95,11 @@ struct BufferDetails final {
             if (opt.key == 0 || opt.value == nullptr)
                 break;
 
-            if (minlen == opt.key)
+            if (minkey == opt.key)
                 min = *(uint32_t*) opt.value;
-            else if (maxlen == opt.key)
+            else if (maxkey == opt.key)
                 max = *(uint32_t*) opt.value;
-            else if (seq_size == opt.key)
+            else if (seqkey == opt.key)
                 sequence_size = *(uint32_t*) opt.value;
             else if (nomkey == opt.key)
                 nominal = *(uint32_t*) opt.value;

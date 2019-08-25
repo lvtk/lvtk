@@ -31,17 +31,18 @@ struct Resize : Extension<I>
     /** @private */
     Resize (const FeatureList& features) {
         if (auto* data = features.data (LV2_UI__resize))
-            resize = *(LV2UI_Resize*) data;
+            resize = (LV2UI_Resize*) data;
     }
     
-    /** Notify host of size change */
+    /** Called from the <em>plugin</em> to notify the host of size change
+        @returns non-zero on error
+     */
     int notify_size (int width, int height) {
-        return (resize.handle != nullptr)
-            ? resize.ui_resize (resize.handle, width, height)
-            : 1;
+        return (resize != nullptr) ? resize->ui_resize (resize->handle, width, height)
+                                   : 1;
     }
 
-    /** Called by the host to request a new UI size
+    /** Called by the <em>host</em> to request a new UI size
         @return non-zero on error
      */
     int size_requested (int width, int height) { return 0; }
@@ -54,7 +55,7 @@ protected:
     }
 
 private:
-    LV2UI_Resize resize = { nullptr, nullptr };
+    LV2UI_Resize* resize = nullptr;
     inline static int _ui_resize (LV2UI_Feature_Handle handle, int width, int height) {
         return (static_cast<I*>(handle))->size_requested (width, height);
     }

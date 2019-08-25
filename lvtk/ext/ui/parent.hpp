@@ -21,14 +21,17 @@
 
 namespace lvtk {
 
-/** Parent feature */
+/** Parent feature
+    @headerfile lvtk/ext/ui/parent.hpp
+    @ingroup ui
+*/
 struct ParentWidget final : FeatureData<LV2UI_Widget, LV2UI_Widget> {
     ParentWidget() : FeatureData (LV2_UI__parent) {}
 };
 
 /** Support for UI Parent
-    @ingroup ui
     @headerfile lvtk/ext/ui/parent.hpp
+    @ingroup ui
 */
 template<class I> 
 struct Parent : NullExtension
@@ -41,6 +44,20 @@ struct Parent : NullExtension
     }
 
 protected:
+    /** Returns the parent widget, or nullptr if not found. 
+        It is a function object and also has a bool() operator, so....
+        @code
+        // ...
+        
+        if (parent) {
+            auto* widget = reinterpret_cast<WidgetType*> (parent())
+            // do something with the parent widget, WidgetType* above
+            // would be an object of whatever toolkit you're using.
+        }
+
+        // ...
+        @endcode
+     */
     ParentWidget parent;
 };
 

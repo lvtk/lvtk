@@ -32,7 +32,7 @@ struct Touch : NullExtension
     Touch (const FeatureList& features) { 
         for (const auto& f : features) {
             if (f == LV2_UI__touch) {
-                ui_touch = *(LV2UI_Touch*) f.data;
+                ui_touch = (LV2UI_Touch*) f.data;
                 break;
             }
         }
@@ -42,12 +42,12 @@ struct Touch : NullExtension
         @returns non-zero on error
      */
     void touch (uint32_t port, bool grabbed) {
-        if (ui_touch.handle != nullptr)
-            ui_touch.touch (ui_touch.handle, port, grabbed);
+        if (ui_touch != nullptr)
+            ui_touch->touch (ui_touch->handle, port, grabbed);
     }
 
 private:
-    LV2UI_Touch ui_touch = { nullptr, nullptr };
+    LV2UI_Touch* ui_touch = nullptr;
 };
 
 }
