@@ -38,6 +38,7 @@ struct PortMap : NullExtension
         }
     }
 
+    /** Returns a port index for a symbol */
     uint32_t port_index (const std::string& symbol) const {
         return (port_map.handle != nullptr)
             ? port_map.port_index (port_map.handle, symbol.c_str())

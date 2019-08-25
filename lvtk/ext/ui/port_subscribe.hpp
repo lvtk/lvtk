@@ -37,12 +37,14 @@ struct PortSubscribe : NullExtension
         }
     }
 
+    /** Subscribe to port events */
     uint32_t subscribe (uint32_t port, uint32_t protocol, const LV2_Feature *const *features) const {
         return (port_subscribe.handle != nullptr)
             ? port_subscribe.subscribe (port_subscribe.handle, port, protocol, features)
             : 1;
     }
 
+    /** Unsubscribe from port events */
     uint32_t unsubscribe (uint32_t port, uint32_t protocol, const LV2_Feature *const *features) const {
         return (port_subscribe.handle != nullptr)
             ? port_subscribe.unsubscribe (port_subscribe.handle, port, protocol, features)

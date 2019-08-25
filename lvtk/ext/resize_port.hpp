@@ -35,8 +35,7 @@ using ResizePortStatus = LV2_Resize_Port_Status;
     @headerfile lvtk/ext/resize_port.hpp
  */
 struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
-    /** ctor */
-    PortResizer() : FeatureData<LV2_Resize_Port_Resize> (LV2_RESIZE_PORT__resize) {}
+    PortResizer() : FeatureData (LV2_RESIZE_PORT__resize) {}
 
     /** Resize a port buffer to at least @a size bytes.
 
