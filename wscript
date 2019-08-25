@@ -91,7 +91,7 @@ def configure (conf):
 
 def build (bld):
     if not bld.env.EXAMPLES_DISABLED:
-        for subdir in ['examples']:
+        for subdir in ['plugins']:
             bld.recurse (subdir)
             bld.add_group()
     
@@ -123,7 +123,7 @@ def build (bld):
         bld.program (
             features = 'cxx cxxprogram',
             source   = bld.path.ant_glob ('tests/**/*.cpp') + \
-                       [ 'examples/volume.cpp' ],
+                       [ 'plugins/volume.cpp' ],
             name     = 'testlvtk',
             target   = 'testlvtk',
             use      = [ 'CPPUNIT' ],
@@ -136,6 +136,7 @@ def build (bld):
     bld.install_files(header_base+"/lvtk", "build/version.h")
     bld.install_files(header_base+"/lvtk", bld.path.ant_glob("lvtk/*.*"))
     bld.install_files(header_base+"/lvtk/ext", bld.path.ant_glob("lvtk/ext/*.*"))
+    bld.install_files(header_base+"/lvtk/ext/ui", bld.path.ant_glob("lvtk/ext/ui/*.*"))
 
 def check (ctx):
     if not os.path.exists ('build/testlvtk'):

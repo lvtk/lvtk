@@ -19,13 +19,13 @@ if buildme:
 	examples = [ "volume" ]
 	first_plugin = True
 
-	bundle = 'lvtk-examples.lv2'
+	bundle = 'lvtk-plugins.lv2'
 	install_dir = os.path.join (bld.env.LV2DIR, bundle)
 	module_pat = re.sub('^lib', '', bld.env.cxxshlib_PATTERN)
 	module_ext = module_pat[module_pat.rfind('.'):]
 	plugin_env = bld.env.derive()
 	ui_env = bld.env.derive()
-	plugin_env.cxxshlib_PATTERN = module_pat
+	plugin_env.cxxshlib_PATTERN = ui_env.cxxshlib_PATTERN = module_pat
 
 	for slug in examples:
 		if first_plugin:
