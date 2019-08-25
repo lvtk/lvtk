@@ -24,6 +24,7 @@ if buildme:
 	module_pat = re.sub('^lib', '', bld.env.cxxshlib_PATTERN)
 	module_ext = module_pat[module_pat.rfind('.'):]
 	plugin_env = bld.env.derive()
+	ui_env = bld.env.derive()
 	plugin_env.cxxshlib_PATTERN = module_pat
 
 	for slug in examples:
@@ -67,7 +68,7 @@ if buildme:
 						includes      = [ "../build/examples"],
 						use           = [ 'GTKMM2', 'LV2' ],
 						install_path  = install_dir,
-						env  		  = plugin_env
+						env  		  = ui_env
 					)
 			elif slug == 'volume':
 				if bool(bld.env.HAVE_JUCE_GUI_BASICS):
@@ -78,5 +79,5 @@ if buildme:
 						includes      = [ "../build/examples"],
 						use           = [ 'JUCE_GUI_BASICS', 'LV2' ],
 						install_path  = install_dir,
-						env  		  = plugin_env
+						env  		  = ui_env
 					)
