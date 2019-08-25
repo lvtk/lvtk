@@ -68,21 +68,21 @@ public:
     }
 
     /** Add an option. Does nothing if data is referenced */
-    void add (const Option& option) {
-        add (option.context, option.subject, option.key,
-             option.size, option.type, option.value);
+    OptionArray& add (const Option& option) {
+        return add (option.context, option.subject, option.key,
+                    option.size, option.type, option.value);
     }
 
     /** Add an option. Does nothing if data is referenced */
-    void add (OptionsContext        context,
-              uint32_t              subject, 
-              LV2_URID              key,
-              uint32_t              size, 
-              LV2_URID              type,
-              const void*           value)
+    OptionArray& add (OptionsContext        context,
+                      uint32_t              subject, 
+                      LV2_URID              key,
+                      uint32_t              size, 
+                      LV2_URID              type,
+                      const void*           value)
     {
         if (! allocated)
-            return;
+            return *this;
         opts = (Option*) realloc (opts, ++count * sizeof (Option));
         memset (&opts[count - 1], 0, sizeof (Option));
         auto& opt = opts [count - 2];
@@ -92,18 +92,19 @@ public:
         opt.size        = size;
         opt.type        = type;
         opt.value       = value;
+        return *this;
     }
 
     /** Returns the number of options stored excluding the zeroed end
         option as per LV2 specifications
      */
-    uint32_t size() const { return count - 1; }
+    size_type size() const { return count - 1; }
 
     /** Returns true if empty */
     bool empty() const { return size() == 0; }
 
     /** Access to Ctype LV2_Options_Option* array */
-    const Option* c_obj() const { return opts; }
+    const_pointer c_obj() const { return opts; }
 
     /** @private */
     struct iterator
