@@ -478,14 +478,7 @@ public:
     inline void pop (ForgeFrame& frame) {
         lv2_atom_forge_pop (this, &frame);
     }
-
-    /** Pop a forge frame
-        @param frame The frame to pop
-    */
-    inline void pop_frame (ForgeFrame& frame) {
-        lv2_atom_forge_pop (this, &frame);
-    }
-
+    
     /** Write an atom header
 
         @param size The atom's body size
