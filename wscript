@@ -97,7 +97,7 @@ def build (bld):
     
     bld (
         features    = 'subst',
-        source      = 'lvtk.lv2/manifest.ttl',
+        source      = 'manifest.ttl',
         target      = 'lvtk.lv2/manifest.ttl',
         install_path = os.path.join (bld.env.LV2DIR, 'lvtk.lv2')
     )
