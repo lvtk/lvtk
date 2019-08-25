@@ -31,27 +31,8 @@ namespace lvtk {
     @headerfile lvtk/ext/instance_access.hpp
     @ingroup instance_access
 */
-struct InstanceHandle final {
-    /** ctor */
-    InstanceHandle() = default;
-
-    /** Get the plugin instance
-        @returns The LV2 plugin instance handle or nullptr if not available
-     */
-    Handle handle() const { return p_handle; }
-
-    /** Assign the LV2_Handle by LV2 Feature */
-    bool set (const Feature& feature) {
-        if (strcmp (LV2_INSTANCE_ACCESS_URI, feature.URI) == 0) {
-            p_handle = reinterpret_cast<Handle> (feature.data);
-            return true;
-        }
-        return false;
-    }
-
-    private:
-        /** @internal Feature Data passed from host */
-        Handle p_handle { nullptr };
+struct InstanceHandle final : FeatureData<Handle, Handle> {
+    InstanceHandle() : FeatureData (LV2_INSTANCE_ACCESS_URI) {}
 };
 
 /** Adds LV2 Instance Access support to your UI
@@ -64,15 +45,15 @@ struct InstanceAccess : NullExtension
     /** @private */
     InstanceAccess (const FeatureList& features) {
         for (const auto& f : features)
-            if (m_instance.set (f))
+            if (instance.set (f))
                 break;
     }
 
     /** @returns the LV2_Handle of the plugin if available, otherwise nullptr */
-    Handle plugin_instance() const { return m_instance.handle(); }
+    Handle plugin_instance() const { return instance.get(); }
 
 private:
-    InstanceHandle m_instance;
+    InstanceHandle instance;
 };
 
 }

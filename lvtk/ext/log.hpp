@@ -33,7 +33,7 @@ namespace lvtk {
  */
 struct Logger : FeatureData<LV2_Log_Log> {
     /** ctor */
-    Logger() : FeatureData<LV2_Log_Log> (LV2_LOG__log) {}
+    Logger() : FeatureData (LV2_LOG__log) {}
 
     /** Log a log:Trace message with stream operator */
     inline void operator<< (const std::string& out) const { operator<< (out.c_str()); }

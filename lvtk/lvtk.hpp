@@ -133,12 +133,17 @@ struct FeatureList final : public std::vector<Feature>
     Typically these are used to facilitate features provided by the host 
     during plugin instantiation or in host-side callbacks to the plugin.
 
-    @see @ref Scheduler, @ref Map, @ref Unmap, @ref Logger
+    @tparam D   The data type
+    @tparam P   The data's pointer type. Usefull to set P = D
+                when D itself is a pointer.
+                
+    @see @ref WorkerSchedule, @ref Map, @ref Unmap, @ref Logger
  */
-template<class D>
+template<class D, class P = D*>
 struct FeatureData
 {
     using data_t        = D;
+    using data_ptr_t    = P;
 
     /** A uri for this data */
     const std::string URI;
@@ -158,24 +163,31 @@ public:
     inline bool is_for (const Feature& feature) const { return feature == URI; }
 
     /** @returns a pointer to the underlying data_t */
-    inline data_t* get() const { return data; }
-
-    /** Castable to `data_t*` */
-    inline operator data_t*() const { return get(); }
+    inline data_ptr_t get() const { return data; }
 
     /** Sets the data from a feature
         @param feature  The Feature to check and set
      */
     inline bool set (const Feature& feature) {
-        if (is_for (feature)) {
-            data = (data_t*) feature.data;
-            return true;
-        }
-        return false;
+        if (! is_for (feature))
+            return false;
+        data = (data_ptr_t) feature.data;
+        return true;
     }
 
+    /** false if the data ptr is null */
+    inline operator bool() const { return data != nullptr; }
+
+    /** castable to `data_ptr_t` */
+    inline operator data_ptr_t() const { return data; }
+
+    /** Call as function
+        @returns The data pointer
+     */
+    inline data_ptr_t operator()() const { return data; }
+
 protected:
-    data_t* data = nullptr;
+    data_ptr_t data = nullptr;
 };
 /* @} */
 }

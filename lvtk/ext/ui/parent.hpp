@@ -21,6 +21,10 @@
 
 namespace lvtk {
 
+struct ParentWidget : FeatureData<LV2UI_Widget, LV2UI_Widget> {
+    ParentWidget() : FeatureData (LV2_UI__parent) {}
+};
+
 /** Support for UI Parent
     @ingroup ui
     @headerfile lvtk/ext/ui/parent.hpp
@@ -29,20 +33,14 @@ template<class I>
 struct Parent : NullExtension
 {
     /** @private */
-    Parent (const FeatureList& features) { 
-        for (const auto& f : features) {
-            if (f == LV2_UI__parent) {
-                parent_widget = (LV2UI_Widget) f.data;
+    Parent (const FeatureList& features) {
+        for (const auto& f : features)
+            if (parent.set (f))
                 break;
-            }
-        }
     }
 
-    /** Returns the parent widget if provided by the host */
-    LV2UI_Widget parent() const { return parent_widget; }
-
-private:
-    LV2UI_Widget parent_widget = nullptr;
+protected:
+    ParentWidget parent;
 };
 
 }

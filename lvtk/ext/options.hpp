@@ -48,32 +48,8 @@ using OptionsStatus = LV2_Options_Status;
     @headerfile lvtk/ext/options.hpp
     @ingroup options
  */
-struct OptionsData final {
-    OptionsData() = default;
-
-    /** Get the options passed by the host as an LV2_Feature
-
-        @note The options array MUST NOT be modified by the plugin instance
-        @return The options array or 0 if no options were supplied
-     */
-    const Option* get() const { return options; }
-
-    /** Assign options from a feature
-        @param feature  Should be a feature with LV2_OPTIONS__options
-                        as the URI.
-        
-        @returns True if the feature data was set
-     */
-    bool set (const Feature& feature) {
-        if (feature == LV2_OPTIONS__options) {
-            options = (Option*) feature.data;
-            return true;
-        }
-        return false;
-    }
-
-private:
-    Option* options = nullptr;
+struct OptionsData final : FeatureData<Option> {
+    OptionsData() : FeatureData (LV2_OPTIONS__options) {}
 };
 
 /** Adds support for LV2 options on your instance

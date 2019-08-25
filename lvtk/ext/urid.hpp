@@ -32,8 +32,8 @@ namespace lvtk {
 class Map : public FeatureData<LV2_URID_Map>
 {
 public:
-    Map() : FeatureData<LV2_URID_Map> (LV2_URID__map) {}
-    Map (const Feature& f) :FeatureData<LV2_URID_Map> (LV2_URID__map) {
+    Map() : FeatureData (LV2_URID__map) {}
+    Map (const Feature& f) : FeatureData (LV2_URID__map) {
         set (f);
     }
 
@@ -76,13 +76,10 @@ struct URID : NullExtension
 {
     /** @private */
     URID (const FeatureList& features) {
-        bool have_map = false, have_unmap = false;
         for (const auto& f : features) {
-            if (! have_map)
-                have_map = map.set (f);
-            if (! have_unmap)
-                have_unmap = unmap.set (f);
-            if (have_map && have_unmap)
+            if (! map)   map.set (f);
+            if (! unmap) unmap.set (f);
+            if (map && unmap)
                 break;
         }
     }

@@ -51,11 +51,10 @@ struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
         Plugins MAY resize a port many times in a single run callback.  Hosts
         SHOULD make this as inexpensive as possible.
      */
-    inline ResizePortStatus resize (uint32_t index, size_t size) const
+    inline ResizePortStatus operator() (uint32_t index, size_t size) const
     {
-        if (nullptr == data)
-            return LV2_RESIZE_PORT_ERR_UNKNOWN;
-        return data->resize (data->data, index, size);
+        return (nullptr == data) ? LV2_RESIZE_PORT_ERR_UNKNOWN
+                                 : data->resize (data->data, index, size);
     }
 };
 
@@ -69,18 +68,14 @@ struct ResizePort : NullExtension
     /** @private */
     ResizePort (const FeatureList& features) { 
         for (const auto& f : features) {
-            if (resizer.set (f))
+            if (resize_port.set (f))
                 break;
         }
     }
 
+protected:
     /** Call this to request the host resize a port */
-    inline ResizePortStatus resize_port (uint32_t index, uint32_t size) {
-        return resizer.resize (index, size);
-    }
-
-private:
-    PortResizer resizer;
+    PortResizer resize_port;
 };
 
 }
