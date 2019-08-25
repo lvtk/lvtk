@@ -24,68 +24,77 @@
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
 
-namespace lvtk {
+#ifndef LV2_BUF_SIZE__coarseBlockLength
+ #define LV2_BUF_SIZE__coarseBlockLength LV2_BUF_SIZE_PREFIX "coarseBlockLength"
+#endif
 
+namespace lvtk {
+/* @{ */
 /** Description of buffer information.
     
     Used by the @ref BufSize extension to automatically scan for buffer details
     during instantiation. @see @ref BufSize
 
-    @ingroup bufsize
     @headerfile lvtk/ext/bufsize.hpp
  */
 struct BufferDetails final {
-    bool bounded            = false;
-    bool fixed              = false;
-    bool power_of_two       = false;
-    uint32_t min_length     = 0;
-    uint32_t max_length     = 0;
-    uint32_t sequence_size  = 0;
+    bool bounded            = false;    /**< <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength> */
+    bool coarse             = false;    /**< <http://lv2plug.in/ns/ext/buf-size#coarseBlockLength> */
+    bool fixed              = false;    /**< <http://lv2plug.in/ns/ext/buf-size#fixedBlockLength> */
+    bool power_of_two       = false;    /**< <http://lv2plug.in/ns/ext/buf-size#powerOf2BlockLength> */
+    uint32_t min            = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
+    uint32_t max            = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
+    uint32_t nominal        = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
+    uint32_t sequence_size  = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
 
-    /** Update with a Feature. Sets `bounded`, `power_of_two`, or `fixed` if 
-        the Feature's URI matches.
+    /** Update with a Feature. Sets `bounded`, `power_of_two`, `coarse`, or 
+        `fixed` if the Feature's URI matches.
      */
     void update_with (const Feature& feature)
     {
-        if (strcmp (LV2_BUF_SIZE__boundedBlockLength, feature.URI) ==0) {
+        if (feature == LV2_BUF_SIZE__boundedBlockLength) {
             bounded = true;
-        } else if (strcmp (LV2_BUF_SIZE__powerOf2BlockLength, feature.URI) ==0) {
+        } else if (feature == LV2_BUF_SIZE__powerOf2BlockLength) {
             power_of_two = true;
-        } else if (strcmp (LV2_BUF_SIZE__fixedBlockLength, feature.URI) ==0) {
+        } else if (feature == LV2_BUF_SIZE__fixedBlockLength) {
             fixed = true;
+        } else if (feature == LV2_BUF_SIZE__coarseBlockLength) {
+            coarse = true;
         }
     }
 
-    /** Update with Options. Updates `min_length`, `max_length`, and 
-        `sequence_size` if found in the Options array
+    /** Update with Options. Updates `min`, `max`, and `nominal`, and 
+        `sequence_size` if found in the Option array
 
         @param map      Map for getting required LV2_URIDs
-        @param options  The Options array to scan
+        @param options  The Options array to scan and MUST be valid with a
+                        zeroed option at the end.
      */
     void apply_options (Map& map, const Option* options)
     {
-        uint32_t min      (map (LV2_BUF_SIZE__minBlockLength));
-        uint32_t max      (map (LV2_BUF_SIZE__maxBlockLength));
-        uint32_t seq_size (map (LV2_BUF_SIZE__sequenceSize));
+        uint32_t minlen   = map (LV2_BUF_SIZE__minBlockLength);
+        uint32_t maxlen   = map (LV2_BUF_SIZE__maxBlockLength);
+        uint32_t seq_size = map (LV2_BUF_SIZE__sequenceSize);
+        uint32_t nomkey   = map (LV2_BUF_SIZE__nominalBlockLength);
         
-        uint32_t i = 0;
-        for (;;)
+        for (uint32_t i = 0;;++i)
         {
-            const auto& opt = options [i++];
+            const auto& opt = options [i];
             if (opt.key == 0 || opt.value == nullptr)
                 break;
 
-            if (min == opt.key)
-                min_length = *(uint32_t*) opt.value;
-            if (max == opt.key)
-                max_length = *(uint32_t*) opt.value;
-            if (seq_size == opt.key)
+            if (minlen == opt.key)
+                min = *(uint32_t*) opt.value;
+            else if (maxlen == opt.key)
+                max = *(uint32_t*) opt.value;
+            else if (seq_size == opt.key)
                 sequence_size = *(uint32_t*) opt.value;
+            else if (nomkey == opt.key)
+                nominal = *(uint32_t*) opt.value;
         }        
     }
 };
 
-/* @{ */
 /** LV2 Buf Size support
     
     Scans for buffer information provided by the host, and populates a
@@ -100,7 +109,7 @@ struct BufSize : NullExtension
     /** @private */
     BufSize (const FeatureList& features)
     {
-        memset (&details, 0, sizeof (BufferDetails));
+        memset (&details, 0, sizeof(BufferDetails));
         Map map; OptionsData options;
         for (const auto& f : features)
         {

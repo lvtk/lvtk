@@ -28,10 +28,10 @@
     functionality to your plugin or UI.
     
     <b>Versioning</b><br>
-    This library is available as a header only, thus ABI stability is not an
-    issue. The API will be stable between major version bumps, at which the
-    pkg-config name would change to prevent plugins from building against an
-    incompatible version.
+    This library is header only, thus ABI stability is not an issue. The API 
+    will be stable between major version bumps, at which the pkg-config name 
+    would change to prevent plugins from building against an incompatible 
+    version.
 
     @author Michael Fisher <mfisher@kushview.net>
     @example volume.cpp
