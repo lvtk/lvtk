@@ -75,8 +75,7 @@ struct DescriptorList final : public std::vector<D>
 struct Feature : LV2_Feature {
     Feature() = default;
 
-    Feature (const LV2_Feature& feature)
-    {
+    Feature (const LV2_Feature& feature) {
         data = feature.data;
         URI  = feature.URI;
     }
@@ -92,8 +91,8 @@ struct Feature : LV2_Feature {
     This is used to prepare LV2_Feature arrays for use by instances
     and extensions during instantiation of Plugins and UIs.
 
-    @note This usually contains external data from the host and should never
-    itself be referenced by your plugin
+    @note This contains external data from the host and should never
+    itself be referenced by your plugin.
  */
 struct FeatureList final : public std::vector<Feature>
 {
@@ -112,17 +111,20 @@ struct FeatureList final : public std::vector<Feature>
     */
     FeatureList (const LV2_Feature *const * features) {
         for (int i = 0; features[i]; ++i) {
-            push_back (*features[i]);
+            push_back (*features [i]);
         }
     }
 
-    /** Populate a string vector with URIs contained in this list
-        
-        @param uris The vector to fill
-    */
-    inline void get_uris (std::vector<std::string>& uris) const {
+    inline void* data (const std::string& uri) const {
         for (const auto& f : *this)
-            uris.push_back (f.URI);
+            if (f == uri)
+                return f.data;
+        return nullptr;
+    }
+
+    /** Returns true if the uri is found */
+    inline bool contains (const std::string& uri) const {
+        return data (uri) != nullptr;
     }
 };
 

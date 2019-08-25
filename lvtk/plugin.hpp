@@ -87,7 +87,7 @@ public:
 
     ~Descriptor() = default;
 
-private:    
+private:
     inline void register_plugin (const char* uri) {
         LV2_Descriptor desc;
         desc.URI            = strdup (uri);

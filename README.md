@@ -16,7 +16,7 @@ $ ./waf configure
 $ ./waf build
 $ sudo ./waf install
 ```
-To build without the UI libraries, run
+To build without the UIs, run
 
 `$ ./waf configure --disable-ui build`
 

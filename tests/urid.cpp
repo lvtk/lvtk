@@ -26,17 +26,16 @@ private:
     inline static int _vprintf (LV2_Log_Handle handle, uint32_t type, const char*, va_list va) {
         return 0;
     }
-
 };
 }
 
 class URID : public TestFixutre
 {
-  CPPUNIT_TEST_SUITE (URID);
-  CPPUNIT_TEST (directory);
-  CPPUNIT_TEST (mapping);
-  CPPUNIT_TEST (unmapping);
-  CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE (URID);
+    CPPUNIT_TEST (directory);
+    CPPUNIT_TEST (mapping);
+    CPPUNIT_TEST (unmapping);
+    CPPUNIT_TEST_SUITE_END();
 
 protected:
     lvtk::URIDirectory urids;
