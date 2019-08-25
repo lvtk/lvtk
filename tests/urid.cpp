@@ -68,7 +68,7 @@ protected:
     void mapping()
     {
         lvtk::Map map (*urids.get_map_feature());
-        auto* cobj = map.c_obj();
+        auto* cobj = map.get();
         CPPUNIT_ASSERT (cobj != nullptr);
         CPPUNIT_ASSERT (cobj->handle != nullptr);
         CPPUNIT_ASSERT (cobj->map != nullptr);
@@ -78,8 +78,8 @@ protected:
     void unmapping()
     {
         lvtk::Unmap unmap;
-        unmap.set_feature (*urids.get_unmap_feature());
-        auto* cobj = unmap.c_obj();
+        unmap.set (*urids.get_unmap_feature());
+        auto* cobj = unmap.get();
         CPPUNIT_ASSERT (cobj != nullptr);
         CPPUNIT_ASSERT (cobj->handle != nullptr);
         CPPUNIT_ASSERT (cobj->unmap != nullptr);

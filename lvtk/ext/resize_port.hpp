@@ -53,10 +53,9 @@ struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
      */
     inline ResizePortStatus resize (uint32_t index, size_t size) const
     {
-        if (nullptr == data.resize)
+        if (nullptr == data)
             return LV2_RESIZE_PORT_ERR_UNKNOWN;
-        return static_cast<ResizePortStatus> (data.resize (
-            data.data, index, size));
+        return data->resize (data->data, index, size);
     }
 };
 
@@ -70,7 +69,7 @@ struct ResizePort : NullExtension
     /** @private */
     ResizePort (const FeatureList& features) { 
         for (const auto& f : features) {
-            if (resizer.set_feature (f))
+            if (resizer.set (f))
                 break;
         }
     }

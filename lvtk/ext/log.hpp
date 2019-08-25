@@ -52,8 +52,8 @@ struct Logger : FeatureData<LV2_Log_Log> {
     */
     inline int vprintf (uint32_t type, const char* fmt, va_list ap) const
     {
-        if (data.handle != nullptr)
-            return data.vprintf (data.handle, type, fmt, ap);
+        if (data != nullptr)
+            return data->vprintf (data->handle, type, fmt, ap);
         return 0;
     }
 
@@ -105,7 +105,7 @@ struct Log : NullExtension
         for (const auto& f : features) {
             int n_ok = 0;
             if (strcmp (f.URI, LV2_LOG__log) == 0)
-                { log.set_feature (f); ++n_ok; }
+                { log.set (f); ++n_ok; }
             if (strcmp (f.URI, LV2_URID__map) == 0)
                 { log.init ((LV2_URID_Map*) f.data); ++n_ok; }
             if (n_ok >= 2)

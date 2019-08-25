@@ -27,7 +27,7 @@ namespace lvtk {
 
 /** Wrap the Instance Access host feature.
  
-    Use these on the stack and all set_feature() passing the appropriate feature.
+    Use these on the stack and all set() passing the appropriate feature.
     @headerfile lvtk/ext/instance_access.hpp
     @ingroup instance_access
 */
@@ -41,7 +41,7 @@ struct InstanceHandle final {
     Handle handle() const { return p_handle; }
 
     /** Assign the LV2_Handle by LV2 Feature */
-    bool set_feature (const Feature& feature) {
+    bool set (const Feature& feature) {
         if (strcmp (LV2_INSTANCE_ACCESS_URI, feature.URI) == 0) {
             p_handle = reinterpret_cast<Handle> (feature.data);
             return true;
@@ -64,7 +64,7 @@ struct InstanceAccess : NullExtension
     /** @private */
     InstanceAccess (const FeatureList& features) {
         for (const auto& f : features)
-            if (m_instance.set_feature (f))
+            if (m_instance.set (f))
                 break;
     }
 

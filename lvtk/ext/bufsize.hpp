@@ -117,11 +117,11 @@ struct BufSize : NullExtension
         for (const auto& f : features)
         {
             details.update_with (f);
-            map.set_feature (f);
+            map.set (f);
             options.set (f);
         }
 
-        if (map.c_obj() != nullptr && options.get() != nullptr)
+        if (map.get() != nullptr && options.get() != nullptr)
             details.apply_options (map, options.get());
     }
 

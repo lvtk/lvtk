@@ -49,8 +49,8 @@ struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
         @returns    Not nullptr on Success
      */
     const void* operator() (const std::string& uri) const {
-        return nullptr != data.data_access ? data.data_access (uri.c_str())
-                                           : nullptr;
+        return nullptr != data ? data->data_access (uri.c_str())
+                               : nullptr;
     }
 };
 
@@ -64,7 +64,7 @@ struct DataAccess : NullExtension
     /** @private */
     DataAccess (const FeatureList& features) {
         for (const auto& f : features)
-            if (data_access.set_feature (f))
+            if (data_access.set (f))
                 break;
     }
 

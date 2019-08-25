@@ -139,7 +139,6 @@ template<class D>
 struct FeatureData
 {
     using data_t        = D;
-    using data_ptr_t    = D*;
 
     /** A uri for this data */
     const std::string URI;
@@ -158,22 +157,25 @@ public:
      */
     inline bool is_for (const Feature& feature) const { return feature == URI; }
 
-    /** @returns a C-Type pointer to the underlying data_t */
-    inline data_ptr_t c_obj() const { return (data_ptr_t) &data; }
+    /** @returns a pointer to the underlying data_t */
+    inline data_t* get() const { return data; }
+
+    /** Castable to `data_t*` */
+    inline operator data_t*() const { return get(); }
 
     /** Sets the data from a feature
         @param feature  The Feature to check and set
      */
-    inline bool set_feature (const Feature& feature) {
+    inline bool set (const Feature& feature) {
         if (is_for (feature)) {
-            data = *static_cast<data_ptr_t> (feature.data);
+            data = (data_t*) feature.data;
             return true;
         }
         return false;
     }
 
 protected:
-    data_t data {};
+    data_t* data = nullptr;
 };
 /* @} */
 }

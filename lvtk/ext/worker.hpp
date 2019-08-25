@@ -111,11 +111,11 @@ struct WorkerSchedule : FeatureData<LV2_Worker_Schedule> {
     /** Schedule work with the host
         
         @param size Size of the data
-        @param job  The data to write
+        @param data The data to write
      */
-    WorkerStatus operator() (uint32_t size, const void* job) const {
-        if (data.schedule_work)
-            return data.schedule_work (data.handle, size, job);
+    WorkerStatus operator() (uint32_t size, const void* data) const {
+        if (this->data != nullptr)
+            return this->data->schedule_work (this->data->handle, size, data);
         return LV2_WORKER_ERR_UNKNOWN;
     }
 };
@@ -132,7 +132,7 @@ struct Worker : Extension<I>
     /** @private */
     Worker (const FeatureList& features) { 
         for (const auto& f : features)
-            if (schedule_work.set_feature (f))
+            if (schedule_work.set (f))
                 break;
     }
 
