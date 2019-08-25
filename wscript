@@ -102,7 +102,7 @@ def build (bld):
         install_path = os.path.join (bld.env.LV2DIR, 'lvtk.lv2')
     )
 
-    # Build PC Files
+    # Build PC File
     pcvers = LVTK_MAJOR_VERSION
     autowaf.build_pc (bld, 'LVTK', LVTK_VERSION, pcvers, [],
         { 'LVTK_MAJOR_VERSION'   : LVTK_MAJOR_VERSION,
@@ -110,9 +110,6 @@ def build (bld):
           'LVTK_PKG_DEPS'        : 'lv2'})
 
     bld.add_group()
-
-    # Install Static Libraries
-    bld.install_files(bld.env['LIBDIR'], bld.path.ant_glob("build/**/*.a"))
 
     # Documentation
     autowaf.build_dox (bld, 'LVTK', VERSION, top, out)
