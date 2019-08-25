@@ -105,7 +105,7 @@ private:
     @ingroup worker
     @headerfile lvtk/ext/worker.hpp
  */
-struct WorkerSchedule : FeatureData<LV2_Worker_Schedule> {
+struct WorkerSchedule final : FeatureData<LV2_Worker_Schedule> {
     WorkerSchedule() : FeatureData (LV2_WORKER__schedule) {}
     
     /** Schedule work with the host

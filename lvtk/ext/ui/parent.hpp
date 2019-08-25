@@ -21,7 +21,7 @@
 
 namespace lvtk {
 
-struct ParentWidget : FeatureData<LV2UI_Widget, LV2UI_Widget> {
+struct ParentWidget final : FeatureData<LV2UI_Widget, LV2UI_Widget> {
     ParentWidget() : FeatureData (LV2_UI__parent) {}
 };
 

@@ -31,7 +31,7 @@ namespace lvtk {
     @headerfile lvtk/ext/log.hpp
     @ingroup log
  */
-struct Logger : FeatureData<LV2_Log_Log> {
+struct Logger final : FeatureData<LV2_Log_Log> {
     /** ctor */
     Logger() : FeatureData (LV2_LOG__log) {}
 

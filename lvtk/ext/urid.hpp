@@ -29,9 +29,8 @@ namespace lvtk {
     @headerfile lvtk/ext/urid.hpp
     @ingroup urid
  */
-class Map : public FeatureData<LV2_URID_Map>
+struct Map final : FeatureData<LV2_URID_Map>
 {
-public:
     Map() : FeatureData (LV2_URID__map) {}
     Map (const Feature& f) : FeatureData (LV2_URID__map) {
         set (f);
@@ -50,9 +49,8 @@ public:
     @headerfile lvtk/ext/urid.hpp
     @ingroup urid
  */
-class Unmap : public FeatureData<LV2_URID_Unmap>
+struct Unmap final : FeatureData<LV2_URID_Unmap>
 {
-public:
     Unmap() : FeatureData (LV2_URID__unmap) {}
     Unmap (const Feature& feature) : FeatureData (LV2_URID__unmap) {
         set (feature);
