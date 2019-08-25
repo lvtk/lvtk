@@ -125,8 +125,8 @@ struct BufSize : NullExtension
             options.set (f);
         }
 
-        if (map.get() != nullptr && options.get() != nullptr)
-            details.apply_options (map, options.get());
+        if (map && options)
+            details.apply_options (map, options);
     }
 
     /** Get the buffer details

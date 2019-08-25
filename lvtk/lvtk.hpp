@@ -149,7 +149,7 @@ struct FeatureData
     const std::string URI;
 
 protected:
-    /** Subclasses must use this ctor to assing the URI of the data */
+    /** Subclasses must use this ctor to assign the URI of the data */
     explicit FeatureData (const char* feature_uri)
         : URI (feature_uri) { }
 
