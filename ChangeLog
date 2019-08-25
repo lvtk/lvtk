@@ -1,6 +1,15 @@
 Version 2.0.0 (????-??-??)
     * Complete rewrite of the Library
+    * Require modern C++
     * Change to ISC license
+    * Added Dynamic Manifest support
+    * Removed examples which have no purpose
+    * Removed toolkit specific UI mixins
+    * Drop support for deprecated LV2 specs (Event & URI map)
+    * Set up continuous integration with Travis CI
+    * Add lvtk:JUCEUI UI type
+    * Test suite with cppunit
+    * Better organized API docs
 
 Version 1.2.0 (2014-03-22)
     * Adds STL iterators for Atom Vectors, Sequences, and Objects
