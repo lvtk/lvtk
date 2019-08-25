@@ -16,6 +16,21 @@
 
 /** @defgroup bufsize Buf Size 
     Access to buffer information
+
+    The @ref BufSize extension scans for buffer information provided by the 
+    host, and populates a @ref BufferDetails accordingly. To use it, add 
+    BufSize to the template parameters of your Plugin and call buffer_details() 
+    for buffer info
+
+    @code
+    class MyPlug : public lvtk::Plugin<MyPlug, lvtk::BufSize> {
+    public:
+        MyPlug (lvtk::Args& args) : lvtk::Plugin (args) {
+            const auto& details = buffer_details();
+            // setup plugin using details
+        }
+    };
+    @endcode
 */
 
 #pragma once
@@ -23,10 +38,6 @@
 #include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
-
-#ifndef LV2_BUF_SIZE__coarseBlockLength
- #define LV2_BUF_SIZE__coarseBlockLength LV2_BUF_SIZE_PREFIX "coarseBlockLength"
-#endif
 
 namespace lvtk {
 /* @{ */
@@ -39,7 +50,6 @@ namespace lvtk {
  */
 struct BufferDetails final {
     bool bounded            = false;    /**< <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength> */
-    bool coarse             = false;    /**< <http://lv2plug.in/ns/ext/buf-size#coarseBlockLength> */
     bool fixed              = false;    /**< <http://lv2plug.in/ns/ext/buf-size#fixedBlockLength> */
     bool power_of_two       = false;    /**< <http://lv2plug.in/ns/ext/buf-size#powerOf2BlockLength> */
     uint32_t min            = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
@@ -47,7 +57,7 @@ struct BufferDetails final {
     uint32_t nominal        = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
     uint32_t sequence_size  = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
 
-    /** Update with a Feature. Sets `bounded`, `power_of_two`, `coarse`, or 
+    /** Update with a Feature. Sets `bounded`, `power_of_two`, or 
         `fixed` if the Feature's URI matches.
      */
     void update_with (const Feature& feature)
@@ -58,8 +68,6 @@ struct BufferDetails final {
             power_of_two = true;
         } else if (feature == LV2_BUF_SIZE__fixedBlockLength) {
             fixed = true;
-        } else if (feature == LV2_BUF_SIZE__coarseBlockLength) {
-            coarse = true;
         }
     }
 
@@ -95,12 +103,7 @@ struct BufferDetails final {
     }
 };
 
-/** LV2 Buf Size support
-    
-    Scans for buffer information provided by the host, and populates a
-    @ref BufferDetails accordingly. To use it, add BufSize to the template 
-    parameters of your Instance
-
+/** LV2 Buf Size Extension
     @headerfile lvtk/ext/bufsize.hpp
  */
 template<class I>
