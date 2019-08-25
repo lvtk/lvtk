@@ -85,9 +85,9 @@ public:
 
     @ingroup dynmanifest
 */
-static void write_lines (const std::stringstream& lines, FILE* fp) {
+static bool write_lines (const std::stringstream& lines, FILE* fp) {
     const auto data = lines.str();
-    fwrite (data.c_str(), sizeof(char), data.size(), fp);
+    return data.size() == fwrite (data.c_str(), sizeof(char), data.size(), fp);
 }
 
 }
@@ -125,8 +125,7 @@ int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
     std::stringstream lines;
     if (! manifest->get_subjects (lines))
         return 1;
-    lvtk::write_lines (lines, fp);
-    return 0;
+    return lvtk::write_lines (lines, fp) ? 0 : 2;
 }
 
 /** @private */
@@ -137,8 +136,7 @@ int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const c
     std::stringstream lines;
     if (! manifest->get_data (lines, uri))
         return 1;
-    lvtk::write_lines (lines, fp);
-    return 0;
+    return lvtk::write_lines (lines, fp) ? 0 : 2;
 }
 
 /** @private */
