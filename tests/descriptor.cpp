@@ -1,14 +1,13 @@
 
 #include "tests.hpp"
 
-class Registration : public TestFixutre
+class Descriptor : public TestFixutre
 {
-    CPPUNIT_TEST_SUITE (Registration);
+    CPPUNIT_TEST_SUITE (Descriptor);
     CPPUNIT_TEST (total_descriptors);
     CPPUNIT_TEST (instantiation);
     CPPUNIT_TEST (missing_host_feature);
     CPPUNIT_TEST_SUITE_END();
-
 
 public:
     void setUp() { }
@@ -66,4 +65,4 @@ private:
     lvtk::URIDirectory urids;
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(Registration);
+CPPUNIT_TEST_SUITE_REGISTRATION (Descriptor);
