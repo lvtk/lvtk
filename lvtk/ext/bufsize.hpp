@@ -39,6 +39,10 @@
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
 
+#ifndef LV2_BUF_SIZE__nominalBlockLength
+ #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
+#endif
+
 namespace lvtk {
 /* @{ */
 /** Description of buffer information.
