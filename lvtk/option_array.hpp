@@ -38,7 +38,12 @@ public:
     using const_pointer = const Option*;
     using const_reference = const Option&;
 
-    /** Array from options raw array.
+    /** A referenced Option array.
+
+        Creating an array with this contrsuctor will simply reference @p ref
+        and NOT allocate memory. This is useful when iterating options provided
+        by the host or from get/set in the Options mixin.
+
         @note You MUST pass a valid pointer according to LV2 specifications
      */
     OptionArray (const Option* ref)
@@ -54,6 +59,14 @@ public:
         assert (count >= 1);
     }
 
+    /** A new Option array.
+        
+        Using this ctor will allocate memory and allow `add` to function. It
+        will maintain a zeroed end Option so client code doesn't have to
+        worry about it.
+        
+        This version is intended to be used by an LV2 host.
+     */
     OptionArray() {
         opts = (Option*) malloc (sizeof (Option));
         memset (&opts[0], 0, sizeof (Option));
@@ -104,7 +117,7 @@ public:
     bool empty() const { return size() == 0; }
 
     /** Access to Ctype LV2_Options_Option* array */
-    const_pointer c_obj() const { return opts; }
+    const_pointer get() const { return opts; }
 
     /** @private */
     struct iterator

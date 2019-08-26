@@ -53,7 +53,7 @@ public:
         args.sample_rate = 44100.0;
         args.bundle = "/fake/bundle.lv2";
         options_feature.URI = LV2_OPTIONS__options;
-        options_feature.data = const_cast<lvtk::Option*> (options.c_obj());
+        options_feature.data = const_cast<lvtk::Option*> (options.get());
         args.features.push_back (options_feature);
         args.features.push_back (*urid.get_map_feature());
     }

@@ -45,7 +45,7 @@ protected:
 
         CPPUNIT_ASSERT_EQUAL (opts.size(), c);
 
-        lvtk::OptionArray opts_ref (opts.c_obj());
+        lvtk::OptionArray opts_ref (opts.get());
         CPPUNIT_ASSERT_EQUAL (opts_ref.size(), opts.size());
         uint32_t fake = 1; // it's referenced, so add should do nothing
         opts_ref.add (LV2_OPTIONS_BLANK, 1, 1, sizeof(uint32_t), 1, &fake);
