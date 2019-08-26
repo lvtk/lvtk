@@ -24,7 +24,7 @@ LVTK_VERSION='2.0.0'
 LVTK_MAJOR_VERSION=LVTK_VERSION[0]
 LVTK_MINOR_VERSION=LVTK_VERSION[2]
 LVTK_MICRO_VERSION=LVTK_VERSION[4]
-LVTK_EXTRA_VERSION=''
+LVTK_EXTRA_VERSION='rc1'
 
 # For waf dist
 APPNAME = 'lvtk'
@@ -89,7 +89,7 @@ def configure (conf):
 
     print
     autowaf.display_summary (conf, {
-        "LVTK Version": LVTK_VERSION,
+        "LVTK Version": VERSION,
         "LVTK Bundle": conf.env.BUNDLE,
         "Build Examples": not conf.env.EXAMPLES_DISABLED,
         "Build Example UIs": conf.env.BUILD_EXAMPLE_UIS
@@ -110,9 +110,9 @@ def build (bld):
 
     # Build PC File
     pcvers = LVTK_MAJOR_VERSION
-    autowaf.build_pc (bld, 'LVTK', LVTK_VERSION, pcvers, [],
+    autowaf.build_pc (bld, 'LVTK', VERSION, pcvers, [],
         { 'LVTK_MAJOR_VERSION'   : LVTK_MAJOR_VERSION,
-          'VERSION'              : LVTK_VERSION,
+          'VERSION'              : VERSION,
           'LVTK_PKG_DEPS'        : 'lv2'})
 
     bld.add_group()
