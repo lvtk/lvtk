@@ -112,16 +112,14 @@ struct Object
         const PropertyBody& operator*()  const { assert (index); return *index; }
         const PropertyBody* operator->() const { assert (index); return index; }
 
-        iterator& operator++()
-        {
+        iterator& operator++() {
             index = lv2_atom_object_next (index);
             if (lv2_atom_object_is_end (&obj->body, obj->atom.size, index))
-                index = 0;
+                index = nullptr;
             return *this;
         }
 
-        iterator operator++ (int)
-        {
+        iterator operator++ (int)  {
             iterator ret (obj, index);
             ++(*this);
             return ret;

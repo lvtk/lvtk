@@ -27,7 +27,15 @@
     public:
         MyPlug (lvtk::Args& args) : lvtk::Plugin (args) {
             const auto& details = buffer_details();
-            // setup plugin using details
+            
+            // setup plugin using details. members are optional
+            // and only set if provided by the host. e.g....
+            
+            if (details.min && details.max) {
+                // got min/max do something with them
+            } else {
+                // wasn't set...
+            }
         }
     };
     @endcode
@@ -86,7 +94,7 @@ struct BufferDetails final {
                 sequence_size = *(uint32_t*) opt.value;
             else if (nomkey == opt.key)
                 nominal = *(uint32_t*) opt.value;
-        }        
+        }
     }
 };
 

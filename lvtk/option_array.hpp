@@ -45,6 +45,8 @@ public:
         by the host or from get/set in the Options mixin.
 
         @note You MUST pass a valid pointer according to LV2 specifications
+
+        @param ref  Naked Option array to reference
      */
     OptionArray (const Option* ref)
         : allocated (false), count (0),
