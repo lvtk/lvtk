@@ -33,19 +33,12 @@
     @endcode
 */
 
-#if __cpluspus > 201402L
- #include <optional>
- template<typename T> using Optional = std::optional<T>;
-#else
- #include <experimental/optional>
- template<typename T> using Optional = std::experimental::optional<T>;
-#endif
-
 #pragma once
 
 #include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
+#include <lvtk/optional.hpp>
 
 #ifndef LV2_BUF_SIZE__nominalBlockLength
  #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
@@ -61,11 +54,10 @@ namespace lvtk {
     @headerfile lvtk/ext/bufsize.hpp
  */
 struct BufferDetails final {
-    Optional<uint32_t> min;        /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
-    Optional<uint32_t> max;        /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
-    Optional<uint32_t> nominal;    /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
-    
-    Optional<uint32_t> sequence_size;  /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
+    Optional<uint32_t> min;             /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
+    Optional<uint32_t> max;             /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
+    Optional<uint32_t> nominal;         /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
+    Optional<uint32_t> sequence_size;   /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
 
     /** Update with Options. Updates `min`, `max`, and `nominal`, and 
         `sequence_size` if found in the Option array
