@@ -13,6 +13,7 @@ class BufSize : public TestFixutre
 
 public:
     void setUp() {
+        details.bounded = true;
         details.min = 64;
         details.max = 4096;
         details.nominal = 128;
