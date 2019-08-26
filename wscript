@@ -38,6 +38,8 @@ def options (opts):
     opts.load("compiler_c compiler_cxx lv2 autowaf")
     autowaf.set_options (opts)
     
+    opts.add_option('--bundle', default='lvtk.lv2', \
+        dest='bundle', type='string', help='Bundle name [ Default: lvtk.lv2 ]')
     opts.add_option('--tests', default=False, \
         dest="tests", action='store_true', help='Build the test suite')
     opts.add_option('--disable-ui', default=False, \
@@ -58,6 +60,8 @@ def configure (conf):
     conf.write_config_header ('version.h')
 
     autowaf.set_modern_cxx_flags (conf, True)
+    conf.env.append_unique ('CFLAGS', ['-fvisibility=hidden'])
+    conf.env.append_unique ('CXXFLAGS', ['-fvisibility=hidden'])
 
     conf.check_inline()
     autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
@@ -71,6 +75,9 @@ def configure (conf):
         autowaf.check_pkg (conf, pkgname, uselib_store=uselib, atleast_version="5.4.3", mandatory=False)
     
     # Setup the Environment
+    conf.env.BUNDLE             = conf.options.bundle
+    if len(conf.env.BUNDLE) <= 0: 
+        conf.env.BUNDLE = 'lvtk.lv2'
     conf.env.TESTS              = conf.options.tests
     conf.env.EXAMPLES_DISABLED  = conf.options.disable_examples
     conf.env.UI_DISABLED        = conf.options.disable_ui
@@ -83,6 +90,7 @@ def configure (conf):
     print
     autowaf.display_summary (conf, {
         "LVTK Version": LVTK_VERSION,
+        "LVTK Bundle": conf.env.BUNDLE,
         "Build Examples": not conf.env.EXAMPLES_DISABLED,
         "Build Example UIs": conf.env.BUILD_EXAMPLE_UIS
     })
@@ -96,8 +104,8 @@ def build (bld):
     bld (
         features    = 'subst',
         source      = 'manifest.ttl',
-        target      = 'lvtk.lv2/manifest.ttl',
-        install_path = os.path.join (bld.env.LV2DIR, 'lvtk.lv2')
+        target      = '%s/manifest.ttl' % bld.env.BUNDLE,
+        install_path = os.path.join (bld.env.LV2DIR, bld.env.BUNDLE)
     )
 
     # Build PC File
