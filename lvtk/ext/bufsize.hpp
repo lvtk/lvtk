@@ -33,6 +33,14 @@
     @endcode
 */
 
+#if __cpluspus > 201402L
+ #include <optional>
+ template<typename T> using Optional = std::optional<T>;
+#else
+ #include <experimental/optional>
+ template<typename T> using Optional = std::experimental::optional<T>;
+#endif
+
 #pragma once
 
 #include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
@@ -53,27 +61,11 @@ namespace lvtk {
     @headerfile lvtk/ext/bufsize.hpp
  */
 struct BufferDetails final {
-    bool bounded            = false;    /**< <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength> */
-    bool fixed              = false;    /**< <http://lv2plug.in/ns/ext/buf-size#fixedBlockLength> */
-    bool power_of_two       = false;    /**< <http://lv2plug.in/ns/ext/buf-size#powerOf2BlockLength> */
-    uint32_t min            = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
-    uint32_t max            = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
-    uint32_t nominal        = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
-    uint32_t sequence_size  = 0;        /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
-
-    /** Update with a Feature. Sets `bounded`, `power_of_two`, or 
-        `fixed` if the Feature's URI matches.
-     */
-    void update_with (const Feature& feature)
-    {
-        if (feature == LV2_BUF_SIZE__boundedBlockLength) {
-            bounded = true;
-        } else if (feature == LV2_BUF_SIZE__powerOf2BlockLength) {
-            power_of_two = true;
-        } else if (feature == LV2_BUF_SIZE__fixedBlockLength) {
-            fixed = true;
-        }
-    }
+    Optional<uint32_t> min;        /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
+    Optional<uint32_t> max;        /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
+    Optional<uint32_t> nominal;    /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
+    
+    Optional<uint32_t> sequence_size;  /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
 
     /** Update with Options. Updates `min`, `max`, and `nominal`, and 
         `sequence_size` if found in the Option array
@@ -82,12 +74,11 @@ struct BufferDetails final {
         @param options  The Options array to scan. MUST be valid with a
                         zeroed option at the end.
      */
-    void apply_options (Map& map, const Option* options)
-    {
+    void apply_options (Map& map, const Option* options) {
         uint32_t minkey = map (LV2_BUF_SIZE__minBlockLength);
         uint32_t maxkey = map (LV2_BUF_SIZE__maxBlockLength);
-        uint32_t seqkey = map (LV2_BUF_SIZE__sequenceSize);
         uint32_t nomkey = map (LV2_BUF_SIZE__nominalBlockLength);
+        uint32_t seqkey = map (LV2_BUF_SIZE__sequenceSize);
         
         for (uint32_t i = 0;;++i)
         {
@@ -118,15 +109,14 @@ struct BufSize : NullExtension
     {
         memset (&details, 0, sizeof(BufferDetails));
         Map map; OptionsData options;
-        for (const auto& f : features)
-        {
-            details.update_with (f);
-            map.set (f);
-            options.set (f);
+        for (const auto& f : features) {
+            if (! map) map.set (f);
+            if (! options) options.set (f);
+            if (map && options) {
+                details.apply_options (map, options);
+                break;
+            }
         }
-
-        if (map && options)
-            details.apply_options (map, options);
     }
 
     /** Get the buffer details

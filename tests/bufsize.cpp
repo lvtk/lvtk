@@ -13,7 +13,6 @@ class BufSize : public TestFixutre
 
 public:
     void setUp() {
-        details.bounded = true;
         details.min = 64;
         details.max = 4096;
         details.nominal = 128;
@@ -21,27 +20,35 @@ public:
 
         subject = urid.map ("http://dummy.subject.org");
         type = urid.map ("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
-        options.add (
-            LV2_OPTIONS_BLANK, subject,
-            urid.map (LV2_BUF_SIZE__minBlockLength),
-            sizeof(uint32_t), type,
-            &details.min
-        ).add (
-            LV2_OPTIONS_BLANK, subject,
-            urid.map (LV2_BUF_SIZE__maxBlockLength),
-            sizeof(uint32_t), type,
-            &details.max
-        ).add (
-            LV2_OPTIONS_BLANK, subject,
-            urid.map (LV2_BUF_SIZE__nominalBlockLength),
-            sizeof(uint32_t), type,
-            &details.nominal
-        ).add (
-            LV2_OPTIONS_BLANK, subject,
-            urid.map (LV2_BUF_SIZE__sequenceSize),
-            sizeof(uint32_t), type,
-            &details.sequence_size
-        );
+        try {
+            options.add (
+                LV2_OPTIONS_BLANK, subject,
+                urid.map (LV2_BUF_SIZE__minBlockLength),
+                sizeof(uint32_t), type,
+                &*details.min
+            )
+            .add (
+                LV2_OPTIONS_BLANK, subject,
+                urid.map (LV2_BUF_SIZE__maxBlockLength),
+                sizeof(uint32_t), type,
+                &*details.max
+            )
+            // leave commented: check not set by mixin
+            // .add (
+            //     LV2_OPTIONS_BLANK, subject,
+            //     urid.map (LV2_BUF_SIZE__nominalBlockLength),
+            //     sizeof(uint32_t), type,
+            //     &*details.nominal
+            // )
+            .add (
+                LV2_OPTIONS_BLANK, subject,
+                urid.map (LV2_BUF_SIZE__sequenceSize),
+                sizeof(uint32_t), type,
+                &*details.sequence_size
+            );
+        } catch (std::exception& e) {
+            CPPUNIT_ASSERT_MESSAGE (e.what(), false);
+        }
 
         args.sample_rate = 44100.0;
         args.bundle = "/fake/bundle.lv2";
@@ -49,21 +56,20 @@ public:
         options_feature.data = const_cast<lvtk::Option*> (options.c_obj());
         args.features.push_back (options_feature);
         args.features.push_back (*urid.get_map_feature());
-        if (details.bounded)
-            args.features.push_back (bounded_feature);
     }
 
 protected:
     void buffer_details() {
         auto plugin = std::unique_ptr<BufSizePlug> (new BufSizePlug (args));
         const auto& pdetails = plugin->buffer_details();
-        CPPUNIT_ASSERT_EQUAL (details.min,      pdetails.min);
-        CPPUNIT_ASSERT_EQUAL (details.max,      pdetails.max);
-        CPPUNIT_ASSERT_EQUAL (details.nominal,  pdetails.nominal);
-        CPPUNIT_ASSERT_EQUAL (details.fixed,    pdetails.fixed);
-        CPPUNIT_ASSERT_EQUAL (details.bounded,  pdetails.bounded);
-        CPPUNIT_ASSERT_EQUAL (details.power_of_two,  pdetails.power_of_two);
-        CPPUNIT_ASSERT_EQUAL (details.sequence_size,  pdetails.sequence_size);
+
+        CPPUNIT_ASSERT ((bool) pdetails.min);
+        CPPUNIT_ASSERT (details.min == pdetails.min);
+        CPPUNIT_ASSERT ((bool) pdetails.max);
+        CPPUNIT_ASSERT (details.max == pdetails.max);
+
+        CPPUNIT_ASSERT (!(bool) pdetails.nominal);
+        CPPUNIT_ASSERT (details.nominal != pdetails.nominal);
     }
 
 private:
