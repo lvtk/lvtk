@@ -12,8 +12,7 @@ class BufSize : public TestFixutre
     CPPUNIT_TEST_SUITE_END();
 
 public:
-    void setUp()
-    {   
+    void setUp() {
         details.min = 64;
         details.max = 4096;
         details.nominal = 128;
