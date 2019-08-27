@@ -1,20 +1,19 @@
-@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
 @prefix doap:  <http://usefulinc.com/ns/doap#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
-@prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
-@prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
-@prefix units: <http://lv2plug.in/ns/ext/units#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
 @prefix lvtk:  <http://lvtoolkit.org/ns/lvtk#> .
-@prefix midi:  <http://lv2plug.in/ns/ext/midi#> .
 
 <http://lvtoolkit.org/plugins/volume>
-	a lv2:Plugin , lv2:AmplifierPlugin ;
+	a lv2:Plugin , 
+		lv2:AmplifierPlugin ;
 	doap:name "Volume" ;
 	doap:license <https://opensource.org/licenses/ISC> ;
-	lv2:requiredFeature urid:map ;
+	lv2:project <http://lvtoolkit.org/ns/lvtk> ;
+	lv2:minorVersion 0 ;
+	lv2:microVersion 0 ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	ui:ui <http://lvtoolkit.org/plugins/volume#ui> ;
 	lv2:port [
@@ -63,4 +62,6 @@
 
 <http://lvtoolkit.org/plugins/volume#ui>
 	a lvtk:JUCEUI ;
+	lv2:extensionData ui:resize ;
+	lv2:optionalFeature ui:resize, ui:touch, ui:idle, ui:show ;
 	doap:license <https://opensource.org/licenses/GPL-3.0> .

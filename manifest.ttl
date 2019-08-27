@@ -10,7 +10,12 @@
 	a foaf:Person ;
 	foaf:name "Michael Fisher" ;
 	foaf:mbox <mailto:mfisher31@gmail.com> ;
-	rdfs:seeAlso <http://lvtoolkit.org> .
+	foaf:homepage <http://lvtoolkit.org> .
+
+<http://lvtoolkit.org/ns/lvtk>
+	a doap:Project ;
+	doap:maintainer <http://lvtoolkit.org/people/mfisher> ;
+	doap:name "LV2 Toolkit" .
 
 lvtk:JUCEUI
     a rdfs:Class ,
