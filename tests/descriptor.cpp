@@ -1,6 +1,11 @@
 
 #include "tests.hpp"
 
+// dummy plugin with worker interface
+struct PlugWithRequiredHostFeature : lvtk::Plugin<PlugWithRequiredHostFeature> {
+    PlugWithRequiredHostFeature (const lvtk::Args& args) : Plugin (args) { }
+};
+
 class Descriptor : public TestFixutre
 {
     CPPUNIT_TEST_SUITE (Descriptor);
@@ -53,13 +58,13 @@ protected:
 
     void missing_host_feature()
     {
-        if (0 == lvtk::descriptors().size())
-            return;
-        
-        const auto& desc = lvtk::descriptors()[0];
+        lvtk::Descriptor<PlugWithRequiredHostFeature> reg ("http://fakeuri.com", { LV2_URID__map });
+        const auto& desc = lvtk::descriptors().back();
         const LV2_Feature* features[] = { nullptr };
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
         CPPUNIT_ASSERT (handle == nullptr);
+        if (handle && desc.cleanup)
+            desc.cleanup (handle);
     }
 private:
     lvtk::URIDirectory urids;
