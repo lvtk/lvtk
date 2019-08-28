@@ -36,6 +36,4 @@ private:
     float gain = 0.f;
 };
 
-static const lvtk::Descriptor<Volume> volume (LVTK_VOLUME_URI, {
-    LV2_URID__map // << required host feature
-});
+static const lvtk::Descriptor<Volume> volume (LVTK_VOLUME_URI);

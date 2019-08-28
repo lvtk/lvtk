@@ -35,7 +35,6 @@
 
     @author Michael Fisher <mfisher@kushview.net>
     @example volume.cpp
-    @example volume_ui.cpp
  */
 
 #pragma once

@@ -10,7 +10,7 @@ class Console
         log_feature.URI     = LV2_LOG__log;
         log_data.handle     = this;
         log_data.printf     = _printf;
-        log_data.vprintf    = _vprintf;;
+        log_data.vprintf    = _vprintf;
     }
 
     const LV2_Feature* const get_feature() const { return &log_feature; }

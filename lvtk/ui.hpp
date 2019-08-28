@@ -19,9 +19,6 @@
    
     UI descriptors are registered on the stack at the global scope. First
     make a sublcass of @ref UI, then register it with @ref UIDescriptor.
-    
-    <h3>Example</h3>
-    @include volume_ui.cpp
 
     @see @ref UI
  */
