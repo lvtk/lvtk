@@ -11,11 +11,10 @@
 		lv2:AmplifierPlugin ;
 	doap:name "Volume" ;
 	doap:license <https://opensource.org/licenses/ISC> ;
-	lv2:project <http://lvtoolkit.org/ns/lvtk> ;
+	lv2:project <http://lvtoolkit.org/plugins/> ;
 	lv2:minorVersion 0 ;
 	lv2:microVersion 0 ;
 	lv2:optionalFeature lv2:hardRTCapable ;
-	ui:ui <http://lvtoolkit.org/plugins/volume#ui> ;
 	lv2:port [
 		a lv2:AudioPort, lv2:InputPort ;
 		lv2:index 0 ;
@@ -59,9 +58,3 @@
 			rdf:value -10.0
 		] ;
 	] .
-
-<http://lvtoolkit.org/plugins/volume#ui>
-	a lvtk:JUCEUI ;
-	lv2:extensionData ui:resize ;
-	lv2:optionalFeature ui:resize, ui:touch, ui:idle, ui:show ;
-	doap:license <https://opensource.org/licenses/GPL-3.0> .

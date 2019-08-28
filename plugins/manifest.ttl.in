@@ -1,14 +1,20 @@
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
-@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
-@prefix lvtk:  <http://lvtoolkit.org/ns/lvtk#> .
+
+<http://lvtoolkit.org/people/mfisher>
+	a foaf:Person ;
+	foaf:name "Michael Fisher" ;
+	foaf:mbox <mailto:mfisher31@gmail.com> ;
+	foaf:homepage <http://lvtoolkit.org> .
+
+<http://lvtoolkit.org/plugins/>
+	a doap:Project ;
+	doap:name "LVTK Plugins" ;
+	doap:maintainer <http://lvtoolkit.org/people/mfisher> .
 
 <http://lvtoolkit.org/plugins/volume>
 	a lv2:Plugin ;
 	lv2:binary <volume@LIB_EXT@> ;
-	rdfs:seeAlso <volume.ttl> .
-
-<http://lvtoolkit.org/plugins/volume#ui>
-	a lvtk:JUCEUI ;
-	ui:binary <volume_ui@LIB_EXT@> ;
 	rdfs:seeAlso <volume.ttl> .

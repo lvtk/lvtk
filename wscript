@@ -65,15 +65,8 @@ def configure (conf):
 
     conf.check_inline()
     autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
-    autowaf.check_pkg (conf, "gtkmm-2.4", uselib_store="GTKMM2", atleast_version="2.20.0", mandatory=False)
-    autowaf.check_pkg (conf, "gtkmm-3.0", uselib_store="GTKMM3", atleast_version="3.0.0", mandatory=False)
     autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=conf.options.tests)
-    
-    for module in 'gui_basics'.split():
-        pkgname = 'juce_%s-5' % module if not conf.options.debug else 'juce_%s_debug-5' % module
-        uselib  = 'JUCE_%s' % module.upper()
-        autowaf.check_pkg (conf, pkgname, uselib_store=uselib, atleast_version="5.4.3", mandatory=False)
-    
+      
     # Setup the Environment
     conf.env.BUNDLE             = conf.options.bundle
     if len(conf.env.BUNDLE) <= 0: 
@@ -100,13 +93,6 @@ def build (bld):
         for subdir in ['plugins']:
             bld.recurse (subdir)
             bld.add_group()
-    
-    bld (
-        features    = 'subst',
-        source      = 'manifest.ttl',
-        target      = '%s/manifest.ttl' % bld.env.BUNDLE,
-        install_path = os.path.join (bld.env.LV2DIR, bld.env.BUNDLE)
-    )
 
     # Build PC File
     pcvers = LVTK_MAJOR_VERSION
