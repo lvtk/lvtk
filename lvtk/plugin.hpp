@@ -255,7 +255,7 @@ private:
         return s_required;
     }
 
-    inline static LV2_Handle _instantiate (const struct _LV2_Descriptor* descriptor,
+    inline static LV2_Handle _instantiate (const struct LV2_Descriptor*  descriptor,
                                            double                        sample_rate,
                                            const char*                   bundle_path,
                                            const LV2_Feature *const*     features)
