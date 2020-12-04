@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 #include <lv2/lv2plug.in/ns/ext/urid/urid.h>
@@ -110,8 +110,8 @@ public:
     const LV2_Feature *const get_unmap_feature()    const { return &unmap_feature; }
 
 private:
-    std::map<std::string, uint32_t> mapped;
-    std::map<uint32_t, std::string> unmapped;
+    std::unordered_map<std::string, uint32_t> mapped;
+    std::unordered_map<uint32_t, std::string> unmapped;
 
     LV2_Feature         map_feature;
     LV2_URID_Map        map_data;
