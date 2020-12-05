@@ -155,7 +155,7 @@ def build(bld):
 
 def release_tag(ctx):
     tag = git.tag_version(VERSION, "Release: v" + VERSION , "lvtk-")
-    if tag : print "Git Tag Created: " + tag
+    if tag : print ("Git Tag Created: " + tag)
 
 def dist(ctx):
     z=ctx.options.ziptype
