@@ -142,6 +142,7 @@ def dist(ctx):
         ziptype = "tar." + z
     ctx.algo       = ziptype
     ctx.base_name = '%s-%s' % (APPNAME, VERSION)
-    ctx.excl = ' **/.waf-1* **/.waf-2* **/*~ **/*.pyc **/*.swp **/.lock-w*'
+    ctx.excl =  ' **/.waf-1* **/.waf-2* **/.waf-3 **/waf-1* **/waf-2* **/waf-3*'
+    ctx.excl += ' **/*~ **/*.pyc **/*.swp **/.lock-w*'
     ctx.excl += ' **/.gitignore **/.gitmodules **/.git dist build **/.DS_Store'
     ctx.excl += ' **/.vscode **/.travis.yml'
