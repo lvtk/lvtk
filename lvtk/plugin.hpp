@@ -194,7 +194,7 @@ public:
         This is always called before the host starts using the @ref run() 
         function. You should reset your plugin to it's initial state here. 
      */
-    void activate() {}
+    virtual void activate() {}
 
     /** Override this to connect to your own port buffers.
 
@@ -204,7 +204,7 @@ public:
         @param port The index of the port to connect.
         @param data The buffer to connect it to.
      */
-    void connect_port (uint32_t port, void* data) {}
+    virtual void connect_port (uint32_t port, void* data) {}
 
     /** This is the process callback which should fill all output port buffers.
         You most likely want to override it - the default implementation does
@@ -216,19 +216,19 @@ public:
         
         @param sample_count The number of audio frames to process.
      */
-    void run (uint32_t sample_count) {}
+    virtual void run (uint32_t sample_count) {}
 
     /** Override this function if you need to do anything on deactivation.
         The host calls this when it does not plan to make any more calls to
         @ref run() unless it calls @ref activate() again.
      */
-    void deactivate() {}
+    virtual void deactivate() {}
 
     /** Override this to handle cleanup. Is called immediately before the 
         instance is deleted.  You only need to implement this if you'd like 
         to do something special before the destructor.
      */
-    void cleanup() {}
+    virtual void cleanup() {}
 
     /** Override this to add custom extension data without having to implement
         an @ref Extension mixin.  Also, it will be called after the the mixins,
