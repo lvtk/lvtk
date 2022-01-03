@@ -46,7 +46,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/dynmanifest/dynmanifest.h>
+#include <lv2/dynmanifest/dynmanifest.h>
 #include <sstream>
 #include <cstdio>
 

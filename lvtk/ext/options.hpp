@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/options/options.h>
+#include <lv2/options/options.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {

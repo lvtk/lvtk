@@ -90,7 +90,7 @@ public:
 private:
     inline void register_plugin (const char* uri) {
         LV2_Descriptor desc;
-        desc.URI            = strdup (uri);
+        desc.URI            = _strdup (uri);
         desc.instantiate    = P::_instantiate;
         desc.activate       = P::_activate;
         desc.connect_port   = P::_connect_port;

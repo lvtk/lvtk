@@ -17,7 +17,7 @@
 #pragma once
 
 #include <lvtk/ext/extension.hpp>
-#include <lv2/lv2plug.in/ns/ext/log/log.h>
+#include <lv2/log/log.h>
 
 /** @defgroup log Log
     Logging support

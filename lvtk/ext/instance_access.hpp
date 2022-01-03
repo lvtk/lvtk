@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
+#include <lv2/instance-access/instance-access.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {

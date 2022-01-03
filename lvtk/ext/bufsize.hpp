@@ -43,7 +43,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
+#include <lv2/buf-size/buf-size.h>
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/optional.hpp>

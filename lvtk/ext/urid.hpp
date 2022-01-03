@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
+#include <lv2/urid/urid.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {

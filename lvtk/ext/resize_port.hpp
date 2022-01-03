@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/resize-port/resize-port.h>
+#include <lv2/resize-port/resize-port.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {

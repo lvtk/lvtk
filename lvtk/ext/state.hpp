@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lv2/state/state.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
