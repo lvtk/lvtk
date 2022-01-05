@@ -26,7 +26,7 @@
 #pragma once
 
 #include <memory>
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/ui/ui.h>
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
