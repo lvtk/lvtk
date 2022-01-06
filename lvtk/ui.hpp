@@ -135,6 +135,8 @@ public:
 private:
     void register_ui (const std::string& uri) {
         LV2UI_Descriptor desc;
+        desc.URI = (const char*) malloc ((1 + uri.length()) * sizeof (char));
+        strcpy ((char*) desc.URI, uri.c_str());
         desc.URI            = strdup (uri.c_str());
         desc.instantiate    = U::_instantiate;
         desc.port_event     = U::_port_event;
