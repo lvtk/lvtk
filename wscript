@@ -64,7 +64,7 @@ def configure (conf):
     conf.env.append_unique ('CXXFLAGS', ['-fvisibility=hidden'])
 
     conf.check_inline()
-    autowaf.check_pkg (conf, 'lv2', uselib_store='LV2', mandatory=True)
+    autowaf.check_pkg (conf, 'lv2 >= 1.15.4', uselib_store='LV2', mandatory=True)
     autowaf.check_pkg (conf, 'cppunit', uselib_store='CPPUNIT', atleast_version='1.13.0', mandatory=conf.options.tests)
       
     # Setup the Environment
