@@ -18,8 +18,16 @@
 
 #if __cpluspus > 201402L
  #include <optional>
- template<typename T> using Optional = std::optional<T>;
 #else
  #include <experimental/optional>
+#endif
+
+namespace lvtk {
+
+#if __cpluspus > 201402L
+ template<typename T> using Optional = std::optional<T>;
+#else
  template<typename T> using Optional = std::experimental::optional<T>;
 #endif
+
+}
