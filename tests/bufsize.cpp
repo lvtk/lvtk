@@ -5,8 +5,7 @@ struct BufSizePlug : lvtk::Plugin<BufSizePlug, lvtk::BufSize> {
     BufSizePlug (const lvtk::Args& args) : Plugin (args) {}
 };
 
-class BufSize : public TestFixutre
-{
+class BufSize : public TestFixutre {
     CPPUNIT_TEST_SUITE (BufSize);
     CPPUNIT_TEST (buffer_details);
     CPPUNIT_TEST_SUITE_END();
@@ -22,30 +21,18 @@ public:
         type = urid.map ("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
         try {
             options.add (
-                LV2_OPTIONS_BLANK, subject,
-                urid.map (LV2_BUF_SIZE__minBlockLength),
-                sizeof(uint32_t), type,
-                &*details.min
-            )
-            .add (
-                LV2_OPTIONS_BLANK, subject,
-                urid.map (LV2_BUF_SIZE__maxBlockLength),
-                sizeof(uint32_t), type,
-                &*details.max
-            )
-            // leave commented: check not set by mixin
-            // .add (
-            //     LV2_OPTIONS_BLANK, subject,
-            //     urid.map (LV2_BUF_SIZE__nominalBlockLength),
-            //     sizeof(uint32_t), type,
-            //     &*details.nominal
-            // )
-            .add (
-                LV2_OPTIONS_BLANK, subject,
-                urid.map (LV2_BUF_SIZE__sequenceSize),
-                sizeof(uint32_t), type,
-                &*details.sequence_size
-            );
+                       LV2_OPTIONS_BLANK, subject, urid.map (LV2_BUF_SIZE__minBlockLength), sizeof (uint32_t), type, &*details.min)
+                .add (
+                    LV2_OPTIONS_BLANK, subject, urid.map (LV2_BUF_SIZE__maxBlockLength), sizeof (uint32_t), type, &*details.max)
+                // leave commented: check not set by mixin
+                // .add (
+                //     LV2_OPTIONS_BLANK, subject,
+                //     urid.map (LV2_BUF_SIZE__nominalBlockLength),
+                //     sizeof(uint32_t), type,
+                //     &*details.nominal
+                // )
+                .add (
+                    LV2_OPTIONS_BLANK, subject, urid.map (LV2_BUF_SIZE__sequenceSize), sizeof (uint32_t), type, &*details.sequence_size);
         } catch (std::exception& e) {
             CPPUNIT_ASSERT_MESSAGE (e.what(), false);
         }
@@ -68,7 +55,7 @@ protected:
         CPPUNIT_ASSERT ((bool) pdetails.max);
         CPPUNIT_ASSERT (details.max == pdetails.max);
 
-        CPPUNIT_ASSERT (!(bool) pdetails.nominal);
+        CPPUNIT_ASSERT (! (bool) pdetails.nominal);
         CPPUNIT_ASSERT (details.nominal != pdetails.nominal);
     }
 
@@ -83,4 +70,4 @@ private:
     uint32_t type;
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(BufSize);
+CPPUNIT_TEST_SUITE_REGISTRATION (BufSize);

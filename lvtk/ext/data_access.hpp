@@ -31,7 +31,7 @@ namespace lvtk {
     @ingroup data_access
 */
 struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
-    ExtensionData() : FeatureData (LV2_DATA_ACCESS_URI) { }
+    ExtensionData() : FeatureData (LV2_DATA_ACCESS_URI) {}
 
     /** A UI can call this to get data (of a type specified by some other
         extension) from the plugin.
@@ -57,9 +57,8 @@ struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
     @headerfile lvtk/ext/data_access.hpp
     @ingroup data_access
 */
-template<class I>
-struct DataAccess : NullExtension
-{
+template <class I>
+struct DataAccess : NullExtension {
     /** @private */
     DataAccess (const FeatureList& features) {
         for (const auto& f : features)
@@ -83,4 +82,4 @@ protected:
     ExtensionData data_access;
 };
 /* @} */
-}
+} // namespace lvtk

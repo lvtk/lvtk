@@ -4,12 +4,12 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <lvtk/ext/ui/idle.hpp>
-#include <lvtk/ext/ui/resize.hpp>
-#include <lvtk/ext/ui/show.hpp>
-#include <lvtk/ext/ui/touch.hpp>
 #include <lvtk/ext/ui/parent.hpp>
 #include <lvtk/ext/ui/port_map.hpp>
 #include <lvtk/ext/ui/port_subscribe.hpp>
+#include <lvtk/ext/ui/resize.hpp>
+#include <lvtk/ext/ui/show.hpp>
+#include <lvtk/ext/ui/touch.hpp>
 
 #include <lvtk/ext/atom.hpp>
 #include <lvtk/ext/bufsize.hpp>
@@ -29,7 +29,7 @@
 #include <lvtk/uri_directory.hpp>
 
 #ifndef LVTK_VOLUME_URI
- #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
+    #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 #endif
 
 class TestFixutre : public CPPUNIT_NS::TestFixture {};

@@ -29,8 +29,7 @@ namespace lvtk {
     @headerfile lvtk/option_array.hpp
     @ingroup options
 */
-class OptionArray
-{
+class OptionArray {
 public:
     using size_type = uint32_t;
     using pointer = Option*;
@@ -49,9 +48,7 @@ public:
         @param ref  Naked Option array to reference
      */
     OptionArray (const Option* ref)
-        : allocated (false), count (0),
-          opts (const_cast<Option*> (ref))
-    {
+        : allocated (false), count (0), opts (const_cast<Option*> (ref)) {
         for (;;) {
             auto& opt = ref[count++];
             if (opt.key == 0 || opt.value == nullptr) {
@@ -84,29 +81,27 @@ public:
 
     /** Add an option. Does nothing if data is referenced */
     OptionArray& add (const Option& option) {
-        return add (option.context, option.subject, option.key,
-                    option.size, option.type, option.value);
+        return add (option.context, option.subject, option.key, option.size, option.type, option.value);
     }
 
     /** Add an option. Does nothing if data is referenced */
-    OptionArray& add (OptionsContext        context,
-                      uint32_t              subject, 
-                      LV2_URID              key,
-                      uint32_t              size, 
-                      LV2_URID              type,
-                      const void*           value)
-    {
+    OptionArray& add (OptionsContext context,
+                      uint32_t subject,
+                      LV2_URID key,
+                      uint32_t size,
+                      LV2_URID type,
+                      const void* value) {
         if (! allocated)
             return *this;
         opts = (Option*) realloc (opts, ++count * sizeof (Option));
         memset (&opts[count - 1], 0, sizeof (Option));
-        auto& opt = opts [count - 2];
-        opt.context     = context;
-        opt.subject     = subject;
-        opt.key         = key;
-        opt.size        = size;
-        opt.type        = type;
-        opt.value       = value;
+        auto& opt = opts[count - 2];
+        opt.context = context;
+        opt.subject = subject;
+        opt.key = key;
+        opt.size = size;
+        opt.type = type;
+        opt.value = value;
         return *this;
     }
 
@@ -122,12 +117,11 @@ public:
     const_pointer get() const { return opts; }
 
     /** @private */
-    struct iterator
-    {
-        iterator (Option* options, uint32_t index) 
-            : opts(options), i (index) { }
+    struct iterator {
+        iterator (Option* options, uint32_t index)
+            : opts (options), i (index) {}
 
-        const Option& operator*()  const { return opts[i]; }
+        const Option& operator*() const { return opts[i]; }
         const Option* operator->() const { return &opts[i]; }
 
         iterator& operator++() {
@@ -150,10 +144,10 @@ public:
     };
 
     /** Begin iterator */
-    iterator begin() const  { return iterator (opts, 0); }
+    iterator begin() const { return iterator (opts, 0); }
 
     /** End iterator */
-    iterator end() const    { return iterator (opts, size()); }
+    iterator end() const { return iterator (opts, size()); }
 
 private:
     bool allocated = false;
@@ -161,4 +155,4 @@ private:
     Option* opts = nullptr;
 };
 
-}
+} // namespace lvtk

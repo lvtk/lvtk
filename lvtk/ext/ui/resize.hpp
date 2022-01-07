@@ -25,15 +25,14 @@ namespace lvtk {
     @headerfile lvtk/ext/ui/resize.hpp
     @ingroup ui
 */
-template<class I> 
-struct Resize : Extension<I>
-{
+template <class I>
+struct Resize : Extension<I> {
     /** @private */
     Resize (const FeatureList& features) {
         if (auto* data = features.data (LV2_UI__resize))
             resize = (LV2UI_Resize*) data;
     }
-    
+
     /** Called from the <em>plugin</em> to notify the host of size change
         @returns non-zero on error
      */
@@ -57,8 +56,8 @@ protected:
 private:
     LV2UI_Resize* resize = nullptr;
     inline static int _ui_resize (LV2UI_Feature_Handle handle, int width, int height) {
-        return (static_cast<I*>(handle))->size_requested (width, height);
+        return (static_cast<I*> (handle))->size_requested (width, height);
     }
 };
 
-}
+} // namespace lvtk

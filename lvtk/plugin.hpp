@@ -28,10 +28,10 @@
 
 #pragma once
 
+#include <lvtk/lvtk.hpp>
 #include <map>
 #include <memory>
-#include <lvtk/lvtk.hpp>
- 
+
 namespace lvtk {
 /** A list of LV2_Descriptors. Used internally to manage registered plugins */
 using PluginDescriptors = DescriptorList<LV2_Descriptor>;
@@ -61,9 +61,8 @@ inline PluginDescriptors& descriptors() {
     @headerfile lvtk/plugin.hpp
     @see @ref Plugin
  */
-template<class P>
-class Descriptor final
-{
+template <class P>
+class Descriptor final {
 public:
     /** Plugin registration with required host features
         
@@ -92,12 +91,12 @@ private:
         LV2_Descriptor desc;
         desc.URI = (const char*) malloc ((1 + strlen (uri)) * sizeof (char));
         strcpy ((char*) desc.URI, uri);
-        desc.instantiate    = P::_instantiate;
-        desc.activate       = P::_activate;
-        desc.connect_port   = P::_connect_port;
-        desc.run            = P::_run;
-        desc.deactivate     = P::_deactivate;
-        desc.cleanup        = P::_cleanup;
+        desc.instantiate = P::_instantiate;
+        desc.activate = P::_activate;
+        desc.connect_port = P::_connect_port;
+        desc.run = P::_run;
+        desc.deactivate = P::_deactivate;
+        desc.cleanup = P::_cleanup;
         desc.extension_data = P::_extension_data;
         descriptors().push_back (desc);
         P::initialize_extensions();
@@ -105,17 +104,16 @@ private:
 };
 
 /** Arguments passed to a @ref Plugin "plugin" instance */
-struct Args
-{
+struct Args {
     /** @private */
-    Args() : sample_rate(0.0), bundle(), features() {}
+    Args() : sample_rate (0.0), bundle(), features() {}
     /** @private */
     Args (double r, const std::string& b, const FeatureList& f)
-        : sample_rate (r), bundle (b), features (f) { }
+        : sample_rate (r), bundle (b), features (f) {}
 
-    double sample_rate;     /**< Sample Rate */
-    std::string bundle;     /**< Bundle Path */
-    FeatureList features;   /**< Host provided features */
+    double sample_rate;   /**< Sample Rate */
+    std::string bundle;   /**< Bundle Path */
+    FeatureList features; /**< Host provided features */
 };
 
 /** A template base class for LV2 plugin instances. Default implementations 
@@ -174,9 +172,8 @@ struct Args
     @headerfile lvtk/plugin.hpp
     @ingroup plugin
  */
-template<class S, template<class> class... E>
-class Plugin : public E<S>...
-{
+template <class S, template <class> class... E>
+class Plugin : public E<S>... {
 protected:
     /** Default constructor not allowed */
     Plugin() = delete;
@@ -251,24 +248,26 @@ private:
         S::map_extension_data (extensions());
     }
 
-    inline static std::vector<std::string>& required()  {
+    inline static std::vector<std::string>& required() {
         static std::vector<std::string> s_required;
         return s_required;
     }
 
-    inline static LV2_Handle _instantiate (const LV2_Descriptor*        descriptor,
-                                           double                       sample_rate,
-                                           const char*                  bundle_path,
-                                           const LV2_Feature *const*    features)
-    {
+    inline static LV2_Handle _instantiate (const LV2_Descriptor* descriptor,
+                                           double sample_rate,
+                                           const char* bundle_path,
+                                           const LV2_Feature* const* features) {
         const Args args (sample_rate, bundle_path, features);
         auto instance = std::unique_ptr<S> (new S (args));
 
         for (const auto& rq : required()) {
             bool provided = false;
             for (const auto& f : args.features)
-                if (f == rq) { provided = true; break; }
-            
+                if (f == rq) {
+                    provided = true;
+                    break;
+                }
+
             if (! provided)
                 return nullptr;
         }
@@ -280,8 +279,8 @@ private:
         (static_cast<S*> (handle))->activate();
     }
 
-    inline static void _connect_port (LV2_Handle handle, uint32_t port, void* data) { 
-        (static_cast<S*> (handle))->connect_port (port, data); 
+    inline static void _connect_port (LV2_Handle handle, uint32_t port, void* data) {
+        (static_cast<S*> (handle))->connect_port (port, data);
     }
 
     inline static void _run (LV2_Handle handle, uint32_t sample_count) {
@@ -304,7 +303,7 @@ private:
 };
 
 /* @} */
-}
+} // namespace lvtk
 
 extern "C" {
 
@@ -312,8 +311,8 @@ extern "C" {
 /** @private */
 LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor (uint32_t index) {
     return (index < lvtk::descriptors().size())
-        ? &lvtk::descriptors()[index] : NULL;
+               ? &lvtk::descriptors()[index]
+               : NULL;
 }
 #endif
-
 }

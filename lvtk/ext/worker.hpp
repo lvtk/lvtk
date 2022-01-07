@@ -18,8 +18,8 @@
     Scheduling work and processing jobs
     <h3>Example</h3>
     @code
-        #include <lvtk/plugin.hpp>
         #include <lvtk/ext/worker.hpp>
+        #include <lvtk/plugin.hpp>
 
         using namespace lvtk;
         
@@ -71,15 +71,13 @@ using WorkerStatus = LV2_Worker_Status;
     @ingroup worker
     @headerfile lvtk/ext/worker.hpp
  */
-struct WorkerRespond
-{
-    WorkerRespond (LV2_Handle                  instance,
+struct WorkerRespond {
+    WorkerRespond (LV2_Handle instance,
                    LV2_Worker_Respond_Function wrfunc,
-                   LV2_Worker_Respond_Handle   handle)
+                   LV2_Worker_Respond_Handle handle)
         : p_instance (instance),
-          p_handle (handle), 
-          p_wrfunc (wrfunc) 
-    { }
+          p_handle (handle),
+          p_wrfunc (wrfunc) {}
 
     /** Execute the worker respond function.
         @param size
@@ -91,9 +89,9 @@ struct WorkerRespond
     }
 
 private:
-    LV2_Handle                        p_instance;
-    LV2_Worker_Respond_Handle         p_handle;
-    LV2_Worker_Respond_Function       p_wrfunc;
+    LV2_Handle p_instance;
+    LV2_Worker_Respond_Handle p_handle;
+    LV2_Worker_Respond_Function p_wrfunc;
 };
 
 /** Schedule jobs with the host.
@@ -107,7 +105,7 @@ private:
  */
 struct WorkerSchedule final : FeatureData<LV2_Worker_Schedule> {
     WorkerSchedule() : FeatureData (LV2_WORKER__schedule) {}
-    
+
     /** Schedule work with the host
         
         @param size Size of the data
@@ -126,11 +124,10 @@ struct WorkerSchedule final : FeatureData<LV2_Worker_Schedule> {
     @headerfile lvtk/ext/worker.hpp
     @ingroup worker
 */
-template<class I> 
-struct Worker : Extension<I>
-{
+template <class I>
+struct Worker : Extension<I> {
     /** @private */
-    Worker (const FeatureList& features) { 
+    Worker (const FeatureList& features) {
         for (const auto& f : features)
             if (schedule_work.set (f))
                 break;
@@ -140,7 +137,7 @@ struct Worker : Extension<I>
      
         @param respond  Function to send responses with
      */
-    WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { return LV2_WORKER_SUCCESS; }
+    WorkerStatus work (WorkerRespond& respond, uint32_t size, const void* data) { return LV2_WORKER_SUCCESS; }
 
     /** Process work responses sent with respond in the `work` callback
      
@@ -173,36 +170,32 @@ struct Worker : Extension<I>
 protected:
     /** @private */
     static void map_extension_data (ExtensionMap& dmap) {
-        static const LV2_Worker_Interface _worker = { _work, _work_response, _end_run  };
+        static const LV2_Worker_Interface _worker = { _work, _work_response, _end_run };
         dmap[LV2_WORKER__interface] = &_worker;
     }
 
 private:
-
     /** @internal */
-    static LV2_Worker_Status _work (LV2_Handle					instance,
+    static LV2_Worker_Status _work (LV2_Handle instance,
                                     LV2_Worker_Respond_Function respond,
-                                    LV2_Worker_Respond_Handle   handle,
-                                    uint32_t                    size,
-                                    const void*                 data)
-    {
+                                    LV2_Worker_Respond_Handle handle,
+                                    uint32_t size,
+                                    const void* data) {
         WorkerRespond wrsp (instance, respond, handle);
         return (LV2_Worker_Status) (static_cast<I*> (instance))->work (wrsp, size, data);
     }
 
     /** @internal */
-    static LV2_Worker_Status _work_response (LV2_Handle  instance,
-                                             uint32_t    size,
-                                             const void* body)
-    {
-        return (LV2_Worker_Status)(static_cast<I*>(instance))->work_response (size, body);
+    static LV2_Worker_Status _work_response (LV2_Handle instance,
+                                             uint32_t size,
+                                             const void* body) {
+        return (LV2_Worker_Status) (static_cast<I*> (instance))->work_response (size, body);
     }
 
     /** @internal */
-    static LV2_Worker_Status _end_run (LV2_Handle instance)
-    {
-        return (LV2_Worker_Status)(static_cast<I*> (instance))->end_run();
+    static LV2_Worker_Status _end_run (LV2_Handle instance) {
+        return (LV2_Worker_Status) (static_cast<I*> (instance))->end_run();
     }
 };
 
-}
+} // namespace lvtk

@@ -3,7 +3,7 @@
 
 // dummy plugin with worker interface
 struct DataAccessPlug : lvtk::Plugin<DataAccessPlug, lvtk::Worker> {
-    DataAccessPlug (const lvtk::Args& args) : Plugin (args) { }
+    DataAccessPlug (const lvtk::Args& args) : Plugin (args) {}
 };
 
 // dummy UI that wants data access
@@ -11,23 +11,21 @@ struct DataAccessUI : lvtk::UI<DataAccessUI, lvtk::DataAccess> {
     DataAccessUI (const lvtk::UIArgs& args) : UI (args) {}
 };
 
-class DataAccess : public TestFixutre
-{
+class DataAccess : public TestFixutre {
     CPPUNIT_TEST_SUITE (DataAccess);
     CPPUNIT_TEST (plugin_extension_data);
     CPPUNIT_TEST_SUITE_END();
 
 public:
     void setUp() {
-
     }
 
 protected:
     void plugin_extension_data() {
         lvtk::Descriptor<DataAccessPlug> reg ("http://fakeuri.com");
         const auto& desc = lvtk::descriptors().back();
-        CPPUNIT_ASSERT(strcmp (desc.URI, "http://fakeuri.com") == 0);
-        
+        CPPUNIT_ASSERT (strcmp (desc.URI, "http://fakeuri.com") == 0);
+
         lvtk::UIArgs args;
         args.bundle = "/fake/path";
         args.plugin = "http://fakeuri.com";
@@ -43,7 +41,6 @@ protected:
     }
 
 private:
-
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(DataAccess);
+CPPUNIT_TEST_SUITE_REGISTRATION (DataAccess);

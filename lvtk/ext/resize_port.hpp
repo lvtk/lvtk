@@ -50,8 +50,7 @@ struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
         Plugins MAY resize a port many times in a single run callback.  Hosts
         SHOULD make this as inexpensive as possible.
      */
-    inline ResizePortStatus operator() (uint32_t index, size_t size) const
-    {
+    inline ResizePortStatus operator() (uint32_t index, size_t size) const {
         return (nullptr == data) ? LV2_RESIZE_PORT_ERR_UNKNOWN
                                  : data->resize (data->data, index, size);
     }
@@ -61,11 +60,10 @@ struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
     @ingroup resize_port
     @headerfile lvtk/ext/resize_port.hpp
 */
-template<class I> 
-struct ResizePort : NullExtension
-{
+template <class I>
+struct ResizePort : NullExtension {
     /** @private */
-    ResizePort (const FeatureList& features) { 
+    ResizePort (const FeatureList& features) {
         for (const auto& f : features) {
             if (resize_port.set (f))
                 break;
@@ -77,4 +75,4 @@ protected:
     PortResizer resize_port;
 };
 
-}
+} // namespace lvtk

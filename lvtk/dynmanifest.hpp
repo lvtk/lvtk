@@ -46,9 +46,9 @@
 
 #pragma once
 
+#include <cstdio>
 #include <lv2/dynmanifest/dynmanifest.h>
 #include <sstream>
-#include <cstdio>
 
 namespace lvtk {
 /** Dynamic Manifest helper class
@@ -58,8 +58,7 @@ namespace lvtk {
     @ingroup dynmanifest
     @headerfile lvtk/dynmanifest.hpp
  */
-class DynManifest
-{
+class DynManifest {
 public:
     DynManifest() = default;
     virtual ~DynManifest() = default;
@@ -68,14 +67,14 @@ public:
         @param lines    Add each line to this stream
         @return false if problems getting subjects
      */
-    virtual bool get_subjects (std::stringstream& lines) =0;
+    virtual bool get_subjects (std::stringstream& lines) = 0;
 
     /** Get the data
         @param uri      The subject URI to get data for
         @param lines    Add each line to this stream
         @return false if problems getting data
      */
-    virtual bool get_data (std::stringstream& lines, const std::string& uri) =0;
+    virtual bool get_data (std::stringstream& lines, const std::string& uri) = 0;
 };
 
 /** Write a string vector `lines` as lines to `FILE` 
@@ -87,10 +86,10 @@ public:
 */
 static bool write_lines (const std::stringstream& lines, FILE* fp) {
     const auto data = lines.str();
-    return data.size() == fwrite (data.c_str(), sizeof(char), data.size(), fp);
+    return data.size() == fwrite (data.c_str(), sizeof (char), data.size(), fp);
 }
 
-}
+} // namespace lvtk
 
 /** Implement this and return your subclassed @ref DynManifest object
     @ingroup dynmanifest
@@ -102,8 +101,7 @@ extern "C" {
 
 /** @private */
 LV2_SYMBOL_EXPORT
-int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle *handle, const LV2_Feature *const *features)
-{
+int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle* handle, const LV2_Feature* const* features) {
     auto* const manifest = lvtk_create_dyn_manifest();
     if (nullptr == manifest)
         return 1;
@@ -113,8 +111,7 @@ int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle *handle, const LV2_Feature *c
 
 /** @private */
 LV2_SYMBOL_EXPORT
-int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
-{
+int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE* fp) {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
     std::stringstream lines;
     if (! manifest->get_subjects (lines))
@@ -124,8 +121,7 @@ int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE *fp)
 
 /** @private */
 LV2_SYMBOL_EXPORT
-int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const char *uri)
-{
+int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE* fp, const char* uri) {
     auto* manifest = static_cast<lvtk::DynManifest*> (handle);
     std::stringstream lines;
     if (! manifest->get_data (lines, uri))
@@ -135,9 +131,7 @@ int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle, FILE *fp, const c
 
 /** @private */
 LV2_SYMBOL_EXPORT
-void lv2_dyn_manifest_close (LV2_Dyn_Manifest_Handle handle)
-{
+void lv2_dyn_manifest_close (LV2_Dyn_Manifest_Handle handle) {
     delete static_cast<lvtk::DynManifest*> (handle);
 }
-
 }

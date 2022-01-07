@@ -25,11 +25,10 @@ namespace lvtk {
     @ingroup ui
     @headerfile lvtk/ext/ui/touch.hpp
 */
-template<class I> 
-struct Touch : NullExtension
-{
+template <class I>
+struct Touch : NullExtension {
     /** @private */
-    Touch (const FeatureList& features) { 
+    Touch (const FeatureList& features) {
         for (const auto& f : features) {
             if (f == LV2_UI__touch) {
                 ui_touch = (LV2UI_Touch*) f.data;
@@ -50,4 +49,4 @@ private:
     LV2UI_Touch* ui_touch = nullptr;
 };
 
-}
+} // namespace lvtk

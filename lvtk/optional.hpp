@@ -17,17 +17,19 @@
 #pragma once
 
 #if __cpluspus > 201402L
- #include <optional>
+    #include <optional>
 #else
- #include <experimental/optional>
+    #include <experimental/optional>
 #endif
 
 namespace lvtk {
 
 #if __cpluspus > 201402L
- template<typename T> using Optional = std::optional<T>;
+template <typename T>
+using Optional = std::optional<T>;
 #else
- template<typename T> using Optional = std::experimental::optional<T>;
+template <typename T>
+using Optional = std::experimental::optional<T>;
 #endif
 
-}
+} // namespace lvtk

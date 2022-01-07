@@ -33,9 +33,8 @@ struct ParentWidget final : FeatureData<LV2UI_Widget, LV2UI_Widget> {
     @headerfile lvtk/ext/ui/parent.hpp
     @ingroup ui
 */
-template<class I> 
-struct Parent : NullExtension
-{
+template <class I>
+struct Parent : NullExtension {
     /** @private */
     Parent (const FeatureList& features) {
         for (const auto& f : features)
@@ -61,4 +60,4 @@ protected:
     ParentWidget parent;
 };
 
-}
+} // namespace lvtk

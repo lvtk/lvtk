@@ -29,8 +29,7 @@ namespace lvtk {
     @headerfile lvtk/ext/urid.hpp
     @ingroup urid
  */
-struct Map final : FeatureData<LV2_URID_Map>
-{
+struct Map final : FeatureData<LV2_URID_Map> {
     Map() : FeatureData (LV2_URID__map) {}
     Map (const Feature& f) : FeatureData (LV2_URID__map) {
         set (f);
@@ -39,7 +38,7 @@ struct Map final : FeatureData<LV2_URID_Map>
     /** Get URID integer from URI string
         @param uri  The URI string to map
      */
-    uint32_t operator()(const std::string& uri) const {
+    uint32_t operator() (const std::string& uri) const {
         return data != nullptr ? data->map (data->handle, uri.c_str())
                                : 0;
     }
@@ -49,8 +48,7 @@ struct Map final : FeatureData<LV2_URID_Map>
     @headerfile lvtk/ext/urid.hpp
     @ingroup urid
  */
-struct Unmap final : FeatureData<LV2_URID_Unmap>
-{
+struct Unmap final : FeatureData<LV2_URID_Unmap> {
     Unmap() : FeatureData (LV2_URID__unmap) {}
     Unmap (const Feature& feature) : FeatureData (LV2_URID__unmap) {
         set (feature);
@@ -59,7 +57,7 @@ struct Unmap final : FeatureData<LV2_URID_Unmap>
     /** Unmap a URID to string
         @param urid The URID integer to unmap
      */
-    std::string operator()(const uint32_t urid) const {
+    std::string operator() (const uint32_t urid) const {
         return data != nullptr ? data->unmap (data->handle, urid)
                                : std::string();
     }
@@ -69,14 +67,15 @@ struct Unmap final : FeatureData<LV2_URID_Unmap>
     @ingroup urid
     @headerfile lvtk/ext/urid.hpp
 */
-template<class I> 
-struct URID : NullExtension
-{
+template <class I>
+struct URID : NullExtension {
     /** @private */
     URID (const FeatureList& features) {
         for (const auto& f : features) {
-            if (! map)   map.set (f);
-            if (! unmap) unmap.set (f);
+            if (! map)
+                map.set (f);
+            if (! unmap)
+                unmap.set (f);
             if (map && unmap)
                 break;
         }
@@ -94,4 +93,4 @@ protected:
     Unmap unmap;
 };
 
-}
+} // namespace lvtk

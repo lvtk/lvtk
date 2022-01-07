@@ -28,7 +28,8 @@ namespace lvtk {
     @headerfile lvtk/ext/extension.hpp
     @ingroup lvtk
 */
-template<class I> struct Extension {};
+template <class I>
+struct Extension {};
 
 /** Dummy class indicating an Extension doesn't use the Instance */
 struct NoInstance {};
@@ -41,4 +42,4 @@ struct NullExtension : Extension<NoInstance> {
     inline static void map_extension_data (ExtensionMap&) {}
 };
 
-}
+} // namespace lvtk
