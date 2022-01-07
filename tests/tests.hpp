@@ -24,6 +24,7 @@
 
 #include <lvtk/lvtk.hpp>
 #include <lvtk/option_array.hpp>
+#include <lvtk/optional.hpp>
 #include <lvtk/plugin.hpp>
 #include <lvtk/ui.hpp>
 #include <lvtk/uri_directory.hpp>
@@ -31,5 +32,8 @@
 #ifndef LVTK_VOLUME_URI
     #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 #endif
+
+#define LVTK_TEST_PLUGIN_URI "http://lvtk.org/plugins/test"
+#define LVTK_TEST_UI_URI     "http://lvtk.org/plugins/test#ui"
 
 class TestFixutre : public CPPUNIT_NS::TestFixture {};
