@@ -73,11 +73,11 @@ using WorkerStatus = LV2_Worker_Status;
  */
 struct WorkerRespond {
     WorkerRespond (LV2_Handle instance,
-                   LV2_Worker_Respond_Function wrfunc,
+                   LV2_Worker_Respond_Function respond_function,
                    LV2_Worker_Respond_Handle handle)
         : p_instance (instance),
           p_handle (handle),
-          p_wrfunc (wrfunc) {}
+          f_respond (respond_function) {}
 
     /** Execute the worker respond function.
         @param size
@@ -85,13 +85,13 @@ struct WorkerRespond {
         @return WORKER_SUCCESS on success
      */
     WorkerStatus operator() (uint32_t size, const void* data) const {
-        return p_wrfunc (p_handle, size, data);
+        return f_respond (p_handle, size, data);
     }
 
 private:
     LV2_Handle p_instance;
     LV2_Worker_Respond_Handle p_handle;
-    LV2_Worker_Respond_Function p_wrfunc;
+    LV2_Worker_Respond_Function f_respond;
 };
 
 /** Schedule jobs with the host.
