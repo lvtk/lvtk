@@ -9,9 +9,9 @@ struct StatePlug : lvtk::Plugin<StatePlug, lvtk::State> {
     static constexpr const uint32_t value_type = 111;
 
     lvtk::StateStatus save (lvtk::StateStore& store,
-                      uint32_t flags, const lvtk::FeatureList& features) {
+                            uint32_t flags, const lvtk::FeatureList& features) {
         auto val = StatePlug::value;
-        store (StatePlug::key, &val, sizeof(value), StatePlug::value_type, 0);
+        store (StatePlug::key, &val, sizeof (value), StatePlug::value_type, 0);
         return LV2_STATE_SUCCESS;
     }
 
@@ -39,15 +39,12 @@ protected:
         CPPUNIT_ASSERT (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         lvtk::URIDirectory uris;
-        uris.get_map_feature();
-        uris.get_unmap_feature();
-
         const LV2_Feature* features[] = { uris.get_map_feature(), uris.get_unmap_feature(), nullptr };
         auto handle = desc.instantiate (&desc, 44100.0, "/fake/path", features);
         CPPUNIT_ASSERT (handle != nullptr);
         auto iface = (const LV2_State_Interface*) desc.extension_data (LV2_STATE__interface);
         CPPUNIT_ASSERT (iface != nullptr);
-        
+
         if (handle && iface) {
             const LV2_Feature* f2[] = { nullptr };
             iface->save (handle, _store, this, 0, f2);
