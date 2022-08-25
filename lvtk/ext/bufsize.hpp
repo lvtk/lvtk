@@ -104,7 +104,6 @@ template <class I>
 struct BufSize : NullExtension {
     /** @private */
     BufSize (const FeatureList& features) {
-        memset (&details, 0, sizeof (BufferDetails));
         Map map;
         OptionsData options;
         for (const auto& f : features) {
