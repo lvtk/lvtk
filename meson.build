@@ -8,14 +8,20 @@ dot = find_program ('dot')
 cppunit_dep = dependency ('cppunit', required : false)
 
 install_subdir ('lvtk', install_dir : 'include' / 'lvtk-2')
+
 pkg = import('pkgconfig')
 pkg.generate (
     name : 'LVTK',
     filebase : 'lvtk-2',
     version : meson.project_version(),
     description : 'LV2 Toolkit Plugin Library',
-    subdirs : 'lvtk-2'
+    subdirs : 'lvtk-2',
+    requires : [ lv2_dep ]
 )
+
+lvtk_dep = declare_dependency (
+    include_directories : '.',
+    dependencies : [ lv2_dep ])
 
 if doxygen.found() and dot.found()
     subdir ('doc')

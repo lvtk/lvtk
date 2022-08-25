@@ -13,11 +13,10 @@ lvtk_test_sources = '''
     ../plugins/volume.cpp
 '''.split()
 
-lvtk_test_deps = [ cppunit_dep ]
-
-lvtk_test_app = executable ('test_lvtk', lvtk_test_sources,
+test ('cppunit', executable (
+    'test_lvtk', 
+    lvtk_test_sources,
     cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
-    include_directories : ['.', '..'],
-    dependencies : lvtk_test_deps)
-
-test ('cppunit', lvtk_test_app)
+    include_directories : ['.'],
+    dependencies : [ cppunit_dep, lvtk_dep ])
+)
