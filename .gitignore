@@ -22,3 +22,5 @@ lvtk.includes
 
 /.vscode/settings.json
 /lvtk-*
+
+doxy.log
