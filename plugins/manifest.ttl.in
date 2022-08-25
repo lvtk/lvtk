@@ -6,7 +6,7 @@
 <http://lvtoolkit.org/people/mfisher>
 	a foaf:Person ;
 	foaf:name "Michael Fisher" ;
-	foaf:mbox <mailto:mfisher31@gmail.com> ;
+	foaf:mbox <mailto:mfisher@kushview.net> ;
 	foaf:homepage <http://lvtoolkit.org> .
 
 <http://lvtoolkit.org/plugins/>

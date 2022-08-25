@@ -43,13 +43,13 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/buf-size/buf-size.h>
+#include <lv2/buf-size/buf-size.h>
 #include <lvtk/ext/options.hpp>
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/optional.hpp>
 
 #ifndef LV2_BUF_SIZE__nominalBlockLength
- #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
+    #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
 #endif
 
 namespace lvtk {
@@ -62,10 +62,10 @@ namespace lvtk {
     @headerfile lvtk/ext/bufsize.hpp
  */
 struct BufferDetails final {
-    Optional<uint32_t> min;             /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
-    Optional<uint32_t> max;             /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
-    Optional<uint32_t> nominal;         /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
-    Optional<uint32_t> sequence_size;   /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
+    Optional<uint32_t> min;           /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
+    Optional<uint32_t> max;           /**< <http://lv2plug.in/ns/ext/buf-size#maxBlockLength> */
+    Optional<uint32_t> nominal;       /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
+    Optional<uint32_t> sequence_size; /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
 
     /** Update with Options. Updates `min`, `max`, and `nominal`, and 
         `sequence_size` if found in the Option array
@@ -79,10 +79,9 @@ struct BufferDetails final {
         uint32_t maxkey = map (LV2_BUF_SIZE__maxBlockLength);
         uint32_t nomkey = map (LV2_BUF_SIZE__nominalBlockLength);
         uint32_t seqkey = map (LV2_BUF_SIZE__sequenceSize);
-        
-        for (uint32_t i = 0;;++i)
-        {
-            const auto& opt = options [i];
+
+        for (uint32_t i = 0;; ++i) {
+            const auto& opt = options[i];
             if (opt.key == 0 || opt.value == nullptr)
                 break;
 
@@ -101,17 +100,18 @@ struct BufferDetails final {
 /** LV2 Buf Size Extension
     @headerfile lvtk/ext/bufsize.hpp
  */
-template<class I>
-struct BufSize : NullExtension
-{
+template <class I>
+struct BufSize : NullExtension {
     /** @private */
-    BufSize (const FeatureList& features)
-    {
-        memset (&details, 0, sizeof(BufferDetails));
-        Map map; OptionsData options;
+    BufSize (const FeatureList& features) {
+        memset (&details, 0, sizeof (BufferDetails));
+        Map map;
+        OptionsData options;
         for (const auto& f : features) {
-            if (! map) map.set (f);
-            if (! options) options.set (f);
+            if (! map)
+                map.set (f);
+            if (! options)
+                options.set (f);
             if (map && options) {
                 details.apply_options (map, options);
                 break;
@@ -132,4 +132,4 @@ private:
     BufferDetails details;
 };
 /* @} */
-}
+} // namespace lvtk

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/ui/ui.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
@@ -38,9 +38,8 @@ struct PortIndex : FeatureData<LV2UI_Port_Map> {
     @ingroup ui
     @headerfile lvtk/ext/ui/port_map.hpp
 */
-template<class I> 
-struct PortMap : NullExtension
-{
+template <class I>
+struct PortMap : NullExtension {
     /** @private */
     PortMap (const FeatureList& features) {
         for (const auto& f : features)
@@ -62,4 +61,4 @@ protected:
     PortIndex port_index;
 };
 
-}
+} // namespace lvtk

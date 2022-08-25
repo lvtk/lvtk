@@ -23,70 +23,69 @@
 #include <iostream>
 #include <string>
 
-#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
-#include <lv2/lv2plug.in/ns/ext/atom/forge.h>
-#include <lv2/lv2plug.in/ns/ext/atom/util.h>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/forge.h>
+#include <lv2/atom/util.h>
 
 namespace lvtk {
 /* @{ */
 /** Alias to `LV2_Atom_Event` */
-using AtomEvent             = LV2_Atom_Event;
+using AtomEvent = LV2_Atom_Event;
 
 /** Alias to `LV2_Atom_Property_Body` */
-using PropertyBody          = LV2_Atom_Property_Body ;
+using PropertyBody = LV2_Atom_Property_Body;
 
 /** Alias to `LV2_Atom_Forge_Frame` */
-using ForgeFrame            = LV2_Atom_Forge_Frame;
+using ForgeFrame = LV2_Atom_Forge_Frame;
 
 /** Alias to `LV2_Atom_Forge_Ref` */
-using ForgeRef              = LV2_Atom_Forge_Ref;
+using ForgeRef = LV2_Atom_Forge_Ref;
 
 /** Alias to `LV2_Atom_Object_Query` */
-using ObjectQuery           = LV2_Atom_Object_Query;
+using ObjectQuery = LV2_Atom_Object_Query;
 
 /** An LV2_Atom_Object wrapper
     @headerfile lvtk/ext/atom.hpp
  */
-struct Object final
-{
+struct Object final {
     /** Create an Object from raw data. The data passed in will be casted 
         to a LV2_Atom_Object pointer
         
         @param data Pointer to an LV2_Atom_Object
      */
-    Object (const void* data) 
-        : obj ((LV2_Atom_Object*) data) { }
+    Object (const void* data)
+        : obj ((LV2_Atom_Object*) data) {}
 
     /** Create an Object from a ForgeRef 
      
         @param ref  A ForgeRef which will be casted to LV2_Atom_Object internally
     */
-    Object (ForgeRef ref) 
-        : obj ((LV2_Atom_Object*) ref) { }
+    Object (ForgeRef ref)
+        : obj ((LV2_Atom_Object*) ref) {}
 
     /** Copy constructor only references the internal pointer */
-    Object (const Object& other) { 
-        operator= (other); 
+    Object (const Object& other) {
+        operator= (other);
     }
 
     /** @returns the object type */
     inline uint32_t otype() const {
-        return object_type(); 
+        return object_type();
     }
 
     /** @returns the object type */
-    inline uint32_t object_type() const { 
-        return obj->body.otype; 
+    inline uint32_t object_type() const {
+        return obj->body.otype;
     }
 
     /** Return the object's id */
-    inline uint32_t id() const { 
-        return obj->body.id; 
+    inline uint32_t id() const {
+        return obj->body.id;
     }
 
     /** Return the object's total size */
-    inline uint32_t total_size() const { 
-        return lv2_atom_total_size ((LV2_Atom*) obj); 
+    inline uint32_t total_size() const {
+        return lv2_atom_total_size ((LV2_Atom*) obj);
     }
 
     /** Get an object's values for various keys.
@@ -105,11 +104,11 @@ struct Object final
     }
 
     /** Get the underlying LV2_Atom_Object pointer */
-    inline LV2_Atom_Object* c_obj()          const { return obj; }
-    
+    inline LV2_Atom_Object* c_obj() const { return obj; }
+
     /** Pass this as a LV2_Atom Object* parameter */
-    inline operator LV2_Atom_Object*()       const { return obj; }
-    
+    inline operator LV2_Atom_Object*() const { return obj; }
+
     /** Pass this as a const LV2_Atom Object* parameter */
     inline operator const LV2_Atom_Object*() const { return obj; }
 
@@ -121,8 +120,14 @@ struct Object final
 
     /** @private */
     struct iterator {
-        const PropertyBody& operator*()  const { assert (index); return *index; }
-        const PropertyBody* operator->() const { assert (index); return index; }
+        const PropertyBody& operator*() const {
+            assert (index);
+            return *index;
+        }
+        const PropertyBody* operator->() const {
+            assert (index);
+            return index;
+        }
 
         iterator& operator++() {
             index = lv2_atom_object_next (index);
@@ -131,7 +136,7 @@ struct Object final
             return *this;
         }
 
-        iterator operator++ (int)  {
+        iterator operator++ (int) {
             iterator ret (obj, index);
             ++(*this);
             return ret;
@@ -143,16 +148,16 @@ struct Object final
     private:
         friend struct Object;
         iterator (LV2_Atom_Object* o, LV2_Atom_Property_Body* i)
-            : index (i), obj (o) { }
+            : index (i), obj (o) {}
         LV2_Atom_Property_Body* index;
-        LV2_Atom_Object*        obj;
+        LV2_Atom_Object* obj;
     };
 
     /** Start of properties */
     iterator begin() const { return iterator (obj, lv2_atom_object_begin (&obj->body)); }
 
     /** End of properties */
-    iterator end()   const { return iterator (obj, nullptr); }
+    iterator end() const { return iterator (obj, nullptr); }
 
 private:
     LV2_Atom_Object* obj = nullptr;
@@ -163,96 +168,95 @@ private:
     
     @headerfile lvtk/ext/atom.hpp
  */
-struct Atom final
-{
+struct Atom final {
     /** Create a null Atom */
-    Atom() 
+    Atom()
         : atom (nullptr) {}
 
     /** Create an Atom from raw data */
-    Atom (const void* data) 
-        : atom (reinterpret_cast<const LV2_Atom*> (data))  { }
+    Atom (const void* data)
+        : atom (reinterpret_cast<const LV2_Atom*> (data)) {}
 
     /** Create an Atom from a Forge Ref */
-    Atom (ForgeRef ref) 
-        : atom (reinterpret_cast<LV2_Atom*> (ref)) { }
+    Atom (ForgeRef ref)
+        : atom (reinterpret_cast<LV2_Atom*> (ref)) {}
 
     /** Create an Atom from an AtomEvent */
-    Atom (const AtomEvent* ev) 
+    Atom (const AtomEvent* ev)
         : atom (&ev->body) {}
 
     /** Create an Atom from a CType reference */
-    Atom (const LV2_Atom& ref) 
+    Atom (const LV2_Atom& ref)
         : atom (&ref) {}
 
     /** Create an Atom from an Object */
     Atom (const Object& obj)
-        : atom ((const LV2_Atom*) obj.c_obj()) { }
+        : atom ((const LV2_Atom*) obj.c_obj()) {}
 
     /** Pad a size to 64 bits
         @param size The size to pad
         @returns The padded size
      */
-    inline static uint32_t pad_size (uint32_t size) { 
-        return lv2_atom_pad_size (size); 
+    inline static uint32_t pad_size (uint32_t size) {
+        return lv2_atom_pad_size (size);
     }
 
     /** Determine if the Atom is null */
-    inline bool is_null() const { 
-        return lv2_atom_is_null (atom); 
+    inline bool is_null() const {
+        return lv2_atom_is_null (atom);
     }
 
     /** Returns true if this atom has type and equals a given value
         @param type     The atom POD type
         @param value    The value to test
     */
-    template<typename POD>
+    template <typename POD>
     inline bool has_type_and_equals (uint32_t type, const POD& value) const {
         return atom->type == type && operator== (value);
     }
 
     /** Get the Atom's body */
-    inline void* body()           const { return LV2_ATOM_BODY (atom); }
+    inline void* body() const { return LV2_ATOM_BODY (atom); }
 
     /** Get the body as a boolean */
-    inline bool as_bool()         const { return ((LV2_Atom_Bool*)atom)->body > 0; }
+    inline bool as_bool() const { return ((LV2_Atom_Bool*) atom)->body > 0; }
 
     /** Get the body as a float */
-    inline float as_float()       const { return ((LV2_Atom_Float*)atom)->body; }
+    inline float as_float() const { return ((LV2_Atom_Float*) atom)->body; }
 
     /** Get the body as a double */
-    inline double as_double()     const { return ((LV2_Atom_Double*)atom)->body; }
+    inline double as_double() const { return ((LV2_Atom_Double*) atom)->body; }
 
     /** Returns the atom casted to LV2_Atom_Object */
-    const Object as_object()      const { return Object ((LV2_Atom_Object* ) atom); }
+    const Object as_object() const { return Object ((LV2_Atom_Object*) atom); }
 
     /** Get the body as a string */
     inline const char* as_string() const { return (const char*) LV2_ATOM_BODY (atom); }
 
     /** Get the body as a 32bit integer */
-    inline int32_t as_int()       const { return ((LV2_Atom_Int*)atom)->body; }
+    inline int32_t as_int() const { return ((LV2_Atom_Int*) atom)->body; }
 
     /** Get the body as a long */
-    inline int64_t as_long()      const { return ((LV2_Atom_Long*)atom)->body; }
+    inline int64_t as_long() const { return ((LV2_Atom_Long*) atom)->body; }
 
     /** Get the body as a URID */
-    inline uint32_t as_urid()     const { return ((LV2_Atom_URID*)atom)->body; }
+    inline uint32_t as_urid() const { return ((LV2_Atom_URID*) atom)->body; }
 
     /** Get this Atom's type */
-    inline uint32_t type()        const { return atom->type; }
+    inline uint32_t type() const { return atom->type; }
 
     /** Get the Atom's total size */
-    inline uint32_t total_size()  const { return lv2_atom_total_size (atom); }
+    inline uint32_t total_size() const { return lv2_atom_total_size (atom); }
 
     /** Get the Atom's body size */
-    inline uint32_t size()        const { return atom->size; }
+    inline uint32_t size() const { return atom->size; }
 
     /** Get the underlying LV2_Atom pointer */
     inline const LV2_Atom* c_obj() const { return atom; }
 
     /** Castable to bool */
     inline operator bool() const { return ! lv2_atom_is_null (atom); }
-    
+
     /** Castable to const LV2_Atom* */
     inline operator const LV2_Atom*() const { return atom; }
 
@@ -266,8 +270,8 @@ struct Atom final
     }
 
     /** Equality operator */
-    inline bool operator== (const Atom& other) const { 
-        return lv2_atom_equals (atom, other.atom); 
+    inline bool operator== (const Atom& other) const {
+        return lv2_atom_equals (atom, other.atom);
     }
 
     /** Inequality operator */
@@ -278,13 +282,13 @@ struct Atom final
 private:
     friend struct Object;
     const LV2_Atom* atom = nullptr;
-    
+
     /** @private Used by has_type_and_equals */
-    inline bool operator== (const LV2_URID& u) const { return (((LV2_Atom_URID*)atom)->body == u); }
-    inline bool operator== (const int32_t& i)  const { return (((LV2_Atom_Int*)atom)->body == i); }
-    inline bool operator== (const int64_t& l)  const { return (((LV2_Atom_Long*)atom)->body == l); }
-    inline bool operator== (const float& f)    const { return (((LV2_Atom_Float*)atom)->body == f); }
-    inline bool operator== (const double& f)   const { return (((LV2_Atom_Double*)atom)->body == f); }
+    inline bool operator== (const LV2_URID& u) const { return (((LV2_Atom_URID*) atom)->body == u); }
+    inline bool operator== (const int32_t& i) const { return (((LV2_Atom_Int*) atom)->body == i); }
+    inline bool operator== (const int64_t& l) const { return (((LV2_Atom_Long*) atom)->body == l); }
+    inline bool operator== (const float& f) const { return (((LV2_Atom_Float*) atom)->body == f); }
+    inline bool operator== (const double& f) const { return (((LV2_Atom_Double*) atom)->body == f); }
 };
 
 /** An LV2_Atom_Sequence wrapper.
@@ -300,8 +304,7 @@ private:
     @endcode
     @headerfile lvtk/ext/atom.hpp
 */
-struct Sequence final
-{
+struct Sequence final {
     typedef AtomEvent* pointer;
     typedef AtomEvent& reference;
     typedef const AtomEvent* const_pointer;
@@ -311,17 +314,17 @@ struct Sequence final
         @param seq  Pointer to an LV2_Atom_Sequence 
      */
     Sequence (const void* data)
-        : sequence ((LV2_Atom_Sequence*) data) { }
+        : sequence ((LV2_Atom_Sequence*) data) {}
 
     /** Create an AtomSequnce from an LV2_Atom_Sequence
         @param seq The sequence to wrap 
      */
     Sequence (LV2_Atom_Sequence* seq)
-        : sequence (seq) { }
-    
+        : sequence (seq) {}
+
     /** Create an Sequence from a ForgeRef */
     Sequence (ForgeRef ref)
-        : sequence ((LV2_Atom_Sequence*) ref) { }
+        : sequence ((LV2_Atom_Sequence*) ref) {}
 
     /** Reset for writing */
     inline void reset() {
@@ -335,22 +338,22 @@ struct Sequence final
         @note This method does NOT return the number of events contained in
               the Sequence.  It is the size in terms of bytes.
     */
-    inline uint32_t size() const        { return sequence->atom.size; }
+    inline uint32_t size() const { return sequence->atom.size; }
 
     /** Return the sequence's unit */
-    inline uint32_t unit() const        { return sequence->body.unit; }
+    inline uint32_t unit() const { return sequence->body.unit; }
 
     /** Return the sequence's c-type */
-    inline LV2_Atom_Sequence* c_obj()   { return sequence; }
+    inline LV2_Atom_Sequence* c_obj() { return sequence; }
 
     /** Castable to bool. True if the sequence isn't nullptr */
-    inline operator bool() const        { return sequence != 0; }
+    inline operator bool() const { return sequence != 0; }
 
     /** Castable to LV2_Atom_Sequence */
     inline operator LV2_Atom_Sequence*() const { return sequence; }
 
     /** @private */
-    inline operator uint8_t*() const    { return (uint8_t*) sequence; }
+    inline operator uint8_t*() const { return (uint8_t*) sequence; }
 
     /** Append an AtomEvent to the end of the sequence.
 
@@ -361,7 +364,7 @@ struct Sequence final
      */
     inline void append (const AtomEvent& ev) {
         if (AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size)) {
-            auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
+            auto total_size = (uint32_t) sizeof (ev) + ev.body.size;
             memcpy (pos, &ev, total_size);
             sequence->atom.size += lv2_atom_pad_size (total_size);
         }
@@ -375,7 +378,7 @@ struct Sequence final
         AtomEvent* e = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
         LV2_ATOM_SEQUENCE_FOREACH (sequence, iter) {
             if (iter->time.frames > ev.time.frames) {
-                memmove (((uint8_t*) iter) + lv2_atom_pad_size ((uint32_t) sizeof(*iter) + iter->body.size),
+                memmove (((uint8_t*) iter) + lv2_atom_pad_size ((uint32_t) sizeof (*iter) + iter->body.size),
                          (uint8_t*) iter,
                          (uint8_t*) e - (uint8_t*) iter);
                 e = iter;
@@ -384,7 +387,7 @@ struct Sequence final
         }
 
         if (e) {
-            auto total_size = (uint32_t)sizeof(ev) + ev.body.size;
+            auto total_size = (uint32_t) sizeof (ev) + ev.body.size;
             memcpy (e, &ev, total_size);
             sequence->atom.size += lv2_atom_pad_size (total_size);
         }
@@ -392,17 +395,15 @@ struct Sequence final
 
     /** @private */
     struct iterator {
-        AtomEvent&  operator*()  { return *event; }
+        AtomEvent& operator*() { return *event; }
         const AtomEvent* operator->() const { return event; }
 
-        iterator& operator++()
-        {
+        iterator& operator++() {
             event = lv2_atom_sequence_next (event);
             return *this;
         }
 
-        iterator operator++(int)
-        {
+        iterator operator++ (int) {
             iterator res (sequence, event);
             ++(*this);
             return res;
@@ -413,20 +414,20 @@ struct Sequence final
 
     private:
         friend struct Sequence;
-        iterator (LV2_Atom_Sequence *seq, AtomEvent* ev)
-            : event (ev), sequence (seq) { }
+        iterator (LV2_Atom_Sequence* seq, AtomEvent* ev)
+            : event (ev), sequence (seq) {}
         LV2_Atom_Event* event = nullptr;
         LV2_Atom_Sequence* sequence = nullptr;
     };
 
     /** @returns an iterator starting at the first event */
-    inline iterator begin() const { 
-        return iterator (sequence, lv2_atom_sequence_begin (&sequence->body)); 
+    inline iterator begin() const {
+        return iterator (sequence, lv2_atom_sequence_begin (&sequence->body));
     }
 
     /** @returns the end iterator of this sequence */
-    inline iterator end() const { 
-        return iterator (sequence, lv2_atom_sequence_end (&sequence->body, sequence->atom.size)); 
+    inline iterator end() const {
+        return iterator (sequence, lv2_atom_sequence_end (&sequence->body, sequence->atom.size));
     }
 
 private:
@@ -437,8 +438,7 @@ private:
 /** Class wrapper around LV2_Atom_Forge
     @headerfile lvtk/ext/atom.hpp
 */
-struct Forge final : LV2_Atom_Forge
-{
+struct Forge final : LV2_Atom_Forge {
     /** Uninitialized Forge.
         Client code must call Forge::init() before using otherwise
         written output will be unpredictable and likely cause a nasty crash
@@ -448,7 +448,7 @@ struct Forge final : LV2_Atom_Forge
     /** Initialized Forge.
         @param map The LV2_URID_Map to use for initialization    
      */
-    Forge (LV2_URID_Map* map)   { init (map); }
+    Forge (LV2_URID_Map* map) { init (map); }
 
     /** Initialize the underlying atom forge
          @param map The mapping function needed for init
@@ -500,7 +500,7 @@ struct Forge final : LV2_Atom_Forge
     inline void pop (ForgeFrame& frame) {
         lv2_atom_forge_pop (this, &frame);
     }
-    
+
     /** Write an atom header
 
         @param size The atom's body size
@@ -545,36 +545,36 @@ struct Forge final : LV2_Atom_Forge
         @param val The value to write
         @returns    A reference to the Atom
      */
-    inline ForgeRef write_int (const int val) { 
-        return lv2_atom_forge_int (this, val); 
+    inline ForgeRef write_int (const int val) {
+        return lv2_atom_forge_int (this, val);
     }
 
     /** Write a double value @param val the value to write
         @param val The value to write
         @returns    A reference to the Atom
      */
-    inline ForgeRef write_double (const double val) { 
-        return lv2_atom_forge_double (this, val); 
+    inline ForgeRef write_double (const double val) {
+        return lv2_atom_forge_double (this, val);
     }
 
     /** Write a float value */
-    inline ForgeRef write_float (const float val) { 
-        return lv2_atom_forge_float (this, val); 
+    inline ForgeRef write_float (const float val) {
+        return lv2_atom_forge_float (this, val);
     }
 
     /** Write a long integer value  */
-    inline ForgeRef write_long (const int64_t val) { 
-        return lv2_atom_forge_long (this, val); 
+    inline ForgeRef write_long (const int64_t val) {
+        return lv2_atom_forge_long (this, val);
     }
 
     /** Write a string value */
-    inline ForgeRef write_string (const char* str) { 
-        return lv2_atom_forge_string (this, str, strlen (str)); 
+    inline ForgeRef write_string (const char* str) {
+        return lv2_atom_forge_string (this, str, strlen (str));
     }
 
     /** Write a URI string */
-    inline ForgeRef write_uri (const char* uri) { 
-        return lv2_atom_forge_uri (this, uri, strlen (uri)); 
+    inline ForgeRef write_uri (const char* uri) {
+        return lv2_atom_forge_uri (this, uri, strlen (uri));
     }
 
     /** Write raw data
@@ -596,21 +596,19 @@ struct Forge final : LV2_Atom_Forge
 /** An LV2_Atom_Vector Wrapper 
     @headerfile lvtk/ext/atom.hpp
  */
-struct Vector final
-{
-    inline Vector (ForgeRef ref) : vec ((LV2_Atom_Vector*) ref) { }
+struct Vector final {
+    inline Vector (ForgeRef ref) : vec ((LV2_Atom_Vector*) ref) {}
     ~Vector() = default;
 
     inline size_t size() const { return vec->atom.size / vec->body.child_size; }
     inline uint32_t child_size() const { return vec->body.child_size; }
     inline uint32_t child_type() const { return vec->body.child_type; }
     inline LV2_Atom_Vector* c_obj() const { return vec; }
-    inline operator LV2_Atom_Vector* () const { return vec; }
+    inline operator LV2_Atom_Vector*() const { return vec; }
 
     /** @private */
     struct iterator {
-        iterator& operator++()
-        {
+        iterator& operator++() {
             offset += vec->body.child_size;
 
             if (vec && offset >= vec->atom.size)
@@ -619,8 +617,7 @@ struct Vector final
             return *this;
         }
 
-        iterator operator++(int)
-        {
+        iterator operator++ (int) {
             iterator it (vec, offset);
             ++(*this);
             return it;
@@ -638,7 +635,7 @@ struct Vector final
 
     private:
         friend class Vector;
-        iterator (LV2_Atom_Vector *v, uint32_t os = 0) : vec (v), offset (os) { }
+        iterator (LV2_Atom_Vector* v, uint32_t os = 0) : vec (v), offset (os) {}
         LV2_Atom_Vector* vec = nullptr;
         uint32_t offset = 0;
     };
@@ -647,10 +644,10 @@ struct Vector final
     iterator begin() const { return iterator (vec); }
 
     /** Returns the end iterator */
-    iterator end()   const { return iterator (vec, vec->atom.size); }
+    iterator end() const { return iterator (vec, vec->atom.size); }
 
 private:
     LV2_Atom_Vector* vec = nullptr;
 };
 /* @} */
-}  /* namespace lvtk */
+} /* namespace lvtk */

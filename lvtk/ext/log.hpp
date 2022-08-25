@@ -16,8 +16,8 @@
 
 #pragma once
 
+#include <lv2/log/log.h>
 #include <lvtk/ext/extension.hpp>
-#include <lv2/lv2plug.in/ns/ext/log/log.h>
 
 /** @defgroup log Log
     Logging support
@@ -39,19 +39,18 @@ struct Logger final : FeatureData<LV2_Log_Log> {
     inline void operator<< (const std::string& out) const { operator<< (out.c_str()); }
 
     /** Log log:Trace with stream operator */
-    inline void operator<< (const char* out) const { 
+    inline void operator<< (const char* out) const {
         if (Trace > 0)
             this->printf (Trace, out);
     }
-    
+
     /** Log message with va_list 
      
         @param type     LV2_URID type to log
         @fmt            Format / message
         @ap             Arguments
     */
-    inline int vprintf (uint32_t type, const char* fmt, va_list ap) const
-    {
+    inline int vprintf (uint32_t type, const char* fmt, va_list ap) const {
         if (data != nullptr)
             return data->vprintf (data->handle, type, fmt, ap);
         return 0;
@@ -62,8 +61,7 @@ struct Logger final : FeatureData<LV2_Log_Log> {
         @param type     LV2_URID type to log
         @fmt            Format / message
     */
-    inline int printf (uint32_t type, const char* fmt, ...) const
-    {
+    inline int printf (uint32_t type, const char* fmt, ...) const {
         va_list argptr;
         va_start (argptr, fmt);
         int res = this->vprintf (type, fmt, argptr);
@@ -76,19 +74,18 @@ struct Logger final : FeatureData<LV2_Log_Log> {
        
         @param map  A LV2_URID_Map to inititialize with
      */
-    inline void init (LV2_URID_Map* const map)
-    {
-        Entry   = map->map (map->handle, LV2_LOG__Entry);
-        Error   = map->map (map->handle, LV2_LOG__Error);
-        Note    = map->map (map->handle, LV2_LOG__Note);
-        Trace   = map->map (map->handle, LV2_LOG__Trace);
+    inline void init (LV2_URID_Map* const map) {
+        Entry = map->map (map->handle, LV2_LOG__Entry);
+        Error = map->map (map->handle, LV2_LOG__Error);
+        Note = map->map (map->handle, LV2_LOG__Note);
+        Trace = map->map (map->handle, LV2_LOG__Trace);
         Warning = map->map (map->handle, LV2_LOG__Warning);
     }
 
 private:
     uint32_t Entry = 0;
     uint32_t Error = 0;
-    uint32_t Note  = 0;
+    uint32_t Note = 0;
     uint32_t Trace = 0;
     uint32_t Warning = 0;
 };
@@ -97,17 +94,20 @@ private:
     @ingroup log
     @headerfile lvtk/ext/log.hpp
 */
-template<class I> 
-struct Log : NullExtension
-{
+template <class I>
+struct Log : NullExtension {
     /** @private */
-    Log (const FeatureList& features) { 
+    Log (const FeatureList& features) {
         for (const auto& f : features) {
             int n_ok = 0;
-            if (strcmp (f.URI, LV2_LOG__log) == 0)
-                { log.set (f); ++n_ok; }
-            if (strcmp (f.URI, LV2_URID__map) == 0)
-                { log.init ((LV2_URID_Map*) f.data); ++n_ok; }
+            if (strcmp (f.URI, LV2_LOG__log) == 0) {
+                log.set (f);
+                ++n_ok;
+            }
+            if (strcmp (f.URI, LV2_URID__map) == 0) {
+                log.init ((LV2_URID_Map*) f.data);
+                ++n_ok;
+            }
             if (n_ok >= 2)
                 break;
         }
@@ -118,4 +118,4 @@ protected:
     Logger log;
 };
 
-}
+} // namespace lvtk

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
+#include <lv2/instance-access/instance-access.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
@@ -39,9 +39,8 @@ struct InstanceHandle final : FeatureData<Handle, Handle> {
     @headerfile lvtk/ext/instance_access.hpp
     @ingroup instance_access 
 */
-template<class I>
-struct InstanceAccess : NullExtension
-{
+template <class I>
+struct InstanceAccess : NullExtension {
     /** @private */
     InstanceAccess (const FeatureList& features) {
         for (const auto& f : features)
@@ -56,4 +55,4 @@ private:
     InstanceHandle instance;
 };
 
-}
+} // namespace lvtk

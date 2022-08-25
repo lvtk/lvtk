@@ -4,37 +4,13 @@ LV2 Toolkit
 This software package contains libraries that wrap the LV2 C API and extensions 
 into easy to use C++ classes.
 
-Status
-------
-[![Build Status](https://travis-ci.org/lvtk/lvtk.svg?branch=master)](https://travis-ci.org/lvtk/lvtk)
-
 Building
 --------
 To build and install, run
 ```
-$ ./waf configure
-$ ./waf build
-$ sudo ./waf install
-```
-To build without the UIs, run
-
-`$ ./waf configure --disable-ui build`
-
-To build documentation, run
-
-`$ ./waf configure --docs build`
-
-HTML documentation gets placed in build/doc/html
-
-Packaging
----------
-It is recommended for the 2.0 variety of LVTK to **completely replace** version 1.
-
-However, if v1 and v2 are to be installed on the same system, you will want to
-use the `--bundle` option in configure.  This allows you to rename the `lvtk.lv2`
-bundle name so there aren't conflicts:
-```
-./waf configure --bundle=lvtk-2.lv2
+$ meson setup build
+$ meson test -C build
+$ meson install -C build
 ```
 
 ISC License

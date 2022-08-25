@@ -1,11 +1,10 @@
 
-#include <math.h>
 #include <lvtk/plugin.hpp>
+#include <math.h>
 
 #define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
 
-class Volume : public lvtk::Plugin<Volume>
-{
+class Volume : public lvtk::Plugin<Volume> {
 public:
     Volume (const lvtk::Args& args) : Plugin (args) {
         lpf = 990.f / static_cast<float> (args.sample_rate);
@@ -30,7 +29,7 @@ public:
         if (fabsf (gains.last - gains.next) < 0.01) {
             // constant gain
             for (uint32_t c = 0; c < 2; ++c)
-                for (uint32_t f = 0; f < nframes; ++f)        
+                for (uint32_t f = 0; f < nframes; ++f)
                     output[c][f] = input[c][f] * gains.next;
             gains.last = gains.next;
         } else {

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <memory>
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/ui/ui.h>
 #include <lvtk/lvtk.hpp>
+#include <memory>
 
 namespace lvtk {
 /** Vector of LV2UI_Descriptor's
@@ -53,17 +53,16 @@ static UIDescriptors& ui_descriptors() {
     @ingroup ui
     @headerfile lvtk/ui.hpp
  */
-class Controller
-{
+class Controller {
 public:
     Controller() = default;
     Controller (LV2UI_Controller c, LV2UI_Write_Function f)
-        : controller (c), port_write (f) { }
+        : controller (c), port_write (f) {}
 
     Controller (const Controller& o) { operator= (o); }
 
     /** Write data to one of the ports */
-    void write (uint32_t port, uint32_t size, uint32_t protocol, const void * data) const {
+    void write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) const {
         port_write (controller, port, size, protocol, data);
     }
 
@@ -88,18 +87,17 @@ private:
     @headerfile lvtk/ui.hpp
     @ingroup ui
 */
-struct UIArgs
-{
+struct UIArgs {
     /** @private */
     UIArgs() = default;
     /** @private */
     UIArgs (const std::string& p, const std::string& b, const Controller& c, const FeatureList& f)
-        : plugin(p), bundle(b), controller(c), features (f) {}
+        : plugin (p), bundle (b), controller (c), features (f) {}
 
-    std::string plugin;     /**< Plugin URI */
-    std::string bundle;     /**< UI Bundle Path */
-    Controller controller;  /**< The @ref Controller */
-    FeatureList features;   /**< Feature List */
+    std::string plugin;    /**< Plugin URI */
+    std::string bundle;    /**< UI Bundle Path */
+    Controller controller; /**< The @ref Controller */
+    FeatureList features;  /**< Feature List */
 };
 
 /** UI registration class
@@ -107,9 +105,8 @@ struct UIArgs
     @ingroup ui
     @headerfile lvtk/ui.hpp
  */
-template<class U>
-class UIDescriptor final
-{
+template <class U>
+class UIDescriptor final {
 public:
     /** UI Registation
         
@@ -135,10 +132,12 @@ public:
 private:
     void register_ui (const std::string& uri) {
         LV2UI_Descriptor desc;
-        desc.URI            = strdup (uri.c_str());
-        desc.instantiate    = U::_instantiate;
-        desc.port_event     = U::_port_event;
-        desc.cleanup        = U::_cleanup;
+        desc.URI = (const char*) malloc ((1 + uri.length()) * sizeof (char));
+        strcpy ((char*) desc.URI, uri.c_str());
+        desc.URI = strdup (uri.c_str());
+        desc.instantiate = U::_instantiate;
+        desc.port_event = U::_port_event;
+        desc.cleanup = U::_cleanup;
         desc.extension_data = U::_extension_data;
         ui_descriptors().push_back (desc);
         U::map_extension_data();
@@ -156,17 +155,15 @@ private:
     @ingroup ui
     @headerfile lvtk/ui.hpp
 */
-template<class S, template<class> class... E>
-class UI : public E<S>...
-{
+template <class S, template <class> class... E>
+class UI : public E<S>... {
 protected:
     /** Default constructor not allowed */
     UI() = delete;
 
     /** A UI with Arguments */
     explicit UI (const UIArgs& args)
-        : E<S> (args.features)..., controller (args.controller)
-    {}
+        : E<S> (args.features)..., controller (args.controller) {}
 
 public:
     virtual ~UI() = default;
@@ -183,14 +180,14 @@ public:
         This is called immediately before the destructor. Override it if you 
         need to do something special beforehand.
      */
-    void cleanup() { }
+    void cleanup() {}
 
     /** Port events (optional) 
      
         Called when port events are received from the host. Implement this to 
         update the UI when properties change in the plugin.
     */
-    void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) { }
+    void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) {}
 
     /** Write data to ports
         
@@ -216,23 +213,23 @@ protected:
 
 private:
     friend class UIDescriptor<S>; // so this can be private
-    
+
     inline static ExtensionMap& extensions() {
         static ExtensionMap s_extensions;
         return s_extensions;
     }
 
     inline static std::vector<std::string>& required() {
-        static std::vector<std::string>  s_required;
+        static std::vector<std::string> s_required;
         return s_required;
     }
 
     static void map_extension_data() {
         using pack_context = std::vector<int>;
-        pack_context { (E<S>::map_extension_data (extensions()) , 0)... };
+        pack_context { (E<S>::map_extension_data (extensions()), 0)... };
     }
 
-    static LV2UI_Handle _instantiate (const struct LV2UI_Descriptor*  descriptor,
+    static LV2UI_Handle _instantiate (const LV2UI_Descriptor*         descriptor,
                                       const char*                     plugin_uri,
                                       const char*                     bundle_path,
                                       LV2UI_Write_Function            write_function,
@@ -243,13 +240,14 @@ private:
         const UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
         auto instance = std::unique_ptr<S> (new S (args));
 
-        for (const auto& rq : required())
-        {
+        for (const auto& rq : required()) {
             bool provided = false;
             for (const auto& f : args.features)
-                if (strcmp (f.URI, rq.c_str()) == 0)
-                    { provided = true; break; }
-            
+                if (strcmp (f.URI, rq.c_str()) == 0) {
+                    provided = true;
+                    break;
+                }
+
             if (! provided) {
                 return nullptr;
             }
@@ -259,19 +257,17 @@ private:
         return static_cast<LV2UI_Handle> (instance.release());
     }
 
-	static void _cleanup (LV2UI_Handle ui)
-    {
-        (static_cast<S*>(ui))->cleanup();
+    static void _cleanup (LV2UI_Handle ui) {
+        (static_cast<S*> (ui))->cleanup();
         delete static_cast<S*> (ui);
     }
 
-	static void _port_event (LV2UI_Handle ui,
-	                         uint32_t     port_index,
-	                         uint32_t     buffer_size,
-	                         uint32_t     format,
-	                         const void*  buffer)
-    {
-        (static_cast<S*>(ui))->port_event (port_index, buffer_size, format, buffer);
+    static void _port_event (LV2UI_Handle ui,
+                             uint32_t port_index,
+                             uint32_t buffer_size,
+                             uint32_t format,
+                             const void* buffer) {
+        (static_cast<S*> (ui))->port_event (port_index, buffer_size, format, buffer);
     }
 
     static const void* _extension_data (const char* uri) {
@@ -280,17 +276,17 @@ private:
     }
 };
 
-}
+} // namespace lvtk
 
 extern "C" {
 
 #ifndef LVTK_NO_SYMBOL_EXPORT
 
-LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor(uint32_t index) {
+LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor (uint32_t index) {
     return (index < lvtk::ui_descriptors().size())
-        ? &lvtk::ui_descriptors()[index] : NULL;
+               ? &lvtk::ui_descriptors()[index]
+               : NULL;
 }
 
 #endif
-
 }

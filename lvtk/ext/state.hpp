@@ -1,5 +1,5 @@
 /* 
-    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
+    Copyright (c) 2019-2022, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
     purpose with or without fee is hereby granted, provided that the above
@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lv2/state/state.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
@@ -43,10 +43,10 @@ using StateStatus = LV2_State_Status;
     @headerfile lvtk/ext/state.hpp
  */
 struct StateRetrieve {
-    StateRetrieve (LV2_State_Retrieve_Function srfunc, LV2_State_Handle handle)
-        : p_handle (handle), p_srfunc (srfunc) { }
+    StateRetrieve (LV2_State_Retrieve_Function retrieve, LV2_State_Handle handle)
+        : p_handle (handle), f_retrieve (retrieve) {}
 
-    /** Call the retrieve function
+    /** Call the retrieve function.
 
         @param key
         @param size
@@ -54,17 +54,16 @@ struct StateRetrieve {
         @param flags
         @returns Associated 'value' data for the given key
       */
-    const void* operator () (uint32_t key, 
-                             size_t *size = nullptr,
-                             uint32_t *type  = nullptr,
-                             uint32_t *flags = nullptr) const
-    {
-        return p_srfunc (p_handle, key, size, type, flags);
+    const void* operator() (uint32_t key,
+                            size_t* size = nullptr,
+                            uint32_t* type = nullptr,
+                            uint32_t* flags = nullptr) const {
+        return f_retrieve (p_handle, key, size, type, flags);
     }
 
 private:
-    LV2_State_Handle              p_handle;
-    LV2_State_Retrieve_Function   p_srfunc;
+    LV2_State_Handle p_handle { nullptr };
+    LV2_State_Retrieve_Function f_retrieve { nullptr };
 };
 
 /** Wrapper struct for state storage. This wraps an
@@ -73,8 +72,8 @@ private:
     @headerfile lvtk/ext/state.hpp
  */
 struct StateStore {
-    StateStore (LV2_State_Store_Function ssfunc, LV2_State_Handle handle)
-        : p_handle(handle), p_ssfunc(ssfunc) { }
+    StateStore (LV2_State_Store_Function store, LV2_State_Handle handle)
+        : p_handle (handle), f_store (store) {}
 
     /** Execute the store functor.
 
@@ -83,82 +82,75 @@ struct StateStore {
         @param size
         @param type
         @param flags
-        @return STATE_SUCCESS on Success
+        @return LV2_STATE_SUCCESS on Success
      */
     inline StateStatus operator() (uint32_t key, const void* value,
-                                    size_t size, uint32_t type,
-                                    uint32_t flags = 0) const
-    {
-        return (StateStatus) p_ssfunc (p_handle, key, value, size, type, flags);
+                                   size_t size, uint32_t type,
+                                   uint32_t flags = 0) const {
+        return (StateStatus) f_store (p_handle, key, value, size, type, flags);
     }
 
 private:
-    LV2_State_Handle              p_handle;
-    LV2_State_Store_Function      p_ssfunc;
+    LV2_State_Handle p_handle;
+    LV2_State_Store_Function f_store;
 };
 
-/** Adds LV2 State support to your plugin instance
+/** Adds LV2 State support to your plugin instance.
     @ingroup state
     @headerfile lvtk/ext/state.hpp
 */
-template<class I>
-struct State : Extension<I>
-{   
+template <class I>
+struct State : Extension<I> {
     /** @private */
     State (const FeatureList&) {}
 
-    /** Called by the host when saving state
+    /** Called by the host when saving state.
      
         @param store    Store function object to write keys/values
         @param flags    State flags to check
         @param features Additional features for this operation 
     */
-    StateStatus save (StateStore &store, 
-                      uint32_t flags, const 
-                      FeatureList &features)
-    { 
-        return LV2_STATE_SUCCESS; 
+    StateStatus save (StateStore& store,
+                      uint32_t flags, const FeatureList& features) {
+        return LV2_STATE_SUCCESS;
     }
 
-    /** Called by the host when restoring state
+    /** Called by the host when restoring state.
      
         @param retrieve Retrieve function object to get keys/values
         @param flags    State flags to check
         @param features Additional features for this operation 
     */
-    StateStatus restore (StateRetrieve &retrieve, 
-                         uint32_t flags, 
-                         const FeatureList &features)
-    { 
-        return LV2_STATE_SUCCESS; 
+    StateStatus restore (StateRetrieve& retrieve,
+                         uint32_t flags,
+                         const FeatureList& features) {
+        return LV2_STATE_SUCCESS;
     }
 
 protected:
     /** @private */
-    inline static void map_extension_data (ExtensionMap& dmap) {
-        static const LV2_State_Interface _state =  { _save, _restore };
-        dmap[LV2_STATE__interface] = &_state;
+    inline static void map_extension_data (ExtensionMap& extensions) {
+        static const LV2_State_Interface _state = { _save, _restore };
+        extensions[LV2_STATE__interface] = &_state;
     }
 
 private:
-    static LV2_State_Status _save (LV2_Handle                    instance,
-                                   LV2_State_Store_Function      store_function,
-                                   LV2_State_Handle              state_handle,
-                                   uint32_t                      flags,
-                                   const LV2_Feature *const *    features)
-    {
+    static LV2_State_Status _save (LV2_Handle instance,
+                                   LV2_State_Store_Function store_function,
+                                   LV2_State_Handle state_handle,
+                                   uint32_t flags,
+                                   const LV2_Feature* const* features) {
         auto* const plugin = reinterpret_cast<I*> (instance);
         StateStore store (store_function, state_handle);
         FeatureList flist (features);
         return (LV2_State_Status) plugin->save (store, flags, flist);
     }
 
-    static LV2_State_Status _restore (LV2_Handle                  instance,
+    static LV2_State_Status _restore (LV2_Handle instance,
                                       LV2_State_Retrieve_Function retrieve_function,
-                                      LV2_State_Handle            handle,
-                                      uint32_t                    flags,
-                                      const LV2_Feature *const *  features)
-    {
+                                      LV2_State_Handle handle,
+                                      uint32_t flags,
+                                      const LV2_Feature* const* features) {
         auto* const plugin = static_cast<I*> (instance);
         StateRetrieve retrieve (retrieve_function, handle);
         FeatureList feature_list (features);
@@ -166,4 +158,4 @@ private:
     }
 };
 
-}
+} // namespace lvtk

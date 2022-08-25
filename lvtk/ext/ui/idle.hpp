@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/ui/ui.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
@@ -25,9 +25,8 @@ namespace lvtk {
     @headerfile lvtk/ext/ui/idle.hpp
     @ingroup ui
  */
-template<class I>
-struct Idle : Extension<I>
-{
+template <class I>
+struct Idle : Extension<I> {
     /** @private */
     Idle (const FeatureList&) {}
 
@@ -40,7 +39,7 @@ struct Idle : Extension<I>
 
 protected:
     inline static void map_extension_data (ExtensionMap& dmap) {
-        static const LV2UI_Idle_Interface _idle_iface =  { _idle };
+        static const LV2UI_Idle_Interface _idle_iface = { _idle };
         dmap[LV2_UI__idleInterface] = &_idle_iface;
     }
 
@@ -48,4 +47,4 @@ private:
     static int _idle (LV2UI_Handle ui) { return (static_cast<I*> (ui))->idle(); }
 };
 
-}
+} // namespace lvtk

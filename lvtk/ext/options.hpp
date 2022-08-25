@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/ext/options/options.h>
+#include <lv2/options/options.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
@@ -56,9 +56,8 @@ struct OptionsData final : FeatureData<Option> {
     @headerfile lvtk/ext/options.hpp
     @ingroup options
  */
-template<class I>
-struct Options : Extension<I>
-{
+template <class I>
+struct Options : Extension<I> {
     /** @private */
     Options (const FeatureList& features) {
         for (const auto& f : features)
@@ -100,7 +99,7 @@ protected:
 
 private:
     OptionsData host_options;
-    
+
     static uint32_t _get (LV2_Handle handle, LV2_Options_Option* options) {
         return (static_cast<I*> (handle))->get (options);
     }
@@ -110,4 +109,4 @@ private:
     }
 };
 
-}
+} // namespace lvtk

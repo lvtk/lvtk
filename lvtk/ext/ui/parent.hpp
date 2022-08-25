@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <lv2/ui/ui.h>
 #include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
@@ -33,9 +33,8 @@ struct ParentWidget final : FeatureData<LV2UI_Widget, LV2UI_Widget> {
     @headerfile lvtk/ext/ui/parent.hpp
     @ingroup ui
 */
-template<class I> 
-struct Parent : NullExtension
-{
+template <class I>
+struct Parent : NullExtension {
     /** @private */
     Parent (const FeatureList& features) {
         for (const auto& f : features)
@@ -61,4 +60,4 @@ protected:
     ParentWidget parent;
 };
 
-}
+} // namespace lvtk

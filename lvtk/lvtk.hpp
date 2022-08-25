@@ -45,8 +45,8 @@
 #include <string>
 #include <vector>
 
-#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
 
 namespace lvtk {
 /** @defgroup lvtk Core
@@ -55,15 +55,14 @@ namespace lvtk {
  */
 
 /** Alias to LV2_Handle */
-using Handle        = LV2_Handle;
+using Handle = LV2_Handle;
 
 /** Map of extension data */
-using ExtensionMap  = std::map<std::string, const void*>;
+using ExtensionMap = std::map<std::string, const void*>;
 
 /** Internal class which maintains a list of descriptors */
-template<class D>
-struct DescriptorList final : public std::vector<D>
-{
+template <class D>
+struct DescriptorList final : public std::vector<D> {
     inline ~DescriptorList() {
         for (const auto& desc : *this)
             std::free ((void*) desc.URI);
@@ -76,11 +75,12 @@ struct Feature : LV2_Feature {
 
     Feature (const LV2_Feature& feature) {
         data = feature.data;
-        URI  = feature.URI;
+        URI = feature.URI;
     }
 
     /** @returns true if this Feature's URI matches */
-    inline bool operator== (const char* uri)  const { return strcmp (uri, URI) == 0; }
+    inline bool operator== (const char* uri) const { return strcmp (uri, URI) == 0; }
+
     /** @returns true if this Feature's URI matches */
     inline bool operator== (const std::string& uri) const { return strcmp (uri.c_str(), URI) == 0; }
 };
@@ -93,8 +93,7 @@ struct Feature : LV2_Feature {
     @note This contains external data from the host and should never
     itself be referenced by your plugin.
  */
-struct FeatureList final : public std::vector<Feature>
-{
+struct FeatureList final : public std::vector<Feature> {
     /** Construct an empty feature list */
     FeatureList() = default;
 
@@ -108,9 +107,9 @@ struct FeatureList final : public std::vector<Feature>
         
         @param feature  LV2_Feature array to reference
     */
-    FeatureList (const LV2_Feature *const * features) {
+    FeatureList (const LV2_Feature* const* features) {
         for (int i = 0; features[i]; ++i) {
-            push_back (*features [i]);
+            push_back (*features[i]);
         }
     }
 
@@ -138,19 +137,13 @@ struct FeatureList final : public std::vector<Feature>
                 
     @see @ref WorkerSchedule, @ref Map, @ref Unmap, @ref Logger
  */
-template<class D, class P = D*>
-struct FeatureData
-{
-    using data_t        = D;
-    using data_ptr_t    = P;
+template <class D, class P = D*>
+struct FeatureData {
+    using data_type = D;
+    using data_ptr_type = P;
 
     /** A uri for this data */
     const std::string URI;
-
-protected:
-    /** Subclasses must use this ctor to assign the URI of the data */
-    explicit FeatureData (const char* feature_uri)
-        : URI (feature_uri) { }
 
 public:
     FeatureData() = delete;
@@ -159,34 +152,38 @@ public:
     /** Returns true if the passed feature is for this Feature Data
         @param feature  The feature to check
      */
-    inline bool is_for (const Feature& feature) const { return feature == URI; }
+    inline bool is_for (const Feature& feature) const noexcept { return feature == URI; }
 
     /** @returns a pointer to the underlying data_t */
-    inline data_ptr_t get() const { return data; }
+    inline data_ptr_type get() const noexcept { return data; }
 
     /** Sets the data from a feature
         @param feature  The Feature to check and set
      */
-    inline bool set (const Feature& feature) {
+    inline bool set (const Feature& feature) noexcept {
         if (! is_for (feature))
             return false;
-        data = (data_ptr_t) feature.data;
+        data = (data_ptr_type) feature.data;
         return true;
     }
 
     /** false if the data ptr is null */
-    inline operator bool() const { return data != nullptr; }
+    inline operator bool() const noexcept { return data != nullptr; }
 
-    /** castable to `data_ptr_t` */
-    inline operator data_ptr_t() const { return data; }
+    /** castable to `data_ptr_type` */
+    inline operator data_ptr_type() const noexcept { return data; }
 
     /** Call as function
         @returns The data pointer
      */
-    inline data_ptr_t operator()() const { return data; }
+    inline data_ptr_type operator()() const noexcept { return data; }
 
 protected:
-    data_ptr_t data = nullptr;
+    /** Subclasses must use this ctor to assign the URI of the data */
+    explicit FeatureData (const char* feature_uri)
+        : URI (feature_uri) {}
+
+    data_ptr_type data = nullptr;
 };
 /* @} */
-}
+} // namespace lvtk

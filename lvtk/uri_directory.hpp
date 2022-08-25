@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <unordered_map>
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
 #include <string>
-#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
+#include <unordered_map>
 
 namespace lvtk {
 
@@ -32,42 +32,37 @@ namespace lvtk {
     @headerfile lvtk/uri_directory.hpp
     @ingroup urid
  */
-class URIDirectory
-{
+class URIDirectory {
 public:
     /** Create an empty symbol map and initialized LV2 URID features */
-    URIDirectory()
-    {
-        map_feature.URI    = LV2_URID__map;
-        map_data.handle    = (void*) this;
-        map_data.map       = &URIDirectory::_map;
-        map_feature.data   = &map_data;
+    URIDirectory() {
+        map_feature.URI = LV2_URID__map;
+        map_data.handle = (void*) this;
+        map_data.map = &URIDirectory::_map;
+        map_feature.data = &map_data;
 
-        unmap_feature.URI  = LV2_URID__unmap;
-        unmap_data.handle  = this;
-        unmap_data.unmap   = _unmap;
+        unmap_feature.URI = LV2_URID__unmap;
+        unmap_data.handle = this;
+        unmap_data.unmap = _unmap;
         unmap_feature.data = &unmap_data;
     }
 
-    ~URIDirectory()
-    {
+    ~URIDirectory() {
         clear();
     }
 
     /** Map a symbol/uri to an unsigned integer
         @param key The symbol to map
         @returns A mapped URID, a return of 0 indicates failure */
-    inline uint32_t map (const char* key)
-    {
-        if (! contains (key))
-        {
+    inline uint32_t map (const char* key) {
+        if (! contains (key)) {
             const uint32_t urid (1 + (uint32_t) mapped.size());
-            mapped [key] = urid;
-            unmapped [urid] = std::string (key);
+            mapped[key] = urid;
+            unmapped[urid] = std::string (key);
             return urid;
         }
 
-        return mapped [key];
+        return mapped[key];
     }
 
     /** Containment test of a URI
@@ -93,30 +88,29 @@ public:
      */
     inline const char* unmap (uint32_t urid) {
         if (contains (urid))
-            return (const char*) unmapped [urid].c_str();
+            return (const char*) unmapped[urid].c_str();
         return "";
     }
 
     /** Clear the URIDirectory */
-    inline void clear()
-    {
+    inline void clear() {
         mapped.clear();
         unmapped.clear();
     }
 
     /** @returns a LV2_Feature with LV2_URID_Map as the data member */
-    const LV2_Feature *const get_map_feature()      const { return &map_feature; }
+    const LV2_Feature* const get_map_feature() const { return &map_feature; }
     /** @returns a LV2_Feature with LV2_URID_Unmap as the data member */
-    const LV2_Feature *const get_unmap_feature()    const { return &unmap_feature; }
+    const LV2_Feature* const get_unmap_feature() const { return &unmap_feature; }
 
 private:
     std::unordered_map<std::string, uint32_t> mapped;
     std::unordered_map<uint32_t, std::string> unmapped;
 
-    LV2_Feature         map_feature;
-    LV2_URID_Map        map_data;
-    LV2_Feature         unmap_feature;
-    LV2_URID_Unmap      unmap_data;
+    LV2_Feature map_feature;
+    LV2_URID_Map map_data;
+    LV2_Feature unmap_feature;
+    LV2_URID_Unmap unmap_data;
 
     static uint32_t _map (LV2_URID_Map_Handle self, const char* uri) {
         return (static_cast<URIDirectory*> (self))->map (uri);
@@ -127,4 +121,4 @@ private:
     }
 };
 
-}
+} // namespace lvtk
