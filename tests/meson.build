@@ -6,6 +6,7 @@ lvtk_test_sources = '''
     bufsize_test.cpp
     dynmanifest_test.cpp
     options_test.cpp
+    log_test.cpp
     worker_test.cpp
     data_access_test.cpp
     instance_access_test.cpp
