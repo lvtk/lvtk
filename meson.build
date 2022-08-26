@@ -1,6 +1,6 @@
 project ('lvtk', 'cpp', version : '2.0.0',
     meson_version : '>= 0.58.0',
-    default_options : [ 'cpp_std=c++11' ])
+    default_options : [ 'cpp_std=c++14' ])
 
 lv2_dep = dependency ('lv2', version : '>= 1.15.4', required : true)
 doxygen = find_program ('doxygen')
