@@ -5,7 +5,7 @@
             "name": "Test LVTK",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/testlvtk",
+            "program": "${workspaceRoot}/build/tests/test_lvtk",
             "cwd": "${workspaceRoot}/build",
             "args": [ ],
             "stopAtEntry": false,
@@ -14,8 +14,7 @@
             "logging": {
                 "moduleLoad": false
             },
-            "MIMode": "lldb",
-            "preLaunchTask": "Build"
+            "MIMode": "gdb"
         }
     ]
 }
