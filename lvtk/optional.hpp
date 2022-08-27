@@ -16,20 +16,27 @@
 
 #pragma once
 
-#if __cpluspus > 201402L
+#if __cplusplus > 201402L
     #include <optional>
+    #define LVTK_STD_EXPERIMENTAL_OPTIONAL 0
 #else
-    #include <experimental/optional>
+    #if __has_include(<experimental/optional>)
+        #include <experimental/optional>
+        #define LVTK_STD_EXPERIMENTAL_OPTIONAL 1
+    #else
+        #error "Header <optional> or <expermental/optional> is required."
+    #endif    
 #endif
 
 namespace lvtk {
 
-#if __cpluspus > 201402L
-template <typename T>
-using Optional = std::optional<T>;
+#if defined (LVTK_STD_EXPERIMENTAL_OPTIONAL)
+#if LVTK_STD_EXPERIMENTAL_OPTIONAL
+    template <typename T> using Optional = std::experimental::optional<T>;
 #else
-template <typename T>
-using Optional = std::experimental::optional<T>;
+    template <typename T> using Optional = std::optional<T>;
+#endif
+#undef LVTK_STD_EXPERIMENTAL_OPTIONAL
 #endif
 
 } // namespace lvtk
