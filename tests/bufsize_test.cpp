@@ -61,7 +61,6 @@ protected:
 
 private:
     lvtk::Args args;
-    LV2_Feature bounded_feature = { LV2_BUF_SIZE__boundedBlockLength, nullptr };
     LV2_Feature options_feature = { LV2_OPTIONS__options, nullptr };
     lvtk::BufferDetails details;
     lvtk::OptionArray options;

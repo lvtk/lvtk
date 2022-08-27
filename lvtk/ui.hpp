@@ -40,7 +40,7 @@ using UIDescriptors = DescriptorList<LV2UI_Descriptor>;
     @headerfile lvtk/ui.hpp
     @ingroup ui
 */
-static UIDescriptors& ui_descriptors() {
+static inline UIDescriptors& ui_descriptors() {
     static UIDescriptors s_desc;
     return s_desc;
 }

@@ -432,8 +432,8 @@ struct Sequence final {
 
 private:
     LV2_Atom_Sequence* sequence = nullptr;
-    uint32_t capacity = 0;
 };
+
 
 /** Class wrapper around LV2_Atom_Forge
     @headerfile lvtk/ext/atom.hpp
@@ -634,7 +634,7 @@ struct Vector final {
         }
 
     private:
-        friend class Vector;
+        friend struct Vector;
         iterator (LV2_Atom_Vector* v, uint32_t os = 0) : vec (v), offset (os) {}
         LV2_Atom_Vector* vec = nullptr;
         uint32_t offset = 0;

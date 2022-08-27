@@ -75,8 +75,7 @@ struct WorkerRespond {
     WorkerRespond (LV2_Handle instance,
                    LV2_Worker_Respond_Function respond_function,
                    LV2_Worker_Respond_Handle handle)
-        : p_instance (instance),
-          p_handle (handle),
+        : p_handle (handle),
           f_respond (respond_function) {}
 
     /** Execute the worker respond function.
@@ -89,7 +88,6 @@ struct WorkerRespond {
     }
 
 private:
-    LV2_Handle p_instance;
     LV2_Worker_Respond_Handle p_handle;
     LV2_Worker_Respond_Function f_respond;
 };
