@@ -2,7 +2,7 @@
 #include <lvtk/plugin.hpp>
 #include <math.h>
 
-#define LVTK_VOLUME_URI "http://lvtoolkit.org/plugins/volume"
+#define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
 
 class Volume : public lvtk::Plugin<Volume> {
 public:

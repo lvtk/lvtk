@@ -4,14 +4,13 @@
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
-@prefix lvtk:  <http://lvtoolkit.org/ns/lvtk#> .
 
-<http://lvtoolkit.org/plugins/volume>
+<http://lvtk.org/plugins/volume>
 	a lv2:Plugin , 
 		lv2:AmplifierPlugin ;
 	doap:name "Volume" ;
 	doap:license <https://opensource.org/licenses/ISC> ;
-	lv2:project <http://lvtoolkit.org/plugins/> ;
+	lv2:project <http://lvtk.org/plugins/> ;
 	lv2:minorVersion 0 ;
 	lv2:microVersion 0 ;
 	lv2:optionalFeature lv2:hardRTCapable ;

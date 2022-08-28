@@ -3,18 +3,18 @@
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 
-<http://lvtoolkit.org/people/mfisher>
+<http://lvtk.org/people/mfisher>
 	a foaf:Person ;
 	foaf:name "Michael Fisher" ;
 	foaf:mbox <mailto:mfisher@kushview.net> ;
-	foaf:homepage <http://lvtoolkit.org> .
+	foaf:homepage <http://lvtk.org> .
 
-<http://lvtoolkit.org/plugins/>
+<http://lvtk.org/plugins/>
 	a doap:Project ;
 	doap:name "LVTK Plugins" ;
-	doap:maintainer <http://lvtoolkit.org/people/mfisher> .
+	doap:maintainer <http://lvtk.org/people/mfisher> .
 
-<http://lvtoolkit.org/plugins/volume>
+<http://lvtk.org/plugins/volume>
 	a lv2:Plugin ;
-	lv2:binary <volume@LIB_EXT@> ;
+	lv2:binary <@BINARY@> ;
 	rdfs:seeAlso <volume.ttl> .
