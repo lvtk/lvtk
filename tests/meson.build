@@ -11,6 +11,7 @@ lvtk_test_sources = '''
     data_access_test.cpp
     instance_access_test.cpp
     state_test.cpp
+    weak_ref_test.cpp
     ../lvtk.lv2/volume.cpp
 '''.split()
 
