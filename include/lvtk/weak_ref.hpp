@@ -21,7 +21,8 @@
 namespace lvtk {
 
 /** Status of a weak-referenced object.
-    @see lvtk::WeakRef
+    Used by WeakRef to monitor deleted pointers.
+    @see WeakRef
  */
 template<class T>
 class WeakStatus {
@@ -52,10 +53,16 @@ public:
         return status != nullptr && status->ptr != o;
     }
 
+    /** Returns true if the pointer has not been deleted. */
     bool valid() const noexcept { 
         return status != nullptr && status->ptr != nullptr;
     }
 
+    /** Initialize or clear the pointer.
+        Call without passing a ptr to indicate deleted.
+
+        @param ptr  Set to `this` in your class ctor.
+    */
     void reset (T* ptr = nullptr) {
         if (status != nullptr)
             status->ptr = ptr;
@@ -68,7 +75,7 @@ private:
     std::shared_ptr<Status> status;
 };
 
-/** A weak refereable object ptr.
+/** A weak refrenceable object ptr.
 
     To use it:
     1) Add a WeakStatus<MyObject> to your class.
@@ -127,12 +134,12 @@ private:
 }
 
 /**
-    Macro to make a Weak Referenceable object.
-    Use it to implement boiler plate code required for a WeakRef.
+    Macro to make a implement WeakStatus/WeakRef.
+    Use it to implement boiler plate code required to use WeakRef.
 
     @param klass    The class name to use.
     @param member   The member variable name of the WeakStatus.
-    
+
     @code
     class MyObject
     {
