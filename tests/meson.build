@@ -12,6 +12,7 @@ lvtk_test_sources = '''
     instance_access_test.cpp
     state_test.cpp
     weak_ref_test.cpp
+    ui_path_test.cpp
     ../lvtk.lv2/volume.cpp
 '''.split()
 
@@ -20,5 +21,6 @@ test ('cppunit', executable (
     lvtk_test_sources,
     cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
     include_directories : ['.'],
-    dependencies : [ cppunit_dep, lvtk_dep ])
+    dependencies : [ cppunit_dep, lvtk_dep ],
+    install : false)
 )

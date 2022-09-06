@@ -1,18 +1,5 @@
-/* 
-    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
-
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted, provided that the above
-    copyright notice and this permission notice appear in all copies.
-
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
+// Copyright 2019 Michael Fisher <mfisher@kushview.net>
+// SPDX-License-Identifier: ISC
 
 /** @defgroup ui UI
     Writing an LV2 UI
@@ -163,7 +150,8 @@ protected:
 
     /** A UI with Arguments */
     explicit UI (const UIArgs& args)
-        : E<S> (args.features)..., controller (args.controller) {}
+        : E<S> (args.features)...,
+          controller (args.controller) {}
 
 public:
     virtual ~UI() = default;
@@ -229,14 +217,13 @@ private:
         pack_context { (E<S>::map_extension_data (extensions()), 0)... };
     }
 
-    static LV2UI_Handle _instantiate (const LV2UI_Descriptor*         descriptor,
-                                      const char*                     plugin_uri,
-                                      const char*                     bundle_path,
-                                      LV2UI_Write_Function            write_function,
-                                      LV2UI_Controller                ctl,
-                                      LV2UI_Widget*                   widget,
-                                      const LV2_Feature* const*       features)
-    {
+    static LV2UI_Handle _instantiate (const LV2UI_Descriptor* descriptor,
+                                      const char* plugin_uri,
+                                      const char* bundle_path,
+                                      LV2UI_Write_Function write_function,
+                                      LV2UI_Controller ctl,
+                                      LV2UI_Widget* widget,
+                                      const LV2_Feature* const* features) {
         const UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
         auto instance = std::unique_ptr<S> (new S (args));
 

@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [ 
         {
-            "name": "Test LVTK",
+            "name": "Test",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/build/tests/test_lvtk",
@@ -10,6 +10,40 @@
             "args": [ ],
             "stopAtEntry": false,
             "environment": [ ],
+            "externalConsole": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Demo",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/demo/lvtk_demo",
+            "cwd": "${workspaceRoot}/build",
+            "args": [],
+            "stopAtEntry": false,
+            "environment": [ {
+                "name": "LV2_PATH", "value": "${workspaceRoot}/build"
+            }],
+            "externalConsole": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Volume",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/usr/local/bin/jalv.gtk3",
+            "cwd": "${workspaceRoot}/build",
+            "args": [ "http://lvtk.org/plugins/volume" ],
+            "stopAtEntry": false,
+            "environment": [ {
+                "name": "LV2_PATH", "value": "${workspaceRoot}/build"
+            }],
             "externalConsole": false,
             "logging": {
                 "moduleLoad": false

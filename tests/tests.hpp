@@ -23,11 +23,11 @@
 #include <lvtk/ext/worker.hpp>
 
 #include <lvtk/lvtk.hpp>
-#include <lvtk/option_array.hpp>
+#include <lvtk/options.hpp>
 #include <lvtk/optional.hpp>
 #include <lvtk/plugin.hpp>
 #include <lvtk/ui.hpp>
-#include <lvtk/uri_directory.hpp>
+#include <lvtk/symbols.hpp>
 
 #ifndef LVTK_VOLUME_URI
     #define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"

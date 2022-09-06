@@ -13,6 +13,7 @@
 	lv2:project <http://lvtk.org/plugins/> ;
 	lv2:minorVersion 0 ;
 	lv2:microVersion 0 ;
+	ui:ui <http://lvtk.org/plugins/volume/ui> ;
 	lv2:optionalFeature lv2:hardRTCapable ;
 	lv2:port [
 		a lv2:AudioPort, lv2:InputPort ;

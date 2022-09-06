@@ -1,46 +1,31 @@
-/* 
-    Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
-
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted, provided that the above
-    copyright notice and this permission notice appear in all copies.
-
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
+// Copyright 2022 Michael Fisher <mfisher@kushview.net>
+// SPDX-License-Identifier: ISC
 
 /** @defgroup dynmanifest Dynamic Manifest 
     Dynamic Manifest support
 
     <h3>Example</h3>
     @code
+    #include <lvtk/dynmanifest.hpp>
 
-        #include <lvtk/dynmanifest.hpp>
-
-        class MyManifest : public lvtk::DynManifest {
-        public:
-            bool get_subjects (std::stringstream& lines) override {
-                lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
-                        << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
-                        << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
-                return true;
-            }
-
-            bool get_data (std::stringstream& lines, const std::string& uri) override {
-                lines << "doap:name \"My Plugin\" ;" << std::endl;
-                return true;
-            }
-        };
-
-        void* lvtk_create_dyn_manifest() {
-            return new MyManifest();
+    class MyManifest : public lvtk::DynManifest {
+    public:
+        bool get_subjects (std::stringstream& lines) override {
+            lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
+                    << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
+                    << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
+            return true;
         }
 
+        bool get_data (std::stringstream& lines, const std::string& uri) override {
+            lines << "doap:name \"My Plugin\" ;" << std::endl;
+            return true;
+        }
+    };
+
+    void* lvtk_create_dyn_manifest() {
+        return new MyManifest();
+    }
     @endcode
 */
 

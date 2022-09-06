@@ -21,7 +21,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/*"
+                "${workspaceFolder}/include/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
