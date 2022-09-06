@@ -9,4 +9,4 @@ patch_hash = e61cd965c629d6543176f41a9f1cb9050edfd1566cf00ce768ff211086e40bdc
 
 [provide]
 lua-5.4 = lua_dep
-
+lua = lua_dep
