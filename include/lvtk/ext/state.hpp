@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019-2022, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -38,7 +38,7 @@ using StateFlags = LV2_State_Flags;
 using StateStatus = LV2_State_Status;
 
 /** Wrapper struct for state retrieval. This wraps an
-    LV2_State_Retrieve_Function and exeucutes via operator () 
+    LV2_State_Retrieve_Function and exeucutes via operator ()
     @ingroup state
     @headerfile lvtk/ext/state.hpp
  */
@@ -67,7 +67,7 @@ private:
 };
 
 /** Wrapper struct for state storage. This wraps an
-    LV2_State_Store_Function and exeucutes via operator () 
+    LV2_State_Store_Function and exeucutes via operator ()
     @ingroup state
     @headerfile lvtk/ext/state.hpp
  */
@@ -105,10 +105,10 @@ struct State : Extension<I> {
     State (const FeatureList&) {}
 
     /** Called by the host when saving state.
-     
+
         @param store    Store function object to write keys/values
         @param flags    State flags to check
-        @param features Additional features for this operation 
+        @param features Additional features for this operation
     */
     StateStatus save (StateStore& store,
                       uint32_t flags, const FeatureList& features) {
@@ -116,10 +116,10 @@ struct State : Extension<I> {
     }
 
     /** Called by the host when restoring state.
-     
+
         @param retrieve Retrieve function object to get keys/values
         @param flags    State flags to check
-        @param features Additional features for this operation 
+        @param features Additional features for this operation
     */
     StateStatus restore (StateRetrieve& retrieve,
                          uint32_t flags,

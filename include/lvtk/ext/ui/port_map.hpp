@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -52,7 +52,7 @@ protected:
         if not found. It is a function object, so....
         @code
         // ...
-        
+
         const auto index = port_index ("port_symbol");
 
         // ...

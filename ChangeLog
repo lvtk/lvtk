@@ -19,7 +19,7 @@ Version 1.2.0 (2014-03-22)
     * Adds QT4 gui mixin
     * Atom Sequence insertion methods
 
-Version 1.1.1 (2013-05-05) 
+Version 1.1.1 (2013-05-05)
     * Small Fixes in waf scripts
     * Code formatting
     * Fixed typos in example rdf files
@@ -41,7 +41,7 @@ Version 1.0.4 (2013-02-02)
     * Fixed Synth bug where handle_midi wasn’t being called if overridden
     * Compatibility with older and newer boost versions
     * Added support for LV2UI_Resize
- 
+
 Version 1.0.3 (2012-12-20)
     * Fixed UI compiler errors with -Wl,nodelete.
     * Accurate MIDI triggering Synth base class
@@ -55,7 +55,7 @@ Version 1.0.2 (2012-10-16)
 Version 1.0.1 (2012-10-13)
     * #25 Doxygen include typos
     * #28 State Mixin correct validation
-	
+
 Version 1.0.0 (2012-10-03)
     * lvtk::UI harborded widget instead of inheriting
     * Added GtkUI mixin for easy Gtk GUI's

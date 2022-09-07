@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -21,9 +21,9 @@
 
 namespace lvtk {
 
-/** Adds LV2UI_Show support to your UI instance.  This interface inherits 
+/** Adds LV2UI_Show support to your UI instance.  This interface inherits
     from Idle. In other words, don't use Idle + Show together, just use Show.
-    
+
     @ingroup ui
     @headerfile lvtk/ext/ui/show.hpp
  */

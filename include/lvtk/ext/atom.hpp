@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -14,7 +14,7 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup atom Atom 
+/** @defgroup atom Atom
     Dealing with LV2 Atoms
 */
 
@@ -48,16 +48,16 @@ using ObjectQuery = LV2_Atom_Object_Query;
     @headerfile lvtk/ext/atom.hpp
  */
 struct Object final {
-    /** Create an Object from raw data. The data passed in will be casted 
+    /** Create an Object from raw data. The data passed in will be casted
         to a LV2_Atom_Object pointer
-        
+
         @param data Pointer to an LV2_Atom_Object
      */
     Object (const void* data)
         : obj ((LV2_Atom_Object*) data) {}
 
-    /** Create an Object from a ForgeRef 
-     
+    /** Create an Object from a ForgeRef
+
         @param ref  A ForgeRef which will be casted to LV2_Atom_Object internally
     */
     Object (ForgeRef ref)
@@ -165,7 +165,7 @@ private:
 
 /** An LV2_Atom wrapper
     These are intended to be used on the stack
-    
+
     @headerfile lvtk/ext/atom.hpp
  */
 struct Atom final {
@@ -292,7 +292,7 @@ private:
 };
 
 /** An LV2_Atom_Sequence wrapper.
-        
+
     Since this implements an STL style container, you can use it as follows:
     @code
 
@@ -311,13 +311,13 @@ struct Sequence final {
     typedef const AtomEvent& const_reference;
 
     /** Create an Sequence from raw data
-        @param seq  Pointer to an LV2_Atom_Sequence 
+        @param seq  Pointer to an LV2_Atom_Sequence
      */
     Sequence (const void* data)
         : sequence ((LV2_Atom_Sequence*) data) {}
 
     /** Create an AtomSequnce from an LV2_Atom_Sequence
-        @param seq The sequence to wrap 
+        @param seq The sequence to wrap
      */
     Sequence (LV2_Atom_Sequence* seq)
         : sequence (seq) {}
@@ -334,7 +334,7 @@ struct Sequence final {
     /** Return the sequence body's pad. Currently unused per LV2 spec. */
     inline uint32_t pad() const { return sequence->body.pad; }
 
-    /** Return the sequence's body size 
+    /** Return the sequence's body size
         @note This method does NOT return the number of events contained in
               the Sequence.  It is the size in terms of bytes.
     */
@@ -357,10 +357,10 @@ struct Sequence final {
 
     /** Append an AtomEvent to the end of the sequence.
 
-        Effectively this is the same as lv2_atom_sequence_append, but 
+        Effectively this is the same as lv2_atom_sequence_append, but
         re-implemented to avoid an extra function call.
 
-        @param ev The event to add 
+        @param ev The event to add
      */
     inline void append (const AtomEvent& ev) {
         if (AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size)) {
@@ -371,8 +371,8 @@ struct Sequence final {
     }
 
     /** Insert an AtomEvent into the middle of the sequence
-        
-        @param ev The event to insert 
+
+        @param ev The event to insert
      */
     inline void insert (const AtomEvent& ev) {
         AtomEvent* e = lv2_atom_sequence_end (&sequence->body, sequence->atom.size);
@@ -445,7 +445,7 @@ struct Forge final : LV2_Atom_Forge {
     Forge() = default;
 
     /** Initialized Forge.
-        @param map The LV2_URID_Map to use for initialization    
+        @param map The LV2_URID_Map to use for initialization
      */
     Forge (LV2_URID_Map* map) { init (map); }
 
@@ -457,7 +457,7 @@ struct Forge final : LV2_Atom_Forge {
     }
 
     /** Set the Forge's buffer
-        
+
         You must call this before writing Atoms with the forge. Failing
         to do so could result in a nasty crash.
 
@@ -592,7 +592,7 @@ struct Forge final : LV2_Atom_Forge {
     }
 };
 
-/** An LV2_Atom_Vector Wrapper 
+/** An LV2_Atom_Vector Wrapper
     @headerfile lvtk/ext/atom.hpp
  */
 struct Vector final {

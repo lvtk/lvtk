@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -14,7 +14,7 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup dynmanifest Dynamic Manifest 
+/** @defgroup dynmanifest Dynamic Manifest
     Dynamic Manifest support
 
     <h3>Example</h3>
@@ -52,7 +52,7 @@
 
 namespace lvtk {
 /** Dynamic Manifest helper class
-    
+
     To create a dynamic manifest, subclass this an implement it's pure virtual
     methods. Then implement lvtk_create_dyn_manifest().
     @ingroup dynmanifest
@@ -77,8 +77,8 @@ public:
     virtual bool get_data (std::stringstream& lines, const std::string& uri) = 0;
 };
 
-/** Write a string vector `lines` as lines to `FILE` 
-    
+/** Write a string vector `lines` as lines to `FILE`
+
     You don't need to use this directly.  The internal dynmanifest
     callbacks use it to return data to the host.
 

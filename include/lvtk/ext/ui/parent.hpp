@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -43,11 +43,11 @@ struct Parent : NullExtension {
     }
 
 protected:
-    /** Returns the parent widget, or nullptr if not found. 
+    /** Returns the parent widget, or nullptr if not found.
         It is a function object and also has a bool() operator, so....
         @code
         // ...
-        
+
         if (parent) {
             auto* widget = reinterpret_cast<WidgetType*> (parent())
             // do something with the parent widget, WidgetType* above

@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -15,7 +15,7 @@
 */
 
 /** @mainpage LV2 Toolkit
-    
+
     @section intro Introduction
     These documents describe some C++ classes that may be of use if you want
     to write LV2 plugins in C++. They implement most of the boilerplate code
@@ -23,14 +23,14 @@
     C API.
 
     <b>Extension Mixins</b><br>
-    For both the @ref Plugin and the @ref UI classes there are other helper 
-    classes called @ref Extension "Extensions" that you can use to add extra 
+    For both the @ref Plugin and the @ref UI classes there are other helper
+    classes called @ref Extension "Extensions" that you can use to add extra
     functionality to your plugin or UI.
-    
+
     <b>Versioning</b><br>
-    This library is header only, thus ABI stability is not an issue. The API 
-    will be stable between major version bumps, at which the pkg-config name 
-    would change to prevent plugins from building against an incompatible 
+    This library is header only, thus ABI stability is not an issue. The API
+    will be stable between major version bumps, at which the pkg-config name
+    would change to prevent plugins from building against an incompatible
     version.
 
     @author Michael Fisher <mfisher@kushview.net>
@@ -86,7 +86,7 @@ struct Feature : LV2_Feature {
 };
 
 /** A Vector of Features.
-    
+
     This is used to prepare LV2_Feature arrays for use by instances
     and extensions during instantiation of Plugins and UIs.
 
@@ -104,7 +104,7 @@ struct FeatureList final : public std::vector<Feature> {
     }
 
     /** Contstruct from raw LV2_Feature array
-        
+
         @param feature  LV2_Feature array to reference
     */
     FeatureList (const LV2_Feature* const* features) {
@@ -127,14 +127,14 @@ struct FeatureList final : public std::vector<Feature> {
 };
 
 /** Template class which can be used to assign feature data in a common way.
-    
-    Typically these are used to facilitate features provided by the host 
+
+    Typically these are used to facilitate features provided by the host
     during plugin instantiation or in host-side callbacks to the plugin.
 
     @tparam D   The data type
     @tparam P   The data's pointer type. Usefull to set P = D
                 when D itself is a pointer.
-                
+
     @see @ref WorkerSchedule, @ref Map, @ref Unmap, @ref Logger
  */
 template <class D, class P = D*>

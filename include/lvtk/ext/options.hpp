@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -14,7 +14,7 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup options Options 
+/** @defgroup options Options
     Dealing with LV2 Options
 */
 
@@ -37,14 +37,14 @@ using Option = LV2_Options_Option;
 */
 using OptionsContext = LV2_Options_Context;
 
-/** Equivalent to LV2_Options_Status 
+/** Equivalent to LV2_Options_Status
     @headerfile lvtk/ext/options.hpp
     @ingroup options
 */
 using OptionsStatus = LV2_Options_Status;
 
 /** The LV2 Options Feature
- 
+
     @headerfile lvtk/ext/options.hpp
     @ingroup options
  */
@@ -70,11 +70,11 @@ struct Options : Extension<I> {
 
     /** Get the given options.
 
-        Each element of the passed options array MUST have type, subject, and 
-        key set. All other fields (size, type, value) MUST be initialised to 
+        Each element of the passed options array MUST have type, subject, and
+        key set. All other fields (size, type, value) MUST be initialised to
         zero, and are set to the option value if such an option is found.
 
-        This function is in the "instantiation" LV2 threading class, so no 
+        This function is in the "instantiation" LV2 threading class, so no
         other instance functions may be called concurrently.
 
         @returns Bitwise OR of OptionsStatus values.
@@ -83,7 +83,7 @@ struct Options : Extension<I> {
 
     /** Set the given options.
 
-        This function is in the "instantiation" LV2 threading class, so no 
+        This function is in the "instantiation" LV2 threading class, so no
         other instance functions may be called concurrently.
 
         @returns Bitwise OR of OptionsStatus values.

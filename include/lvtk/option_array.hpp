@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -23,7 +23,7 @@ namespace lvtk {
 
 /** An array of Options
 
-    Plugin implementations don't need to use this.  You can, however, use this 
+    Plugin implementations don't need to use this.  You can, however, use this
     in an LV2 host to easily provide URID map/unmaping features to plugins.
 
     @headerfile lvtk/option_array.hpp
@@ -59,11 +59,11 @@ public:
     }
 
     /** A new Option array.
-        
+
         Using this ctor will allocate memory and allow `add` to function. It
         will maintain a zeroed end Option so client code doesn't have to
         worry about it.
-        
+
         This version is intended to be used by an LV2 host.
      */
     OptionArray() {

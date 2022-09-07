@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2022, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -138,7 +138,7 @@ private:
 
     @param klass    The class name to use.
     @param member   The member variable name of the WeakStatus.
-    
+
     @code
     class MyObject
     {

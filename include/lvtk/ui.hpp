@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -16,7 +16,7 @@
 
 /** @defgroup ui UI
     Writing an LV2 UI
-   
+
     UI descriptors are registered on the stack at the global scope. First
     make a sublcass of @ref UI, then register it with @ref UIDescriptor.
 
@@ -46,7 +46,7 @@ static inline UIDescriptors& ui_descriptors() {
 }
 
 /** A UI Controller
-    
+
     This wraps LV2UI_Controller + LV2UI_Write_Function in a single
     Object
 
@@ -101,7 +101,7 @@ struct UIArgs {
 };
 
 /** UI registration class
-    Create a static one of these to register the descriptor for UI instance type.    
+    Create a static one of these to register the descriptor for UI instance type.
     @ingroup ui
     @headerfile lvtk/ui.hpp
  */
@@ -109,7 +109,7 @@ template <class U>
 class UIDescriptor final {
 public:
     /** UI Registation
-        
+
         @param uri          The URI string of your UI
         @param required     List of required host feature URIs. If the host fails
                             to provide any of these, instantiate will return
@@ -122,7 +122,7 @@ public:
     }
 
     /** UI Registation
-        
+
         @param uri  The URI string of your UI
      */
     UIDescriptor (const std::string& uri) {
@@ -144,8 +144,8 @@ private:
     }
 };
 
-/** UI Instance 
- 
+/** UI Instance
+
     Inherrit this when making an LV2 UI.  The first template parameter
     is the type of your super class.  The rest are @ref Extension mixins.
 
@@ -169,28 +169,28 @@ public:
     virtual ~UI() = default;
 
     /** Get the LV2UI_Widget (required)
-        
+
         It is ok to create your widget here, but make sure
-        that it only gets allocated once. 
+        that it only gets allocated once.
     */
     LV2UI_Widget get_widget() { return nullptr; }
 
     /** Clean up (optional)
-         
-        This is called immediately before the destructor. Override it if you 
+
+        This is called immediately before the destructor. Override it if you
         need to do something special beforehand.
      */
     void cleanup() {}
 
-    /** Port events (optional) 
-     
-        Called when port events are received from the host. Implement this to 
+    /** Port events (optional)
+
+        Called when port events are received from the host. Implement this to
         update the UI when properties change in the plugin.
     */
     void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) {}
 
     /** Write data to ports
-        
+
         @param port
         @param size
         @param protocol

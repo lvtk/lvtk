@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -14,7 +14,7 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup data_access Data Access 
+/** @defgroup data_access Data Access
     Access to plugin extension data
 */
 
@@ -25,7 +25,7 @@
 
 namespace lvtk {
 /** An LV2_Extension_Data_Feature function wrapper
- 
+
     Use these on the stack and call set_feature() passing the appropriate feature.
     @headerfile lvtk/ext/data_access.hpp
     @ingroup data_access
@@ -67,7 +67,7 @@ struct DataAccess : NullExtension {
     }
 
     /** Calls extension_data on the plugin if supported by the host.
-        
+
         @param uri  URI of the extension
         @note This is an alias to `data_access`
 

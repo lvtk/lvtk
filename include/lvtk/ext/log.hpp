@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -26,7 +26,7 @@
 namespace lvtk {
 
 /** Wrapper around LV2_Log_Log
-    
+
     Use this on the stack to log messages
     @headerfile lvtk/ext/log.hpp
     @ingroup log
@@ -44,8 +44,8 @@ struct Logger final : FeatureData<LV2_Log_Log> {
             this->printf (Trace, out);
     }
 
-    /** Log message with va_list 
-     
+    /** Log message with va_list
+
         @param type     LV2_URID type to log
         @fmt            Format / message
         @ap             Arguments
@@ -57,7 +57,7 @@ struct Logger final : FeatureData<LV2_Log_Log> {
     }
 
     /** Log message with var args
-     
+
         @param type     LV2_URID type to log
         @fmt            Format / message
     */
@@ -71,7 +71,7 @@ struct Logger final : FeatureData<LV2_Log_Log> {
     }
 
     /** Assign LV2_URIDs needed to log messages
-       
+
         @param map  A LV2_URID_Map to inititialize with
      */
     inline void init (LV2_URID_Map* const map) {

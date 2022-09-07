@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright (c) 2019, Michael Fisher <mfisher@kushview.net>
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -24,9 +24,9 @@
 namespace lvtk {
 
 /** Maintains a map of Strings/Symbols to integers
-    
-    This class also implements LV2 URID Map/Unmap features.  Plugin 
-    implementations don't need to use this.  You can, however, use this in a 
+
+    This class also implements LV2 URID Map/Unmap features.  Plugin
+    implementations don't need to use this.  You can, however, use this in a
     LV2 host to easily provide URID map/unmaping features to plugins.
 
     @headerfile lvtk/uri_directory.hpp
@@ -66,7 +66,7 @@ public:
     }
 
     /** Containment test of a URI
-        
+
         @param uri The URI to test
         @returns True if found */
     inline bool contains (const char* uri) {
@@ -74,7 +74,7 @@ public:
     }
 
     /** Containment test of a URID
-        
+
         @param urid The URID to test
         @return True if found */
     inline bool contains (uint32_t urid) {
@@ -82,7 +82,7 @@ public:
     }
 
     /** Unmap an already mapped id to its symbol
-        
+
         @param urid The URID to unmap
         @return The previously mapped symbol or 0 if the urid isn't in the cache
      */
