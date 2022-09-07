@@ -7,7 +7,7 @@ lvtk_ui_sources = '''
 '''.split()
 
 lvtk_ui_deps = [ lvtk_dep, puglpp_dep ]
-liblvtk_ui = library ('lvtk-ui-2',
+liblvtk_ui = library ('lvtk-ui-3',
     lvtk_ui_sources,
     dependencies : lvtk_ui_deps)
 lvtk_ui_dep = declare_dependency (
@@ -16,12 +16,14 @@ lvtk_ui_dep = declare_dependency (
     dependencies : lvtk_ui_deps)
 
 subdir ('nanovg')
-lvtk_gl_deps = [ lvtk_ui_dep, lvtk_nanovg_dep, pugl_gl_dep ]
-liblvtk_gl = library ('lvtk-gl-2',
-    'ui/opengl.cpp',
+lvtk_nanovg_deps = [ lvtk_ui_dep, pugl_gl_dep ]
+liblvtk_nanovg = library ('lvtk-nanovg-3',
+    'ui/nanovg.cpp',
     link_with : [],
-    dependencies : lvtk_gl_deps)
-lvtk_gl_dep = declare_dependency (
-    link_with : [ liblvtk_gl ],
+    dependencies : [ lvtk_nanovg_deps ],
+    objects : libnanovg.extract_all_objects (recursive : false))
+lvtk_nanovg_dep = declare_dependency (
+    link_with : [ liblvtk_nanovg ],
     include_directories : [ '.' ],
-    dependencies : lvtk_gl_deps)
+    dependencies : lvtk_nanovg_deps)
+

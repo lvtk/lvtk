@@ -8,9 +8,10 @@
 #include <lvtk/ext/ui/resize.hpp>
 #include <lvtk/options.hpp>
 
-#include <lvtk/ui/opengl.hpp>
+#include <lvtk/ui/nanovg.hpp>
 #include <lvtk/ui/widget.hpp>
 #include <lvtk/ui/main.hpp>
+
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/weak_ref.hpp>
 
@@ -89,7 +90,7 @@ public:
     }
 
 private:
-    lvtk::Main _main { lvtk::Mode::MODULE, std::make_unique<lvtk::OpenGL>() };
+    lvtk::Main _main { lvtk::Mode::MODULE, std::make_unique<lvtk::NanoVG>() };
 
     class Button : public Widget {
     public:

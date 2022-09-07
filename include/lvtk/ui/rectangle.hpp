@@ -65,7 +65,7 @@ struct Rectangle {
         };
     }
 
-    /** Returns a rectangle with top-left at x y */
+    /** Returns a copy of this shape with top-left at x y */
     Rectangle<Val> at (Val x, Val y) const noexcept {
         return { Val(), Val(), width, height };
     }

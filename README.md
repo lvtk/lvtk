@@ -1,8 +1,7 @@
 LV2 Toolkit
 ===========
 
-This software package contains libraries that wrap the LV2 C API and extensions 
-into easy to use C++ classes.
+Minimal C++ library for writing LV2 plugins and Gui's.
 
 Building
 --------

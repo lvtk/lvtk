@@ -44,8 +44,10 @@ public:
         add (button1);
         button1.set_visible (true);
         button1.__name = "button1";
+        button1.color = Color (0x444444ff);
         add (button2);
         button2.__name = "button2";
+        button2.color = button1.color;
         button2.set_visible (true);
     }
 

@@ -37,6 +37,8 @@ lua_dep = dependency ('lua-5.4',
     required : true
 )
 
+boost_dep = (dependency ('boost'))
+
 sol2_dep = dependency ('sol2', 
     fallback : [ 'sol2', 'sol2_dep' ],
     default_options: [],

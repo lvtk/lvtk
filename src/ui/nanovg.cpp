@@ -1,39 +1,14 @@
 
-#include "lvtk/ui/opengl.hpp"
-#include "lvtk/ui/graphics.hpp"
-#include "lvtk/ui/main.hpp"
-
-#define PUGL_DISABLE_DEPRECATED
-#include <pugl/gl.h>
+#include <lvtk/ui/nanovg.hpp>
 #define NANOVG_GL3 1
 #include "nanovg/nanovg_gl.h"
 
 namespace lvtk {
 
-class NanoVGSurface final : public Surface {
+class NanoVGSurface::Context {
 public:
-    NanoVGSurface();
-    ~NanoVGSurface();
-
-    void translate (const Point<int>& pt) override;
-    void set_clip_bounds (const Rectangle<int>& r) override;
-    Rectangle<int> clip_bounds() const override;
-    void set_fill (const Fill& fill) override;
-    void save() override;
-    void restore() override;
-    void begin_frame (int width, int height, float pixel_ratio);
-    void end_frame();
-    void fill_rect (const Rectangle<float>& r) override;
-
-private:
-    class Ctx;
-    std::unique_ptr<Ctx> ctx;
-};
-
-class NanoVGSurface::Ctx {
-public:
-    Ctx() : ctx (nvgCreateGL3 (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {}
-    ~Ctx() { nvgDeleteGL3 (ctx); }
+    Context() : ctx (nvgCreateGL3 (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {}
+    ~Context() { if (ctx) nvgDeleteGL3 (ctx); }
 
     void save() {
         stack.push_back (state);
@@ -69,7 +44,7 @@ private:
 };
 
 NanoVGSurface::NanoVGSurface()
-    : ctx (std::make_unique<Ctx>()) {
+    : ctx (std::make_unique<Context>()) {
     set_fill (Color (0.f, 0.f, 0.f, 1.f));
 }
 
@@ -106,7 +81,9 @@ void NanoVGSurface::set_fill (const Fill& fill) {
 void NanoVGSurface::save() { ctx->save(); }
 void NanoVGSurface::restore() { ctx->restore(); }
 
-void NanoVGSurface::begin_frame (int width, int height, float pixel_ratio) {
+void NanoVGSurface::begin_frame (int width, int height, float scale) {
+    // are nvg pixel ratio and PuglView scale same?
+    auto pixel_ratio = scale;
     nvgBeginFrame (ctx->ctx, width, height, pixel_ratio);
 }
 
@@ -125,39 +102,6 @@ void NanoVGSurface::fill_rect (const Rectangle<float>& r) {
 
     nvgFillColor (ctx->ctx, ctx->state.color);
     nvgFill (ctx->ctx);
-}
-
-//=============================================================================
-class OpenGLView : public View {
-public:
-    OpenGLView (Main& c, Widget& w)
-        : View (c, w) {
-        set_backend ((uintptr_t) puglGlBackend());
-    }
-
-protected:
-    void created() override {
-        View::created();
-        if (! surface) {
-            surface = std::make_unique<NanoVGSurface>();
-        }
-    }
-
-    void expose (Rectangle<int> frame) override {
-        glClearColor (0.f, 0.f, 0.f, 1.0f);
-        glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        surface->begin_frame (frame.width, frame.height, scale());
-        render (*surface);
-        surface->end_frame();
-    }
-
-private:
-    std::unique_ptr<NanoVGSurface> surface;
-};
-
-//=============================================================================
-std::unique_ptr<View> OpenGL::create_view (Main& m, Widget& w) {
-    return std::make_unique<OpenGLView> (m, w);
 }
 
 } // namespace lvtk

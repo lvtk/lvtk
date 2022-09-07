@@ -7,7 +7,9 @@
 
 namespace lvtk {
 
-/** A 32bit color value. */
+/** A 32bit color value.
+    The value represented by a uint32_t. e.g. 0xRRGGBBAA
+ */
 class Color {
 public:
     Color() = default;
