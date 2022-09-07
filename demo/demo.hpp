@@ -114,8 +114,10 @@ private:
     Container buttons;
 };
 
-static int run (lvtk::Main& context, int argc, char** argv) {
-    auto content = std::make_unique<Content>();
+
+template <class Wgt>
+static int run (lvtk::Main& context) {
+    auto content = std::make_unique<Wgt>();
     content->set_size (640, 360);
     content->set_visible (true);
 
@@ -134,6 +136,10 @@ static int run (lvtk::Main& context, int argc, char** argv) {
 
     content.reset();
     return 0;
+}
+
+static int run (lvtk::Main& context, int, char**) {
+    return run<Content> (context);
 }
 
 } // namespace demo
