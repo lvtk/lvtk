@@ -102,8 +102,8 @@ private:
             g.fill_rect (bounds().at (0, 0).as<float>());
         }
         
-        bool obstructed (Point<float> pos) override {
-            return Widget::obstructed (pos);
+        bool obstructed (int x, int y) override {
+            return true;
         }
 
         void motion (InputEvent ev) override {

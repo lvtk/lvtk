@@ -12,7 +12,7 @@ static int round_int (T v) { return static_cast<int> (v); }
 static bool test_pos (Widget& widget, Point<float> pos) {
     auto ipos = pos.as<int>();
     return widget.bounds().at (0, 0).contains (ipos)
-           && widget.obstructed (pos);
+           && widget.obstructed (ipos.x, ipos.y);
 }
 
 static Point<float> coord_from_parent_space (const Widget& widget,
@@ -103,7 +103,6 @@ void Widget::set_size (int width, int height) {
 }
 
 //=============================================================================
-
 void Widget::add (Widget& widget) {
     _widgets.push_back (&widget);
     widget._parent = this;
@@ -120,7 +119,8 @@ void Widget::remove (Widget& widget) {
     remove (&widget);
 }
 
-bool Widget::obstructed (Point<float> pos) {
+bool Widget::obstructed (int x, int y) {
+    auto pos = Point<int>{x, y}.as<float>();
     for (auto child : _widgets) {
         if (child->visible() && detail::test_pos (*child, detail::coord_from_parent_space (*child, pos))) {
             return true;
@@ -180,6 +180,10 @@ void Widget::render_internal (Graphics& g) {
         cw->render (g);
         g.restore();
     }
+}
+
+bool Widget::contains (int x, int y) const noexcept {
+    return contains (Point<int> {x, y}.as<double>());
 }
 
 bool Widget::contains (Point<int> pt) const noexcept {

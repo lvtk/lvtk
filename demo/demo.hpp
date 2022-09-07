@@ -17,7 +17,7 @@ public:
         g.fill_rect (bounds().at (0, 0));
     }
 
-    bool obstructed (Point<float>) override { return true; }
+    bool obstructed (int x, int y) override { return true; }
 
     void motion (InputEvent ev) override {
         // std::clog << __name << " motion: "

@@ -46,10 +46,16 @@ public:
     void set_bounds (Bounds b);
     void set_size (int width, int height);
     
-    bool contains (Point<int> pt) const noexcept;
-    bool contains (Point<double> pt) const noexcept;
-    virtual bool obstructed (Point<float> pos);
-
+    /** Returns true if the Widget can receive events at coordate xy. */
+    virtual bool obstructed (int x, int y);
+    
+    /** True if xy falls within this Widget's local bounds */
+    bool contains (int x, int y) const noexcept;
+    /** True if pt falls within this Widget's local bounds */
+    bool contains (Point<int> coord) const noexcept;
+    /** True if pt falls within this Widget's local bounds */
+    bool contains (Point<double> coord) const noexcept;
+    
     /** Convert a coordinate from one widget to another.
         @param source The Widget to convert from
         @param coord  A coordinate in the source.
@@ -57,13 +63,21 @@ public:
     Point<double> convert (Widget& source, Point<double> coord) const;
 
     //=========================================================================
+    /** Called by the View to render this Widget.
+        Invokes Widget::paint on this and all children.
+     */
     void render (Graphics& g);
 
     //=========================================================================
+    /** True if this Widget owns the View. i.e. is the top level
+        widget under the OS window */
     bool elevated() const noexcept { return _view != nullptr; }
 
     //=========================================================================
-    Widget* widget_at (Point<float> pos);
+    /** Returns the Widget underneath the given coordinate.
+        @param coord The coordinate to check in local space
+     */
+    Widget* widget_at (Point<float> coord);
 
     //=========================================================================
     Widget* find_root() const noexcept;
