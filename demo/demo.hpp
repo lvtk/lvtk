@@ -41,14 +41,14 @@ public:
 class Container : public Widget {
 public:
     Container() {
-        add (button1);
-        button1.set_visible (true);
-        button1.__name = "button1";
-        button1.color = Color (0x444444ff);
-        add (button2);
-        button2.__name = "button2";
-        button2.color = button1.color;
-        button2.set_visible (true);
+        add (box1);
+        box1.set_visible (true);
+        box1.__name = "box1";
+        box1.color = Color (0x444444ff);
+        add (box2);
+        box2.__name = "box2";
+        box2.color = box1.color;
+        box2.set_visible (true);
     }
 
     void resized() override {
@@ -67,8 +67,8 @@ public:
         r2.width -= (padding * 2);
         r2.height -= (padding * 2);
 
-        button1.set_bounds (r1);
-        button2.set_bounds (r2);
+        box1.set_bounds (r1);
+        box2.set_bounds (r2);
     }
 
     void paint (Graphics& g) override {
@@ -76,7 +76,7 @@ public:
         g.fill_rect (bounds().at (0, 0));
     }
 
-    Box button1, button2;
+    Box box1, box2;
 };
 
 class Content : public Widget {
