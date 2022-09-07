@@ -61,6 +61,9 @@ public:
     /** Returns the underlying PuglWorld */
     uintptr_t world() const noexcept { return _world; }
 
+    /* things for testing */
+    bool __quit_flag = false;
+    /* end things for testing */
 private:
     uintptr_t _world;
     std::unique_ptr<Backend> _backend;

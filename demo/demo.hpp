@@ -122,8 +122,10 @@ static int run (lvtk::Main& context, int argc, char** argv) {
     try {
         context.elevate (*content, 0);
         bool quit = false;
-        while (! quit)
+        while (! quit) {
             context.loop (-1.0);
+            quit = context.__quit_flag;
+        }
     } catch (...) {
         std::clog << "fatal error in main loop\n";
         // std::clog << e.what() << std::endl;

@@ -61,7 +61,13 @@ struct View::EventHandler {
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus close (View& view, const PuglCloseEvent& ev) { return PUGL_SUCCESS; }
+    static PuglStatus close (View& view, const PuglCloseEvent& ev) {
+        // dirty setup so the demo can at least quit...
+        if (view._main.mode() == Mode::PROGRAM)
+            view._main.quit();
+        return PUGL_SUCCESS;
+    }
+    
     static PuglStatus focus_in (View& view, const PuglFocusEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus focus_out (View& view, const PuglFocusEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus key_press (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }

@@ -34,7 +34,7 @@ void Main::loop (double timeout) {
 }
 
 void Main::quit() {
-
+    __quit_flag = true;
 }
 
 std::unique_ptr<View> Main::create_view (Widget& widget, uintptr_t parent) {
