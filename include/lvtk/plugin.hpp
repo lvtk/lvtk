@@ -28,7 +28,8 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
+#include "lvtk/lvtk.hpp"
+
 #include <map>
 #include <memory>
 
@@ -129,8 +130,9 @@ struct Args {
 
     <h3>Copy Audio Example</h3>
     @code
-        #include <cstring>
         #include <lvtk/plugin.hpp>
+
+        #include <cstring>
 
         using namespace lvtk;
 

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
+#include "lvtk/lvtk.hpp"
 
 namespace lvtk {
 

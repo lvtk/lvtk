@@ -1,7 +1,20 @@
 
 
 #include "tests.hpp"
-#include <lv2/lv2plug.in/ns/ext/midi/midi.h>
+
+#include "lvtk/ext/atom.hpp"
+#include "lvtk/uri_directory.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <lv2/core/lv2.h>
+#include <lv2/midi/midi.h>
+#include <lv2/urid/urid.h>
+
+#include <cstdint>
+#include <cstring>
 #include <memory>
 
 class Atom : public TestFixutre {

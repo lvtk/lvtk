@@ -20,8 +20,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/urid/urid.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 

@@ -20,8 +20,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/options/options.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 

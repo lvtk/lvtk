@@ -39,14 +39,14 @@
 
 #pragma once
 
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
+
 #include <cstdlib>
 #include <cstring>
 #include <map>
 #include <string>
 #include <vector>
-
-#include <lv2/core/lv2.h>
-#include <lv2/urid/urid.h>
 
 namespace lvtk {
 /** @defgroup lvtk Core

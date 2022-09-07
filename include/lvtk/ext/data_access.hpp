@@ -20,8 +20,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/data-access/data-access.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 /** An LV2_Extension_Data_Feature function wrapper

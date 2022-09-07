@@ -1,6 +1,11 @@
 
-#include "lvtk/weak_ref.hpp"
 #include "tests.hpp"
+
+#include "lvtk/weak_ref.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+
 #include <memory>
 
 class WeakRefTest : public TestFixutre {

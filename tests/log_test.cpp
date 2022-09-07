@@ -1,6 +1,22 @@
 
 #include "tests.hpp"
 
+#include "lvtk/ext/log.hpp"
+#include "lvtk/lvtk.hpp"
+#include "lvtk/plugin.hpp"
+#include "lvtk/uri_directory.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <lv2/core/lv2.h>
+#include <lv2/log/log.h>
+#include <lv2/urid/urid.h>
+
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <vector>
+
 struct LogPlug : lvtk::Plugin<LogPlug, lvtk::Log> {
     LogPlug (const lvtk::Args& args) : Plugin (args) {}
     void trace (const std::string& message) {

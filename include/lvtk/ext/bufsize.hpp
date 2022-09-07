@@ -43,10 +43,11 @@
 
 #pragma once
 
+#include "lvtk/ext/options.hpp"
+#include "lvtk/ext/urid.hpp"
+#include "lvtk/optional.hpp"
+
 #include <lv2/buf-size/buf-size.h>
-#include <lvtk/ext/options.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/optional.hpp>
 
 #ifndef LV2_BUF_SIZE__nominalBlockLength
     #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"

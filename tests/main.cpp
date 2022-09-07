@@ -1,11 +1,10 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <cppunit/CompilerOutputter.h>
+#include <cppunit/Portability.h>
 #include <cppunit/TestResult.h>
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
-
-#include "tests.hpp"
 
 int main() {
     // Create the event manager and test controller

@@ -16,8 +16,9 @@
 
 #pragma once
 
+#include "lvtk/ext/options.hpp"
+
 #include <cassert>
-#include <lvtk/ext/options.hpp>
 
 namespace lvtk {
 

@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "lvtk/lvtk.hpp"
+
 #include <lv2/ui/ui.h>
-#include <lvtk/lvtk.hpp>
+
 #include <memory>
 
 namespace lvtk {

@@ -46,8 +46,9 @@
 
 #pragma once
 
-#include <cstdio>
 #include <lv2/dynmanifest/dynmanifest.h>
+
+#include <cstdio>
 #include <sstream>
 
 namespace lvtk {
