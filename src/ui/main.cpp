@@ -39,8 +39,8 @@ void Main::quit() {
 
 std::unique_ptr<View> Main::create_view (Widget& widget, uintptr_t parent) {
     auto view = _backend->create_view (*this, widget);
-    if (parent && view->_view)
-        puglSetParentWindow ((PuglView*)view->_view, parent);
+    if (view && parent)
+        view->set_parent (parent);
     return view;
 }
 

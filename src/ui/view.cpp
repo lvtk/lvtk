@@ -30,7 +30,7 @@ static inline Rectangle<Tp> rect (const Ev& ev) {
 
 struct View::EventHandler {
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
-        view.configure (detail::rect<int> (ev));
+        // view.configure (detail::rect<int> (ev));
         return PUGL_SUCCESS;
     }
 
@@ -230,9 +230,9 @@ void View::render (Surface& ctx) {
     _widget.render (g);
 }
 
-void View::configure (Rectangle<int> r) {
-    
-    // _widget.resized();
+void View::set_parent (uintptr_t parent) {
+    if (parent)
+        puglSetParentWindow ((PuglView*)_view, parent);
 }
 
 } // namespace lvtk
