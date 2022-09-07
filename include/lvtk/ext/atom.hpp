@@ -434,7 +434,6 @@ private:
     LV2_Atom_Sequence* sequence = nullptr;
 };
 
-
 /** Class wrapper around LV2_Atom_Forge
     @headerfile lvtk/ext/atom.hpp
 */

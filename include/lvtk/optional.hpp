@@ -25,18 +25,20 @@
         #define LVTK_STD_EXPERIMENTAL_OPTIONAL 1
     #else
         #error "Header <optional> or <expermental/optional> is required."
-    #endif    
+    #endif
 #endif
 
 namespace lvtk {
 
-#if defined (LVTK_STD_EXPERIMENTAL_OPTIONAL)
-#if LVTK_STD_EXPERIMENTAL_OPTIONAL
-    template <typename T> using Optional = std::experimental::optional<T>;
-#else
-    template <typename T> using Optional = std::optional<T>;
-#endif
-#undef LVTK_STD_EXPERIMENTAL_OPTIONAL
+#if defined(LVTK_STD_EXPERIMENTAL_OPTIONAL)
+    #if LVTK_STD_EXPERIMENTAL_OPTIONAL
+template <typename T>
+using Optional = std::experimental::optional<T>;
+    #else
+template <typename T>
+using Optional = std::optional<T>;
+    #endif
+    #undef LVTK_STD_EXPERIMENTAL_OPTIONAL
 #endif
 
 } // namespace lvtk

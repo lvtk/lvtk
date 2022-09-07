@@ -23,7 +23,7 @@ namespace lvtk {
 /** Status of a weak-referenced object.
     @see lvtk::WeakRef
  */
-template<class T>
+template <class T>
 class WeakStatus {
 public:
     using owner_type = T;
@@ -34,10 +34,14 @@ public:
     ~WeakStatus() { status.reset(); }
 
     WeakStatus& operator= (const WeakStatus& o) {
-        status = o.status; return *this; }
-    WeakStatus& operator= (WeakStatus&& o) { 
-        status = std::move (o.status); return *this; }
-    
+        status = o.status;
+        return *this;
+    }
+    WeakStatus& operator= (WeakStatus&& o) {
+        status = std::move (o.status);
+        return *this;
+    }
+
     bool operator== (const T* o) const noexcept {
         return status != nullptr && status->ptr == o;
     }
@@ -52,7 +56,7 @@ public:
         return status != nullptr && status->ptr != o;
     }
 
-    bool valid() const noexcept { 
+    bool valid() const noexcept {
         return status != nullptr && status->ptr != nullptr;
     }
 
@@ -64,7 +68,9 @@ public:
     T* get() const noexcept { return status != nullptr ? status->ptr : nullptr; }
 
 private:
-    struct Status { owner_type* ptr = nullptr; };
+    struct Status {
+        owner_type* ptr = nullptr;
+    };
     std::shared_ptr<Status> status;
 };
 
@@ -100,19 +106,19 @@ private:
     };
     @endcode
 */
-template<class Obj>
+template <class Obj>
 class WeakRef {
 public:
     WeakRef() = default;
     WeakRef (Obj* obj) { _status = Obj::lvtk_weak_status (obj); }
-    
+
     /** Returns the reference if not deleted, otherwise nullptr */
     Obj* lock() const noexcept {
         return _status != nullptr ? _status.get() : nullptr;
     }
 
     /** Cast the internal pointer to specified type. */
-    template<class T>
+    template <class T>
     T* as() const noexcept {
         return dynamic_cast<T*> (lock());
     }
@@ -124,7 +130,7 @@ private:
     WeakStatus<Obj> _status;
 };
 
-}
+} // namespace lvtk
 
 /**
     Macro to make a Weak Referenceable object.
@@ -151,9 +157,9 @@ private:
 
     @see WeakRef, WeakStatus
 */
-#define LVTK_WEAK_REFABLE(klass,member) \
-friend class lvtk::WeakRef<klass>; \
-lvtk::WeakStatus<klass> member; \
-static lvtk::WeakStatus<klass> lvtk_weak_status (klass* obj) { \
-    return obj->member; \
-}
+#define LVTK_WEAK_REFABLE(klass, member)                           \
+    friend class lvtk::WeakRef<klass>;                             \
+    lvtk::WeakStatus<klass> member;                                \
+    static lvtk::WeakStatus<klass> lvtk_weak_status (klass* obj) { \
+        return obj->member;                                        \
+    }

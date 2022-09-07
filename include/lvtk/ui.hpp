@@ -229,14 +229,13 @@ private:
         pack_context { (E<S>::map_extension_data (extensions()), 0)... };
     }
 
-    static LV2UI_Handle _instantiate (const LV2UI_Descriptor*         descriptor,
-                                      const char*                     plugin_uri,
-                                      const char*                     bundle_path,
-                                      LV2UI_Write_Function            write_function,
-                                      LV2UI_Controller                ctl,
-                                      LV2UI_Widget*                   widget,
-                                      const LV2_Feature* const*       features)
-    {
+    static LV2UI_Handle _instantiate (const LV2UI_Descriptor* descriptor,
+                                      const char* plugin_uri,
+                                      const char* bundle_path,
+                                      LV2UI_Write_Function write_function,
+                                      LV2UI_Controller ctl,
+                                      LV2UI_Widget* widget,
+                                      const LV2_Feature* const* features) {
         const UIArgs args (plugin_uri, bundle_path, { ctl, write_function }, features);
         auto instance = std::unique_ptr<S> (new S (args));
 
