@@ -27,20 +27,4 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     required : true
 )
 
-lua_dep = dependency ('lua-5.4', 
-    fallback : [ 'lua', 'lua_dep' ],
-    version : '>= 5.4.4',
-    default_options : [
-        'interpreter=true',
-        'default_library=static'
-    ],
-    required : true
-)
-
 boost_dep = (dependency ('boost'))
-
-sol2_dep = dependency ('sol2', 
-    fallback : [ 'sol2', 'sol2_dep' ],
-    default_options: [],
-    required : true
-)

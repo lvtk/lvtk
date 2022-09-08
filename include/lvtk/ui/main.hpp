@@ -1,11 +1,12 @@
-// Copyright 2022 Michael Fisher <mfisher@kushview.net>
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 #pragma once
 
-#include "lvtk/context.hpp"
-#include "lvtk/ui/view.hpp"
-#include "lvtk/ui/widget.hpp"
+#include <lvtk/context.hpp>
+#include <lvtk/string.hpp>
+#include <lvtk/ui/view.hpp>
+#include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
 
@@ -17,26 +18,10 @@ enum class Mode {
     MODULE          ///< Loadable plugin or module
 };
 
-class Main;
+class Backend;
 
-struct Backend {
-    Backend() = delete;
-    virtual ~Backend() = default;
-    const std::string& name() const noexcept { return _name; }
-    virtual std::unique_ptr<View> create_view (Main&, Widget&) =0;
-protected:
-    Backend (const std::string& name)
-        : _name (name) {}
-private:
-    std::string _name;
-    Backend (const Backend&) = delete;
-    Backend (Backend&&) = delete;
-    Backend& operator= (const Backend&) = delete;
-    Backend& operator= (Backend&&) = delete;
-};
-
-/** The context in which a UI is running.
-    Manages Views and the event loop. 
+/** The context in which a UI or GUI app is running.
+    Can create views and run the event loop
  */
 class Main : public Context {
 public:
@@ -73,6 +58,22 @@ private:
     Main (Main&&) = delete;
     Main& operator= (const Main&) = delete;
     Main& operator= (Main&&) = delete;
+};
+
+struct Backend {
+    Backend() = delete;
+    virtual ~Backend() = default;
+    const String& name() const noexcept { return _name; }
+    virtual std::unique_ptr<View> create_view (Main&, Widget&) =0;
+protected:
+    Backend (const String& name)
+        : _name (name) {}
+private:
+    String _name;
+    Backend (const Backend&) = delete;
+    Backend (Backend&&) = delete;
+    Backend& operator= (const Backend&) = delete;
+    Backend& operator= (Backend&&) = delete;
 };
 
 }

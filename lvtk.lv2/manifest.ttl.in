@@ -7,7 +7,7 @@
 <http://lvtk.org/people/mfisher>
 	a foaf:Person ;
 	foaf:name "Michael Fisher" ;
-	foaf:mbox <mailto:mfisher@kushview.net> ;
+	foaf:mbox <mailto:mfisher@lvtk.org> ;
 	foaf:homepage <http://lvtk.org> .
 
 <http://lvtk.org/plugins/>

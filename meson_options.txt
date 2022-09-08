@@ -1,0 +1,4 @@
+option (
+  'readline', type: 'boolean', value: true,
+  description: 'Use GNU readline (or libedit) if available'
+)

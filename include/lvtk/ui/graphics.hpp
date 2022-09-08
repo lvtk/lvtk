@@ -1,4 +1,4 @@
-// Copyright 2022 Michael Fisher <mfisher@kushview.net>
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 #pragma once
@@ -16,13 +16,16 @@
 
 namespace lvtk {
 
+using Position = Point<double>;
 using Bounds = Rectangle<int>;
 
+/** Higher level graphics context.
+    API is subject to change dramatically at any given time
+    until we approach an alpha status.
+ */
 class Graphics final {
 public:
-    Graphics (Surface& d)
-        : surface (d) {}
-
+    Graphics (Surface& d);
     ~Graphics() = default;
 
     void translate (const Point<int>& delta) { surface.translate (delta); }

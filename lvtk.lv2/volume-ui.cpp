@@ -43,40 +43,7 @@ public:
 
     void port_event (uint32_t port, uint32_t size,
                      uint32_t format, const void*  buffer)
-    {
-#if 0
-        if (format != 0 || size != sizeof (float))
-            return;
-        
-        const float value = *((float*) buffer);
-        const bool boolValue = value > 0.f;
-
-        if (port >= RoboverbPorts::Comb_1 && port <= RoboverbPorts::Comb_8)
-        {
-           
-        }
-        else if (port >= RoboverbPorts::AllPass_1 && port <= RoboverbPorts::AllPass_4)
-        {
-           
-        }
-        else
-        {
-            switch (port)
-            {
-                case RoboverbPorts::Wet:
-                    break;
-                case RoboverbPorts::Dry:
-                    break;
-                case RoboverbPorts::RoomSize:
-                    break;
-                case RoboverbPorts::Damping:
-                    break;
-                case RoboverbPorts::Width:
-                    break;
-            }
-        }
-#endif
-    }
+    {}
 
     LV2UI_Widget get_widget() {
         if (content == nullptr) {

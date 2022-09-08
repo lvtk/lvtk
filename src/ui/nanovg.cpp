@@ -1,14 +1,22 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #include <lvtk/ui/nanovg.hpp>
 #define NANOVG_GL3 1
 #include "nanovg/nanovg_gl.h"
 
-namespace lvtk {
+using Surface = lvtk::nvg::Surface;
 
-class NanoVGSurface::Context {
+namespace lvtk {
+namespace nvg {
+
+class Surface::Context {
 public:
     Context() : ctx (nvgCreateGL3 (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {}
-    ~Context() { if (ctx) nvgDeleteGL3 (ctx); }
+    ~Context() {
+        if (ctx)
+            nvgDeleteGL3 (ctx);
+    }
 
     void save() {
         stack.push_back (state);
@@ -24,7 +32,7 @@ public:
     }
 
 private:
-    friend class NanoVGSurface;
+    friend class Surface;
     NVGcontext* ctx { nullptr };
     struct State {
         NVGcolor color;
@@ -43,21 +51,21 @@ private:
     std::vector<State> stack;
 };
 
-NanoVGSurface::NanoVGSurface()
+Surface::Surface()
     : ctx (std::make_unique<Context>()) {
     set_fill (Color (0.f, 0.f, 0.f, 1.f));
 }
 
-NanoVGSurface::~NanoVGSurface() {
+Surface::~Surface() {
     ctx.reset();
 }
 
-void NanoVGSurface::translate (const Point<int>& pt) {
+void Surface::translate (const Point<int>& pt) {
     auto& state = ctx->state;
     state.origin += pt.as<float>();
 }
 
-void NanoVGSurface::set_clip_bounds (const Rectangle<int>& r) {
+void Surface::set_clip_bounds (const Rectangle<int>& r) {
     auto rf = r.as<float>();
     if (rf == ctx->state.clip)
         return;
@@ -65,11 +73,11 @@ void NanoVGSurface::set_clip_bounds (const Rectangle<int>& r) {
     ctx->state.clip = rf;
 }
 
-Rectangle<int> NanoVGSurface::clip_bounds() const {
+Rectangle<int> Surface::clip_bounds() const {
     return ctx->state.clip.as<int>();
 }
 
-void NanoVGSurface::set_fill (const Fill& fill) {
+void Surface::set_fill (const Fill& fill) {
     auto c = fill.color();
     auto& state = ctx->state;
     state.color.r = c.fred();
@@ -78,20 +86,20 @@ void NanoVGSurface::set_fill (const Fill& fill) {
     state.color.a = c.falpha();
 }
 
-void NanoVGSurface::save() { ctx->save(); }
-void NanoVGSurface::restore() { ctx->restore(); }
+void Surface::save() { ctx->save(); }
+void Surface::restore() { ctx->restore(); }
 
-void NanoVGSurface::begin_frame (int width, int height, float scale) {
+void Surface::begin_frame (int width, int height, float scale) {
     // are nvg pixel ratio and PuglView scale same?
     auto pixel_ratio = scale;
     nvgBeginFrame (ctx->ctx, width, height, pixel_ratio);
 }
 
-void NanoVGSurface::end_frame() {
+void Surface::end_frame() {
     nvgEndFrame (ctx->ctx);
 }
 
-void NanoVGSurface::fill_rect (const Rectangle<float>& r) {
+void Surface::fill_rect (const Rectangle<float>& r) {
     nvgBeginPath (ctx->ctx);
 
     nvgRect (ctx->ctx,
@@ -104,4 +112,5 @@ void NanoVGSurface::fill_rect (const Rectangle<float>& r) {
     nvgFill (ctx->ctx);
 }
 
+} // namespace nvg
 } // namespace lvtk

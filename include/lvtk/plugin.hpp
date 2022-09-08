@@ -1,4 +1,4 @@
-// Copyright 2019 Michael Fisher <mfisher@kushview.net>
+// Copyright 2019 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 /** @defgroup plugin Plugin

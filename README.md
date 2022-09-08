@@ -1,7 +1,20 @@
-LV2 Toolkit
-===========
+LVTK3
+=====
 
-Minimal C++ library for writing LV2 plugins and Gui's.
+Minimal C++ library with Lua bindings and console.
+Write your LVplugin gui's in Lua!
+
+Heavy Development
+-----------------
+This branch is under heavy development.  API's will break from time to time
+until the core system is ready.
+
+Built-In Widgets
+----------------
+- `lvtk.Widget`
+- `lvtk.
+- to be determined
+
 
 Building
 --------
@@ -9,7 +22,7 @@ To build and install, run
 ```
 $ meson setup build
 $ meson test -C build
-$ meson install -C build
+$ ninja install -C build
 ```
 
 ISC License
@@ -28,7 +41,17 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ```
 
-Issue Tracking 
--------------- 
+3rd Party Code
+--------------
+The UI classes utilize these libraries internally:
+- STB Image - public domain or MIT
+- NanoVG - MIT (I think)
+- Lua Headers for lua modules - MIT
+- Sol2 for c++ lua class bindings - MIT
+- `lualv` is a fork of Lua v5.4.4
+- boost/signals2 . Observer interfaces.
+
+Issue Tracking
+--------------
 Please report bugs and feature requests here. 
 https://github.com/lvtk/lvtk/issues

@@ -11,7 +11,7 @@ plugin = shared_module ('volume', 'volume.cpp',
     gnu_symbol_visibility : 'hidden'
 )
 
-ui = shared_module ('volume-ui', 'volume_ui.cpp',
+ui = shared_module ('volume-ui', 'volume-ui.cpp',
     name_prefix : '',
     dependencies : [ lvtk_nanovg_dep ],
     install : true,

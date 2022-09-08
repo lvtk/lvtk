@@ -1,4 +1,4 @@
-// Copyright 2022 Michael Fisher <mfisher@kushview.net>
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 /** @mainpage LV2 Toolkit
@@ -20,7 +20,7 @@
     would change to prevent plugins from building against an incompatible 
     version.
 
-    @author Michael Fisher <mfisher@kushview.net>
+    @author Michael Fisher <mfisher@lvtk.org>
     @example volume.cpp
  */
 
@@ -34,6 +34,7 @@
 
 #include <lv2/core/lv2.h>
 #include <lv2/urid/urid.h>
+#include <lvtk/string.hpp>
 
 namespace lvtk {
 /** @defgroup lvtk Core
@@ -45,7 +46,7 @@ namespace lvtk {
 using Handle = LV2_Handle;
 
 /** Map of extension data */
-using ExtensionMap = std::map<std::string, const void*>;
+using ExtensionMap = std::map<String, const void*>;
 
 /** Internal class which maintains a list of descriptors */
 template <class D>
@@ -69,7 +70,7 @@ struct Feature : LV2_Feature {
     inline bool operator== (const char* uri) const { return strcmp (uri, URI) == 0; }
 
     /** @returns true if this Feature's URI matches */
-    inline bool operator== (const std::string& uri) const { return strcmp (uri.c_str(), URI) == 0; }
+    inline bool operator== (const String& uri) const { return strcmp (uri.c_str(), URI) == 0; }
 };
 
 /** A Vector of Features.
@@ -100,7 +101,7 @@ struct FeatureList final : public std::vector<Feature> {
         }
     }
 
-    inline void* data (const std::string& uri) const {
+    inline void* data (const String& uri) const {
         for (const auto& f : *this)
             if (f == uri)
                 return f.data;
@@ -108,7 +109,7 @@ struct FeatureList final : public std::vector<Feature> {
     }
 
     /** Returns true if the uri is found */
-    inline bool contains (const std::string& uri) const {
+    inline bool contains (const String& uri) const {
         return data (uri) != nullptr;
     }
 };
@@ -130,7 +131,7 @@ struct FeatureData {
     using data_ptr_type = P;
 
     /** A uri for this data */
-    const std::string URI;
+    const String URI;
 
 public:
     FeatureData() = delete;

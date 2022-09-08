@@ -1,4 +1,4 @@
-// Copyright 2022 Michael Fisher <mfisher@kushview.net>
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 #pragma once
@@ -15,5 +15,8 @@ struct InputEvent {
     int x;
     int y;
 };
+
+// saving for later...
+struct Event : public InputEvent{};
 
 }
