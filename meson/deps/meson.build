@@ -1,8 +1,11 @@
-doxygen = find_program ('doxygen')
-dot = find_program ('dot')
+doxygen = find_program ('doxygen', required : false)
+dot = find_program ('dot', required : false)
 cppunit_dep = dependency ('cppunit', required : false)
 
-lv2_dep = dependency ('lv2', version : '>= 1.15.4', required : false)
+lv2_dep = dependency ('lv2',
+    fallback : [ 'lv2', 'lv2_dep' ],
+    version : '>= 1.15.4', 
+    required : true)
 
 pugl_opts = [
     'tests=disabled',
