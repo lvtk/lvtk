@@ -29,9 +29,10 @@ local Box = class (lvtk.Widget, {
     }
 })
 
--- "constructor"
+-- "constructor" is required right now whether you want one or not ...
 function Box:init()
-    -- Invoke the parent class' method
+    -- ... because the parent class method needs called for
+    -- it all to work.
     lvtk.Widget.init (self)
 end
 
@@ -66,12 +67,13 @@ end
 local RedBox = class (Box)
 function RedBox:init()
     -- Invoke the parent class' init method.
-    -- do not skip this part. if you do then lvtk.object can't
-    -- build needed symbol tables
+    -- skipping the init step causes all kinds of
+    -- confusing problems.
     Box.init (self)
-    self.color = 0xff0000ff
-    self.visible = true
-    self:set_size (360, 240)
+    self.color = 0xff0000ff    -- set the parent class property
+    self.visible = true        -- make it visible
+    self:set_size (360, 240)   -- need a size
+    -- TODO  self.size = { x, y }
 end
 
 local lvtk_demo_run = function()
