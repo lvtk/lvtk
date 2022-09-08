@@ -6,15 +6,13 @@ Write your LVplugin gui's in Lua!
 
 Heavy Development
 -----------------
-This branch is under heavy development.  API's will break from time to time
-until the core system is ready.
+API's will break from time to time until the core system is ready.
 
 Built-In Widgets
 ----------------
 - `lvtk.Widget`
-- `lvtk.
+- `lvtk.Container`
 - to be determined
-
 
 Building
 --------
@@ -22,8 +20,15 @@ To build and install, run
 ```
 $ meson setup build
 $ meson test -C build
-$ ninja install -C build
 ```
+
+Demo
+----
+Crude right now but if you're lucky...
+```
+bash scripts/demo.sh
+```
+... should run the Lua gui demo loaded by `lvtk.import`
 
 ISC License
 -----------
