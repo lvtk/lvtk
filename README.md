@@ -2,7 +2,7 @@ LVTK3
 =====
 
 Minimal C++ library with Lua bindings and console.
-Write your LVplugin gui's in Lua!
+Write your LV2 plugin gui's in Lua!
 
 Heavy Development
 -----------------
