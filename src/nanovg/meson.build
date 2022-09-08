@@ -3,7 +3,7 @@ lvtk_nanovg_sources = '''
     nanovg_gl.c
 '''.split()
 
-lvtk_nanovg_c_args = [ '-DNANOVG_GL3=1' ]
+lvtk_nanovg_c_args = [ '-DNANOVG_GL2=1' ]
 if meson.get_compiler('c').get_id() != 'msvc'
     lvtk_nanovg_c_args += '-Wno-implicit-function-declaration'
 endif

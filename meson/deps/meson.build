@@ -4,7 +4,7 @@ cppunit_dep = dependency ('cppunit', required : false)
 
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
-    version : '>= 1.15.4', 
+    version : '>= 1.18.0', 
     required : true)
 
 pugl_opts = [
