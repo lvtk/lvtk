@@ -180,6 +180,7 @@ inline static table
 
     // class method symbols used by lua-side proxy
     M_mt[lvtk::proxy::methods_key] = view.create_table().add (
+        "add",
         "set_bounds",
         "set_size");
 
