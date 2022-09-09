@@ -42,6 +42,7 @@ static int glew_initialized = 0;
 #endif
 
 #if defined(NANOVG_GL2) || defined(NANOVG_GL3)
+#define GL_SILENCE_DEPRECATION
 #  include <pugl/gl.h>
 #endif
 

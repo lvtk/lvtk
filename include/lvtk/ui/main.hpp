@@ -18,7 +18,7 @@ enum class Mode {
     MODULE          ///< Loadable plugin or module
 };
 
-class Backend;
+struct Backend;
 
 /** The context in which a UI or GUI app is running.
     Can create views and run the event loop
