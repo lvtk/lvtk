@@ -25,21 +25,21 @@ public:
     }
 
     void pressed (InputEvent ev) override {
-        std::clog << __name       << " pressed: "
+        std::clog << __name << " pressed: "
                   << ev.pos.str() << "  bounds: "
                   << bounds().str() << std::endl;
     }
 
     void released (InputEvent ev) override {
-        std::clog << __name     <<   " released: "
+        std::clog << __name << " released: "
                   << ev.pos.str() << "   bounds: "
                   << bounds().str() << std::endl;
-        is_on = !is_on;
+        is_on = ! is_on;
         repaint();
     }
 
     bool is_on = false;
-    Color color_on  { 0x550000ff };
+    Color color_on { 0x550000ff };
     Color color_off { 0x444444ff };
 };
 

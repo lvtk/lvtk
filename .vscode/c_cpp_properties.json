@@ -22,8 +22,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include/*",
-                "${workspaceFolder}/subprojects/lua-5.4.4/src/*",
-                "${workspaceFolder}/subprojects/sol2/include/*"
+                "${workspaceFolder}/util/lualv/include/*",
+                "${workspaceFolder}/util/lualv/lua/5.4.4/src/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang++",

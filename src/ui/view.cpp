@@ -37,7 +37,7 @@ static inline Rectangle<Tp> rect (const Ev& ev) {
 struct View::EventHandler {
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
         if (ev.flags & PUGL_IS_HINT) {
-            VIEW_DBG("configure: hint");
+            VIEW_DBG ("configure: hint");
             return PUGL_SUCCESS;
         }
         return PUGL_SUCCESS;
@@ -45,7 +45,7 @@ struct View::EventHandler {
 
     static PuglStatus expose (View& view, const PuglExposeEvent& ev) {
         if (ev.flags & PUGL_IS_HINT) {
-            VIEW_DBG("expose: hint");
+            VIEW_DBG ("expose: hint");
             return PUGL_SUCCESS;
         }
         view.expose (detail::rect<int> (ev));
@@ -86,14 +86,14 @@ struct View::EventHandler {
     static PuglStatus key_press (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus key_release (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus text (View& view, const PuglTextEvent& ev) { return PUGL_SUCCESS; }
-    
+
     static PuglStatus pointer_in (View& view, const PuglCrossingEvent& ev) {
-        VIEW_DBG("pointer in")
+        VIEW_DBG ("pointer in")
         return PUGL_SUCCESS;
     }
-    
+
     static PuglStatus pointer_out (View& view, const PuglCrossingEvent& ev) {
-        VIEW_DBG("pointer out")
+        VIEW_DBG ("pointer out")
         return PUGL_SUCCESS;
     }
 
@@ -103,7 +103,7 @@ struct View::EventHandler {
 
         if (ref.valid()) {
             if (view._hovered != ref) {
-                VIEW_DBG("hovered changed: " << ref->__name);
+                VIEW_DBG ("hovered changed: " << ref->__name);
                 view._hovered = ref;
             }
 
@@ -111,7 +111,7 @@ struct View::EventHandler {
             event.pos = ref->convert (view._widget, pos).as<double>();
             ref->motion (event);
         } else if (view._hovered) {
-            VIEW_DBG("hovered cleared");
+            VIEW_DBG ("hovered cleared");
             view._hovered = nullptr;
         }
 
@@ -264,7 +264,7 @@ void View::set_parent (uintptr_t parent) {
 }
 
 void View::__pugl_post_redisplay() {
-    puglPostRedisplay ((PuglView*)_view);
+    puglPostRedisplay ((PuglView*) _view);
 }
 
 } // namespace lvtk
