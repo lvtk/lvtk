@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <memory>
+
 namespace lvtk {
 
 class Pixels {
@@ -13,7 +15,7 @@ class Image {
 public:
     Image() = default;
     Image& operator= (const Image& o) { return *this; }
-    long use_count() const noexcept { _pixels.use_count(); }
+    long use_count() const noexcept { return _pixels.use_count(); }
 
 private:
     std::shared_ptr<Pixels> _pixels;
