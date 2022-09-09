@@ -19,12 +19,19 @@ Building
 To build and install, run
 ```
 $ meson setup build
-$ meson test -C build
+$ cd build
+$ ninja
+$ ninja test
+$ ninja install
 ```
 
 Demo
 ----
 Crude right now but if you're lucky...
+```
+./build/lvtk-demo
+```
+... launches the C++ demo, and ...  
 ```
 bash scripts/demo.sh
 ```
@@ -48,7 +55,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 3rd Party Code
 --------------
-The UI classes utilize these libraries internally:
+Graphics/UI classes utilize these libraries internally:
 
 | Library   | License |
 |-----------|---------|
