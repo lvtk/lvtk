@@ -25,8 +25,8 @@ $ ninja test
 $ ninja install
 ```
 
-Demo
-----
+Gui Demo
+--------
 Crude right now but if you're lucky...
 ```
 ./build/lvtk-demo
