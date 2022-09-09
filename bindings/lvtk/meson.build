@@ -12,6 +12,7 @@ endforeach
 foreach n : 'bytes midi round'.split()
     shared_module (n, [ '@0@.c'.format(n) ],
         name_prefix             : '',
+        name_suffix             : lvtk_lua_modules_suffix,
         include_directories     : [],
         gnu_symbol_visibility   : 'hidden',
         dependencies            : [ lvtk_internal_dep, lualv_includes_dep ],

@@ -1,4 +1,10 @@
 
+lvtk_lua_modules_suffix = []
+if host_machine.system() == 'darwin'
+    # lua needs it this way on OSX
+    lvtk_lua_modules_suffix = 'so'
+endif
+
 # build low level modules
 subdir ('lvtk')
 
@@ -7,6 +13,7 @@ lvtk_lua_cpp_sources = ['lvtk.cpp']
 shared_module ('lvtk',
     lvtk_lua_cpp_sources,
     name_prefix: '',
+    name_suffix : lvtk_lua_modules_suffix,
     include_directories : [ ],
     gnu_symbol_visibility : 'hidden',
     dependencies: [ pugl_gl_dep, lvtk_internal_dep, lualv_includes_dep ],
