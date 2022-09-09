@@ -11,21 +11,26 @@ lvtk_internal_dep = declare_dependency (
     include_directories : [ 'src' ],
     dependencies : lvtk_dep)
 
-subdir ('src')
+### lualv ###
 subdir ('util/lualv')
-subdir ('bindings')
 lualv_prog = executable ('lualv',
     'util/lualv/main.cpp',
-    win_subsystem : 'console',
-    link_with : liblualv_exe,
-    dependencies : lualv_console_deps,
-    c_args : lualv_console_c_args,
-    cpp_args : lualv_console_cpp_args
-)
+    win_subsystem   : 'console',
+    link_with       : liblualv_exe,
+    dependencies    : lualv_console_deps,
+    c_args          : lualv_console_c_args,
+    cpp_args        : lualv_console_cpp_args,
+    install         : false)
 
+### shared libs
+subdir ('src')
+subdir ('bindings')
+
+### Finals
 subdir ('lvtk.lv2')
 subdir ('demo')
 
+### 
 install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-3')
 subdir ('meson/pkgconfig')
 
