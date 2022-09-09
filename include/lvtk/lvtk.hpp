@@ -47,7 +47,7 @@ namespace lvtk {
 using Handle = LV2_Handle;
 
 /** Map of extension data */
-using ExtensionMap = std::map<String, const void*>;
+using ExtensionMap = std::map<std::string, const void*>;
 
 /** Internal class which maintains a list of descriptors */
 template <class D>
@@ -71,7 +71,7 @@ struct Feature : LV2_Feature {
     inline bool operator== (const char* uri) const { return strcmp (uri, URI) == 0; }
 
     /** @returns true if this Feature's URI matches */
-    inline bool operator== (const String& uri) const { return strcmp (uri.c_str(), URI) == 0; }
+    inline bool operator== (const std::string& uri) const { return strcmp (uri.c_str(), URI) == 0; }
 };
 
 /** A Vector of Features.
@@ -102,7 +102,7 @@ struct FeatureList final : public std::vector<Feature> {
         }
     }
 
-    inline void* data (const String& uri) const {
+    inline void* data (const std::string& uri) const {
         for (const auto& f : *this)
             if (f == uri)
                 return f.data;
@@ -110,7 +110,7 @@ struct FeatureList final : public std::vector<Feature> {
     }
 
     /** Returns true if the uri is found */
-    inline bool contains (const String& uri) const {
+    inline bool contains (const std::string& uri) const {
         return data (uri) != nullptr;
     }
 };
@@ -132,7 +132,7 @@ struct FeatureData {
     using data_ptr_type = P;
 
     /** A uri for this data */
-    const String URI;
+    const std::string URI;
 
 public:
     FeatureData() = delete;
