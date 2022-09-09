@@ -1,6 +1,7 @@
 lvtk_nanovg_sources = '''
     nanovg.c
     nanovg_gl.c
+    glad.c
 '''.split()
 
 lvtk_nanovg_c_args = [ '-DNANOVG_GL2=1' ]

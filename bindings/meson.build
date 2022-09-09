@@ -1,3 +1,5 @@
+# TODO: msvc lua module building
+if host_machine.system() != 'windows'
 
 lvtk_lua_modules_suffix = []
 if host_machine.system() == 'darwin'
@@ -21,3 +23,5 @@ shared_module ('lvtk',
                 liblvtk_ui.extract_all_objects (recursive : true)],
     install : true,
     install_dir : lualv_lua_cmodsubdir)
+
+endif # not msvc
