@@ -14,7 +14,7 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup worker Worker 
+/** @defgroup worker Worker
     Scheduling work and processing jobs
     <h3>Example</h3>
     @code
@@ -22,7 +22,7 @@
         #include <lvtk/plugin.hpp>
 
         using namespace lvtk;
-        
+
         class WorkPlugin : public Plugin<WorkPlugin, Worker> {
         public:
             WorkPlugin (const Args& args) : Plugin (args) {}
@@ -32,10 +32,10 @@
                 schedule_work ("workmsg", strlen("workmsg") + 1);
             }
 
-            WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) { 
+            WorkerStatus work (WorkerRespond &respond, uint32_t size, const void* data) {
                 // perform work
                 // send responses with @c respond
-                return WORKER_SUCCESS; 
+                return WORKER_SUCCESS;
             }
 
             WorkerStatus work_response (uint32_t size, const void* body) {
@@ -44,7 +44,7 @@
             }
 
             WorkerStatus end_run() {
-                // optional: do anything needed at the end of the run cycle    
+                // optional: do anything needed at the end of the run cycle
             }
         };
     @endcode
@@ -52,8 +52,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/worker/worker.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
@@ -105,7 +106,7 @@ struct WorkerSchedule final : FeatureData<LV2_Worker_Schedule> {
     WorkerSchedule() : FeatureData (LV2_WORKER__schedule) {}
 
     /** Schedule work with the host
-        
+
         @param size Size of the data
         @param data The data to write
      */
@@ -132,13 +133,13 @@ struct Worker : Extension<I> {
     }
 
     /** Perform work as requested by schedule_work
-     
+
         @param respond  Function to send responses with
      */
     WorkerStatus work (WorkerRespond& respond, uint32_t size, const void* data) { return LV2_WORKER_SUCCESS; }
 
     /** Process work responses sent with respond in the `work` callback
-     
+
         @param size Size of response data
         @param data The reponse data
      */
@@ -149,14 +150,14 @@ struct Worker : Extension<I> {
 
     /** Use this to schedule a job with the host.  This is a function object so
         it can be called directly.
-        
+
         Example:
         @code
             void run (uint32_t nframes) {
                 // ...
-                
+
                 schedule_work (strlen ("non_rt_job"), "non_rt_job"));
-                
+
                 // ...
             }
         @endcode

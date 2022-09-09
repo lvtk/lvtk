@@ -1,6 +1,15 @@
 
 #include "tests.hpp"
-#include <lvtk/dynmanifest.hpp>
+
+#include "lvtk/dynmanifest.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+#include <cstdio>
+#include <memory>
+#include <ostream>
+#include <string>
 
 class TestManifest : public lvtk::DynManifest {
 public:

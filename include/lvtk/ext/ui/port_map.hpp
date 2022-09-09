@@ -16,8 +16,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/ui/ui.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 /** Port index function. LV2_UI__portMap wrapper
@@ -52,7 +53,7 @@ protected:
         if not found. It is a function object, so....
         @code
         // ...
-        
+
         const auto index = port_index ("port_symbol");
 
         // ...

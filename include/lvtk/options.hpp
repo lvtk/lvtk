@@ -142,4 +142,4 @@ private:
     Option* opts = nullptr;
 };
 
-}
+} // namespace lvtk

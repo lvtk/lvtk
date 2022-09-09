@@ -14,8 +14,8 @@ namespace lvtk {
     @see Context
  */
 enum class Mode {
-    PROGRAM = 0,    ///< Standalone application
-    MODULE          ///< Loadable plugin or module
+    PROGRAM = 0, ///< Standalone application
+    MODULE       ///< Loadable plugin or module
 };
 
 class Backend;
@@ -42,7 +42,7 @@ public:
 
     /** Elevate a Widget to view status */
     void elevate (Widget& widget, uintptr_t parent);
-    
+
     /** Returns the underlying PuglWorld */
     uintptr_t world() const noexcept { return _world; }
 
@@ -64,10 +64,12 @@ struct Backend {
     Backend() = delete;
     virtual ~Backend() = default;
     const String& name() const noexcept { return _name; }
-    virtual std::unique_ptr<View> create_view (Main&, Widget&) =0;
+    virtual std::unique_ptr<View> create_view (Main&, Widget&) = 0;
+
 protected:
     Backend (const String& name)
         : _name (name) {}
+
 private:
     String _name;
     Backend (const Backend&) = delete;
@@ -76,4 +78,4 @@ private:
     Backend& operator= (Backend&&) = delete;
 };
 
-}
+} // namespace lvtk

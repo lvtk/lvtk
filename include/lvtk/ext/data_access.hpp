@@ -14,18 +14,19 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup data_access Data Access 
+/** @defgroup data_access Data Access
     Access to plugin extension data
 */
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/data-access/data-access.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 /** An LV2_Extension_Data_Feature function wrapper
- 
+
     Use these on the stack and call set_feature() passing the appropriate feature.
     @headerfile lvtk/ext/data_access.hpp
     @ingroup data_access
@@ -67,7 +68,7 @@ struct DataAccess : NullExtension {
     }
 
     /** Calls extension_data on the plugin if supported by the host.
-        
+
         @param uri  URI of the extension
         @note This is an alias to `data_access`
 

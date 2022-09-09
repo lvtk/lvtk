@@ -13,7 +13,6 @@ class Widget;
 
 class View {
 protected:
-
 public:
     virtual ~View();
     uintptr_t handle();
@@ -26,7 +25,7 @@ public:
     Bounds bounds() const;
 
     void realize();
-    
+
 protected:
     View (Main& context, Widget& widget);
     void render (Surface& surface);
@@ -51,4 +50,4 @@ private:
 
 using ViewRef = WeakRef<View>;
 
-}
+} // namespace lvtk

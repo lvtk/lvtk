@@ -10,4 +10,4 @@ public:
     Image& operator= (const Image& o) { return *this; }
 };
 
-}
+} // namespace lvtk

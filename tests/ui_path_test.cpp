@@ -15,17 +15,22 @@ protected:
     void iterator_count() {
         FloatPath path;
         int numops = 0;
-        path.move (100, 100); ++numops;
-        path.line (200, 200); ++numops;
-        path.quad (300, 300, 300, 300); ++numops;
-        path.cubic (400, 400, 400, 400, 400, 400); ++numops;
-        path.close(); ++numops;
+        path.move (100, 100);
+        ++numops;
+        path.line (200, 200);
+        ++numops;
+        path.quad (300, 300, 300, 300);
+        ++numops;
+        path.cubic (400, 400, 400, 400, 400, 400);
+        ++numops;
+        path.close();
+        ++numops;
         int storedops = 0;
         for (auto& op : path) {
-            (void)op;
+            (void) op;
             ++storedops;
         }
-        CPPUNIT_ASSERT_EQUAL(numops, storedops);
+        CPPUNIT_ASSERT_EQUAL (numops, storedops);
     };
 };
 

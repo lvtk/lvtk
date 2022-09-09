@@ -14,12 +14,12 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup bufsize Buf Size 
+/** @defgroup bufsize Buf Size
     Access to buffer information
 
-    The @ref BufSize extension scans for buffer information provided by the 
-    host, and populates a @ref BufferDetails accordingly. To use it, add 
-    BufSize to the template parameters of your Plugin and call buffer_details() 
+    The @ref BufSize extension scans for buffer information provided by the
+    host, and populates a @ref BufferDetails accordingly. To use it, add
+    BufSize to the template parameters of your Plugin and call buffer_details()
     for buffer info
 
     @code
@@ -27,10 +27,10 @@
     public:
         MyPlug (lvtk::Args& args) : lvtk::Plugin (args) {
             const auto& details = buffer_details();
-            
+
             // setup plugin using details. members are optional
             // and only set if provided by the host. e.g....
-            
+
             if (details.min && details.max) {
                 // got min/max do something with them
             } else {
@@ -43,10 +43,11 @@
 
 #pragma once
 
+#include "lvtk/ext/options.hpp"
+#include "lvtk/ext/urid.hpp"
+#include "lvtk/optional.hpp"
+
 #include <lv2/buf-size/buf-size.h>
-#include <lvtk/ext/options.hpp>
-#include <lvtk/ext/urid.hpp>
-#include <lvtk/optional.hpp>
 
 #ifndef LV2_BUF_SIZE__nominalBlockLength
     #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
@@ -55,7 +56,7 @@
 namespace lvtk {
 /* @{ */
 /** Description of buffer information.
-    
+
     Used by the @ref BufSize extension to automatically scan for buffer details
     during instantiation. @see @ref BufSize
 
@@ -67,7 +68,7 @@ struct BufferDetails final {
     Optional<uint32_t> nominal;       /**< <http://lv2plug.in/ns/ext/buf-size#nominalBlockLength> */
     Optional<uint32_t> sequence_size; /**< <http://lv2plug.in/ns/ext/buf-size#sequenceSize> */
 
-    /** Update with Options. Updates `min`, `max`, and `nominal`, and 
+    /** Update with Options. Updates `min`, `max`, and `nominal`, and
         `sequence_size` if found in the Option array
 
         @param map      Map for getting required LV2_URIDs
@@ -119,10 +120,10 @@ struct BufSize : NullExtension {
     }
 
     /** Get the buffer details
-        
+
         If the required features and options were available when instantiated,
         This will be populated with host buffer information
-     
+
         @returns The host provided buffer details
      */
     const BufferDetails& buffer_details() const { return details; }

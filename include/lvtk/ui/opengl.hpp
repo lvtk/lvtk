@@ -18,8 +18,8 @@ public:
     OpenGLSurface() = default;
     virtual ~OpenGLSurface() = default;
 
-// private:
-//     friend class OpenGLView<OpenGLSurface>;
+    // private:
+    //     friend class OpenGLView<OpenGLSurface>;
     /** called immediately before rendering */
     virtual void begin_frame (int width, int height, float scale) {}
     /** called immediately after rendering */
@@ -65,7 +65,7 @@ private:
     std::unique_ptr<OpenGLSurface> _surface;
 };
 
-template<class Surf, class V = OpenGLView<Surf>>
+template <class Surf, class V = OpenGLView<Surf>>
 struct OpenGL : public Backend {
     using surface_type = Surf;
     using view_type = V;

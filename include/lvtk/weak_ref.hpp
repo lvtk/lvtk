@@ -25,7 +25,6 @@ public:
         status = o.status;
         return *this;
     }
-
     WeakStatus& operator= (WeakStatus&& o) {
         status = std::move (o.status);
         return *this;
@@ -162,9 +161,9 @@ private:
 
     @see WeakRef, WeakStatus
 */
-#define LVTK_WEAK_REFABLE(T, member)                       \
-    friend class lvtk::WeakRef<T>;                         \
-    lvtk::WeakStatus<T> member;                            \
-    static lvtk::WeakStatus<T> lvtk_weak_status (T* obj) { \
-        return obj->member;                                \
+#define LVTK_WEAK_REFABLE(klass, member)                           \
+    friend class lvtk::WeakRef<klass>;                             \
+    lvtk::WeakStatus<klass> member;                                \
+    static lvtk::WeakStatus<klass> lvtk_weak_status (klass* obj) { \
+        return obj->member;                                        \
     }

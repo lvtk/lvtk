@@ -10,8 +10,10 @@ extern "C" {
 #include <stdint.h>
 
 typedef union _LvtkPacked {
-    struct { uint8_t b1, b2, b3, b4; } bytes;
-    uint8_t data [4];
+    struct {
+        uint8_t b1, b2, b3, b4;
+    } bytes;
+    uint8_t data[4];
     lua_Integer packed;
 } LvtkPacked;
 

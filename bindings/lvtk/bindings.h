@@ -4,7 +4,7 @@
 #ifndef LVTK_BINDINGS_H
 #define LVTK_BINDINGS_H
 
-#define LVTK_MT_BYTE_ARRAY      "lvtk.ByteArray"
+#define LVTK_MT_BYTE_ARRAY "lvtk.ByteArray"
 
 #if __cplusplus
     #define LVTK_EXTERN extern "C"

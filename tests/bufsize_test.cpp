@@ -1,6 +1,26 @@
 
 #include "tests.hpp"
 
+#include "lvtk/ext/bufsize.hpp"
+#include "lvtk/ext/options.hpp"
+#include "lvtk/lvtk.hpp"
+#include "lvtk/optional.hpp"
+#include "lvtk/options.hpp"
+#include "lvtk/plugin.hpp"
+#include "lvtk/symbols.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <lv2/buf-size/buf-size.h>
+#include <lv2/core/lv2.h>
+#include <lv2/options/options.h>
+
+#include <cstdint>
+#include <exception>
+#include <experimental/optional>
+#include <memory>
+#include <string>
+
 struct BufSizePlug : lvtk::Plugin<BufSizePlug, lvtk::BufSize> {
     BufSizePlug (const lvtk::Args& args) : Plugin (args) {}
 };

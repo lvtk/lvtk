@@ -2,15 +2,15 @@
 #include <algorithm>
 #include <iostream>
 
-#include <lvtk/ui.hpp>
 #include <lvtk/ext/ui/idle.hpp>
 #include <lvtk/ext/ui/parent.hpp>
 #include <lvtk/ext/ui/resize.hpp>
 #include <lvtk/options.hpp>
+#include <lvtk/ui.hpp>
 
+#include <lvtk/ui/main.hpp>
 #include <lvtk/ui/nanovg.hpp>
 #include <lvtk/ui/widget.hpp>
-#include <lvtk/ui/main.hpp>
 
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/weak_ref.hpp>
@@ -19,19 +19,16 @@
 
 using namespace lvtk;
 
-class VolumeUI final : public UI<VolumeUI, Parent, Idle, URID, Options>
-{
+class VolumeUI final : public UI<VolumeUI, Parent, Idle, URID, Options> {
 public:
     VolumeUI (const UIArgs& args)
-        : UI (args)
-    {
-        for (const auto& opt : OptionArray (options()))
-        {
+        : UI (args) {
+        for (const auto& opt : OptionArray (options())) {
             if (opt.key == map (LV2_UI__scaleFactor))
                 m_scale_factor = *(float*) opt.value;
         }
     }
-    
+
     void cleanup() {
         content.reset();
     }
@@ -42,15 +39,14 @@ public:
     }
 
     void port_event (uint32_t port, uint32_t size,
-                     uint32_t format, const void*  buffer)
-    {}
+                     uint32_t format, const void* buffer) {}
 
     LV2UI_Widget get_widget() {
         if (content == nullptr) {
             content = std::make_unique<Content>();
             content->set_size (640, 360);
             content->set_visible (true);
-            _main.elevate (*content, (uintptr_t)parent.get());
+            _main.elevate (*content, (uintptr_t) parent.get());
         }
 
         return *content;
@@ -68,7 +64,7 @@ private:
             g.set_color (color);
             g.fill_rect (bounds().at (0, 0).as<float>());
         }
-        
+
         bool obstructed (int x, int y) override {
             return true;
         }
@@ -142,7 +138,6 @@ private:
         }
 
         ~Content() {
-
         }
 
         void motion (InputEvent ev) override {
@@ -153,7 +148,7 @@ private:
             auto r = bounds().at (0, 0);
             r.x = 20;
             r.y = 20;
-            r.width  -= (r.x * 2);
+            r.width -= (r.x * 2);
             r.height -= (r.y * 2);
             buttons.set_bounds (r);
         }
@@ -162,6 +157,7 @@ private:
             g.set_color (Color (0x545454ff));
             g.fill_rect (bounds().at (0, 0).as<float>());
         }
+
     private:
         Container buttons;
     };
@@ -171,5 +167,4 @@ private:
 };
 
 static UIDescriptor<VolumeUI> s_volume_ui (
-    LVTK_VOLUME_UI_URI, { LV2_UI__parent }
-);
+    LVTK_VOLUME_UI_URI, { LV2_UI__parent });

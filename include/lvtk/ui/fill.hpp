@@ -17,7 +17,7 @@ public:
     void set_color (Color c) {
         _color = c;
     }
-    
+
     Color color() const noexcept { return _color; }
     bool is_color() const noexcept { return true; }
 
@@ -35,4 +35,4 @@ private:
     Color _color;
 };
 
-}
+} // namespace lvtk

@@ -14,14 +14,15 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup urid URID 
+/** @defgroup urid URID
     Working with URIDs
 */
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/urid/urid.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
@@ -82,12 +83,12 @@ struct URID : NullExtension {
     }
 
 protected:
-    /** The Map is exposed as protected function object. You can call it as such. 
+    /** The Map is exposed as protected function object. You can call it as such.
         e.g. `map ("http://someuri.com/#somekey");`
      */
     Map map;
 
-    /** The Unmap is exposed as protected function object. You can call it as such. 
+    /** The Unmap is exposed as protected function object. You can call it as such.
         e.g. `unmap (a_mapped_uri_int);`
      */
     Unmap unmap;

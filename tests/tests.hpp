@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cppunit/config/SourcePrefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <lvtk/ext/ui/idle.hpp>
@@ -23,11 +22,11 @@
 #include <lvtk/ext/worker.hpp>
 
 #include <lvtk/lvtk.hpp>
-#include <lvtk/options.hpp>
 #include <lvtk/optional.hpp>
+#include <lvtk/options.hpp>
 #include <lvtk/plugin.hpp>
-#include <lvtk/ui.hpp>
 #include <lvtk/symbols.hpp>
+#include <lvtk/ui.hpp>
 
 #ifndef LVTK_VOLUME_URI
     #define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"

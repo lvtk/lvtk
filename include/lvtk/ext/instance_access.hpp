@@ -14,19 +14,20 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup instance_access Instance Access 
+/** @defgroup instance_access Instance Access
     Access to the plugin instance
 */
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/instance-access/instance-access.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
 /** Wrap the Instance Access host feature.
- 
+
     Use these on the stack and all set() passing the appropriate feature.
     @headerfile lvtk/ext/instance_access.hpp
     @ingroup instance_access
@@ -37,7 +38,7 @@ struct InstanceHandle final : FeatureData<Handle, Handle> {
 
 /** Adds LV2 Instance Access support to your UI
     @headerfile lvtk/ext/instance_access.hpp
-    @ingroup instance_access 
+    @ingroup instance_access
 */
 template <class I>
 struct InstanceAccess : NullExtension {

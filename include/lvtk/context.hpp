@@ -19,4 +19,4 @@ private:
     Symbols _symbols;
 };
 
-}
+} // namespace lvtk

@@ -16,8 +16,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/ui/ui.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
@@ -43,11 +44,11 @@ struct Parent : NullExtension {
     }
 
 protected:
-    /** Returns the parent widget, or nullptr if not found. 
+    /** Returns the parent widget, or nullptr if not found.
         It is a function object and also has a bool() operator, so....
         @code
         // ...
-        
+
         if (parent) {
             auto* widget = reinterpret_cast<WidgetType*> (parent())
             // do something with the parent widget, WidgetType* above

@@ -1,6 +1,21 @@
 
 #include "tests.hpp"
 
+#include "lvtk/ext/instance_access.hpp"
+#include "lvtk/lvtk.hpp"
+#include "lvtk/plugin.hpp"
+#include "lvtk/ui.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <lv2/core/lv2.h>
+#include <lv2/instance-access/instance-access.h>
+
+#include <cstring>
+#include <memory>
+#include <string>
+#include <vector>
+
 struct InstanceAccessPlug : lvtk::Plugin<InstanceAccessPlug> {
     InstanceAccessPlug (const lvtk::Args& args) : Plugin (args) {}
 };

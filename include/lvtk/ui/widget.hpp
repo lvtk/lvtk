@@ -32,7 +32,7 @@ public:
     void set_visible (bool visible);
 
     void repaint();
-    
+
     virtual void resized() {}
     virtual void paint (Graphics&) {}
     virtual void motion (InputEvent) {}
@@ -45,17 +45,17 @@ public:
     void set_bounds (int x, int y, int width, int height);
     void set_bounds (Bounds b);
     void set_size (int width, int height);
-    
+
     /** Returns true if the Widget can receive events at coordate xy. */
     virtual bool obstructed (int x, int y);
-    
+
     /** True if xy falls within this Widget's local bounds */
     bool contains (int x, int y) const noexcept;
     /** True if pt falls within this Widget's local bounds */
     bool contains (Point<int> coord) const noexcept;
     /** True if pt falls within this Widget's local bounds */
     bool contains (Point<double> coord) const noexcept;
-    
+
     /** Convert a coordinate from one widget to another.
         @param source The Widget to convert from
         @param coord  A coordinate in the source.

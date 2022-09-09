@@ -1,6 +1,6 @@
 
-#include <lvtk/ui/nanovg.hpp>
 #include "demo.hpp"
+#include <lvtk/ui/nanovg.hpp>
 
 int main (int argc, char** argv) {
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::NanoVG>());

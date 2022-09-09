@@ -9,8 +9,8 @@ extern "C" {
 #endif
 
 typedef struct _LvtkBytes {
-    size_t      size;
-    uint8_t*    data;
+    size_t size;
+    uint8_t* data;
 } LvtkBytes;
 
 #ifdef __cplusplus

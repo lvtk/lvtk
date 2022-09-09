@@ -16,8 +16,9 @@
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/ui/ui.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 
@@ -32,7 +33,7 @@ struct Idle : Extension<I> {
 
     /** Called repeatedly by the host to drive your UI.  Return non-zero
         to stop receiving callbacks.
-        
+
         @returns one by default, so you must override this to be useful.
      */
     inline int idle() { return 1; }

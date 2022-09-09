@@ -1,7 +1,7 @@
 
+#include "console.hpp"
 #include <iostream>
 #include <sol/sol.hpp>
-#include "console.hpp"
 
 int main (int argc, char** argv) {
     sol::state lua;
@@ -11,7 +11,7 @@ int main (int argc, char** argv) {
     lua.open_libraries();
 
     auto console = lua.create_table();
-    console["log"] = [&](const sol::object& obj) {
+    console["log"] = [&] (const sol::object& obj) {
         lua["print"](obj);
     };
     lua["console"] = console;
@@ -20,7 +20,7 @@ int main (int argc, char** argv) {
         std::cout << "help!!\n";
     };
     lua["quit"] = lua["os"]["exit"];
-    
+
     // register some callbacks and/or intrusive
     // functions into the interpreter to be used
     // for smooth GUI operation.

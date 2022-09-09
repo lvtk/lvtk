@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <lauxlib.h>
-#include <lualib.h>
 #include "bindings.h"
 #include "bytes.h"
 #include "packed.h"
+#include <lauxlib.h>
+#include <lualib.h>
 
 static inline void lvtk_bytes_init (LvtkBytes* b, size_t size) {
     b->data = NULL;
@@ -34,7 +34,7 @@ static inline void lvtk_bytes_free (LvtkBytes* b) {
 }
 
 static inline uint8_t lvtk_bytes_get (LvtkBytes* b, lua_Integer index) {
-    return b->data [index];
+    return b->data[index];
 }
 
 static inline void lvtk_bytes_set (LvtkBytes* b, lua_Integer index, uint8_t value) {
@@ -148,25 +148,25 @@ static int f_pack (lua_State* L) {
 }
 
 static const luaL_Reg bytes_f[] = {
-    { "new",    f_new },
-    { "free",   f_free },
-    { "size",   f_size },
-    { "get",    f_get },
-    { "set",    f_set },
-    { "pack",   f_pack },
+    { "new", f_new },
+    { "free", f_free },
+    { "size", f_size },
+    { "get", f_get },
+    { "set", f_set },
+    { "pack", f_pack },
     { NULL, NULL }
 };
 
 static const luaL_Reg bytes_m[] = {
-    { "__gc",   f_free },
+    { "__gc", f_free },
     { NULL, NULL }
 };
 
 LVTK_LUALIB
 int luaopen_lvtk_bytes (lua_State* L) {
     if (luaL_newmetatable (L, LVTK_MT_BYTE_ARRAY)) {
-        lua_pushvalue (L, -1);               /* duplicate the metatable */
-        lua_setfield (L, -2, "__index");     /* mt.__index = mt */
+        lua_pushvalue (L, -1);           /* duplicate the metatable */
+        lua_setfield (L, -2, "__index"); /* mt.__index = mt */
         luaL_setfuncs (L, bytes_m, 0);
         lua_pop (L, 1);
     }

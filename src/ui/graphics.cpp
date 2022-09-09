@@ -6,4 +6,4 @@
 namespace lvtk {
 Graphics::Graphics (Surface& d)
     : surface (d) {}
-}
+} // namespace lvtk

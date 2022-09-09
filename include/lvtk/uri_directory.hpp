@@ -1,3 +1,3 @@
 #pragma once
-#warning "<lvtk/uri_directory.hpp> is deprecated. Use lvtk/symbols.hpp instead."
+#warning "<lvtk/symbols.hpp> is deprecated. Use lvtk/symbols.hpp instead."
 #include <lvtk/symbols.hpp>

@@ -2,4 +2,4 @@
 // SPDX-License-Identifier: ISC
 
 #pragma once
-static_assert(false, "Cairo backend coming soon...");
+static_assert (false, "Cairo backend coming soon...");

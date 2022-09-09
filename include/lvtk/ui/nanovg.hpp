@@ -30,7 +30,7 @@ private:
 
 inline static constexpr const char* GL_BACKEND_NAME = "NanoVG";
 
-}
+} // namespace nvg
 
 /** NanoVG Backend.
     Pass one of these to Main to use NanoVG for rendering
@@ -39,4 +39,4 @@ struct NanoVG : OpenGL<nvg::Surface> {
     NanoVG() : OpenGL (nvg::GL_BACKEND_NAME) {}
 };
 
-}
+} // namespace lvtk

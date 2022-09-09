@@ -1,7 +1,12 @@
 
-#include <memory>
 #include "tests.hpp"
+
 #include "lvtk/weak_ref.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+#include <memory>
 
 class WeakRefTest : public TestFixutre {
     CPPUNIT_TEST_SUITE (WeakRefTest);
@@ -37,10 +42,11 @@ protected:
 
     class TestObject {
     public:
-        TestObject()  { weak_status.reset (this); }
+        TestObject() { weak_status.reset (this); }
         virtual ~TestObject() { weak_status.reset(); }
+
     private:
-        LVTK_WEAK_REFABLE(TestObject, weak_status)
+        LVTK_WEAK_REFABLE (TestObject, weak_status)
     };
 
     class SubObject : public TestObject {};

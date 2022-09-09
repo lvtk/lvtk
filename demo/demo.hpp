@@ -114,7 +114,6 @@ private:
     Container buttons;
 };
 
-
 template <class Wgt>
 static int run (lvtk::Main& context) {
     auto content = std::make_unique<Wgt>();

@@ -18,15 +18,15 @@ enum class PathOp {
 };
 
 /** The element_type for BasicPath<T>::iterator */
-template<typename Coord>
+template <typename Coord>
 struct PathItem {
     PathOp type { PathOp::MOVE };
     Coord x1 {}, y1 {},
-          x2 {}, y2 {},
-          x3 {}, y3 {};
+        x2 {}, y2 {},
+        x3 {}, y3 {};
 };
 
-template<typename Coord>
+template <typename Coord>
 class BasicPath {
 public:
     using coord_type = Coord;

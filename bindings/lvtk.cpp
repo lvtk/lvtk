@@ -1,10 +1,10 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-#include <lvtk/lvtk.hpp>
-#include <lvtk/ui/nanovg.hpp>
-#include <lvtk/string.hpp>
 #include "proxy.hpp"
+#include <lvtk/lvtk.hpp>
+#include <lvtk/string.hpp>
+#include <lvtk/ui/nanovg.hpp>
 
 #include "./lvtk/bindings.h"
 
@@ -62,7 +62,7 @@ static inline void require_geometry_types (lua_State* L) {
 }
 
 // deps required by Widget, excluding itself
-// 
+//
 static inline void require_widget_deps (lua_State* L) {
     state_view view (L);
     view.script (R"(
@@ -96,13 +96,12 @@ inline static auto bind (lua_State* L, const char* name, Args&&... args) {
     state_view lua (L);
     table M = lua.create_table();
     M.new_usertype<Obj> (
-        name, no_constructor, 
-        std::forward<Args> (args)...);
+        name, no_constructor, std::forward<Args> (args)...);
     return remove_and_clear (M, name);
 }
 
 inline static auto script (lua_State* L, const char* body) {
-    return state_view(L).script (body);
+    return state_view (L).script (body);
 }
 
 /** Subclasses of Widget in C++ should register with this variation
@@ -110,7 +109,7 @@ inline static auto script (lua_State* L, const char* body) {
  */
 template <typename Wgt, typename... Args>
 inline static table
-bind_widget (lua_State* L, const char* name, Args&&... args) {
+    bind_widget (lua_State* L, const char* name, Args&&... args) {
     // clang-format off
     auto M = lua::bind<Wgt> (L, "lvtk", name,
         /// Initialize the widget.
@@ -177,8 +176,7 @@ bind_widget (lua_State* L, const char* name, Args&&... args) {
 
     // attribute lookup keys used by lua-side proxy
     M_mt[lvtk::proxy::props_key] = view.create_table().add (
-        "visible", "bounds"
-    );
+        "visible", "bounds");
 
     // class method symbols used by lua-side proxy
     M_mt[lvtk::proxy::methods_key] = view.create_table().add (

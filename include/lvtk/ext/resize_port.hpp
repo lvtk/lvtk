@@ -14,14 +14,15 @@
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/** @defgroup resize_port Resize Port 
+/** @defgroup resize_port Resize Port
     Resizing plugin ports
 */
 
 #pragma once
 
+#include "lvtk/ext/extension.hpp"
+
 #include <lv2/resize-port/resize-port.h>
-#include <lvtk/ext/extension.hpp>
 
 namespace lvtk {
 /** Resize port status codes

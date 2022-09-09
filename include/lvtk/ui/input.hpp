@@ -17,6 +17,6 @@ struct InputEvent {
 };
 
 // saving for later...
-struct Event : public InputEvent{};
+struct Event : public InputEvent {};
 
-}
+} // namespace lvtk

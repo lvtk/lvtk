@@ -1,6 +1,24 @@
 
 #include "tests.hpp"
 
+#include "lvtk/ext/data_access.hpp"
+#include "lvtk/ext/worker.hpp"
+#include "lvtk/lvtk.hpp"
+#include "lvtk/plugin.hpp"
+#include "lvtk/ui.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <lv2/core/lv2.h>
+#include <lv2/data-access/data-access.h>
+#include <lv2/state/state.h>
+#include <lv2/worker/worker.h>
+
+#include <cstring>
+#include <memory>
+#include <string>
+#include <vector>
+
 // dummy plugin with worker interface
 struct DataAccessPlug : lvtk::Plugin<DataAccessPlug, lvtk::Worker> {
     DataAccessPlug (const lvtk::Args& args) : Plugin (args) {}

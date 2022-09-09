@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: ISC
 
 /** @defgroup plugin Plugin
- 
+
     Writing an LV2 Plugin
-   
+
     Plugin descriptors are registered on the stack at the global scope. First
     make a sublcass of @ref Plugin, then register it with @ref Descriptor.
 
@@ -15,7 +15,8 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
+#include "lvtk/lvtk.hpp"
+
 #include <map>
 #include <memory>
 
@@ -32,13 +33,13 @@ inline PluginDescriptors& descriptors() {
 }
 
 /** Registers a plugin instance of type @em`P`
-        
+
     Create a static one of these to register your plugin instance type.
-    
+
     @code
         static lvtk::Descriptor<MyPlugin> my_plugin (
             MY_PLUGIN_URI,           //< MyPlugin's URI String
-            {                            
+            {
                 LV2_URID__map,       //< List of required host features
                 LV2_WORKER__schedule
             }
@@ -52,7 +53,7 @@ template <class P>
 class Descriptor final {
 public:
     /** Plugin registration with required host features
-        
+
         @param plugin_uri   The URI string of your plugin
         @param required     List of required host feature URIs. If the host fails
                             to provide any of these, instantiate will return
@@ -64,7 +65,7 @@ public:
         register_plugin (plugin_uri);
     }
 
-    /** Plugin Registation without required host features        
+    /** Plugin Registation without required host features
         @param plugin_uri   The URI string of your plugin
      */
     Descriptor (const char* plugin_uri) {
@@ -103,21 +104,22 @@ struct Args {
     FeatureList features; /**< Host provided features */
 };
 
-/** A template base class for LV2 plugin instances. Default implementations 
-    exist for most methods, so you only have to implement @ref connect_port() 
+/** A template base class for LV2 plugin instances. Default implementations
+    exist for most methods, so you only have to implement @ref connect_port()
     and @ref run().
-    
-    The signature of subclass must match the one in the example code below. The 
+
+    The signature of subclass must match the one in the example code below. The
     @c args should be used in your constructor to get "details" about instantiation.
 
-    Since this is a template, simulated dynamic binding is used for the callbacks. 
-    When using @ref Extension "Extensions" no vtable lookups are invoked, like normal 
+    Since this is a template, simulated dynamic binding is used for the callbacks.
+    When using @ref Extension "Extensions" no vtable lookups are invoked, like normal
     dynamic binding would.
 
     <h3>Copy Audio Example</h3>
     @code
-        #include <cstring>
         #include <lvtk/plugin.hpp>
+
+        #include <cstring>
 
         using namespace lvtk;
 
@@ -133,7 +135,7 @@ struct Args {
             void run (uint32_t sample_count) {
                 std::memcpy (audio[1], audio[0], sample_count * sizeof (float));
             }
-        
+
         private:
             float* audio[2];
         };
@@ -143,17 +145,17 @@ struct Args {
 
     @endcode
 
-    If the above code is compiled into a shared module, it could form the binary 
-    part of a fully functional LV2 plugin with one audio input port and one audio 
+    If the above code is compiled into a shared module, it could form the binary
+    part of a fully functional LV2 plugin with one audio input port and one audio
     output port that just copies the input to the output.
 
-    You can extend your instance by passing @ref Extension "Extensions" as 
+    You can extend your instance by passing @ref Extension "Extensions" as
     template parameters to Instance (second template parameter and onwards).
-    
+
     @tparam S   Your super class
     @tparam E   List of Extension mixins
 
-    @see \ref BufSize, \ref Log, \ref Options, \ref ResizePort, \ref State, 
+    @see \ref BufSize, \ref Log, \ref Options, \ref ResizePort, \ref State,
          \ref URID, \ref Worker,
 
     @headerfile lvtk/plugin.hpp
@@ -166,7 +168,7 @@ protected:
     Plugin() = delete;
 
     /** Plugin with Arguments.
-      
+
         @param args  Arguments created during instantiation.  Your subclass
                      must pass the @ref Args here
      */
@@ -176,8 +178,8 @@ public:
     ~Plugin() = default;
 
     /** Override this function if you need to do anything on activation.
-        This is always called before the host starts using the @ref run() 
-        function. You should reset your plugin to it's initial state here. 
+        This is always called before the host starts using the @ref run()
+        function. You should reset your plugin to it's initial state here.
      */
     void activate() {}
 
@@ -194,11 +196,11 @@ public:
     /** This is the process callback which should fill all output port buffers.
         You most likely want to override it - the default implementation does
         nothing.
-        
+
         Remember that if you want your plugin to be realtime safe, this function
         may not block, allocate memory or take more than `sample_count` time
         to execute.
-        
+
         @param sample_count The number of audio frames to process.
      */
     void run (uint32_t sample_count) {}
@@ -209,8 +211,8 @@ public:
      */
     void deactivate() {}
 
-    /** Override this to handle cleanup. Is called immediately before the 
-        instance is deleted.  You only need to implement this if you'd like 
+    /** Override this to handle cleanup. Is called immediately before the
+        instance is deleted.  You only need to implement this if you'd like
         to do something special before the destructor.
      */
     void cleanup() {}

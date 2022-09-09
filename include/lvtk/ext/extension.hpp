@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lvtk/lvtk.hpp>
+#include "lvtk/lvtk.hpp"
 
 namespace lvtk {
 
@@ -24,7 +24,7 @@ namespace lvtk {
 
     You shouldn't need to use this directly, unless you'd like to write your
     own Extension mixins.
-    
+
     @headerfile lvtk/ext/extension.hpp
     @ingroup lvtk
 */
@@ -35,7 +35,7 @@ struct Extension {};
 struct NoInstance {};
 
 /** This is for extensions which do not provide extension data
-    and/or call methods on the Instance 
+    and/or call methods on the Instance
  */
 struct NullExtension : Extension<NoInstance> {
     /** @private */

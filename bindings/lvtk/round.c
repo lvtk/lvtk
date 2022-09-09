@@ -19,7 +19,7 @@ static int f_float (lua_State* L) {
             lua_pushnumber (L, (float) lua_tonumber (L, 1));
             break;
         case LUA_TBOOLEAN:
-            lua_pushnumber (L, (float)(lua_Integer) lua_toboolean (L, 1));
+            lua_pushnumber (L, (float) (lua_Integer) lua_toboolean (L, 1));
             break;
         case LUA_TSTRING: {
             size_t len = 0;
@@ -55,7 +55,7 @@ static const luaL_Reg round_f[] = {
     // @function floats
     // @number input Number to round
     // @treturn number Rounded value
-    { "float",  f_float },
+    { "float", f_float },
 
     /// Cast a number to an Integer.
     // @function round.integer

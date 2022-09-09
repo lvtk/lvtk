@@ -1,6 +1,10 @@
 
-#include <lvtk/plugin.hpp>
-#include <math.h>
+#include "lvtk/lvtk.hpp"
+#include "lvtk/plugin.hpp"
+
+#include <cmath>
+#include <cstdint>
+#include <vector>
 
 #define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
 

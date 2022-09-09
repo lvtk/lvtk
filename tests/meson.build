@@ -17,7 +17,7 @@ lvtk_test_sources = '''
 '''.split()
 
 test ('cppunit', executable (
-    'test_lvtk', 
+    'test_lvtk',
     lvtk_test_sources,
     cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
     include_directories : ['.'],

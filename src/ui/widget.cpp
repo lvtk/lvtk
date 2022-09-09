@@ -122,7 +122,7 @@ void Widget::remove (Widget& widget) {
 }
 
 bool Widget::obstructed (int x, int y) {
-    auto pos = Point<int>{x, y}.as<float>();
+    auto pos = Point<int> { x, y }.as<float>();
     for (auto child : _widgets) {
         if (child->visible() && detail::test_pos (*child, detail::coord_from_parent_space (*child, pos))) {
             return true;
@@ -185,7 +185,7 @@ void Widget::render_internal (Graphics& g) {
 }
 
 bool Widget::contains (int x, int y) const noexcept {
-    return contains (Point<int> {x, y}.as<double>());
+    return contains (Point<int> { x, y }.as<double>());
 }
 
 bool Widget::contains (Point<int> pt) const noexcept {

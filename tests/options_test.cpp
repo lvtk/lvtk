@@ -1,6 +1,15 @@
 
 #include "tests.hpp"
 
+#include "lvtk/options.hpp"
+#include "lvtk/symbols.hpp"
+
+#include <cppunit/TestAssert.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <lv2/options/options.h>
+
+#include <cstdint>
+
 class Options : public TestFixutre {
     CPPUNIT_TEST_SUITE (Options);
     CPPUNIT_TEST (array);

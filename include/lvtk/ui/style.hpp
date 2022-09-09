@@ -10,7 +10,7 @@ class Widget;
 
 class Style {
 public:
-    Style() { 
+    Style() {
         _weak_status.reset (this);
     }
     ~Style() {
@@ -20,7 +20,7 @@ public:
     void draw_button (Widget& button) {}
 
 private:
-    LVTK_WEAK_REFABLE(Style, _weak_status);
+    LVTK_WEAK_REFABLE (Style, _weak_status);
 };
 
 } // namespace lvtk
