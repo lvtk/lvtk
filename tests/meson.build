@@ -34,4 +34,4 @@ unit = executable('unit',
     lvtk_test_sources,
     dependencies : [ boost_dep, lvtk_internal_dep ])
 
-test ('strings', unit, args : [ '-t', 'Strings' ])
+test ('strings', unit, args : [ '-t', 'strings' ])
