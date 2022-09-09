@@ -2,6 +2,9 @@ doxygen = find_program ('doxygen', required : false)
 dot = find_program ('dot', required : false)
 cppunit_dep = dependency ('cppunit', required : false)
 
+cc = meson.get_compiler('c')
+dl_dep = cc.find_library ('dl', required: false)
+
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
     version : '>= 1.18.0', 

@@ -12,6 +12,9 @@ elif cc.get_id() == 'gcc'
     lualv_c_args += '-Wno-stringop-overflow'
 endif
 
+# Library dependencies.
+lualv_lib_deps = [cc.find_library('m', required: false)]
+
 # Platform-specific defines.
 is_posix = host_machine.system() not in ['windows', 'emscripten', 'android']
 if is_posix
@@ -22,9 +25,6 @@ if is_posix
 elif get_option('default_library') != 'static'
     lualv_c_args += '-DLUA_BUILD_AS_DLL'
 endif
-
-# Library dependencies.
-lualv_lib_deps = [cc.find_library('m', required: false)]
 
 # Interpreter dependencies.
 lualv_exe_deps = []
