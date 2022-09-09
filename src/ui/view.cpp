@@ -9,6 +9,10 @@
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
 
+// flip these for verbose logging
+#define VIEW_DBG(x) std::clog << x << std::endl;
+// #define VIEW_DBG(x)
+
 namespace lvtk {
 namespace detail {
 template <typename Tp, class Ev>
@@ -32,11 +36,18 @@ static inline Rectangle<Tp> rect (const Ev& ev) {
 
 struct View::EventHandler {
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
-        // view.configure (detail::rect<int> (ev));
+        if (ev.flags & PUGL_IS_HINT) {
+            VIEW_DBG("configure: hint");
+            return PUGL_SUCCESS;
+        }
         return PUGL_SUCCESS;
     }
 
     static PuglStatus expose (View& view, const PuglExposeEvent& ev) {
+        if (ev.flags & PUGL_IS_HINT) {
+            VIEW_DBG("expose: hint");
+            return PUGL_SUCCESS;
+        }
         view.expose (detail::rect<int> (ev));
         return PUGL_SUCCESS;
     }
@@ -75,37 +86,46 @@ struct View::EventHandler {
     static PuglStatus key_press (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus key_release (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus text (View& view, const PuglTextEvent& ev) { return PUGL_SUCCESS; }
-    static PuglStatus pointer_in (View& view, const PuglCrossingEvent& ev) { return PUGL_SUCCESS; }
-    static PuglStatus pointer_out (View& view, const PuglCrossingEvent& ev) { return PUGL_SUCCESS; }
+    
+    static PuglStatus pointer_in (View& view, const PuglCrossingEvent& ev) {
+        VIEW_DBG("pointer in")
+        return PUGL_SUCCESS;
+    }
+    
+    static PuglStatus pointer_out (View& view, const PuglCrossingEvent& ev) {
+        VIEW_DBG("pointer out")
+        return PUGL_SUCCESS;
+    }
 
     static PuglStatus motion (View& view, const PuglMotionEvent& ev) {
         auto pos = detail::point<double> (ev);
         WidgetRef ref = view._widget.widget_at (pos.as<float>());
 
         if (ref.valid()) {
-            InputEvent event;
-
             if (view._hovered != ref) {
-                std::clog << "hovered changed: " << ref->__name << std::endl;
+                VIEW_DBG("hovered changed: " << ref->__name);
                 view._hovered = ref;
             }
 
+            InputEvent event;
             event.pos = ref->convert (view._widget, pos).as<double>();
             ref->motion (event);
+        } else if (view._hovered) {
+            VIEW_DBG("hovered cleared");
+            view._hovered = nullptr;
         }
 
         return PUGL_SUCCESS;
     }
 
     static PuglStatus button_press (View& view, const PuglButtonEvent& ev) {
-        std::clog << "button_press received\n";
         InputEvent event;
         event.pos = detail::point<double> (ev);
 
         if (auto w = view._hovered.lock()) {
             event.pos = w->convert (view._widget, event.pos);
-            std::clog << "widget:" << w->__name << " bounds: " << w->bounds().str() << "\n";
-            std::clog << "ev pos: " << event.pos.str() << std::endl;
+            // VIEW_DBG("widget:" << w->__name << " bounds: " << w->bounds().str());
+            // VIEW_DBG("ev pos: " << event.pos.str());
             if (w->contains (event.pos))
                 w->pressed (event);
         }
