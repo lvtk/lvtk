@@ -17,15 +17,17 @@
 
 namespace lvtk {
 
+// clang-format off
 #if defined(LVTK_STD_EXPERIMENTAL_OPTIONAL)
-    #if LVTK_STD_EXPERIMENTAL_OPTIONAL
-template <typename T>
-using Optional = std::experimental::optional<T>;
-    #else
-template <typename T>
-using Optional = std::optional<T>;
-    #endif
-    #undef LVTK_STD_EXPERIMENTAL_OPTIONAL
+#if LVTK_STD_EXPERIMENTAL_OPTIONAL
+    template <typename T>
+    using Optional = std::experimental::optional<T>;
+#else
+    template <typename T>
+    using Optional = std::optional<T>;
 #endif
+#undef LVTK_STD_EXPERIMENTAL_OPTIONAL
+#endif
+// clang format-on
 
 } // namespace lvtk
