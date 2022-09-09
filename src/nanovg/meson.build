@@ -4,7 +4,8 @@ lvtk_nanovg_sources = '''
 '''.split()
 
 lvtk_nanovg_c_args = [ '-DNANOVG_GL2=1' ]
-if meson.get_compiler('c').get_id() != 'msvc'
+lvtk_nanovg_cpp_args = lvtk_nanovg_c_args
+if meson.get_compiler('c').get_id() != 'darwin'
     lvtk_nanovg_c_args += '-Wno-implicit-function-declaration'
 endif
 

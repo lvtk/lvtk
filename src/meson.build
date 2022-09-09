@@ -25,7 +25,7 @@ liblvtk_nanovg = library ('lvtk-nanovg-3',
     ['ui/nanovg.cpp'],
     link_with : [],
     gnu_symbol_visibility : 'default',
-    cpp_args : [ lvtk_nanovg_c_args ],
+    cpp_args : [ lvtk_nanovg_cpp_args ],
     dependencies : [ lvtk_nanovg_deps ],
     objects : [ libnanovg.extract_all_objects (recursive : false),
                 liblvtk_ui.extract_all_objects (recursive : false) ])
