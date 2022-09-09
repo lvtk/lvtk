@@ -263,4 +263,8 @@ void View::set_parent (uintptr_t parent) {
         puglSetParentWindow ((PuglView*) _view, parent);
 }
 
+void View::__pugl_post_redisplay() {
+    puglPostRedisplay ((PuglView*)_view);
+}
+
 } // namespace lvtk

@@ -26,6 +26,9 @@ public:
 
     void realize();
 
+    //====== TESTING ========
+    void __pugl_post_redisplay();
+    //=======================
 protected:
     View (Main& context, Widget& widget);
     void render (Surface& surface);

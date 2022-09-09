@@ -13,7 +13,7 @@ public:
     virtual ~Box() = default;
 
     void paint (Graphics& g) override {
-        g.set_color (color);
+        g.set_color (is_on ? color_on : color_off);
         g.fill_rect (bounds().at (0, 0));
     }
 
@@ -25,17 +25,22 @@ public:
     }
 
     void pressed (InputEvent ev) override {
-        std::clog << __name << "   down: "
-                  << ev.pos.str() << " bounds: "
+        std::clog << __name       << " pressed: "
+                  << ev.pos.str() << "  bounds: "
                   << bounds().str() << std::endl;
     }
 
     void released (InputEvent ev) override {
-        std::clog << __name << "     up: "
-                  << ev.pos.str() << std::endl;
+        std::clog << __name     <<   " released: "
+                  << ev.pos.str() << "   bounds: "
+                  << bounds().str() << std::endl;
+        is_on = !is_on;
+        repaint();
     }
 
-    Color color { 0xff0000ff };
+    bool is_on = false;
+    Color color_on  { 0x550000ff };
+    Color color_off { 0x444444ff };
 };
 
 class Container : public Widget {
@@ -44,10 +49,8 @@ public:
         add (box1);
         box1.set_visible (true);
         box1.__name = "box1";
-        box1.color = Color (0x444444ff);
         add (box2);
         box2.__name = "box2";
-        box2.color = box1.color;
         box2.set_visible (true);
     }
 

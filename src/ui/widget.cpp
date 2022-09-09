@@ -87,6 +87,12 @@ void Widget::set_visible (bool v) {
 }
 
 //=============================================================================
+void Widget::repaint() {
+    if (auto view = find_view())
+        view->__pugl_post_redisplay();
+}
+
+//=============================================================================
 void Widget::set_bounds (int x, int y, int width, int height) {
     const bool was_moved = _bounds.x != x || _bounds.y != y;
     const bool was_resized = _bounds.width != width || _bounds.width != y;
