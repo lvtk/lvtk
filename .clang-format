@@ -5,7 +5,7 @@ AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: true
-AlignEscapedNewlines: Left
+AlignEscapedNewlines: Right
 # AlignOperands: Align    # v12
 AlignTrailingComments: true
 
@@ -61,7 +61,7 @@ ExperimentalAutoDetectBinPacking: false
 IndentCaseLabels: true
 IndentWidth: 4
 IndentWrappedFunctionNames: true
-IndentPPDirectives: BeforeHash
+IndentPPDirectives: AfterHash
 
 KeepEmptyLinesAtTheStartOfBlocks: false
 
@@ -88,7 +88,7 @@ Standard: "c++17"
 
 TabWidth: 4
 UseTab: Never
-ForEachMacros: [ EL_FEATURES_FOREACH, BOOST_FOREACH ]
+ForEachMacros: [ BOOST_FOREACH ]
 
 ---
 Language: ObjC
