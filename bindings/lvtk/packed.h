@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+#include <lua.h>
 #include <stdint.h>
 
 typedef union _LvtkPacked {

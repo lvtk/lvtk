@@ -17,7 +17,6 @@
 
 #include <cstdint>
 #include <exception>
-#include <experimental/optional>
 #include <memory>
 #include <string>
 
