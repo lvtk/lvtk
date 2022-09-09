@@ -67,7 +67,11 @@ struct Rectangle {
 
     /** Returns a copy of this shape with top-left at x y */
     Rectangle<Val> at (Val x, Val y) const noexcept {
-        return { Val(), Val(), width, height };
+        return { x, x, width, height };
+    }
+
+    Rectangle<Val> at (Val xy) const noexcept {
+        return { xy, xy, width, height };
     }
 
     std::string str() const noexcept {
@@ -141,6 +145,34 @@ struct Rectangle {
         Rectangle r (*this);
         r /= scale;
         return r;
+    }
+
+    Rectangle<Val>& reduce (Val dx, Val dy) {
+        x -= dx;
+        y -= dy;
+        width += (dx * 2);
+        height += (dy * 2);
+        return *this;
+    }
+
+    Rectangle<Val>& reduce (Val delta) {
+        return reduce (delta, delta);
+    }
+
+    /** Returns an expanded shape at same center.
+        @param amount How much to grow by.
+    */
+    Rectangle<Val> bigger (Val amount) const noexcept {
+        auto r = *this;
+        return r.reduce (amount, amount);
+    }
+
+    /** Returns a reduced shape at same center.
+        @param amount How much to reduce by
+    */
+    Rectangle<Val> smaller (Val amount) const noexcept {
+        auto s = *this;
+        return s.reduce (-amount, -amount);
     }
 };
 
