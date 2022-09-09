@@ -29,7 +29,7 @@
 #include <lvtk/ui.hpp>
 
 #ifndef LVTK_VOLUME_URI
-    #define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
+#    define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
 #endif
 
 #define LVTK_TEST_PLUGIN_URI "http://lvtk.org/plugins/test"

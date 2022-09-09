@@ -25,12 +25,12 @@ extern "C" {
 #define LUA_COPYRIGHT LUA_RELEASE "  Copyright (C) 1994-2022 Lua.org, PUC-Rio"
 
 #if ! defined(LUA_PROGNAME)
-    // changed to lualv
-    #define LUA_PROGNAME "lualv"
+// changed to lualv
+#    define LUA_PROGNAME "lualv"
 #endif
 
 #if ! defined(LUA_INIT_VAR)
-    #define LUA_INIT_VAR "LUA_INIT"
+#    define LUA_INIT_VAR "LUA_INIT"
 #endif
 
 #define LUA_INITVARVERSION LUA_INIT_VAR LUA_VERSUFFIX
@@ -54,7 +54,7 @@ static void setsignal (int sig, void (*handler) (int)) {
 
 #else /* }{ */
 
-    #define setsignal signal
+#    define setsignal signal
 
 #endif /* } */
 
@@ -361,12 +361,12 @@ static int handle_luainit (lua_State* L) {
 */
 
 #if ! defined(LUA_PROMPT)
-    #define LUA_PROMPT  "> "
-    #define LUA_PROMPT2 ">> "
+#    define LUA_PROMPT  "> "
+#    define LUA_PROMPT2 ">> "
 #endif
 
 #if ! defined(LUA_MAXINPUT)
-    #define LUA_MAXINPUT 512
+#    define LUA_MAXINPUT 512
 #endif
 
 /*
@@ -375,24 +375,24 @@ static int handle_luainit (lua_State* L) {
 */
 #if ! defined(lua_stdin_is_tty) /* { */
 
-    #if defined(LUA_USE_POSIX) /* { */
+#    if defined(LUA_USE_POSIX) /* { */
 
-        #include <unistd.h>
-        #define lua_stdin_is_tty() isatty (0)
+#        include <unistd.h>
+#        define lua_stdin_is_tty() isatty (0)
 
-    #elif defined(LUA_USE_WINDOWS) /* }{ */
+#    elif defined(LUA_USE_WINDOWS) /* }{ */
 
-        #include <io.h>
-        #include <windows.h>
+#        include <io.h>
+#        include <windows.h>
 
-        #define lua_stdin_is_tty() _isatty (_fileno (stdin))
+#        define lua_stdin_is_tty() _isatty (_fileno (stdin))
 
-    #else                            /* }{ */
+#    else                            /* }{ */
 
-        /* ISO C definition */
-        #define lua_stdin_is_tty() 1 /* assume stdin is a tty */
+/* ISO C definition */
+#        define lua_stdin_is_tty() 1 /* assume stdin is a tty */
 
-    #endif /* } */
+#    endif /* } */
 
 #endif /* } */
 
@@ -404,33 +404,33 @@ static int handle_luainit (lua_State* L) {
 */
 #if ! defined(lua_readline) /* { */
 
-    #if defined(LUA_USE_READLINE) /* { */
+#    if defined(LUA_USE_READLINE) /* { */
 
-        #include <readline/history.h>
-        #include <readline/readline.h>
-        #define lua_initreadline(L)   ((void) L, rl_readline_name = "lua")
-        #define lua_readline(L, b, p) ((void) L, ((b) = readline (p)) != NULL)
-        #define lua_saveline(L, line) ((void) L, add_history (line))
-        #define lua_freeline(L, b)    ((void) L, free (b))
+#        include <readline/history.h>
+#        include <readline/readline.h>
+#        define lua_initreadline(L)   ((void) L, rl_readline_name = "lua")
+#        define lua_readline(L, b, p) ((void) L, ((b) = readline (p)) != NULL)
+#        define lua_saveline(L, line) ((void) L, add_history (line))
+#        define lua_freeline(L, b)    ((void) L, free (b))
 
-    #else /* }{ */
+#    else /* }{ */
 
-        #define lua_initreadline(L) ((void) L)
-        #define lua_readline(L, b, p)                                        \
+#        define lua_initreadline(L) ((void) L)
+#        define lua_readline(L, b, p)                                        \
             ((void) L, fputs (p, stdout), fflush (stdout), /* show prompt */ \
              fgets (b, LUA_MAXINPUT, stdin) != NULL)       /* get line */
-        #define lua_saveline(L, line) \
+#        define lua_saveline(L, line) \
             {                         \
                 (void) L;             \
                 (void) line;          \
             }
-        #define lua_freeline(L, b) \
+#        define lua_freeline(L, b) \
             {                      \
                 (void) L;          \
                 (void) b;          \
             }
 
-    #endif /* } */
+#    endif /* } */
 
 #endif /* } */
 

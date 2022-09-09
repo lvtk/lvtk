@@ -4,15 +4,15 @@
 #pragma once
 
 #if __cplusplus > 201402L
-    #include <optional>
-    #define LVTK_STD_EXPERIMENTAL_OPTIONAL 0
+#    include <optional>
+#    define LVTK_STD_EXPERIMENTAL_OPTIONAL 0
 #else
-    #if __has_include(<experimental/optional>)
-        #include <experimental/optional>
-        #define LVTK_STD_EXPERIMENTAL_OPTIONAL 1
-    #else
-        #error "Header <optional> or <expermental/optional> is required."
-    #endif
+#    if __has_include(<experimental/optional>)
+#        include <experimental/optional>
+#        define LVTK_STD_EXPERIMENTAL_OPTIONAL 1
+#    else
+#        error "Header <optional> or <expermental/optional> is required."
+#    endif
 #endif
 
 namespace lvtk {

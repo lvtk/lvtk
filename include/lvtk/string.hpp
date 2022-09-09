@@ -12,8 +12,8 @@ public:
     using str_type = std::string;
 
     String() = default;
-    String (const char* str) {}
-    String (const std::string& o) {}
+    String (const char* str) : _str (str) {}
+    String (const std::string& o) : _str (o) {}
 
     void clear() { _str.clear(); }
 
@@ -53,9 +53,15 @@ public:
     }
 
     //=================================================================
-    String (const String& o) { operator= (o); }
-    String& operator=(const String& o) { _str = o._str; return *this; }
-    String& operator=(const str_type& o) { _str = o.c_str(); return *this; }
+    String (const String& o) { _str = o._str; }
+    String& operator= (const String& o) {
+        _str = o._str;
+        return *this;
+    }
+    String& operator= (const str_type& o) {
+        _str = o.c_str();
+        return *this;
+    }
 
     inline bool operator== (const char* o) const noexcept { return _str == _str; }
 

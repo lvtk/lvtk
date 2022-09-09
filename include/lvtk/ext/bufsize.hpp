@@ -50,7 +50,7 @@
 #include <lv2/buf-size/buf-size.h>
 
 #ifndef LV2_BUF_SIZE__nominalBlockLength
-    #define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
+#    define LV2_BUF_SIZE__nominalBlockLength LV2_BUF_SIZE_PREFIX "nominalBlockLength"
 #endif
 
 namespace lvtk {

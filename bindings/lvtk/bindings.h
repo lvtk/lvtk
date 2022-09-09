@@ -7,15 +7,15 @@
 #define LVTK_MT_BYTE_ARRAY "lvtk.ByteArray"
 
 #if __cplusplus
-    #define LVTK_EXTERN extern "C"
+#    define LVTK_EXTERN extern "C"
 #else
-    #define LVTK_EXTERN
+#    define LVTK_EXTERN
 #endif
 
 #ifdef _WIN32
-    #define LVTK_LUALIB LVTK_EXTERN __declspec(dllexport)
+#    define LVTK_LUALIB LVTK_EXTERN __declspec(dllexport)
 #else
-    #define LVTK_LUALIB LVTK_EXTERN __attribute__ ((visibility ("default")))
+#    define LVTK_LUALIB LVTK_EXTERN __attribute__ ((visibility ("default")))
 #endif
 
 #endif

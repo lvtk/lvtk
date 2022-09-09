@@ -8,7 +8,7 @@
 #include <lvtk/ui/view.hpp>
 
 #ifdef GL_SILENCE_DEPRECATION
-    #undef GL_SILENCE_DEPRECATION
+#    undef GL_SILENCE_DEPRECATION
 #endif
 #define GL_SILENCE_DEPRECATION
 #define PUGL_DISABLE_DEPRECATED
