@@ -17,10 +17,21 @@ lvtk_test_sources = '''
 '''.split()
 
 test ('cppunit', executable (
-    'test_lvtk',
+    'cppunit',
     lvtk_test_sources,
     cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
     include_directories : ['.'],
     dependencies : [ cppunit_dep, lvtk_dep ],
     install : false)
 )
+
+lvtk_test_sources = '''
+    string_test.cpp
+    unit_tests.cpp
+'''.split()
+
+unit = executable('unit',
+    lvtk_test_sources,
+    dependencies : [ boost_dep, lvtk_internal_dep ])
+
+test ('strings', unit, args : [ '-t', 'Strings' ])
