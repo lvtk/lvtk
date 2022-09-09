@@ -2,7 +2,7 @@ LVTK3
 =====
 
 Minimal C++ library with Lua bindings and console.
-Write your LV2 plugin gui's in Lua!
+Write your LV2 plugins and gui's in C++ or Lua!
 
 Heavy Development
 -----------------
@@ -49,12 +49,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 3rd Party Code
 --------------
 The UI classes utilize these libraries internally:
-- STB Image - public domain or MIT
-- NanoVG - MIT (I think)
-- Lua Headers for lua modules - MIT
-- Sol2 for c++ lua class bindings - MIT
-- `lualv` is a fork of Lua v5.4.4
-- boost/signals2 . Observer interfaces.
+
+| Library   | License |
+|-----------|---------|
+| STB Image | MIT     |
+| NanoVG    | MIT     |
+| Lua       | MIT     |
+| Sol2      | MIT     |
+| boost     | boost   |
 
 Issue Tracking
 --------------
