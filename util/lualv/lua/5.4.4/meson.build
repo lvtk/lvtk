@@ -16,19 +16,15 @@ endif
 is_posix = host_machine.system() not in ['windows', 'emscripten', 'android']
 if is_posix
     lualv_c_args += '-DLUA_USE_POSIX'
+    dl_dep = cc.find_library('dl', required: false)
+    lualv_lib_deps += [dl_dep]
+    lualv_c_args += '-DLUA_USE_DLOPEN'
 elif get_option('default_library') != 'static'
     lualv_c_args += '-DLUA_BUILD_AS_DLL'
 endif
 
 # Library dependencies.
 lualv_lib_deps = [cc.find_library('m', required: false)]
-
-# if get_option('loadlib')
-if true
-    dl_dep = cc.find_library('dl', required: false)
-    lualv_lib_deps += [dl_dep]
-    lualv_c_args += '-DLUA_USE_DLOPEN'
-endif
 
 # Interpreter dependencies.
 lualv_exe_deps = []
@@ -41,10 +37,11 @@ if get_option('readline')
         if not readline_dep.found()
             message('''Didn't find readline or libedit, lualv line editing disabled.''')
             readline_dep = dependency('', required : false)
+        else
+            lualv_exe_deps += [ readline_dep ]
+            lualv_exe_args += [ '-DLUA_USE_READLINE' ]
         endif
     endif
-    lualv_exe_deps += [ readline_dep ]
-    lualv_exe_args += [ '-DLUA_USE_READLINE' ]
 endif
 
 # Targets.
