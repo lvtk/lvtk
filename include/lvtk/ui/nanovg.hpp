@@ -19,8 +19,8 @@ public:
     void set_fill (const Fill& fill) override;
     void save() override;
     void restore() override;
-    void begin_frame (int width, int height, float pixel_ratio);
-    void end_frame();
+    void begin_frame (int width, int height, float pixel_ratio) override;
+    void end_frame() override;
     void fill_rect (const Rectangle<float>& r) override;
 
 private:

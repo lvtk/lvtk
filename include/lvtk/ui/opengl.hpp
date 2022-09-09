@@ -7,6 +7,10 @@
 #include <lvtk/ui/surface.hpp>
 #include <lvtk/ui/view.hpp>
 
+#ifdef GL_SILENCE_DEPRECATION
+#undef GL_SILENCE_DEPRECATION
+#endif
+#define GL_SILENCE_DEPRECATION
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/gl.h>
 
@@ -53,7 +57,7 @@ protected:
         }
     }
 
-    void expose (Bounds frame) {
+    void expose (Bounds frame) override {
         glClearColor (0.f, 0.f, 0.f, 1.0f);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _surface->begin_frame (frame.width, frame.height, scale());

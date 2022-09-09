@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include <lvtk/ui/nanovg.hpp>
-#define NANOVG_GL3 1
+
 #include "nanovg/nanovg_gl.h"
 
 using Surface = lvtk::nvg::Surface;
@@ -10,12 +10,20 @@ using Surface = lvtk::nvg::Surface;
 namespace lvtk {
 namespace nvg {
 
+#ifdef NANOVG_GL2
+static constexpr auto create = nvgCreateGL2;
+static constexpr auto destroy = nvgDeleteGL2;
+#else
+static constexpr auto create = nvgCreateGL3;
+static constexpr auto destroy = nvgDeleteGL3;
+#endif
+
 class Surface::Context {
 public:
-    Context() : ctx (nvgCreateGL3 (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {}
+    Context() : ctx (nvg::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {}
     ~Context() {
         if (ctx)
-            nvgDeleteGL3 (ctx);
+            nvg::destroy (ctx);
     }
 
     void save() {
