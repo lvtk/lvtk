@@ -6,10 +6,6 @@
 extern "C" {
 #endif
 
-typedef enum _LvtkColorFormat {
-
-};
-
 #if __cplusplus
 }
 #endif
