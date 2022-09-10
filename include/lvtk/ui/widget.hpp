@@ -25,8 +25,8 @@ public:
     Widget* parent() const noexcept { return _parent; }
 
     void add (Widget& widget);
-    
-    template<class Wgt>
+
+    template <class Wgt>
     Wgt* add (Wgt* widget) {
         add_internal (widget);
         return widget;
@@ -89,7 +89,7 @@ public:
     //=========================================================================
     Widget* find_root() const noexcept;
     ViewRef find_view() const noexcept;
-    LV2UI_Widget find_handle() const noexcept;
+    uintptr_t find_handle() const noexcept;
     operator LV2UI_Widget() noexcept { return (LV2UI_Widget) find_handle(); }
 
     //=========================================================================

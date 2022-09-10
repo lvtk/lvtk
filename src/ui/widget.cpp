@@ -170,10 +170,10 @@ ViewRef Widget::find_view() const noexcept {
     return it != nullptr ? it->_view.get() : nullptr;
 }
 
-LV2UI_Widget Widget::find_handle() const noexcept {
+uintptr_t Widget::find_handle() const noexcept {
     if (auto v = find_view())
-        return (LV2UI_Widget) v->handle();
-    return nullptr;
+        return v->handle();
+    return 0;
 }
 
 Point<double> Widget::convert (Widget& source, Point<double> pt) const {
