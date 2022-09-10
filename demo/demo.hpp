@@ -7,6 +7,13 @@
 namespace lvtk {
 namespace demo {
 
+template <class Wgt>
+static inline void delete_widgets (std::vector<Wgt*>& vec) {
+    for (auto w : vec)
+        delete w;
+    vec.clear();
+}
+
 class Box : public lvtk::Widget {
 public:
     Box() = default;
@@ -46,32 +53,49 @@ public:
 class Container : public Widget {
 public:
     Container() {
-        add (box1);
-        box1.set_visible (true);
-        box1.__name = "box1";
-        add (box2);
-        box2.__name = "box2";
-        box2.set_visible (true);
+        for (int i = 0; i < 4; ++i) {
+            auto box = add (new Box());
+            box->set_visible (true);
+            box->__name = std::string ("box") + std::to_string (i + 1);
+            boxes.push_back (box);
+        }
+
+        set_size (640, 360);
+    }
+
+    ~Container() {
+        delete_widgets (boxes);
     }
 
     void resized() override {
-        auto r1 = bounds().at (0, 0);
-        // std::clog << "container resized: " << r1.str() << std::endl;
-        r1.width /= 2;
-        auto r2 = r1;
-        r2.x = r1.width;
-        const int padding = 12;
-        r1.x += padding;
-        r1.y += padding;
-        r1.width -= (padding * 2);
-        r1.height -= (padding * 2);
-        r2.x += padding;
-        r2.y += padding;
-        r2.width -= (padding * 2);
-        r2.height -= (padding * 2);
+        auto r1 = bounds().at (0);
+        for (int i = 0; i < 4; ++i) {
+            auto r2 = r1;
+            r2.width = r1.width / 2;
+            r2.height = r1.height / 2;
+            auto box = boxes[i];
 
-        box1.set_bounds (r1);
-        box2.set_bounds (r2);
+            switch (i) {
+                case 0: // top left
+                    r2.x = 0;
+                    r2.y = 0;
+                    break;
+                case 1: // top right
+                    r2.x = r2.width;
+                    r2.y = 0;
+                    break;
+                case 2: // bottom left
+                    r2.x = 0;
+                    r2.y = r2.height;
+                    break;
+                case 3: // bottom right
+                    r2.x = r2.width;
+                    r2.y = r2.height;
+                    break;
+            }
+
+            box->set_bounds (r2.smaller (4));
+        }
     }
 
     void paint (Graphics& g) override {
@@ -79,7 +103,7 @@ public:
         g.fill_rect (bounds().at (0, 0));
     }
 
-    Box box1, box2;
+    std::vector<Box*> boxes;
 };
 
 class Content : public Widget {
@@ -88,7 +112,7 @@ public:
         __name = "Content";
         add (buttons);
         buttons.set_visible (true);
-        set_size (360, 240);
+        set_size (400, 400);
         set_visible (true);
     }
 
@@ -101,8 +125,8 @@ public:
 
     void resized() override {
         auto r = bounds().at (0, 0);
-        r.x = 20;
-        r.y = 20;
+        r.x = 4;
+        r.y = 4;
         r.width -= (r.x * 2);
         r.height -= (r.y * 2);
         buttons.set_bounds (r);
@@ -119,11 +143,8 @@ private:
 
 template <class Wgt>
 static int run (lvtk::Main& context) {
-    auto content = std::make_unique<Wgt>();
-    content->set_size (640, 360);
-    content->set_visible (true);
-
     try {
+        auto content = std::make_unique<Wgt>();
         context.elevate (*content, 0);
         bool quit = false;
         while (! quit) {
@@ -136,7 +157,6 @@ static int run (lvtk::Main& context) {
         return 1;
     }
 
-    content.reset();
     return 0;
 }
 

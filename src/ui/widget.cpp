@@ -112,9 +112,15 @@ void Widget::set_size (int width, int height) {
 
 //=============================================================================
 void Widget::add (Widget& widget) {
-    _widgets.push_back (&widget);
-    widget._parent = this;
-    resized();
+    add_internal (&widget);
+}
+
+void Widget::add_internal (Widget* widget) {
+    if (nullptr == widget)
+        return;
+    _widgets.push_back (widget);
+    widget->_parent = this;
+    return;
 }
 
 void Widget::remove (Widget* widget) {
@@ -129,6 +135,7 @@ void Widget::remove (Widget& widget) {
 
 bool Widget::obstructed (int x, int y) {
     auto pos = Point<int> { x, y }.as<float>();
+
     for (auto child : _widgets) {
         if (child->visible() && detail::test_pos (*child, detail::coord_from_parent_space (*child, pos))) {
             return true;

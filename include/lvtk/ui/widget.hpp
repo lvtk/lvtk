@@ -25,6 +25,13 @@ public:
     Widget* parent() const noexcept { return _parent; }
 
     void add (Widget& widget);
+    
+    template<class Wgt>
+    Wgt* add (Wgt* widget) {
+        add_internal (widget);
+        return widget;
+    }
+
     void remove (Widget* widget);
     void remove (Widget& widget);
 
@@ -99,6 +106,7 @@ private:
     std::vector<Widget*> _widgets;
     Rectangle<int> _bounds;
     bool _visible { false };
+    void add_internal (Widget* widget);
     void render_internal (Graphics& g);
     LVTK_WEAK_REFABLE (Widget, _weak_status)
 };
