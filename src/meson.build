@@ -4,6 +4,7 @@ lvtk_ui_sources = '''
     ui/view.cpp
     ui/widget.cpp
     ui/graphics.cpp
+    ui/embed.cpp
     ui.cpp
 '''.split()
 
@@ -20,7 +21,7 @@ lvtk_ui_dep = declare_dependency (
     dependencies : lvtk_ui_deps)
 
 subdir ('nanovg')
-lvtk_nanovg_deps = [ lvtk_ui_dep, pugl_gl_dep, dl_dep ]
+lvtk_nanovg_deps = [ lvtk_ui_dep, pugl_gl_dep, dl_dep, xcb_dep ]
 liblvtk_nanovg = library ('lvtk-nanovg-3',
     ['ui/nanovg.cpp'],
     link_with : [],

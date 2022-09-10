@@ -2,8 +2,9 @@ doxygen = find_program ('doxygen', required : false)
 dot = find_program ('dot', required : false)
 cppunit_dep = dependency ('cppunit', required : false)
 
-cc = meson.get_compiler('c')
+cc = meson.get_compiler ('c')
 dl_dep = cc.find_library ('dl', required: false)
+threads_dep = dependency('threads')
 
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
@@ -34,3 +35,10 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 )
 
 boost_dep = (dependency ('boost'))
+
+evg_dep = dependency ('evg-0', 
+    fallback : [ 'evg', 'evg_dep' ],
+    required : false)
+
+xcb_dep = dependency ('x11-xcb',
+    version: '>= 1.6.9', required: true)

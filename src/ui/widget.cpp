@@ -6,6 +6,17 @@
 #include "lvtk/ui/style.hpp"
 #include <algorithm>
 
+// =================== widget debugging ===================//
+#define DBG_WIDGET 0
+#if DBG_WIDGET
+#    define MTRACE(i) std::clog << "[widget] " << i << std::endl
+#    define DTRACE(i) std::clog << "[widget] " << i << std::endl
+#else
+#    define MTRACE(i)
+#    define DTRACE(i)
+#endif
+// =================== end widget debugging ===================//
+
 namespace lvtk {
 namespace detail {
 template <typename T>
@@ -116,17 +127,45 @@ void Widget::add (Widget& widget) {
 }
 
 void Widget::add_internal (Widget* widget) {
-    if (nullptr == widget)
+    assert (widget != this);
+
+    if (nullptr == widget || widget->_parent == this)
         return;
-    _widgets.push_back (widget);
+
+    if (widget->_parent != nullptr)
+        widget->_parent->remove (widget);
+    else if (widget->_view)
+        widget->_view.reset();
+
     widget->_parent = this;
-    return;
+
+    if (widget->visible())
+        widget->repaint();
+
+    // TODO: zorder
+
+    _widgets.push_back (widget);
+
+    // child events
+    widget->structure_changed_internal();
+
+    // parent events
+    children_changed_internal();
 }
 
 void Widget::remove (Widget* widget) {
     auto it = std::find (_widgets.begin(), _widgets.end(), widget);
-    if (it != _widgets.end())
-        _widgets.erase (it);
+    if (it == _widgets.end())
+        return;
+
+    _widgets.erase (it);
+    widget->_parent = nullptr;
+
+    // child events
+    widget->structure_changed_internal();
+
+    // parent events
+    children_changed_internal();
 }
 
 void Widget::remove (Widget& widget) {
@@ -184,6 +223,20 @@ void Widget::render (Graphics& g) {
     render_internal (g);
 }
 
+//=============================================================================
+bool Widget::contains (int x, int y) const noexcept {
+    return contains (Point<int> { x, y }.as<double>());
+}
+
+bool Widget::contains (Point<int> pt) const noexcept {
+    return contains (pt.as<double>());
+}
+
+bool Widget::contains (Point<double> pt) const noexcept {
+    return _bounds.at (0, 0).as<double>().contains (pt);
+}
+
+//=================================================================
 void Widget::render_internal (Graphics& g) {
     paint (g);
 
@@ -197,16 +250,22 @@ void Widget::render_internal (Graphics& g) {
     }
 }
 
-bool Widget::contains (int x, int y) const noexcept {
-    return contains (Point<int> { x, y }.as<double>());
+//=============================================================================
+void Widget::structure_changed_internal() {
+    MTRACE ("Widget::structure_changed_internal(): " << __name);
 }
 
-bool Widget::contains (Point<int> pt) const noexcept {
-    return contains (pt.as<double>());
+void Widget::children_changed_internal() {
+    MTRACE ("Widget::children_changed_internal(): " << __name);
 }
 
-bool Widget::contains (Point<double> pt) const noexcept {
-    return _bounds.at (0, 0).as<double>().contains (pt);
+//=============================================================================
+#if 0
+void Widget::observe (WidgetObserver& ob) {
+    using slot_type = Signal<void()>::slot_type;
+    slot_type myslot (&WidgetObserver::elevated, &ob);
+    _sig_elevated.connect (myslot.track (&ob));
 }
+#endif
 
 } // namespace lvtk

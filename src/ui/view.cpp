@@ -10,8 +10,8 @@
 #include <pugl/pugl.h>
 
 // flip these for verbose logging
-#define VIEW_DBG(x) std::clog << x << std::endl;
-// #define VIEW_DBG(x)
+// #define VIEW_DBG(x) std::clog << x << std::endl;
+#define VIEW_DBG(x)
 
 namespace lvtk {
 namespace detail {

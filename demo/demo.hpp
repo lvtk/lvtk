@@ -1,119 +1,32 @@
 #pragma once
 
+#include <memory>
+
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/widget.hpp>
-#include <memory>
+
+#include "button.hpp"
+#include "utils.hpp"
+
+#include "four_squares.hpp"
+#include "video/demo.hpp"
 
 namespace lvtk {
 namespace demo {
 
-template <class Wgt>
-static inline void delete_widgets (std::vector<Wgt*>& vec) {
-    for (auto w : vec)
-        delete w;
-    vec.clear();
-}
-
-class Box : public lvtk::Widget {
-public:
-    Box() = default;
-    virtual ~Box() = default;
-
-    void paint (Graphics& g) override {
-        g.set_color (is_on ? color_on : color_off);
-        g.fill_rect (bounds().at (0, 0));
-    }
-
-    bool obstructed (int x, int y) override { return true; }
-
-    void motion (InputEvent ev) override {
-        // std::clog << __name << " motion: "
-        //           << ev.pos.str() << std::endl;
-    }
-
-    void pressed (InputEvent ev) override {
-        std::clog << __name << " pressed: "
-                  << ev.pos.str() << "  bounds: "
-                  << bounds().str() << std::endl;
-    }
-
-    void released (InputEvent ev) override {
-        std::clog << __name << " released: "
-                  << ev.pos.str() << "   bounds: "
-                  << bounds().str() << std::endl;
-        is_on = ! is_on;
-        repaint();
-    }
-
-    bool is_on = false;
-    Color color_on { 0x550000ff };
-    Color color_off { 0x444444ff };
-};
-
-class Container : public Widget {
-public:
-    Container() {
-        for (int i = 0; i < 4; ++i) {
-            auto box = add (new Box());
-            box->set_visible (true);
-            box->__name = std::string ("box") + std::to_string (i + 1);
-            boxes.push_back (box);
-        }
-
-        set_size (640, 360);
-    }
-
-    ~Container() {
-        delete_widgets (boxes);
-    }
-
-    void resized() override {
-        auto r1 = bounds().at (0);
-        for (int i = 0; i < 4; ++i) {
-            auto r2 = r1;
-            r2.width = r1.width / 2;
-            r2.height = r1.height / 2;
-            auto box = boxes[i];
-
-            switch (i) {
-                case 0: // top left
-                    r2.x = 0;
-                    r2.y = 0;
-                    break;
-                case 1: // top right
-                    r2.x = r2.width;
-                    r2.y = 0;
-                    break;
-                case 2: // bottom left
-                    r2.x = 0;
-                    r2.y = r2.height;
-                    break;
-                case 3: // bottom right
-                    r2.x = r2.width;
-                    r2.y = r2.height;
-                    break;
-            }
-
-            box->set_bounds (r2.smaller (4));
-        }
-    }
-
-    void paint (Graphics& g) override {
-        g.set_color (0x777777FF);
-        g.fill_rect (bounds().at (0, 0));
-    }
-
-    std::vector<Box*> boxes;
-};
+#define SIDEBAR_WIDTH 200
 
 class Content : public Widget {
 public:
-    Content() {
+    Content (Main& m)
+        : main (m),
+          sidebar (*this) {
         __name = "Content";
-        add (buttons);
-        buttons.set_visible (true);
-        set_size (400, 400);
+        add (sidebar);
+        sidebar.set_visible (true);
+        set_size (540 + SIDEBAR_WIDTH, 360);
         set_visible (true);
+        sidebar.run_demo (0);
     }
 
     ~Content() {
@@ -125,11 +38,14 @@ public:
 
     void resized() override {
         auto r = bounds().at (0, 0);
-        r.x = 4;
-        r.y = 4;
-        r.width -= (r.x * 2);
-        r.height -= (r.y * 2);
-        buttons.set_bounds (r);
+        r.width = SIDEBAR_WIDTH;
+        sidebar.set_bounds (r);
+        if (demo) {
+            auto r2 = bounds().at (0);
+            r2.x = r.width;
+            r2.width -= r.width;
+            demo->set_bounds (r2.smaller (4));
+        }
     }
 
     void paint (Graphics& g) override {
@@ -138,13 +54,82 @@ public:
     }
 
 private:
-    Container buttons;
+    Main& main;
+    void run_demo (int index) {
+        if (demo != nullptr)
+            remove (demo.get());
+
+        switch (index) {
+            case 0:
+                demo.reset (new FourSquares());
+                break;
+            case 1:
+                demo.reset (new Video (main));
+                break;
+        }
+
+        if (demo) {
+            add (*demo);
+            demo->set_visible (true);
+        }
+
+        resized();
+    }
+
+    class SideBar : public Widget {
+    public:
+        SideBar (Content& owner) : content (owner) {
+            for (int i = 0; i < 2; ++i) {
+                auto box = add (new Button());
+                box->set_visible (true);
+                box->__name = std::string ("box") + std::to_string (i + 1);
+                box->clicked = std::bind (&SideBar::run_demo, this, i);
+                demos.push_back (box);
+            }
+
+            set_size (640, 360);
+        }
+
+        ~SideBar() {
+            delete_widgets (demos);
+        }
+
+        void resized() override {
+            auto r1 = bounds().at (0);
+            for (auto box : demos) {
+                assert (box != nullptr);
+                auto r2 = r1.slice_top (40).smaller (2, 1);
+                box->set_bounds (r2);
+            }
+        }
+
+        void paint (Graphics& g) override {
+            g.set_color (0x777777FF);
+            g.fill_rect (bounds().at (0, 0));
+        }
+
+    private:
+        friend class Content;
+        Content& content;
+        std::vector<Button*> demos;
+
+        void run_demo (int index) {
+            assert (index < (int) demos.size());
+            for (int i = 0; i < (int) demos.size(); ++i) {
+                demos[i]->toggle (i == index);
+            }
+
+            content.run_demo (index);
+        }
+    } sidebar;
+
+    std::unique_ptr<Widget> demo;
 };
 
 template <class Wgt>
 static int run (lvtk::Main& context) {
     try {
-        auto content = std::make_unique<Wgt>();
+        auto content = std::make_unique<Wgt> (context);
         context.elevate (*content, 0);
         bool quit = false;
         while (! quit) {

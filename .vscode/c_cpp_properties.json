@@ -22,8 +22,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include/*",
-                "${workspaceFolder}/util/lualv/include/*",
-                "${workspaceFolder}/util/lualv/lua/5.4.4/src/*"
+                "${workspaceFolder}/demo/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang++",

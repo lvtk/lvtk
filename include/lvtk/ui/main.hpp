@@ -43,7 +43,12 @@ public:
     /** Elevate a Widget to view status */
     void elevate (Widget& widget, uintptr_t parent);
 
-    /** Returns the underlying PuglWorld */
+    /** Returns the OS System Object.
+        X11: Returns a pointer to the `Display`.
+        MacOS: Returns a pointer to the `NSApplication`.
+        Windows: Returns the `HMODULE` of the calling process.
+    */
+    void* handle() const noexcept;
     uintptr_t world() const noexcept { return _world; }
 
     /* things for testing */

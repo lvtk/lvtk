@@ -23,8 +23,9 @@ executable (
     'lvtk-demo', 
     'demo/main.cpp',
     cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
-    include_directories : ['.'],
-    dependencies : [ lvtk_nanovg_dep ],
+    include_directories : [],
+    link_with : [ liblvtk_demo ],
+    dependencies : [ lvtk_nanovg_dep, evg_dep, threads_dep ],
     install : true)
 
 ### 

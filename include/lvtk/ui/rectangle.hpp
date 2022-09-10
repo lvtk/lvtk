@@ -174,6 +174,42 @@ struct Rectangle {
         auto s = *this;
         return s.reduce (-amount, -amount);
     }
+
+    /** Returns a reduced shape at same center.
+        @param amount How much to reduce by
+    */
+    Rectangle<Val> smaller (Val ax, Val ay) const noexcept {
+        auto s = *this;
+        return s.reduce (-ax, -ay);
+    }
+
+    /** Slice a region from the top leaving bottom */
+    Rectangle<Val> slice_top (Val amount) noexcept {
+        auto s = *this;
+        s.height = amount;
+        y = amount;
+        height -= amount;
+        return s;
+    }
+
+    /** Slice a region from the right leaving the left side */
+    Rectangle<Val> slice_left (Val amount) noexcept {
+        auto s = *this;
+        s.width = amount;
+        x = amount;
+        width -= amount;
+        return s;
+    }
+
+    /** Slice a region from the right leaving the left side */
+    Rectangle<Val> slice_right (Val amount) noexcept {
+        auto s = *this;
+        s.x = s.width - amount;
+        s.width = amount;
+        x = amount;
+        width -= amount;
+        return s;
+    }
 };
 
 } // namespace lvtk
