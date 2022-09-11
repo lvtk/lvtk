@@ -1,5 +1,5 @@
-
-#include "tests.hpp"
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #include "lvtk/ext/bufsize.hpp"
 #include "lvtk/ext/options.hpp"
@@ -9,8 +9,8 @@
 #include "lvtk/plugin.hpp"
 #include "lvtk/symbols.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include <boost/test/unit_test.hpp>
+
 #include <lv2/buf-size/buf-size.h>
 #include <lv2/core/lv2.h>
 #include <lv2/options/options.h>
@@ -24,13 +24,9 @@ struct BufSizePlug : lvtk::Plugin<BufSizePlug, lvtk::BufSize> {
     BufSizePlug (const lvtk::Args& args) : Plugin (args) {}
 };
 
-class BufSize : public TestFixutre {
-    CPPUNIT_TEST_SUITE (BufSize);
-    CPPUNIT_TEST (buffer_details);
-    CPPUNIT_TEST_SUITE_END();
-
+class BufSizeTest {
 public:
-    void setUp() {
+    BufSizeTest() {
         details.min = 64;
         details.max = 4096;
         details.nominal = 128;
@@ -53,7 +49,7 @@ public:
                 .add (
                     LV2_OPTIONS_BLANK, subject, urid.map (LV2_BUF_SIZE__sequenceSize), sizeof (uint32_t), type, &*details.sequence_size);
         } catch (std::exception& e) {
-            CPPUNIT_ASSERT_MESSAGE (e.what(), false);
+            BOOST_ERROR (e.what());
         }
 
         args.sample_rate = 44100.0;
@@ -64,18 +60,17 @@ public:
         args.features.push_back (*urid.get_map_feature());
     }
 
-protected:
     void buffer_details() {
         auto plugin = std::unique_ptr<BufSizePlug> (new BufSizePlug (args));
         const auto& pdetails = plugin->buffer_details();
 
-        CPPUNIT_ASSERT ((bool) pdetails.min);
-        CPPUNIT_ASSERT (details.min == pdetails.min);
-        CPPUNIT_ASSERT ((bool) pdetails.max);
-        CPPUNIT_ASSERT (details.max == pdetails.max);
+        BOOST_ASSERT ((bool) pdetails.min);
+        BOOST_ASSERT (details.min == pdetails.min);
+        BOOST_ASSERT ((bool) pdetails.max);
+        BOOST_ASSERT (details.max == pdetails.max);
 
-        CPPUNIT_ASSERT (! (bool) pdetails.nominal);
-        CPPUNIT_ASSERT (details.nominal != pdetails.nominal);
+        BOOST_ASSERT (! (bool) pdetails.nominal);
+        BOOST_ASSERT (details.nominal != pdetails.nominal);
     }
 
 private:
@@ -88,4 +83,12 @@ private:
     uint32_t type;
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (BufSize);
+using namespace lvtk;
+
+BOOST_AUTO_TEST_SUITE (BufSize)
+
+BOOST_AUTO_TEST_CASE (buffer_details) {
+    BufSizeTest().buffer_details();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

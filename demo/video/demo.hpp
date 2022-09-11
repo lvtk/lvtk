@@ -3,15 +3,15 @@
 
 #if __linux__
 
-#include <assert.h>
-#include <dlfcn.h>
-#include <evg/evg.h>
+#    include <assert.h>
+#    include <dlfcn.h>
+#    include <evg/evg.h>
 
-#include <lvtk/ui/embed.hpp>
+#    include <lvtk/ui/embed.hpp>
 
-#include "../button.hpp"
-#include "display.hpp"
-#include "engine.hpp"
+#    include "../button.hpp"
+#    include "display.hpp"
+#    include "engine.hpp"
 
 namespace lvtk {
 namespace demo {

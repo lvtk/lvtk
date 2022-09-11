@@ -1,15 +1,13 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
+#include <boost/test/unit_test.hpp>
 
-#include "tests.hpp"
+#include <lvtk/ext/atom.hpp>
+#include <lvtk/symbols.hpp>
 
-#include "lvtk/ext/atom.hpp"
-#include "lvtk/symbols.hpp"
-
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/atom/atom.h>
 #include <lv2/atom/util.h>
-#include <lv2/core/lv2.h>
 #include <lv2/midi/midi.h>
 #include <lv2/urid/urid.h>
 
@@ -17,44 +15,38 @@
 #include <cstring>
 #include <memory>
 
-class Atom : public TestFixutre {
-    CPPUNIT_TEST_SUITE (Atom);
-    CPPUNIT_TEST (atom);
-    CPPUNIT_TEST (sequence);
-    CPPUNIT_TEST_SUITE_END();
-
+class AtomTest {
 public:
-    void setUp() {
+    AtomTest() {
         buffer.reset (new uint8_t[buffer_size]);
         clear_buffer();
         forge.init ((LV2_URID_Map*) urids.get_map_feature()->data);
     }
 
-protected:
-    void atom() {
+    void run_atom() {
         for (uint32_t sz = 2; sz < 2048; sz *= 2)
-            CPPUNIT_ASSERT_EQUAL (lvtk::Atom::pad_size (sz), lv2_atom_pad_size (sz));
+            BOOST_REQUIRE_EQUAL (lvtk::Atom::pad_size (sz), lv2_atom_pad_size (sz));
 
         lvtk::Atom atom;
-        CPPUNIT_ASSERT_EQUAL (atom.is_null(), true);
-        CPPUNIT_ASSERT_EQUAL ((bool) atom, false);
-        CPPUNIT_ASSERT_EQUAL (atom.c_obj(), (const LV2_Atom*) nullptr);
+        BOOST_REQUIRE_EQUAL (atom.is_null(), true);
+        BOOST_REQUIRE_EQUAL ((bool) atom, false);
+        BOOST_REQUIRE_EQUAL (atom.c_obj(), (const LV2_Atom*) nullptr);
 
         const LV2_Atom_Float afloat = { { sizeof (float), urids.map (LV2_ATOM__Float) }, 100.f };
         atom = lvtk::Atom ((void*) &afloat);
-        CPPUNIT_ASSERT (atom.has_type_and_equals (urids.map (LV2_ATOM__Float), 100.f));
-        CPPUNIT_ASSERT (atom.total_size() == sizeof (float) + sizeof (*atom.c_obj()));
-        CPPUNIT_ASSERT (atom.size() == sizeof (float));
-        CPPUNIT_ASSERT (atom.type() == urids.map (LV2_ATOM__Float));
+        BOOST_ASSERT (atom.has_type_and_equals (urids.map (LV2_ATOM__Float), 100.f));
+        BOOST_ASSERT (atom.total_size() == sizeof (float) + sizeof (*atom.c_obj()));
+        BOOST_ASSERT (atom.size() == sizeof (float));
+        BOOST_ASSERT (atom.type() == urids.map (LV2_ATOM__Float));
 
         const LV2_Atom_Float bfloat = { { sizeof (float), urids.map (LV2_ATOM__Float) }, 101.f };
         lvtk::Atom batom ((void*) &bfloat);
-        CPPUNIT_ASSERT (atom != batom);
+        BOOST_ASSERT (atom != batom);
         batom = atom;
-        CPPUNIT_ASSERT (atom == batom);
+        BOOST_ASSERT (atom == batom);
     }
 
-    void sequence() {
+    void run_sequence() {
         clear_buffer();
         auto* const cseq = buffer_as<LV2_Atom_Sequence>();
         cseq->atom.type = urids.map (LV2_ATOM__Sequence);
@@ -63,8 +55,8 @@ protected:
         cseq->body.pad = 0;
 
         lvtk::Sequence seq (cseq);
-        CPPUNIT_ASSERT (seq.size() == sizeof (LV2_Atom_Sequence_Body));
-        CPPUNIT_ASSERT (seq.unit() == urids.map (LV2_ATOM__frameTime));
+        BOOST_ASSERT (seq.size() == sizeof (LV2_Atom_Sequence_Body));
+        BOOST_ASSERT (seq.unit() == urids.map (LV2_ATOM__frameTime));
 
         uint8_t evbuf[sizeof (lvtk::AtomEvent) + 3];
         lvtk::AtomEvent* const event = (lvtk::AtomEvent*) evbuf;
@@ -82,34 +74,34 @@ protected:
             event->time.frames += 20;
         }
 
-        CPPUNIT_ASSERT_EQUAL (seq.size(),
-                              (nev * lv2_atom_pad_size ((uint32_t) sizeof (lvtk::AtomEvent) + 3)) + (uint32_t) sizeof (LV2_Atom_Sequence_Body));
+        BOOST_REQUIRE_EQUAL (seq.size(),
+                             (nev * lv2_atom_pad_size ((uint32_t) sizeof (lvtk::AtomEvent) + 3)) + (uint32_t) sizeof (LV2_Atom_Sequence_Body));
 
         uint32_t cnt = 0;
         int64_t frame = 0;
         for (const auto& ev : seq) {
-            CPPUNIT_ASSERT_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
-            CPPUNIT_ASSERT_EQUAL ((uint32_t) 3, ev.body.size);
-            CPPUNIT_ASSERT_EQUAL (frame, ev.time.frames);
+            BOOST_REQUIRE_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
+            BOOST_REQUIRE_EQUAL ((uint32_t) 3, ev.body.size);
+            BOOST_REQUIRE_EQUAL (frame, ev.time.frames);
             frame += 20;
             ++cnt;
         }
 
-        CPPUNIT_ASSERT_EQUAL (nev, cnt);
+        BOOST_REQUIRE_EQUAL (nev, cnt);
 
         // same test but with LV2 macro
         cnt = 0;
         frame = 0;
         LV2_ATOM_SEQUENCE_FOREACH (seq.c_obj(), iter) {
             auto& ev = *iter;
-            CPPUNIT_ASSERT_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
-            CPPUNIT_ASSERT_EQUAL ((uint32_t) 3, ev.body.size);
-            CPPUNIT_ASSERT_EQUAL (frame, ev.time.frames);
+            BOOST_REQUIRE_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
+            BOOST_REQUIRE_EQUAL ((uint32_t) 3, ev.body.size);
+            BOOST_REQUIRE_EQUAL (frame, ev.time.frames);
             frame += 20;
             ++cnt;
         }
 
-        CPPUNIT_ASSERT_EQUAL (nev, cnt);
+        BOOST_REQUIRE_EQUAL (nev, cnt);
 
         event->body.size = 3;
         event->body.type = 111;
@@ -119,19 +111,19 @@ protected:
         frame = 0;
         for (const auto& ev : seq) {
             if (cnt == 1) {
-                CPPUNIT_ASSERT_EQUAL ((uint32_t) 111, ev.body.type);
-                CPPUNIT_ASSERT_EQUAL ((int64_t) 10, ev.time.frames);
+                BOOST_REQUIRE_EQUAL ((uint32_t) 111, ev.body.type);
+                BOOST_REQUIRE_EQUAL ((int64_t) 10, ev.time.frames);
                 frame += 10;
             } else {
-                CPPUNIT_ASSERT_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
-                CPPUNIT_ASSERT_EQUAL ((uint32_t) 3, ev.body.size);
-                CPPUNIT_ASSERT_EQUAL (frame, ev.time.frames);
+                BOOST_REQUIRE_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
+                BOOST_REQUIRE_EQUAL ((uint32_t) 3, ev.body.size);
+                BOOST_REQUIRE_EQUAL (frame, ev.time.frames);
                 frame += cnt == 0 ? 10 : 20;
             }
             ++cnt;
         }
 
-        CPPUNIT_ASSERT_EQUAL (nev + 1, cnt);
+        BOOST_REQUIRE_EQUAL (nev + 1, cnt);
     }
 
 private:
@@ -145,4 +137,16 @@ private:
     T* buffer_as() const { return (T*) buffer.get(); }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (Atom);
+using namespace lvtk;
+
+BOOST_AUTO_TEST_SUITE (Atom)
+
+BOOST_AUTO_TEST_CASE (wrapper) {
+    AtomTest().run_atom();
+}
+
+BOOST_AUTO_TEST_CASE (sequence_wrapper) {
+    AtomTest().run_sequence();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

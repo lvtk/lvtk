@@ -69,7 +69,7 @@ public:
         @param deep If true search children recursively. default = false
     */
     bool contains (Widget& widget, bool deep = false);
-    
+
     /** True if xy falls within this Widget's local bounds */
     bool contains (int x, int y) const noexcept;
     /** True if pt falls within this Widget's local bounds */

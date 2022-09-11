@@ -1,6 +1,8 @@
 
 #include "tests.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 #include "lvtk/ext/worker.hpp"
 #include "lvtk/lvtk.hpp"
 #include "lvtk/plugin.hpp"
@@ -37,7 +39,7 @@ struct WorkerPlug : lvtk::Plugin<WorkerPlug, lvtk::Worker> {
 
     lvtk::WorkerStatus work (lvtk::WorkerRespond& respond, uint32_t size, const void* data) {
         work_called = true;
-        // CPPUNIT_ASSERT(false == respond); // not testing response yet
+        // BOOST_REQUIRE(false == respond); // not testing response yet
         return LV2_WORKER_SUCCESS;
     }
 
@@ -52,20 +54,11 @@ struct WorkerPlug : lvtk::Plugin<WorkerPlug, lvtk::Worker> {
     }
 };
 
-class Worker : public TestFixutre {
-    CPPUNIT_TEST_SUITE (Worker);
-    CPPUNIT_TEST (integration);
-    CPPUNIT_TEST_SUITE_END();
-
-public:
-    void setUp() {
-    }
-
-protected:
+struct WorkerTest {
     void integration() {
         lvtk::Descriptor<WorkerPlug> reg (LVTK_TEST_PLUGIN_URI);
         const auto& desc = lvtk::descriptors().back();
-        CPPUNIT_ASSERT (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
+        BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         LV2_Worker_Schedule schedule = {
             .handle = this,
@@ -82,20 +75,20 @@ protected:
         auto plugin = static_cast<WorkerPlug*> (handle);
 
         plugin->request_work();
-        CPPUNIT_ASSERT (work_was_requested);
-        CPPUNIT_ASSERT (work_size == WorkerPlug::work_size);
-        CPPUNIT_ASSERT (work_data == WorkerPlug::work_value);
+        BOOST_REQUIRE (work_was_requested);
+        BOOST_REQUIRE (work_size == WorkerPlug::work_size);
+        BOOST_REQUIRE (work_data == WorkerPlug::work_value);
 
         auto iface = (const LV2_Worker_Interface*) desc.extension_data (LV2_WORKER__interface);
-        CPPUNIT_ASSERT (iface != nullptr);
+        BOOST_REQUIRE (iface != nullptr);
         if (iface) {
             iface->work (handle, nullptr, nullptr, work_size, &work_data);
 
-            CPPUNIT_ASSERT (plugin->work_called);
+            BOOST_REQUIRE (plugin->work_called);
             iface->work_response (handle, WorkerPlug::work_size, &work_data);
-            CPPUNIT_ASSERT (plugin->work_response_called);
+            BOOST_REQUIRE (plugin->work_response_called);
             iface->end_run (handle);
-            CPPUNIT_ASSERT (plugin->end_run_called);
+            BOOST_REQUIRE (plugin->end_run_called);
         }
 
         desc.cleanup (handle);
@@ -106,7 +99,7 @@ private:
     bool work_was_requested = false;
     uint32_t work_data = 0, work_size = 0;
     static LV2_Worker_Status _schedule_work (LV2_Worker_Schedule_Handle handle, uint32_t size, const void* data) {
-        auto self = static_cast<Worker*> (handle);
+        auto self = static_cast<WorkerTest*> (handle);
         self->work_size = size;
         self->work_data = *(uint32_t*) data;
         self->work_was_requested = true;
@@ -114,4 +107,10 @@ private:
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (Worker);
+BOOST_AUTO_TEST_SUITE (Worker)
+
+BOOST_AUTO_TEST_CASE (integration) {
+    WorkerTest().integration();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

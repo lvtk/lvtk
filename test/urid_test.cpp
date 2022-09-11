@@ -1,12 +1,12 @@
 
 #include "tests.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 #include "lvtk/ext/urid.hpp"
 #include "lvtk/lvtk.hpp"
 #include "lvtk/symbols.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/core/lv2.h>
 #include <lv2/log/log.h>
 #include <lv2/urid/urid.h>
@@ -41,58 +41,64 @@ private:
 };
 } // namespace lvtk
 
-class URID : public TestFixutre {
-    CPPUNIT_TEST_SUITE (URID);
-    CPPUNIT_TEST (directory);
-    CPPUNIT_TEST (mapping);
-    CPPUNIT_TEST (unmapping);
-    CPPUNIT_TEST_SUITE_END();
-
-protected:
+class URIDTest {
     lvtk::URIDirectory urids;
     uint32_t urid_A = 0;
     uint32_t urid_B = 0;
 
 public:
-    void setUp() {
+    URIDTest() {
         urid_A = urids.map ("https://dummy.org/A");
         urid_B = urids.map ("https://dummy.org/B");
     }
 
-protected:
     void directory() {
-        CPPUNIT_ASSERT_EQUAL (urid_A, 1U);
-        CPPUNIT_ASSERT_EQUAL (urid_B, 2U);
-        CPPUNIT_ASSERT_EQUAL (std::string ("https://dummy.org/A"),
-                              std::string (urids.unmap (urid_A)));
-        CPPUNIT_ASSERT_EQUAL (std::string ("https://dummy.org/B"),
-                              std::string (urids.unmap (urid_B)));
+        BOOST_REQUIRE_EQUAL (urid_A, 1U);
+        BOOST_REQUIRE_EQUAL (urid_B, 2U);
+        BOOST_REQUIRE_EQUAL (std::string ("https://dummy.org/A"),
+                             std::string (urids.unmap (urid_A)));
+        BOOST_REQUIRE_EQUAL (std::string ("https://dummy.org/B"),
+                             std::string (urids.unmap (urid_B)));
 
         const auto* map = (LV2_URID_Map*) urids.get_map_feature()->data;
         const auto* unmap = (LV2_URID_Unmap*) urids.get_unmap_feature()->data;
-        CPPUNIT_ASSERT_EQUAL (std::string ("https://dummy.org/A"),
-                              std::string (unmap->unmap (map->handle, urid_A)));
+        BOOST_REQUIRE_EQUAL (std::string ("https://dummy.org/A"),
+                             std::string (unmap->unmap (map->handle, urid_A)));
     }
 
     void mapping() {
         lvtk::Map map (*urids.get_map_feature());
         auto* cobj = map.get();
-        CPPUNIT_ASSERT (cobj != nullptr);
-        CPPUNIT_ASSERT (cobj->handle != nullptr);
-        CPPUNIT_ASSERT (cobj->map != nullptr);
-        CPPUNIT_ASSERT_EQUAL (map ("https://dummy.org/A"), urid_A);
+        BOOST_REQUIRE (cobj != nullptr);
+        BOOST_REQUIRE (cobj->handle != nullptr);
+        BOOST_REQUIRE (cobj->map != nullptr);
+        BOOST_REQUIRE_EQUAL (map ("https://dummy.org/A"), urid_A);
     }
 
     void unmapping() {
         lvtk::Unmap unmap;
         unmap.set (*urids.get_unmap_feature());
         auto* cobj = unmap.get();
-        CPPUNIT_ASSERT (cobj != nullptr);
-        CPPUNIT_ASSERT (cobj->handle != nullptr);
-        CPPUNIT_ASSERT (cobj->unmap != nullptr);
-        CPPUNIT_ASSERT_EQUAL (std::string (unmap (urid_A)),
-                              std::string ("https://dummy.org/A"));
+        BOOST_REQUIRE (cobj != nullptr);
+        BOOST_REQUIRE (cobj->handle != nullptr);
+        BOOST_REQUIRE (cobj->unmap != nullptr);
+        BOOST_REQUIRE_EQUAL (std::string (unmap (urid_A)),
+                             std::string ("https://dummy.org/A"));
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (URID);
+BOOST_AUTO_TEST_SUITE (URID)
+
+BOOST_AUTO_TEST_CASE (directory) {
+    URIDTest().directory();
+}
+
+BOOST_AUTO_TEST_CASE (mapping) {
+    URIDTest().mapping();
+}
+
+BOOST_AUTO_TEST_CASE (unmapping) {
+    URIDTest().unmapping();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

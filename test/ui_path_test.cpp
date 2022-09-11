@@ -1,18 +1,11 @@
 
 #include "tests.hpp"
+#include <boost/test/unit_test.hpp>
 #include <lvtk/ui/path.hpp>
 
-class PathTest : public TestFixutre {
-    using FloatPath = lvtk::graphics::BasicPath<float>;
-    CPPUNIT_TEST_SUITE (PathTest);
-    CPPUNIT_TEST (iterator_count);
-    CPPUNIT_TEST_SUITE_END();
-
-public:
-    void setUp() {}
-
-protected:
-    void iterator_count() {
+struct PathTest {
+    void iterator() {
+        using FloatPath = lvtk::graphics::BasicPath<float>;
         FloatPath path;
         int numops = 0;
         path.move (100, 100);
@@ -30,8 +23,14 @@ protected:
             (void) op;
             ++storedops;
         }
-        CPPUNIT_ASSERT_EQUAL (numops, storedops);
+        BOOST_REQUIRE_EQUAL (numops, storedops);
     };
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (PathTest);
+BOOST_AUTO_TEST_SUITE (Path)
+
+BOOST_AUTO_TEST_CASE (iterator) {
+    PathTest().iterator();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

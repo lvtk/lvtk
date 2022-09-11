@@ -7,9 +7,10 @@
 
 using namespace lvtk;
 
-BOOST_AUTO_TEST_SUITE (strings)
+BOOST_AUTO_TEST_SUITE (String)
 
 BOOST_AUTO_TEST_CASE (ctors) {
+    using lvtk::String;
     auto a = String();
     a = String ("lv2");
     BOOST_REQUIRE_EQUAL (a, "lv2");
@@ -18,6 +19,7 @@ BOOST_AUTO_TEST_CASE (ctors) {
 }
 
 BOOST_AUTO_TEST_CASE (streams) {
+    using lvtk::String;
     String s1 = "hello";
     BOOST_REQUIRE_EQUAL (s1, "hello");
     s1 << " " << String ("world");

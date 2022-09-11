@@ -1,12 +1,10 @@
 
-#include "tests.hpp"
+#include <boost/test/unit_test.hpp>
 
 #include "lvtk/lvtk.hpp"
 #include "lvtk/plugin.hpp"
 #include "lvtk/symbols.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/core/lv2.h>
 #include <lv2/urid/urid.h>
 
@@ -16,26 +14,21 @@
 #include <string>
 #include <vector>
 
+#ifndef LVTK_VOLUME_URI
+#    define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
+#endif
+
 // dummy plugin with worker interface
 struct PlugWithRequiredHostFeature : lvtk::Plugin<PlugWithRequiredHostFeature> {
     PlugWithRequiredHostFeature (const lvtk::Args& args) : Plugin (args) {}
 };
 
-class Descriptor : public TestFixutre {
-    CPPUNIT_TEST_SUITE (Descriptor);
-    CPPUNIT_TEST (total_descriptors);
-    CPPUNIT_TEST (instantiation);
-    CPPUNIT_TEST (missing_host_feature);
-    CPPUNIT_TEST_SUITE_END();
-
+class DescriptorTest {
 public:
-    void setUp() {}
-
-protected:
     void total_descriptors() {
-        CPPUNIT_ASSERT_EQUAL ((size_t) 1, lvtk::descriptors().size());
-        CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_VOLUME_URI), (int) 0);
-        // CPPUNIT_ASSERT_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
+        BOOST_REQUIRE_EQUAL ((size_t) 1, lvtk::descriptors().size());
+        BOOST_REQUIRE_EQUAL (strcmp (lvtk::descriptors()[0].URI, LVTK_VOLUME_URI), (int) 0);
+        // BOOST_REQUIRE_EQUAL (strcmp (lvtk::descriptors()[1].URI, LVTK_WORKHORSE_URI), (int)0);
     }
 
     void instantiation() {
@@ -43,7 +36,7 @@ protected:
             return;
 
         const auto desc = lvtk::descriptors().front();
-        CPPUNIT_ASSERT (strcmp (LVTK_VOLUME_URI, desc.URI) == 0);
+        BOOST_ASSERT (strcmp (LVTK_VOLUME_URI, desc.URI) == 0);
 
         const LV2_Feature* features[] = {
             urids.get_map_feature(),
@@ -52,7 +45,7 @@ protected:
         };
 
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
-        CPPUNIT_ASSERT (handle != nullptr);
+        BOOST_ASSERT (handle != nullptr);
         if (handle != nullptr) {
             desc.activate (handle);
 
@@ -74,7 +67,7 @@ protected:
         const auto& desc = lvtk::descriptors().back();
         const LV2_Feature* features[] = { nullptr };
         LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
-        CPPUNIT_ASSERT (handle == nullptr);
+        BOOST_ASSERT (handle == nullptr);
         if (handle && desc.cleanup)
             desc.cleanup (handle);
     }
@@ -83,4 +76,16 @@ private:
     lvtk::URIDirectory urids;
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (Descriptor);
+using namespace lvtk;
+
+BOOST_AUTO_TEST_SUITE (Descriptor)
+
+BOOST_AUTO_TEST_CASE (instantiate) {
+    DescriptorTest().instantiation();
+}
+
+BOOST_AUTO_TEST_CASE (missing_host_feature) {
+    DescriptorTest().missing_host_feature();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

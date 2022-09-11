@@ -1,4 +1,16 @@
 
+#include <boost/signals2.hpp>
+#include <boost/test/unit_test.hpp>
+
+BOOST_AUTO_TEST_SUITE (Observer)
+
+BOOST_AUTO_TEST_CASE (connectivity) {
+    BOOST_ASSERT (true);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+#if 0
 // Document/View sample for Boost.Signals2.
 // Expands on doc_view.cpp example by using automatic
 // connection management.
@@ -12,13 +24,13 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 // For more information, see http://www.boost.org
 
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/signals2/signal.hpp>
-#include <iostream>
-#include <string>
+#    include <boost/bind.hpp>
+#    include <boost/shared_ptr.hpp>
+#    include <boost/signals2/signal.hpp>
+#    include <iostream>
+#    include <string>
 
-#if 0
+#    if 0
 class Document {
 public:
     typedef boost::signals2::signal<void()> signal_t;
@@ -70,12 +82,12 @@ private:
     Document& m_document;
 };
 
-#endif
+#    endif
 
 template <typename T>
 using Signal = boost::signals2::signal<T>;
 
-#if 0
+#    if 0
 class WidgetObserver {
 public:
     WidgetObserver() {
@@ -92,4 +104,5 @@ private:
 
     std::shared_ptr<Receiver> _slots;
 };
+#    endif
 #endif

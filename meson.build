@@ -36,6 +36,4 @@ if doxygen.found() and dot.found()
     subdir ('doc')
 endif
 
-if cppunit_dep.found()
-    subdir ('test')
-endif
+subdir ('test')

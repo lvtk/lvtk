@@ -1,28 +1,18 @@
 
 #include "tests.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 #include "lvtk/options.hpp"
 #include "lvtk/symbols.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <lv2/options/options.h>
-
 #include <cstdint>
 
-class Options : public TestFixutre {
-    CPPUNIT_TEST_SUITE (Options);
-    CPPUNIT_TEST (array);
-    CPPUNIT_TEST_SUITE_END();
-
+class OptionsTest {
 protected:
     lvtk::URIDirectory urids;
 
 public:
-    void setUp() {
-    }
-
-protected:
     void array() {
         lvtk::OptionArray opts;
         const uint32_t num_opts = 4;
@@ -38,25 +28,31 @@ protected:
                       &values[i]);
         }
 
-        CPPUNIT_ASSERT_EQUAL (opts.size(), num_opts);
+        BOOST_REQUIRE_EQUAL (opts.size(), num_opts);
 
         uint32_t c = 0;
         for (const auto& opt : opts) {
             ++c;
-            CPPUNIT_ASSERT_EQUAL (1024, (int) *(uint32_t*) opt.value);
+            BOOST_REQUIRE_EQUAL (1024, (int) *(uint32_t*) opt.value);
         }
 
-        CPPUNIT_ASSERT_EQUAL (opts.size(), c);
+        BOOST_REQUIRE_EQUAL (opts.size(), c);
 
         lvtk::OptionArray opts_ref (opts.get());
-        CPPUNIT_ASSERT_EQUAL (opts_ref.size(), opts.size());
+        BOOST_REQUIRE_EQUAL (opts_ref.size(), opts.size());
         uint32_t fake = 1; // it's referenced, so add should do nothing
         opts_ref.add (LV2_OPTIONS_BLANK, 1, 1, sizeof (uint32_t), 1, &fake);
-        CPPUNIT_ASSERT_EQUAL (opts_ref.size(), opts.size());
+        BOOST_REQUIRE_EQUAL (opts_ref.size(), opts.size());
 
         for (const auto& opt : opts_ref) // check values are same
-            CPPUNIT_ASSERT_EQUAL (1024, (int) *(uint32_t*) opt.value);
+            BOOST_REQUIRE_EQUAL (1024, (int) *(uint32_t*) opt.value);
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (Options);
+BOOST_AUTO_TEST_SUITE (Options)
+
+BOOST_AUTO_TEST_CASE (array) {
+    OptionsTest().array();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

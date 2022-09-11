@@ -1,13 +1,13 @@
 
 #include "tests.hpp"
 
+#include <boost/test/unit_test.hpp>
+
 #include "lvtk/ext/state.hpp"
 #include "lvtk/lvtk.hpp"
 #include "lvtk/plugin.hpp"
 #include "lvtk/symbols.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/core/lv2.h>
 #include <lv2/state/state.h>
 
@@ -37,34 +37,26 @@ struct StatePlug : lvtk::Plugin<StatePlug, lvtk::State> {
     }
 };
 
-class StateTest : public TestFixutre {
-    CPPUNIT_TEST_SUITE (StateTest);
-    CPPUNIT_TEST (integration);
-    CPPUNIT_TEST_SUITE_END();
-
+class StateTest {
 public:
-    void setUp() {
-    }
-
-protected:
     void integration() {
         lvtk::Descriptor<StatePlug> reg (LVTK_TEST_PLUGIN_URI);
         const auto& desc = lvtk::descriptors().back();
-        CPPUNIT_ASSERT (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
+        BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         lvtk::URIDirectory uris;
         const LV2_Feature* features[] = { uris.get_map_feature(), uris.get_unmap_feature(), nullptr };
         auto handle = desc.instantiate (&desc, 44100.0, "/fake/path", features);
-        CPPUNIT_ASSERT (handle != nullptr);
+        BOOST_REQUIRE (handle != nullptr);
         auto iface = (const LV2_State_Interface*) desc.extension_data (LV2_STATE__interface);
-        CPPUNIT_ASSERT (iface != nullptr);
+        BOOST_REQUIRE (iface != nullptr);
 
         if (handle && iface) {
             const LV2_Feature* f2[] = { nullptr };
             iface->save (handle, _store, this, 0, f2);
             iface->restore (handle, _retrieve, this, 0, f2);
-            CPPUNIT_ASSERT (store_called);
-            CPPUNIT_ASSERT (retrieve_called);
+            BOOST_REQUIRE (store_called);
+            BOOST_REQUIRE (retrieve_called);
         }
 
         desc.cleanup (handle);
@@ -96,4 +88,10 @@ private:
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (StateTest);
+BOOST_AUTO_TEST_SUITE (State)
+
+BOOST_AUTO_TEST_CASE (integration) {
+    StateTest().integration();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

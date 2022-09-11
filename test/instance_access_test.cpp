@@ -1,5 +1,5 @@
 
-#include "tests.hpp"
+#include <boost/test/unit_test.hpp>
 
 #include "lvtk/ext/instance_access.hpp"
 #include "lvtk/lvtk.hpp"
@@ -24,23 +24,15 @@ struct InstanceAccessUI : lvtk::UI<InstanceAccessUI, lvtk::InstanceAccess> {
     InstanceAccessUI (const lvtk::UIArgs& args) : UI (args) {}
 };
 
-class InstanceAccess : public TestFixutre {
-    CPPUNIT_TEST_SUITE (InstanceAccess);
-    CPPUNIT_TEST (plugin_instance);
-    CPPUNIT_TEST_SUITE_END();
-
+class InstanceAccessTest {
 public:
-    void setUp() {
-    }
-
-protected:
     void plugin_instance() {
         lvtk::Descriptor<InstanceAccessPlug> reg ("http://fakeuri.com");
         const auto& desc = lvtk::descriptors().back();
-        CPPUNIT_ASSERT (strcmp (desc.URI, "http://fakeuri.com") == 0);
+        BOOST_REQUIRE (strcmp (desc.URI, "http://fakeuri.com") == 0);
         const LV2_Feature* const features[] = { nullptr };
         auto instance = desc.instantiate (&desc, 44100.0, "/fake/path", features);
-        CPPUNIT_ASSERT (instance != nullptr);
+        BOOST_REQUIRE (instance != nullptr);
         if (! instance)
             return;
 
@@ -51,7 +43,7 @@ protected:
         args.features.push_back (inst_feature);
 
         std::unique_ptr<InstanceAccessUI> ui (new InstanceAccessUI (args));
-        CPPUNIT_ASSERT (instance == ui->plugin_instance());
+        BOOST_REQUIRE (instance == ui->plugin_instance());
 
         ui.reset();
         desc.cleanup (instance);
@@ -61,4 +53,10 @@ protected:
 private:
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (InstanceAccess);
+BOOST_AUTO_TEST_SUITE (InstanceAccess)
+
+BOOST_AUTO_TEST_CASE (plugin_instance) {
+    InstanceAccessTest().plugin_instance();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -16,9 +16,8 @@ struct Embed::Window {
         ~Proxy() {}
     };
 
-    Window (Main& m, Embed& x) 
-        : main (m), owner (x) 
-    {
+    Window (Main& m, Embed& x)
+        : main (m), owner (x) {
         parent = main.find_view (x);
         if (parent == nullptr) {
             std::clog << "connecting to sig....\n";

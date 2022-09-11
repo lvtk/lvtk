@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cppunit/extensions/HelperMacros.h>
-
 #include <lvtk/ext/ui/idle.hpp>
 #include <lvtk/ext/ui/parent.hpp>
 #include <lvtk/ext/ui/port_map.hpp>
@@ -34,5 +32,3 @@
 
 #define LVTK_TEST_PLUGIN_URI "http://lvtk.org/plugins/test"
 #define LVTK_TEST_UI_URI     "http://lvtk.org/plugins/test#ui"
-
-class TestFixutre : public CPPUNIT_NS::TestFixture {};

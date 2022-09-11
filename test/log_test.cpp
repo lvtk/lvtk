@@ -1,13 +1,12 @@
 
 #include "tests.hpp"
+#include <boost/test/unit_test.hpp>
 
 #include "lvtk/ext/log.hpp"
 #include "lvtk/lvtk.hpp"
 #include "lvtk/plugin.hpp"
 #include "lvtk/symbols.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/core/lv2.h>
 #include <lv2/log/log.h>
 #include <lv2/urid/urid.h>
@@ -24,19 +23,12 @@ struct LogPlug : lvtk::Plugin<LogPlug, lvtk::Log> {
     }
 };
 
-class LogTest : public TestFixutre {
-    CPPUNIT_TEST_SUITE (LogTest);
-    CPPUNIT_TEST (integration);
-    CPPUNIT_TEST_SUITE_END();
-
+class LogTest {
 public:
-    void setUp() {}
-
-protected:
     void integration() {
         lvtk::Descriptor<LogPlug> reg (LVTK_TEST_PLUGIN_URI);
         const auto& desc = lvtk::descriptors().back();
-        CPPUNIT_ASSERT (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
+        BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         lvtk::URIDirectory uris;
 
@@ -56,11 +48,11 @@ protected:
         };
 
         auto handle = (LogPlug*) desc.instantiate (&desc, 44100.0, "/fake/path", features);
-        CPPUNIT_ASSERT (handle != nullptr);
+        BOOST_REQUIRE (handle != nullptr);
 #define test_message "hello_logger"
         handle->trace (test_message);
-        CPPUNIT_ASSERT (strcmp (test_message, buffer) == 0);
-        CPPUNIT_ASSERT (msg_type == uris.map (LV2_LOG__Trace));
+        BOOST_REQUIRE (strcmp (test_message, buffer) == 0);
+        BOOST_REQUIRE (msg_type == uris.map (LV2_LOG__Trace));
         desc.cleanup (handle);
         lvtk::descriptors().pop_back(); // needed so descriptor count test doesn't fail
     }
@@ -80,4 +72,10 @@ private:
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION (LogTest);
+BOOST_AUTO_TEST_SUITE (Log)
+
+BOOST_AUTO_TEST_CASE (integration) {
+    LogTest().integration();
+}
+
+BOOST_AUTO_TEST_SUITE_END()

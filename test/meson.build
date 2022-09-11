@@ -1,37 +1,49 @@
-lvtk_test_sources = '''
+
+## Unit Tests
+lvtk_unit_test_sources = '''
     atom_test.cpp
-    descriptor_test.cpp
-    main.cpp
-    urid_test.cpp
     bufsize_test.cpp
-    dynmanifest_test.cpp
-    options_test.cpp
-    log_test.cpp
-    worker_test.cpp
     data_access_test.cpp
+    descriptor_test.cpp
+    dynmanifest_test.cpp
     instance_access_test.cpp
+    log_test.cpp
+    options_test.cpp
     state_test.cpp
-    weak_ref_test.cpp
-    ui_path_test.cpp
-    ../lvtk.lv2/volume.cpp
-'''.split()
+    urid_test.cpp
+    worker_test.cpp
 
-test ('cppunit', executable (
-    'cppunit',
-    lvtk_test_sources,
-    cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
-    include_directories : ['.'],
-    dependencies : [ cppunit_dep, lvtk_dep ],
-    install : false)
-)
-
-lvtk_test_sources = '''
+    observer_test.cpp
     string_test.cpp
-    unit_tests.cpp
+    ui_path_test.cpp
+    weak_ref_test.cpp
+
+    main_unit.cpp
 '''.split()
 
-unit = executable('unit',
-    lvtk_test_sources,
-    dependencies : [ boost_dep, lvtk_internal_dep ])
+unit = executable ('unit',
+    lvtk_unit_test_sources,
+    dependencies : [ boost_dep, lvtk_internal_dep ],
+    cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 
-test ('strings', unit, args : [ '-t', 'strings' ])
+lvtk_unit_tests = '''
+    Atom
+    BufSize
+    DataAccess
+    Descriptor
+    DynManifest
+    InstanceAccess
+    Log
+    Options
+    State
+    URID
+    Worker
+    
+    Observer
+    String
+    Path
+    WeakRef
+'''.split()
+foreach t : lvtk_unit_tests
+    test (t, unit, args : [ '-t', t ])
+endforeach
