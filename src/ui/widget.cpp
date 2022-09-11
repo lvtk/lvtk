@@ -223,7 +223,20 @@ void Widget::render (Graphics& g) {
     render_internal (g);
 }
 
-//=============================================================================
+//=================================================================
+bool Widget::contains (Widget& widget, bool deep) {
+    if (! deep)
+        return widget._parent == this;
+    auto c = &widget;
+    while (c != nullptr) {
+        c = c->_parent;
+        if (c == this) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Widget::contains (int x, int y) const noexcept {
     return contains (Point<int> { x, y }.as<double>());
 }
