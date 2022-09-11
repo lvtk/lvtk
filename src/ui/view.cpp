@@ -203,6 +203,12 @@ struct View::EventHandler {
     }
 };
 
+inline static void remove_view (std::vector<View*>& views, View* view) {
+    auto it = std::find (views.begin(), views.end(), view);
+    if (it != views.end())
+        views.erase (it);
+}
+
 View::View (Main& m, Widget& w)
     : _main (m),
       _widget (w) {
@@ -210,9 +216,11 @@ View::View (Main& m, Widget& w)
     puglSetHandle ((PuglView*) _view, this);
     puglSetEventFunc ((PuglView*) _view, EventHandler::dispatch);
     _weak_status.reset (this);
+    _main._views.push_back (this);
 }
 
 View::~View() {
+    remove_view (_main._views, this);
     _weak_status.reset();
     puglFreeView ((PuglView*) _view);
     _view = (uintptr_t) nullptr;

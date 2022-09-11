@@ -37,11 +37,14 @@ public:
     /** Request the main loop stop running. */
     void quit();
 
-    /** Create an unrealized view for the given Widget. */
-    std::unique_ptr<View> create_view (Widget& widget, uintptr_t parent = 0);
-
-    /** Elevate a Widget to view status */
+    /** Elevate a Widget to view with optional opaque parent */
     void elevate (Widget& widget, uintptr_t parent);
+
+    /** Elevate a Widget to view status with optional known parent */
+    void elevate (Widget& widget, View& parent);
+
+    /** Find the view for this wiget */
+    View* find_view (Widget& widget) const noexcept;
 
     /** Returns the OS System Object.
         X11: Returns a pointer to the `Display`.
@@ -55,9 +58,16 @@ public:
     bool __quit_flag = false;
     /* end things for testing */
 private:
+    friend class Widget;
+    friend class View;
     uintptr_t _world;
     std::unique_ptr<Backend> _backend;
     const Mode _mode;
+    std::vector<View*> _views;
+
+    /** Create an unrealized view for the given Widget. */
+    std::unique_ptr<View> create_view (Widget& widget, uintptr_t parent = 0);
+
     Main() = delete;
     Main (const Main&) = delete;
     Main (Main&&) = delete;

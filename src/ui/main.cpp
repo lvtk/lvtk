@@ -66,6 +66,20 @@ void Main::elevate (Widget& widget, uintptr_t parent) {
         w->__sig_elevated();
 }
 
+void Main::elevate (Widget& widget, View& parent) {
+    auto view = create_view (widget, 0);
+}
+
+View* Main::find_view (Widget& widget) const noexcept {
+    for (auto view : _views) {
+        if (view == widget._view.get())
+            return view;
+        if (view->_widget.contains (widget, true))
+            return view;
+    }
+    return nullptr;
+}
+
 void* Main::handle() const noexcept {
     return puglGetNativeWorld ((PuglWorld*) _world);
 }

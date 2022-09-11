@@ -16,8 +16,10 @@ struct Embed::Window {
         ~Proxy() {}
     };
 
-    Window (Main& m, Embed& x) : main (m), owner (x) {
-        parent = x.find_view();
+    Window (Main& m, Embed& x) 
+        : main (m), owner (x) 
+    {
+        parent = main.find_view (x);
         if (parent == nullptr) {
             std::clog << "connecting to sig....\n";
             conn_elevated = x.__sig_elevated.connect (
@@ -30,21 +32,27 @@ struct Embed::Window {
         conn_elevated.disconnect();
     }
 
+    void create_proxy() {
+        proxy = std::make_unique<Proxy>();
+        proxy->set_size (360, 240);
+        proxy->set_visible (true);
+        assert (proxy != nullptr);
+        assert (proxy->find_view().valid());
+        assert (proxy->elevated());
+    }
+
     void create_window() {
         if (proxy != nullptr)
             return;
 
-        proxy = std::make_unique<Proxy>();
-        proxy->set_size (360, 240);
-        proxy->set_visible (true);
-        main.elevate (*proxy, parent != nullptr ? parent->handle() : 0);
         if (parent != nullptr) {
-            std::clog << "[embed] parent found on instantiate. set visible true\n";
+            create_proxy();
+            main.elevate (*proxy, *parent);
+            std::clog << "[embed] parent found on instantiate\n";
             proxy->set_visible (true);
+        } else {
+            std::clog << "[embed] no parent found on instantiate.\n";
         }
-
-        assert (proxy->find_view().valid());
-        assert (proxy->elevated());
     }
 
     std::unique_ptr<Proxy> proxy;
