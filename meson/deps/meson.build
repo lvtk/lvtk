@@ -39,6 +39,3 @@ boost_dep = (dependency ('boost'))
 evg_dep = dependency ('evg-0', 
     fallback : [ 'evg', 'evg_dep' ],
     required : false)
-
-xcb_dep = dependency ('x11-xcb',
-    version: '>= 1.6.9', required: true)

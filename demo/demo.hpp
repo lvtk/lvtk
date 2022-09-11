@@ -16,6 +16,14 @@ namespace demo {
 
 #define SIDEBAR_WIDTH 200
 
+enum {
+    FOUR_SQUARES = 0,
+#if __linux__
+    VIDEO,
+#endif
+    NUM_DEMOS
+};
+
 class Content : public Widget {
 public:
     Content (Main& m)
@@ -60,12 +68,14 @@ private:
             remove (demo.get());
 
         switch (index) {
-            case 0:
+            case FOUR_SQUARES:
                 demo.reset (new FourSquares());
                 break;
-            case 1:
+#if __linux__
+            case VIDEO:
                 demo.reset (new Video (main));
                 break;
+#endif
         }
 
         if (demo) {
