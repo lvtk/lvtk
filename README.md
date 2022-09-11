@@ -68,4 +68,4 @@ Graphics/UI classes utilize these libraries internally:
 Issue Tracking
 --------------
 Please report bugs and feature requests here. 
-https://github.com/lvtk/lvtk/issues
+https://gitlab.com/lvtk/lvtk/-/issues
