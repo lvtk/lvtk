@@ -57,13 +57,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --------------
 Graphics/UI classes utilize these libraries internally:
 
-| Library   | License |
-|-----------|---------|
-| STB Image | MIT     |
-| NanoVG    | MIT     |
-| Lua       | MIT     |
-| Sol2      | MIT     |
-| boost     | boost   |
+| Library   | License  |
+|-----------|----------|
+| STB Image | MIT or public domain |
+| NanoVG    | Zlib     |
+| Lua       | MIT      |
+| Sol2      | MIT      |
+| boost     | Boost license |
 
 Issue Tracking
 --------------
