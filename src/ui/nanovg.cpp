@@ -4,6 +4,7 @@
 #include <lvtk/ui/nanovg.hpp>
 
 #include "nanovg/nanovg_gl.h"
+// #include "Roboto-Regular.ttf.h"
 
 using Surface = lvtk::nvg::Surface;
 
@@ -19,8 +20,15 @@ static constexpr auto destroy = nvgDeleteGL3;
 #endif
 
 class Surface::Context {
+    int _font = 0;
 public:
-    Context() : ctx (nvg::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {}
+    Context() : ctx (nvg::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) 
+    {
+        // nvgCreateFontMem (ctx, "sans", 
+        //                  (uint8_t*)Roboto_Regular_ttf,
+        //                   Roboto_Regular_ttf_size, 1);
+    }
+    
     ~Context() {
         if (ctx)
             nvg::destroy (ctx);
