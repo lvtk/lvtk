@@ -1,0 +1,9 @@
+[submodule "subprojects/evg"]
+	path = subprojects/evg
+	url = https://gitlab.com/lvtk/libevg
+[submodule "subprojects/pugl"]
+	path = subprojects/pugl
+	url = https://gitlab.com/lv2/pugl
+[submodule "subprojects/lv2"]
+	path = subprojects/lv2
+	url = https://gitlab.com/lv2/lv2
