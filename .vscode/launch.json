@@ -31,7 +31,12 @@
             "logging": {
                 "moduleLoad": false
             },
-            "MIMode": "gdb"
+            "linux": {
+                "MIMode": "gdb",
+            },
+            "osx":{
+                "MIMode": "lldb"
+            }
         },
         {
             "name": "Volume",
