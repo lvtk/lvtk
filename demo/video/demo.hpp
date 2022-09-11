@@ -1,6 +1,8 @@
 
 #pragma once
 
+#if __linux__
+
 #include <assert.h>
 #include <dlfcn.h>
 #include <evg/evg.h>
@@ -69,7 +71,7 @@ public:
         }
         if (enabled) {
             auto swap = display->make_swap();
-            if (swap.window.xwindow != 0)
+            if (swap.window != 0)
                 engine->set_swap (&swap);
             else
                 std::clog << "[video] couldn't initialize swap\n";
@@ -141,3 +143,5 @@ private:
 
 } // namespace demo
 } // namespace lvtk
+
+#endif

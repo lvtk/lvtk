@@ -49,7 +49,7 @@ public:
             setup.width = 640;
             setup.height = 360;
             setup.nbuffers = 1;
-            setup.window.xwindow = view->handle();
+            setup.window = view->handle();
             setup.format = EVG_COLOR_FORMAT_RGBA;
             setup.stencil = EVG_STENCIL_24_S8;
         }

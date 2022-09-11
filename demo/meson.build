@@ -1,5 +1,8 @@
 
-lvtk_demo_sources = []
+lvtk_demo_sources = '''
+    demo.cpp
+'''.split()
+
 lvtk_demo_deps = [ lvtk_nanovg_dep ]
 
 lvtk_video_demo_sources = '''
