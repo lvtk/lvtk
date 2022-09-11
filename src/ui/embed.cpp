@@ -20,7 +20,7 @@ struct Embed::Window {
         parent = x.find_view();
         if (parent == nullptr) {
             std::clog << "connecting to sig....\n";
-            conn_elevated = x.__sig_elevated().connect (
+            conn_elevated = x.__sig_elevated.connect (
                 std::bind (&Window::embed_container_elevated, this));
         }
         create_window();

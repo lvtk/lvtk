@@ -252,11 +252,13 @@ void Widget::render_internal (Graphics& g) {
 
 //=============================================================================
 void Widget::structure_changed_internal() {
-    MTRACE ("Widget::structure_changed_internal(): " << __name);
+    MTRACE (__name << "::structure_changed_internal()");
 }
 
 void Widget::children_changed_internal() {
-    MTRACE ("Widget::children_changed_internal(): " << __name);
+    MTRACE (__name << "::children_changed_internal()");
+    // notify subclass
+    __sig_children_changed;
 }
 
 //=============================================================================

@@ -61,9 +61,9 @@ void Main::elevate (Widget& widget, uintptr_t parent) {
     view->realize();
     view->set_visible (widget.visible());
     widget._view = std::move (view);
-    widget._sig_elevated();
+    widget.__sig_elevated();
     for (auto w : widget._widgets)
-        w->_sig_elevated();
+        w->__sig_elevated();
 }
 
 void* Main::handle() const noexcept {

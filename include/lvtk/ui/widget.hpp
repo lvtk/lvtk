@@ -196,11 +196,17 @@ public:
 
     //=========================================================================
     // things for debugging only
+    // this kind of access into the widget will eventually be stable with
+    // an obverver system + object query system.
     std::string __name;
     const std::vector<Widget*> __widgets() const noexcept { return _widgets; }
-    Signal<void()>& __sig_elevated() noexcept { return _sig_elevated; }
+    Signal<void()> __sig_elevated;
+    Signal<void()> __sig_children_changed;
+    Signal<void()> __sig_structure_changed;
     // end debug things
     //=========================================================================
+protected:
+    virtual void children_changed() { }
 
 private:
     friend class Main;
@@ -209,8 +215,6 @@ private:
     std::vector<Widget*> _widgets;
     Rectangle<int> _bounds;
     bool _visible { false };
-
-    Signal<void()> _sig_elevated;
 
     void add_internal (Widget* widget);
     void render_internal (Graphics& g);
