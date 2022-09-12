@@ -6,8 +6,6 @@
 #include <iostream>
 #include <lv2/ui/ui.h>
 
-#include <boost/signals2.hpp>
-
 #include "lvtk/ui/graphics.hpp"
 #include "lvtk/ui/input.hpp"
 #include "lvtk/ui/view.hpp"
@@ -119,9 +117,6 @@ public:
     // an obverver system + object query system.
     std::string __name;
     const std::vector<Widget*> __widgets() const noexcept { return _widgets; }
-    boost::signals2::signal<void()> __sig_elevated;
-    boost::signals2::signal<void()> __sig_children_changed;
-    boost::signals2::signal<void()> __sig_structure_changed;
     // end debug things
     //=========================================================================
 

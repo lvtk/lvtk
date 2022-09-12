@@ -272,7 +272,6 @@ void Widget::notify_structure_changed() {
     MTRACE (__name << "::notify_structure_changed()");
     WidgetRef ref = this;
     parent_structure_changed();
-    __sig_structure_changed();
 
     for (int i = (int) _widgets.size(); --i >= 0;) {
         _widgets[i]->notify_structure_changed();
@@ -286,7 +285,6 @@ void Widget::notify_children_changed() {
     MTRACE (__name << "::notify_children_changed()");
     // notify subclass
     children_changed();
-    __sig_children_changed();
 }
 
 void Widget::notify_moved_resized (bool was_moved, bool was_resized) {
