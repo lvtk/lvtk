@@ -32,6 +32,17 @@ static inline Rectangle<Tp> rect (const Ev& ev) {
         static_cast<Tp> (ev.height)
     };
 }
+
+template <typename Rect>
+static inline PuglRect frame (const Rect& r) {
+    return {
+        static_cast<PuglCoord> (r.x),
+        static_cast<PuglCoord> (r.y),
+        static_cast<PuglSpan> (r.width),
+        static_cast<PuglSpan> (r.height)
+    };
+}
+
 } // namespace detail
 
 struct View::EventHandler {
@@ -254,6 +265,10 @@ Rectangle<int> View::bounds() const {
         static_cast<int> (f.width),
         static_cast<int> (f.height)
     };
+}
+
+void View::set_bounds (Bounds b) {
+    puglSetFrame ((PuglView*) _view, detail::frame (b));
 }
 
 void View::realize() {

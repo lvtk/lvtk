@@ -41,7 +41,7 @@ struct Embed::Window {
         if (parent != nullptr) {
             create_proxy();
             // TODO: use Pugl's parenting facilities
-            main.elevate (*proxy, parent->handle());
+            main.elevate (*proxy, *parent);
             proxy->set_visible (true);
             parent->set_size (100, 100);
         } else {
@@ -49,12 +49,20 @@ struct Embed::Window {
         }
     }
 
+    void embed_resized() {
+        if (! parent.valid())
+            return;
+        auto b = parent->bounds();
+        b.x = 200;
+        parent->set_bounds (b);
+    }
+
     std::unique_ptr<Proxy> proxy;
 };
 
 Embed::Embed (Main& main)
     : window (std::make_unique<Window> (main, *this)) {
-    // should be opaque
+    set_opaque (true);
 }
 
 Embed::~Embed() {
@@ -73,6 +81,7 @@ void Embed::paint (Graphics& g) {
 }
 
 void Embed::resized() {
+    window->embed_resized();
 }
 
 void Embed::children_changed() {

@@ -61,11 +61,11 @@ void Main::elevate (Widget& widget, uintptr_t parent) {
     view->realize();
     view->set_visible (widget.visible());
     widget._view = std::move (view);
-    widget.structure_changed_internal();
+    widget.notify_structure_changed();
 }
 
 void Main::elevate (Widget& widget, View& parent) {
-    auto view = create_view (widget, 0);
+    elevate (widget, parent.handle());
 }
 
 View* Main::find_view (Widget& widget) const noexcept {

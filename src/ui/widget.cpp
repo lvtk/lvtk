@@ -107,12 +107,16 @@ void Widget::repaint() {
 void Widget::set_bounds (int x, int y, int width, int height) {
     const bool was_moved = _bounds.x != x || _bounds.y != y;
     const bool was_resized = _bounds.width != width || _bounds.width != y;
+
     _bounds.x = x;
     _bounds.y = y;
     _bounds.width = width;
     _bounds.height = height;
-    if (was_moved || was_resized)
-        resized();
+
+    if (visible() && was_resized)
+        repaint();
+
+    notify_moved_resized (was_moved, was_resized);
 }
 
 void Widget::set_bounds (Bounds b) { set_bounds (b.x, b.y, b.width, b.height); }
@@ -147,10 +151,10 @@ void Widget::add_internal (Widget* widget) {
     _widgets.push_back (widget);
 
     // child events
-    widget->structure_changed_internal();
+    widget->notify_structure_changed();
 
     // parent events
-    children_changed_internal();
+    notify_children_changed();
 }
 
 void Widget::remove (Widget* widget) {
@@ -162,10 +166,10 @@ void Widget::remove (Widget* widget) {
     widget->_parent = nullptr;
 
     // child events
-    widget->structure_changed_internal();
+    widget->notify_structure_changed();
 
     // parent events
-    children_changed_internal();
+    notify_children_changed();
 }
 
 void Widget::remove (Widget& widget) {
@@ -264,25 +268,53 @@ void Widget::render_internal (Graphics& g) {
 }
 
 //=============================================================================
-void Widget::structure_changed_internal() {
-    MTRACE (__name << "::structure_changed_internal()");
+void Widget::notify_structure_changed() {
+    MTRACE (__name << "::notify_structure_changed()");
     WidgetRef ref = this;
     parent_structure_changed();
     __sig_structure_changed();
 
     for (int i = (int) _widgets.size(); --i >= 0;) {
-        _widgets[i]->structure_changed_internal();
+        _widgets[i]->notify_structure_changed();
         if (! ref.valid())
             return;
         i = std::min (i, (int) _widgets.size());
     }
 }
 
-void Widget::children_changed_internal() {
-    MTRACE (__name << "::children_changed_internal()");
+void Widget::notify_children_changed() {
+    MTRACE (__name << "::notify_children_changed()");
     // notify subclass
     children_changed();
     __sig_children_changed();
+}
+
+void Widget::notify_moved_resized (bool was_moved, bool was_resized) {
+    WidgetRef ref = this;
+    if (was_moved) {
+        moved();
+        if (! ref.valid())
+            return;
+    }
+
+    if (was_resized) {
+        resized();
+        if (! ref.valid())
+            return;
+
+        for (int i = (int) _widgets.size(); --i >= 0;) {
+            _widgets[i]->parent_size_changed();
+            if (! ref.valid())
+                return;
+            i = std::min (i, (int) _widgets.size());
+        }
+    }
+
+    if (_parent != nullptr)
+        _parent->child_size_changed (this);
+
+    if (ref.valid()) { /* send a signal */
+    };
 }
 
 //=============================================================================

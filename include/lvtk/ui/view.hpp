@@ -23,6 +23,7 @@ public:
 
     void set_size (int width, int height);
     Bounds bounds() const;
+    void set_bounds (Bounds b);
 
     void realize();
 

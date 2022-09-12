@@ -124,9 +124,12 @@ public:
     boost::signals2::signal<void()> __sig_structure_changed;
     // end debug things
     //=========================================================================
+
 protected:
     virtual void children_changed() {}
     virtual void parent_structure_changed() {}
+    virtual void parent_size_changed() {}
+    virtual void child_size_changed (Widget* child) {}
 
 private:
     friend class Main;
@@ -137,11 +140,12 @@ private:
     bool _visible { false };
     bool _opaque { false };
 
-    void add_internal (Widget* widget);
-    void render_internal (Graphics& g);
+    void add_internal (Widget*);
+    void render_internal (Graphics&);
 
-    void structure_changed_internal();
-    void children_changed_internal();
+    void notify_structure_changed();
+    void notify_children_changed();
+    void notify_moved_resized (bool, bool);
 
     LVTK_WEAK_REFABLE (Widget, _weak_status)
 };
