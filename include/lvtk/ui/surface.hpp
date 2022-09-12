@@ -24,6 +24,8 @@ public:
 
     virtual void set_fill (const Fill& fill) = 0;
     virtual void fill_rect (const Rectangle<float>& r) = 0;
+
+    virtual void __text (const std::string& text, float x, float y) {}
 };
 
 } // namespace lvtk

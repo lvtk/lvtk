@@ -23,6 +23,8 @@ public:
     void end_frame() override;
     void fill_rect (const Rectangle<float>& r) override;
 
+    void __text (const std::string&, float, float) override;
+
 private:
     class Context;
     std::unique_ptr<Context> ctx;

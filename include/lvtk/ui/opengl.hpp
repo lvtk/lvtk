@@ -50,19 +50,21 @@ public:
     }
 
 protected:
-    void created() override {
-        View::created();
+    inline void created() override {
         if (! _surface) {
             _surface = std::make_unique<Surf>();
         }
+        View::created();
     }
 
-    void expose (Bounds frame) override {
+    inline void expose (Bounds frame) override {
         glClearColor (0.f, 0.f, 0.f, 1.0f);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        _surface->begin_frame (frame.width, frame.height, scale());
-        render (*_surface);
-        _surface->end_frame();
+        if (_surface) {
+            _surface->begin_frame (frame.width, frame.height, scale());
+            render (*_surface);
+            _surface->end_frame();
+        }
     }
 
 private:

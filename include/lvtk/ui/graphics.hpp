@@ -37,6 +37,10 @@ public:
     void fill_rect (const Rectangle<int>& r) { surface.fill_rect (r.as<float>()); }
     Bounds clip_bounds() const noexcept { return surface.clip_bounds(); }
 
+    void text (const std::string& text, float x, float y) {
+        surface.__text (text, x, y);
+    }
+
 private:
     Surface& surface;
 };

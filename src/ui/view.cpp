@@ -1,9 +1,11 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-#include "lvtk/ui/view.hpp"
+#include <algorithm>
+
 #include "lvtk/ui/input.hpp"
 #include "lvtk/ui/main.hpp"
+#include "lvtk/ui/view.hpp"
 #include "lvtk/ui/widget.hpp"
 
 #define PUGL_DISABLE_DEPRECATED
@@ -41,6 +43,12 @@ static inline PuglRect frame (const Rect& r) {
         static_cast<PuglSpan> (r.width),
         static_cast<PuglSpan> (r.height)
     };
+}
+
+inline static void erase (std::vector<View*>& views, View* view) {
+    auto it = std::find (views.begin(), views.end(), view);
+    if (it != views.end())
+        views.erase (it);
 }
 
 } // namespace detail
@@ -214,12 +222,6 @@ struct View::EventHandler {
     }
 };
 
-inline static void remove_view (std::vector<View*>& views, View* view) {
-    auto it = std::find (views.begin(), views.end(), view);
-    if (it != views.end())
-        views.erase (it);
-}
-
 View::View (Main& m, Widget& w)
     : _main (m),
       _widget (w) {
@@ -231,7 +233,7 @@ View::View (Main& m, Widget& w)
 }
 
 View::~View() {
-    remove_view (_main._views, this);
+    detail::erase (_main._views, this);
     _weak_status.reset();
     puglFreeView ((PuglView*) _view);
     _view = (uintptr_t) nullptr;

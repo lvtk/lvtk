@@ -10,6 +10,8 @@ using Surface = lvtk::nvg::Surface;
 
 namespace lvtk {
 namespace nvg {
+namespace detail {
+static constexpr const char* default_font_face = "sans";
 
 #ifdef NANOVG_GL2
 static constexpr auto create = nvgCreateGL2;
@@ -18,18 +20,19 @@ static constexpr auto destroy = nvgDeleteGL2;
 static constexpr auto create = nvgCreateGL3;
 static constexpr auto destroy = nvgDeleteGL3;
 #endif
+} // namespace detail
 
 class Surface::Context {
     int _font = 0;
 
 public:
-    Context() : ctx (nvg::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {
-        _font = nvgCreateFontMem (ctx, "sans", (uint8_t*) Roboto_Regular_ttf, Roboto_Regular_ttf_size, 1);
+    Context() : ctx (detail::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {
+        _font = nvgCreateFontMem (ctx, detail::default_font_face, (uint8_t*) Roboto_Regular_ttf, Roboto_Regular_ttf_size, 1);
     }
 
     ~Context() {
         if (ctx)
-            nvg::destroy (ctx);
+            detail::destroy (ctx);
     }
 
     void save() {
@@ -124,6 +127,12 @@ void Surface::fill_rect (const Rectangle<float>& r) {
 
     nvgFillColor (ctx->ctx, ctx->state.color);
     nvgFill (ctx->ctx);
+}
+
+void Surface::__text (const std::string& text, float x, float y) {
+    nvgFontSize (ctx->ctx, 15.f);
+    nvgFontFace (ctx->ctx, detail::default_font_face);
+    nvgText (ctx->ctx, x, y, text.c_str(), nullptr);
 }
 
 } // namespace nvg
