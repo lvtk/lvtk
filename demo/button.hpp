@@ -64,11 +64,12 @@ public:
     ~Buttons() {}
 
     void resized() override {
-        int pad = 2;
+        int pad = 4;
         auto r = bounds().at(0).slice_bottom (40).smaller (4);
         button1.set_bounds (r.slice_left (120));
         r.slice_left (pad);
         button2.set_bounds (r.slice_left (120));
+        r.slice_left (pad);
         button3.set_bounds (r.slice_right (120));
     }
 

@@ -204,7 +204,7 @@ struct Rectangle {
     /** Slice a region from the bottom leaving the top */
     Rectangle<Val> slice_bottom (Val amount) noexcept {
         auto s = *this;
-        s.y = s.height - amount;
+        s.y = y + s.height - amount;
         s.height = amount;
         height -= amount; 
         return s;
@@ -213,9 +213,8 @@ struct Rectangle {
     /** Slice a region from the right leaving the left side */
     Rectangle<Val> slice_right (Val amount) noexcept {
         auto s = *this;
-        s.x = s.width - amount;
+        s.x = x + width - amount;
         s.width = amount;
-        x = amount;
         width -= amount;
         return s;
     }
