@@ -136,34 +136,38 @@ private:
 
 } // namespace lvtk
 
+#define LVTK_WEAK_REFABLE_WITH_MEMBER(klass, member)               \
+    friend class lvtk::WeakRef<klass>;                             \
+    lvtk::WeakStatus<klass> member;                                \
+    static lvtk::WeakStatus<klass> lvtk_weak_status (klass* obj) { \
+        return obj->member;                                        \
+    }
+
 /**
     A WeakStatus/WeakRef implementation macro.
+    
     Use it to add boiler plate code required to use WeakRef.
+    NOTE: this adds a _weak_status member in your class. If you need a custom
+    member name, use LVTK_WEAK_REFABLE_WITH_MEMBER instead.
 
-    @param klass    The class name to use.
-    @param member   The member variable name of the WeakStatus.
+    @param klass The class name to use.
 
     @code
     class MyObject
     {
     public:
         MyObject() {
-            weak_status.reset (this);
+            _weak_status.reset (this);
         }
         ~MyObject() {
-            weak_status.reset();
+            _weak_status.reset();
         }
 
     private:
-        LVTK_WEAK_REFABLE (MyObject, weak_status)
+        LVTK_WEAK_REFABLE (MyObject)
     };
     @endcode
 
     @see WeakRef, WeakStatus
 */
-#define LVTK_WEAK_REFABLE(klass, member)                           \
-    friend class lvtk::WeakRef<klass>;                             \
-    lvtk::WeakStatus<klass> member;                                \
-    static lvtk::WeakStatus<klass> lvtk_weak_status (klass* obj) { \
-        return obj->member;                                        \
-    }
+#define LVTK_WEAK_REFABLE(klass) LVTK_WEAK_REFABLE_WITH_MEMBER (klass, _weak_status)

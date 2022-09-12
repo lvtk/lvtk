@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "lvtk/weak_ref.hpp"
+#include <lvtk/weak_ref.hpp>
 namespace lvtk {
 
 class Widget;
@@ -20,7 +20,7 @@ public:
     void draw_button (Widget& button) {}
 
 private:
-    LVTK_WEAK_REFABLE (Style, _weak_status);
+    LVTK_WEAK_REFABLE (Style);
 };
 
 } // namespace lvtk

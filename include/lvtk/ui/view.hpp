@@ -50,7 +50,7 @@ private:
 
     void set_parent (uintptr_t parent);
 
-    LVTK_WEAK_REFABLE (View, _weak_status)
+    LVTK_WEAK_REFABLE (View);
 };
 
 using ViewRef = WeakRef<View>;

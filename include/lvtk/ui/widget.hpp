@@ -142,7 +142,7 @@ private:
     void notify_children_changed();
     void notify_moved_resized (bool, bool);
 
-    LVTK_WEAK_REFABLE (Widget, _weak_status)
+    LVTK_WEAK_REFABLE (Widget)
 };
 
 using WidgetRef = WeakRef<Widget>;

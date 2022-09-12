@@ -35,7 +35,7 @@ struct WeakRefTest {
         virtual ~TestObject() { weak_status.reset(); }
 
     private:
-        LVTK_WEAK_REFABLE (TestObject, weak_status)
+        LVTK_WEAK_REFABLE_WITH_MEMBER (TestObject, weak_status)
     };
 
     class SubObject : public TestObject {};
