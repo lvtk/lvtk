@@ -9,7 +9,6 @@
 #include "utils.hpp"
 
 #include "four_squares.hpp"
-#include "video/demo.hpp"
 
 namespace lvtk {
 namespace demo {
@@ -18,9 +17,6 @@ namespace demo {
 
 enum {
     FOUR_SQUARES = 0,
-#if __linux__
-    VIDEO,
-#endif
     NUM_DEMOS
 };
 
@@ -29,9 +25,7 @@ public:
     Content (Main& m);
     ~Content();
 
-    void motion (InputEvent ev) override {
-        // std::clog << "content motion\n";
-    }
+    void motion (InputEvent ev) override {}
 
     void resized() override {
         auto r = bounds().at (0, 0);
@@ -53,18 +47,15 @@ public:
 private:
     Main& main;
     void run_demo (int index) {
-        if (demo != nullptr)
-            remove (demo.get());
+        if (demo != nullptr) {
+            remove (*demo);
+            demo.reset();
+        }
 
         switch (index) {
             case FOUR_SQUARES:
                 demo.reset (new FourSquares());
                 break;
-#if __linux__
-            case VIDEO:
-                demo.reset (new Video (main));
-                break;
-#endif
         }
 
         if (demo) {

@@ -34,7 +34,3 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 )
 
 boost_dep = (dependency ('boost'))
-
-evg_dep = dependency ('evg-0', 
-    fallback : [ 'evg', 'evg_dep' ],
-    required : false)
