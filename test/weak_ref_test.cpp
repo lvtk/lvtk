@@ -10,9 +10,11 @@ struct WeakRefTest {
         TestRef ref1 = uptr1.get();
         BOOST_REQUIRE (ref1.lock() != nullptr);
         BOOST_REQUIRE (ref1.valid());
+        BOOST_REQUIRE (ref1 != nullptr);
         uptr1.reset();
         BOOST_REQUIRE (ref1.lock() == nullptr);
         BOOST_REQUIRE (! ref1.valid());
+        BOOST_REQUIRE (ref1 == nullptr);
     }
 
     void subclass() {
