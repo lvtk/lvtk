@@ -1,5 +1,7 @@
 
 #pragma once
+
+#include <cstring>
 #include <string>
 
 namespace lvtk {
@@ -62,8 +64,18 @@ public:
         _str = o.c_str();
         return *this;
     }
+    String& operator= (const char* o) {
+        _str = o;
+        return *this;
+    }
 
-    inline bool operator== (const char* o) const noexcept { return _str == _str; }
+    inline bool operator== (const char* o) const noexcept { return strcmp (_str.c_str(), o) == 0; }
+    inline bool operator== (const String& o) const noexcept { return _str == o._str; }
+    inline bool operator== (const std::string& o) const noexcept { return _str == o; }
+
+    inline bool operator!= (const char* o) const noexcept { return strcmp (_str.c_str(), o) != 0; }
+    inline bool operator!= (const String& o) const noexcept { return _str != o._str; }
+    inline bool operator!= (const std::string& o) const noexcept { return _str != o; }
 
     inline bool operator< (const String& a) const noexcept {
         return _str < a._str;

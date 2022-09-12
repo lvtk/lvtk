@@ -16,6 +16,14 @@ BOOST_AUTO_TEST_CASE (ctors) {
     BOOST_REQUIRE_EQUAL (a, "lv2");
     a = String (String (std::string ("rules")));
     BOOST_REQUIRE_EQUAL (a, "rules");
+
+    a = String("test_1");
+    BOOST_REQUIRE_EQUAL(a, "test_1");
+    BOOST_REQUIRE_EQUAL(a, std::string("test_1"));
+    BOOST_REQUIRE_EQUAL(a, String("test_1"));
+    BOOST_REQUIRE_NE(a, "s df ");
+    BOOST_REQUIRE_NE(a, std::string("seee"));
+    BOOST_REQUIRE_NE(a, String("test_1 "));
 }
 
 BOOST_AUTO_TEST_CASE (streams) {
