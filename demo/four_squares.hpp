@@ -15,6 +15,8 @@ public:
     void paint (Graphics& g) override {
         g.set_color (is_on ? color_on : color_off);
         g.fill_rect (bounds().at (0, 0));
+        g.set_color (color_text);
+        g.text (__name, width() / 2, height() / 2);
     }
 
     bool obstructed (int x, int y) override { return true; }
@@ -25,20 +27,12 @@ public:
     }
 
     void pressed (InputEvent ev) override {
-        std::clog << __name << " pressed: "
-                  << ev.pos.str() << "  bounds: "
-                  << bounds().str() << std::endl;
-    }
-
-    void released (InputEvent ev) override {
-        std::clog << __name << " released: "
-                  << ev.pos.str() << "   bounds: "
-                  << bounds().str() << std::endl;
         is_on = ! is_on;
         repaint();
     }
 
     bool is_on = false;
+    Color color_text { 0xffffffff };
     Color color_on { 0x550000ff };
     Color color_off { 0x444444ff };
 };
@@ -49,7 +43,7 @@ public:
         for (int i = 0; i < 4; ++i) {
             auto box = add (new Box());
             box->set_visible (true);
-            box->__name = std::string ("box") + std::to_string (i + 1);
+            box->__name = std::string ("Box ") + std::to_string (i + 1);
             boxes.push_back (box);
         }
 
@@ -96,6 +90,7 @@ public:
         g.fill_rect (bounds().at (0, 0));
     }
 
+private:
     std::vector<Box*> boxes;
 };
 

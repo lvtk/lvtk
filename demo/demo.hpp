@@ -55,7 +55,12 @@ public:
 
 private:
     Main& main;
+    int current_demo = -1;
+    
     void run_demo (int index) {
+        if (current_demo == index)
+            return;
+        
         if (demo != nullptr) {
             remove (*demo);
             demo.reset();
@@ -72,6 +77,7 @@ private:
             demo->set_visible (true);
         }
 
+        current_demo = index;
         resized();
     }
 
