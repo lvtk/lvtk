@@ -52,11 +52,14 @@ public:
         Windows: Returns the `HMODULE` of the calling process.
     */
     void* handle() const noexcept;
+
+    /** Returns the underlying PuglWorld. */
     uintptr_t world() const noexcept { return _world; }
 
     /* things for testing */
     bool __quit_flag = false;
     /* end things for testing */
+
 private:
     friend class Widget;
     friend class View;

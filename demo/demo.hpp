@@ -6,9 +6,8 @@
 #include <lvtk/ui/widget.hpp>
 
 #include "button.hpp"
-#include "utils.hpp"
-
 #include "four_squares.hpp"
+#include "utils.hpp"
 
 namespace lvtk {
 namespace demo {
@@ -17,13 +16,20 @@ namespace demo {
 
 enum ID {
     FOUR_SQUARES = 0,
+    BUTTONS,
     NUM_DEMOS
 };
 
 static std::string name (int did) {
     switch (did) {
-        case FOUR_SQUARES: return "Four Squares"; break;
+        case FOUR_SQUARES:
+            return "Four Squares";
+            break;
+        case BUTTONS:
+            return "Buttons";
+            break;
     }
+
     String demo ("Demo ");
     demo << (did + 1);
     return demo;
@@ -56,11 +62,11 @@ public:
 private:
     Main& main;
     int current_demo = -1;
-    
+
     void run_demo (int index) {
         if (current_demo == index)
             return;
-        
+
         if (demo != nullptr) {
             remove (*demo);
             demo.reset();
@@ -69,6 +75,9 @@ private:
         switch (index) {
             case FOUR_SQUARES:
                 demo.reset (new FourSquares());
+                break;
+            case BUTTONS:
+                demo.reset (new Buttons());
                 break;
         }
 

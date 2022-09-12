@@ -12,8 +12,8 @@
 #endif
 #define GL_SILENCE_DEPRECATION
 #define PUGL_DISABLE_DEPRECATED
-#include <pugl/pugl.h>
 #include <pugl/gl.h>
+#include <pugl/pugl.h>
 
 // /// A hint for configuring a view
 // typedef enum {
@@ -67,6 +67,7 @@ public:
         set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 3);
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 3);
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
+        set_view_hint (PUGL_RESIZABLE, PUGL_FALSE);
     }
 
     ~OpenGLView() {

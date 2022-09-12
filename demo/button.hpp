@@ -22,14 +22,11 @@ public:
 
     bool obstructed (int x, int y) override { return true; }
 
-    void motion (InputEvent ev) override {
-    }
-
-    void pressed (InputEvent ev) override {
-    }
+    void pressed (InputEvent ev) override {}
 
     void released (InputEvent ev) override {
-        notify_clicked();
+        if (contains (ev.pos))
+            notify_clicked();
     }
 
     bool toggled() const noexcept { return _toggled; }
@@ -48,6 +45,35 @@ private:
         if (clicked)
             clicked();
     }
+};
+
+class Buttons : public Widget {
+public:
+    Buttons() {
+        add (button1);
+        button1.__name = "Text Button 1";
+        button1.set_visible (true);
+        add (button2);
+        button2.__name = "Text Button 2";
+        button2.set_visible (true);
+        add (button3);
+        button3.__name = "Text Button 3";
+        button3.set_visible (true);
+    }
+
+    ~Buttons() {}
+
+    void resized() override {
+        int pad = 2;
+        auto r = bounds().at(0).slice_bottom (40).smaller (4);
+        button1.set_bounds (r.slice_left (120));
+        r.slice_left (pad);
+        button2.set_bounds (r.slice_left (120));
+        button3.set_bounds (r.slice_right (120));
+    }
+
+private:
+    Button button1, button2, button3;
 };
 
 } // namespace demo
