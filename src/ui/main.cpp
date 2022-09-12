@@ -61,9 +61,7 @@ void Main::elevate (Widget& widget, uintptr_t parent) {
     view->realize();
     view->set_visible (widget.visible());
     widget._view = std::move (view);
-    widget.__sig_elevated();
-    for (auto w : widget._widgets)
-        w->__sig_elevated();
+    widget.structure_changed_internal();
 }
 
 void Main::elevate (Widget& widget, View& parent) {

@@ -45,6 +45,11 @@ public:
 
     void repaint();
 
+    //==========================================
+    bool opaque() const noexcept { return _opaque; }
+    void set_opaque (bool opaque) { _opaque = opaque; }
+
+    //==================
     virtual void resized() {}
     virtual void moved() {}
 
@@ -52,6 +57,7 @@ public:
     virtual void motion (InputEvent) {}
     virtual void pressed (InputEvent) {}
     virtual void released (InputEvent) {}
+    //============
 
     Bounds bounds() const noexcept { return _bounds; }
     int width() const noexcept { return _bounds.width; }
@@ -85,13 +91,14 @@ public:
 
     //=========================================================================
     /** Called by the View to render this Widget.
-        Invokes Widget::paint on this and all children.
+        Invokes Widget::paint on this and all children recursively
      */
     void render (Graphics& g);
 
     //=========================================================================
-    /** True if this Widget owns the View. i.e. is the top level
-        widget under the OS window */
+    /** True if this Widget owns it's View. i.e. is the top level
+        widget under the OS window 
+     */
     bool elevated() const noexcept { return _view != nullptr; }
 
     //=========================================================================
@@ -119,6 +126,7 @@ public:
     //=========================================================================
 protected:
     virtual void children_changed() {}
+    virtual void parent_structure_changed() {}
 
 private:
     friend class Main;
@@ -127,6 +135,7 @@ private:
     std::vector<Widget*> _widgets;
     Rectangle<int> _bounds;
     bool _visible { false };
+    bool _opaque { false };
 
     void add_internal (Widget* widget);
     void render_internal (Graphics& g);

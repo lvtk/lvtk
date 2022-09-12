@@ -12,10 +12,14 @@ public:
     Embed (Main& main);
     ~Embed();
 
+    ViewRef host_view() const noexcept;
+
     void paint (Graphics& g) override;
     void resized() override;
 
-    ViewRef host_view() const noexcept;
+protected:
+    void children_changed() override;
+    void parent_structure_changed() override;
 
 private:
     class Window;

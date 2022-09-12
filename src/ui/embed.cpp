@@ -18,49 +18,38 @@ struct Embed::Window {
 
     Window (Main& m, Embed& x)
         : main (m), owner (x) {
-        parent = main.find_view (x);
-        if (parent == nullptr) {
-            std::clog << "connecting to sig....\n";
-            conn_elevated = x.__sig_elevated.connect (
-                std::bind (&Window::embed_container_elevated, this));
-        }
         create_window();
     }
 
     ~Window() {
-        conn_elevated.disconnect();
     }
 
     void create_proxy() {
         proxy = std::make_unique<Proxy>();
         proxy->set_size (360, 240);
         proxy->set_visible (true);
-        assert (proxy != nullptr);
-        assert (proxy->find_view().valid());
-        assert (proxy->elevated());
     }
 
     void create_window() {
         if (proxy != nullptr)
             return;
 
+        parent = owner.find_view();
+        if (parent == nullptr)
+            parent = main.find_view (owner);
+
         if (parent != nullptr) {
             create_proxy();
-            main.elevate (*proxy, *parent);
-            std::clog << "[embed] parent found on instantiate\n";
+            // TODO: use Pugl's parenting facilities
+            main.elevate (*proxy, parent->handle());
             proxy->set_visible (true);
+            parent->set_size (100, 100);
         } else {
-            std::clog << "[embed] no parent found on instantiate.\n";
+            std::clog << "[embed] window: didn't get parent view\n";
         }
     }
 
     std::unique_ptr<Proxy> proxy;
-
-    boost::signals2::connection conn_elevated;
-    void embed_container_elevated() {
-        std::clog << "[embed] window: ancestor elevated\n";
-        conn_elevated.disconnect();
-    }
 };
 
 Embed::Embed (Main& main)
@@ -72,6 +61,12 @@ Embed::~Embed() {
     window.reset();
 }
 
+ViewRef Embed::host_view() const noexcept {
+    return (window != nullptr && window->proxy != nullptr)
+               ? window->proxy->find_view()
+               : nullptr;
+}
+
 void Embed::paint (Graphics& g) {
     g.set_color (0x222222ff);
     g.fill_rect (bounds().at (0));
@@ -80,10 +75,19 @@ void Embed::paint (Graphics& g) {
 void Embed::resized() {
 }
 
-ViewRef Embed::host_view() const noexcept {
-    return (window != nullptr && window->proxy != nullptr)
-               ? window->proxy->find_view()
-               : nullptr;
+void Embed::children_changed() {
+    std::clog << "[embed] children_changed()\n";
+    window->create_window();
+}
+
+void Embed::parent_structure_changed() {
+    std::clog << "[embed] parent_structure_changed\n";
+    if (auto v = find_view()) {
+        std::clog << "[embed] find_fiew() != nullptr\n";
+        window->create_window();
+    } else {
+        std::clog << "[embed] find_fiew() == nullptr\n";
+    }
 }
 
 } // namespace lvtk

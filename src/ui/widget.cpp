@@ -266,12 +266,23 @@ void Widget::render_internal (Graphics& g) {
 //=============================================================================
 void Widget::structure_changed_internal() {
     MTRACE (__name << "::structure_changed_internal()");
+    WidgetRef ref = this;
+    parent_structure_changed();
+    __sig_structure_changed();
+
+    for (int i = (int) _widgets.size(); --i >= 0;) {
+        _widgets[i]->structure_changed_internal();
+        if (! ref.valid())
+            return;
+        i = std::min (i, (int) _widgets.size());
+    }
 }
 
 void Widget::children_changed_internal() {
     MTRACE (__name << "::children_changed_internal()");
     // notify subclass
-    __sig_children_changed;
+    children_changed();
+    __sig_children_changed();
 }
 
 //=============================================================================
