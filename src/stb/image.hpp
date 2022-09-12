@@ -36,7 +36,7 @@ public:
 
     void load_file (const char* file) {
         free_data();
-        _data = stb::load (file, _width, _height);
+        _data = stb::load_file (file, _width, _height);
     }
 
     int num_components() const noexcept { return _n_comps; }

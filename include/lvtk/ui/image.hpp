@@ -14,7 +14,7 @@ public:
 class Image {
 public:
     Image() = default;
-    Image& operator= (const Image& o) { return *this; }
+    Image& operator= (const Image& o) { _pixels = o._pixels; return *this; }
     long use_count() const noexcept { return _pixels.use_count(); }
 
 private:
