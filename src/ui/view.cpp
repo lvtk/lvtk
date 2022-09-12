@@ -226,8 +226,9 @@ View::View (Main& m, Widget& w)
     : _main (m),
       _widget (w) {
     _view = (uintptr_t) puglNewView ((PuglWorld*) m.world());
-    puglSetHandle ((PuglView*) _view, this);
-    puglSetEventFunc ((PuglView*) _view, EventHandler::dispatch);
+    auto v = (PuglView*) _view;
+    puglSetHandle (v, this);
+    puglSetEventFunc (v, EventHandler::dispatch);
     _weak_status.reset (this);
     _main._views.push_back (this);
 }
@@ -241,6 +242,10 @@ View::~View() {
 
 void View::set_backend (uintptr_t b) {
     puglSetBackend ((PuglView*) _view, (PuglBackend*) b);
+}
+
+void View::set_view_hint (int hint, int value) {
+    puglSetViewHint ((PuglView*)_view, static_cast<PuglViewHint>(hint), value);
 }
 
 uintptr_t View::handle() { return puglGetNativeView ((PuglView*) _view); }

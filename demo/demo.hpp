@@ -15,10 +15,19 @@ namespace demo {
 
 #define SIDEBAR_WIDTH 200
 
-enum {
+enum ID {
     FOUR_SQUARES = 0,
     NUM_DEMOS
 };
+
+static std::string name (int did) {
+    switch (did) {
+        case FOUR_SQUARES: return "Four Squares"; break;
+    }
+    String demo ("Demo ");
+    demo << (did + 1);
+    return demo;
+}
 
 class Content : public Widget {
 public:
@@ -69,10 +78,10 @@ private:
     class SideBar : public Widget {
     public:
         SideBar (Content& owner) : content (owner) {
-            for (int i = 0; i < 2; ++i) {
+            for (int i = 0; i < NUM_DEMOS; ++i) {
                 auto box = add (new Button());
                 box->set_visible (true);
-                box->__name = std::string ("box") + std::to_string (i + 1);
+                box->__name = demo::name (i);
                 box->clicked = std::bind (&SideBar::run_demo, this, i);
                 demos.push_back (box);
             }

@@ -27,7 +27,7 @@ class Surface::Context {
 
 public:
     Context() : ctx (detail::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {
-        _font = nvgCreateFontMem (ctx, detail::default_font_face, (uint8_t*) Roboto_Regular_ttf, Roboto_Regular_ttf_size, 1);
+        _font = nvgCreateFontMem (ctx, detail::default_font_face, (uint8_t*) Roboto_Regular_ttf, Roboto_Regular_ttf_size, 0);
     }
 
     ~Context() {
@@ -129,10 +129,16 @@ void Surface::fill_rect (const Rectangle<float>& r) {
     nvgFill (ctx->ctx);
 }
 
-void Surface::__text (const std::string& text, float x, float y) {
+void Surface::__text_top_left (const std::string& text, float x, float y) {
     nvgFontSize (ctx->ctx, 15.f);
     nvgFontFace (ctx->ctx, detail::default_font_face);
-    nvgText (ctx->ctx, x, y, text.c_str(), nullptr);
+    nvgTextAlign (ctx->ctx, NVG_ALIGN_TOP | NVG_ALIGN_LEFT);
+    nvgFillColor (ctx->ctx, ctx->state.color);
+    nvgText (ctx->ctx,
+             ctx->state.origin.x + x,
+             ctx->state.origin.y + y,
+             text.c_str(),
+             nullptr);
 }
 
 } // namespace nvg

@@ -23,7 +23,7 @@ public:
     void end_frame() override;
     void fill_rect (const Rectangle<float>& r) override;
 
-    void __text (const std::string&, float, float) override;
+    void __text_top_left (const std::string&, float, float) override;
 
 private:
     class Context;

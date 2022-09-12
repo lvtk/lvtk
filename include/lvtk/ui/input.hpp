@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <lvtk/ui/graphics.hpp> // point
 #include <lvtk/weak_ref.hpp>
 
 namespace lvtk {

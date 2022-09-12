@@ -12,7 +12,28 @@
 #endif
 #define GL_SILENCE_DEPRECATION
 #define PUGL_DISABLE_DEPRECATED
+#include <pugl/pugl.h>
 #include <pugl/gl.h>
+
+// /// A hint for configuring a view
+// typedef enum {
+//   PUGL_USE_COMPAT_PROFILE,    ///< Use compatible (not core) OpenGL profile
+//   PUGL_USE_DEBUG_CONTEXT,     ///< True to use a debug OpenGL context
+//   PUGL_CONTEXT_VERSION_MAJOR, ///< OpenGL context major version
+//   PUGL_CONTEXT_VERSION_MINOR, ///< OpenGL context minor version
+//   PUGL_RED_BITS,              ///< Number of bits for red channel
+//   PUGL_GREEN_BITS,            ///< Number of bits for green channel
+//   PUGL_BLUE_BITS,             ///< Number of bits for blue channel
+//   PUGL_ALPHA_BITS,            ///< Number of bits for alpha channel
+//   PUGL_DEPTH_BITS,            ///< Number of bits for depth buffer
+//   PUGL_STENCIL_BITS,          ///< Number of bits for stencil buffer
+//   PUGL_SAMPLES,               ///< Number of samples per pixel (AA)
+//   PUGL_DOUBLE_BUFFER,         ///< True if double buffering should be used
+//   PUGL_SWAP_INTERVAL,         ///< Number of frames between buffer swaps
+//   PUGL_RESIZABLE,             ///< True if view should be resizable
+//   PUGL_IGNORE_KEY_REPEAT,     ///< True if key repeat events are ignored
+//   PUGL_REFRESH_RATE,          ///< Refresh rate in Hz
+// } PuglViewHint;
 
 namespace lvtk {
 
@@ -43,6 +64,9 @@ public:
     OpenGLView (Main& context, Widget& widget)
         : View (context, widget) {
         set_backend ((uintptr_t) puglGlBackend());
+        set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 3);
+        set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 3);
+        set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
     }
 
     ~OpenGLView() {

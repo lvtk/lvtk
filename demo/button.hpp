@@ -16,6 +16,8 @@ public:
     void paint (Graphics& g) override {
         g.set_color (toggled() ? color_on : color_off);
         g.fill_rect (bounds().at (0));
+        g.set_color (0xffffffff);
+        g.text (__name, 10, 12);
     }
 
     bool obstructed (int x, int y) override { return true; }

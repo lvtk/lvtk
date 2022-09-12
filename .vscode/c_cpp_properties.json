@@ -3,9 +3,10 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}",
-                "${workspaceFolder}/examples",
-                "/usr/local/include/juce-5"
+                "${workspaceFolder}/include/*",
+                "${workspaceFolder}/demo/*",
+                "${workspaceFolder}/subprojects/lv2/include/*",
+                "${workspaceFolder}/subprojects/pugl/include/*"
             ],
             "defines": [],
             "macFrameworkPath": [
@@ -22,7 +23,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include/*",
-                "${workspaceFolder}/demo/*"
+                "${workspaceFolder}/demo/*",
+                "${workspaceFolder}/subprojects/lv2/include/*",
+                "${workspaceFolder}/subprojects/pugl/include/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang++",
