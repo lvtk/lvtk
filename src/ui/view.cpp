@@ -59,6 +59,10 @@ struct View::EventHandler {
             VIEW_DBG ("configure: hint");
             return PUGL_SUCCESS;
         }
+
+        auto& w = view._widget;
+        w.set_bounds (w.x(), w.y(), (int)ev.width, (int)ev.height);
+        VIEW_DBG ("pugl: configure: " << w.bounds().str());
         return PUGL_SUCCESS;
     }
 
@@ -127,7 +131,7 @@ struct View::EventHandler {
             }
 
             InputEvent event;
-            event.pos = ref->convert (view._widget, pos).as<double>();
+            event.pos = ref->convert (&view._widget, pos).as<double>();
             ref->motion (event);
         } else if (view._hovered) {
             VIEW_DBG ("hovered cleared");
@@ -142,7 +146,7 @@ struct View::EventHandler {
         event.pos = detail::point<double> (ev);
 
         if (auto w = view._hovered.lock()) {
-            event.pos = w->convert (view._widget, event.pos);
+            event.pos = w->convert (&view._widget, event.pos);
             // VIEW_DBG("widget:" << w->__name << " bounds: " << w->bounds().str());
             // VIEW_DBG("ev pos: " << event.pos.str());
             if (w->contains (event.pos))
@@ -158,7 +162,7 @@ struct View::EventHandler {
         auto hovered = view._hovered;
 
         if (auto w = hovered.lock()) {
-            event.pos = hovered->convert (view._widget, event.pos);
+            event.pos = hovered->convert (&view._widget, event.pos);
             if (w->contains (event.pos))
                 w->released (event);
         }

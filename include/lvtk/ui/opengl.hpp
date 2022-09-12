@@ -67,7 +67,7 @@ public:
         set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 3);
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 3);
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
-        set_view_hint (PUGL_RESIZABLE, PUGL_FALSE);
+        set_view_hint (PUGL_RESIZABLE, PUGL_TRUE);
     }
 
     ~OpenGLView() {
@@ -83,9 +83,11 @@ protected:
     }
 
     inline void expose (Bounds frame) override {
+        glViewport (frame.x, frame.y, frame.width, frame.height);
         glClearColor (0.f, 0.f, 0.f, 1.0f);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (_surface) {
+            
             _surface->begin_frame (frame.width, frame.height, scale());
             render (*_surface);
             _surface->end_frame();

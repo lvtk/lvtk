@@ -55,7 +55,7 @@ static Point<float> coord_to_parent_space (const Widget& widget,
     return result;
 }
 
-static Point<float> convert_coord (const Widget* tgt, Widget* src, Point<float> pt) {
+static Point<float> convert_coord (const Widget* tgt, const Widget* src, Point<float> pt) {
     while (src != nullptr) {
         if (src == tgt)
             return pt;
@@ -220,8 +220,8 @@ Style& Widget::style() {
     assert (false);
 }
 
-Point<double> Widget::convert (Widget& source, Point<double> pt) const {
-    return detail::convert_coord (this, &source, pt.as<float>()).as<double>();
+Point<double> Widget::convert (const Widget* source, Point<double> pt) const {
+    return detail::convert_coord (this, source, pt.as<float>()).as<double>();
 }
 
 Point<int> Widget::to_view_space (Point<int> pt) {
@@ -237,7 +237,7 @@ void Widget::render (Graphics& g) {
 }
 
 //=================================================================
-bool Widget::contains (const Widget& widget, bool deep) {
+bool Widget::contains (const Widget& widget, bool deep) const {
     if (! deep)
         return widget._parent == this;
     auto c = &widget;

@@ -74,7 +74,7 @@ public:
         @param widget The widget to test.
         @param deep If true search children recursively. default = false
     */
-    bool contains (const Widget& widget, bool deep = false);
+    bool contains (const Widget& widget, bool deep = false) const;
 
     /** True if xy falls within this Widget's local bounds */
     bool contains (int x, int y) const noexcept;
@@ -87,7 +87,7 @@ public:
         @param source The Widget to convert from.
         @param coord  A coordinate in the source.
      */
-    Point<double> convert (Widget& source, Point<double> coord) const;
+    Point<double> convert (const Widget* source, Point<double> coord) const;
 
     /** Convert a coordnate to view space.
         @param coord The coordnate in local space to convert
