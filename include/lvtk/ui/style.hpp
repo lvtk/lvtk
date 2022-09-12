@@ -34,6 +34,10 @@ public:
         _weak_status.reset();
     }
 
+    void set_color (ColorIDs ID, Color color) {
+        set_color (static_cast<int> (ID), color);
+    }
+
     void set_color (int ID, Color color) {
         _colors.insert (ColorItem { ID, color });
     }
