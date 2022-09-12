@@ -219,6 +219,12 @@ uintptr_t Widget::find_handle() const noexcept {
     return 0;
 }
 
+Style& Widget::style() {
+    if (auto v = find_view())
+        return v->style();
+    assert(false);
+}
+
 Point<double> Widget::convert (Widget& source, Point<double> pt) const {
     return detail::convert_coord (this, &source, pt.as<float>()).as<double>();
 }

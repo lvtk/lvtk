@@ -4,11 +4,12 @@
 #pragma once
 
 #include <lvtk/ui/graphics.hpp>
+#include <lvtk/ui/main.hpp>
+#include <lvtk/ui/style.hpp>
 #include <lvtk/weak_ref.hpp>
 
 namespace lvtk {
 
-class Main;
 class Widget;
 
 class View {
@@ -26,6 +27,9 @@ public:
     void set_bounds (Bounds b);
 
     void realize();
+
+    Style& style() noexcept { return _main.style(); }
+    const Style& style() const noexcept { return _main.style(); }
 
     //====== TESTING ========
     void __pugl_post_redisplay();

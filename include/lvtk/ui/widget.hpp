@@ -58,6 +58,8 @@ public:
     //============
 
     Bounds bounds() const noexcept { return _bounds; }
+    int x() const noexcept { return _bounds.x; }
+    int y() const noexcept { return _bounds.y; }
     int width() const noexcept { return _bounds.width; }
     int height() const noexcept { return _bounds.height; }
     void set_bounds (int x, int y, int width, int height);
@@ -110,6 +112,8 @@ public:
     ViewRef find_view() const noexcept;
     uintptr_t find_handle() const noexcept;
     operator LV2UI_Widget() noexcept { return (LV2UI_Widget) find_handle(); }
+
+    Style& style();
 
     //=========================================================================
     // things for debugging only

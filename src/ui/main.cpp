@@ -1,8 +1,9 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-#include "lvtk/ui/main.hpp"
-#include "lvtk/ui/widget.hpp"
+#include <lvtk/ui/main.hpp>
+#include <lvtk/ui/style.hpp>
+#include <lvtk/ui/button.hpp>
 
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
@@ -25,12 +26,40 @@ static inline PuglWorldFlags world_flags() {
     return 0; //PUGL_WORLD_THREADS;
 }
 
+class DefaultStyle : public Style {
+public:
+    DefaultStyle() {
+        set_color ((int) ColorIDs::BUTTON_BASE, Color (0x333333ff));
+        set_color ((int) ColorIDs::BUTTON_ON, Color (0x252525ff));
+        set_color ((int) ColorIDs::BUTTON_TEXT_OFF, Color (0xeeeeeeff));
+        set_color ((int) ColorIDs::BUTTON_TEXT_ON, Color (0xddddddff));
+    }
+
+    ~DefaultStyle() {}
+
+    void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) override {
+        auto bc = highlight || down ? find_color ((int) ColorIDs::BUTTON_BASE) : find_color ((int) ColorIDs::BUTTON_BASE).brighter(0.1);
+        g.set_color (w.toggled() ? find_color ((int) ColorIDs::BUTTON_ON) : bc);
+        g.fill_rect (w.bounds().at (0));
+    }
+
+    void draw_button_text (Graphics& g, TextButton& w, bool highlight, bool down) override {
+        auto c = find_color (w.toggled() ? (int)ColorIDs::BUTTON_TEXT_ON : (int)ColorIDs::BUTTON_TEXT_OFF);
+        if (highlight || down)
+            c = c.brighter (0.05);
+        g.set_color (c);
+        g.text (w.text(), 10, 12);
+    }
+};
+
 } // namespace detail
 
 Main::Main (Mode m, std::unique_ptr<Backend> b)
     : _world ((uintptr_t) puglNewWorld (detail::world_type (m), detail::world_flags())),
       _backend (std::move (b)),
-      _mode (m) {}
+      _mode (m) {
+    _style.reset (new detail::DefaultStyle());
+}
 
 Main::~Main() {}
 

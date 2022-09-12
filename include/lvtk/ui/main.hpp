@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include <lvtk/context.hpp>
 #include <lvtk/string.hpp>
-#include <lvtk/ui/view.hpp>
-#include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
 
@@ -19,6 +20,9 @@ enum class Mode {
 };
 
 struct Backend;
+class Style;
+class View;
+class Widget;
 
 /** The context in which a UI or GUI app is running.
     Can create views and run the event loop
@@ -56,6 +60,10 @@ public:
     /** Returns the underlying PuglWorld. */
     uintptr_t world() const noexcept { return _world; }
 
+    /** Returns the default style */
+    Style& style() noexcept { return *_style; }
+    const Style& style() const noexcept { return *_style; }
+
     /* things for testing */
     bool __quit_flag = false;
     /* end things for testing */
@@ -67,6 +75,7 @@ private:
     std::unique_ptr<Backend> _backend;
     const Mode _mode;
     std::vector<View*> _views;
+    std::unique_ptr<Style> _style;
 
     /** Create an unrealized view for the given Widget. */
     std::unique_ptr<View> create_view (Widget& widget, uintptr_t parent = 0);

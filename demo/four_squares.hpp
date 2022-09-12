@@ -21,12 +21,10 @@ public:
 
     bool obstructed (int x, int y) override { return true; }
 
-    void motion (InputEvent ev) override {
-        // std::clog << __name << " motion: "
-        //           << ev.pos.str() << std::endl;
+    void motion (InputEvent) override {
     }
 
-    void pressed (InputEvent ev) override {
+    void pressed (InputEvent) override {
         is_on = ! is_on;
         repaint();
     }

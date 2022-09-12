@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <lvtk/string.hpp>
+
 namespace lvtk {
 
 template <typename Val>
@@ -42,9 +44,9 @@ struct Point {
     }
 
     std::string str() const noexcept {
-        std::stringstream st;
+        String st;
         st << x << " " << y;
-        return st.str();
+        return st;
     }
 };
 
@@ -75,9 +77,9 @@ struct Rectangle {
     }
 
     std::string str() const noexcept {
-        std::stringstream out;
+        String out;
         out << x << " " << y << " " << width << " " << height;
-        return out.str();
+        return out;
     }
 
     bool contains (Val x1, Val y1) const noexcept {

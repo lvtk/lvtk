@@ -5,7 +5,7 @@
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/widget.hpp>
 
-#include "button.hpp"
+#include "buttons.hpp"
 #include "four_squares.hpp"
 #include "utils.hpp"
 
@@ -94,9 +94,9 @@ private:
     public:
         SideBar (Content& owner) : content (owner) {
             for (int i = 0; i < NUM_DEMOS; ++i) {
-                auto box = add (new Button());
+                auto box = add (new TextButton());
                 box->set_visible (true);
-                box->__name = demo::name (i);
+                box->set_text (demo::name (i));
                 box->clicked = std::bind (&SideBar::run_demo, this, i);
                 demos.push_back (box);
             }
