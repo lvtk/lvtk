@@ -38,6 +38,10 @@ public:
         _colors.insert (ColorItem { ID, color });
     }
 
+    Color find_color (ColorIDs ID) const noexcept {
+        return find_color (static_cast<int> (ID));
+    }
+
     Color find_color (int ID) const noexcept {
         if (_colors.empty())
             return {};
