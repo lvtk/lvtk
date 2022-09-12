@@ -35,20 +35,20 @@ public:
     }
 
     void set_color (int ID, Color color) {
-        _colors.insert (ColorItem {ID, color});
+        _colors.insert (ColorItem { ID, color });
     }
-    
+
     Color find_color (int ID) const noexcept {
         if (_colors.empty())
             return {};
-        auto it = _colors.find (ColorItem {ID, {}});
+        auto it = _colors.find (ColorItem { ID, {} });
         if (it != _colors.end())
             return (*it).color;
         return {};
     }
 
     virtual void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) = 0;
-    virtual void draw_button_text (Graphics& g, TextButton& b, bool highlight, bool down) =0;
+    virtual void draw_button_text (Graphics& g, TextButton& b, bool highlight, bool down) = 0;
 
 private:
     struct ColorItem {

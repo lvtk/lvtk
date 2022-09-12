@@ -60,19 +60,14 @@ static Point<float> convert_coord (const Widget* tgt, Widget* src, Point<float> 
         if (src == tgt)
             return pt;
 
-        /* is source parent of tgt deep */
-        auto child = tgt;
-        while (child != nullptr) {
-            child = child->parent();
-            if (child == src) {
-                return coord_from_parent_space (src, *tgt, pt);
-            }
-        }
+        if (src->contains (*tgt, true))
+            return coord_from_parent_space (src, *tgt, pt);
 
         pt = coord_to_parent_space (*src, pt);
         src = src->parent();
     }
 
+    assert (src == nullptr);
     if (tgt == nullptr)
         return pt;
 
@@ -106,7 +101,7 @@ void Widget::repaint() {
 //=============================================================================
 void Widget::set_bounds (int x, int y, int width, int height) {
     const bool was_moved = _bounds.x != x || _bounds.y != y;
-    const bool was_resized = _bounds.width != width || _bounds.width != y;
+    const bool was_resized = _bounds.width != width || _bounds.height != height;
 
     _bounds.x = x;
     _bounds.y = y;
@@ -222,11 +217,19 @@ uintptr_t Widget::find_handle() const noexcept {
 Style& Widget::style() {
     if (auto v = find_view())
         return v->style();
-    assert(false);
+    assert (false);
 }
 
 Point<double> Widget::convert (Widget& source, Point<double> pt) const {
     return detail::convert_coord (this, &source, pt.as<float>()).as<double>();
+}
+
+Point<int> Widget::to_view_space (Point<int> pt) {
+    return to_view_space (pt.as<float>()).as<int>();
+}
+
+Point<float> Widget::to_view_space (Point<float> pt) {
+    return detail::convert_coord (nullptr, this, pt);
 }
 
 void Widget::render (Graphics& g) {
@@ -234,7 +237,7 @@ void Widget::render (Graphics& g) {
 }
 
 //=================================================================
-bool Widget::contains (Widget& widget, bool deep) {
+bool Widget::contains (const Widget& widget, bool deep) {
     if (! deep)
         return widget._parent == this;
     auto c = &widget;

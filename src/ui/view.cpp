@@ -245,7 +245,7 @@ void View::set_backend (uintptr_t b) {
 }
 
 void View::set_view_hint (int hint, int value) {
-    puglSetViewHint ((PuglView*)_view, static_cast<PuglViewHint>(hint), value);
+    puglSetViewHint ((PuglView*) _view, static_cast<PuglViewHint> (hint), value);
 }
 
 uintptr_t View::handle() { return puglGetNativeView ((PuglView*) _view); }

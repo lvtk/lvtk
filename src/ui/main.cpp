@@ -1,9 +1,9 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <lvtk/ui/button.hpp>
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/style.hpp>
-#include <lvtk/ui/button.hpp>
 
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
@@ -38,13 +38,13 @@ public:
     ~DefaultStyle() {}
 
     void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) override {
-        auto bc = highlight || down ? find_color ((int) ColorIDs::BUTTON_BASE) : find_color ((int) ColorIDs::BUTTON_BASE).brighter(0.1);
+        auto bc = highlight || down ? find_color ((int) ColorIDs::BUTTON_BASE) : find_color ((int) ColorIDs::BUTTON_BASE).brighter (0.1);
         g.set_color (w.toggled() ? find_color ((int) ColorIDs::BUTTON_ON) : bc);
         g.fill_rect (w.bounds().at (0));
     }
 
     void draw_button_text (Graphics& g, TextButton& w, bool highlight, bool down) override {
-        auto c = find_color (w.toggled() ? (int)ColorIDs::BUTTON_TEXT_ON : (int)ColorIDs::BUTTON_TEXT_OFF);
+        auto c = find_color (w.toggled() ? (int) ColorIDs::BUTTON_TEXT_ON : (int) ColorIDs::BUTTON_TEXT_OFF);
         if (highlight || down)
             c = c.brighter (0.05);
         g.set_color (c);

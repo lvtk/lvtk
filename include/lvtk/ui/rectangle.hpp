@@ -208,7 +208,7 @@ struct Rectangle {
         auto s = *this;
         s.y = y + s.height - amount;
         s.height = amount;
-        height -= amount; 
+        height -= amount;
         return s;
     }
 

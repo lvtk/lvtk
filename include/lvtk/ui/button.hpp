@@ -77,4 +77,4 @@ private:
     String _text;
 };
 
-}
+} // namespace lvtk
