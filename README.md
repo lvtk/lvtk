@@ -11,7 +11,8 @@ API's will break from time to time until the core system is ready.
 Built-In Widgets
 ----------------
 - `lvtk.Widget`
-- `lvtk.Container`
+- `lvtk.Button`
+- `lvtk.TextButton`
 - to be determined
 
 Building
@@ -27,9 +28,9 @@ $ ninja install
 
 Gui Demo
 --------
-Crude right now but if you're lucky...
 ```
-./build/lvtk-demo
+cd build
+./lvtk-demo
 ```
 ... launches the C++ demo, and ...  
 ```
