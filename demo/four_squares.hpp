@@ -21,7 +21,16 @@ public:
 
     bool obstructed (int x, int y) override { return true; }
 
-    void motion (InputEvent) override {
+    void motion (InputEvent) override {}
+
+    void pointer_in (InputEvent ev) {
+        std::clog << "pointer_in(" << ev.pos.str() << ")" << std::endl;
+        ;
+    }
+
+    void pointer_out (InputEvent ev) override {
+        std::clog << "pointer_out(" << ev.pos.str() << ")" << std::endl;
+        ;
     }
 
     void pressed (InputEvent) override {

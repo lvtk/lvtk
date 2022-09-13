@@ -139,6 +139,9 @@ public:
     //=========================================================================
 
 protected:
+    virtual void pointer_in (InputEvent ev) {}
+    virtual void pointer_out (InputEvent ev) {}
+
     virtual void children_changed() {}
     virtual void parent_structure_changed() {}
     virtual void parent_size_changed() {}
@@ -146,6 +149,7 @@ protected:
 
 private:
     friend class Main;
+    friend class View;
     Widget* _parent = nullptr;
     std::unique_ptr<View> _view;
     std::vector<Widget*> _widgets;

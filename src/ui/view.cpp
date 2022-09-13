@@ -129,17 +129,24 @@ struct View::EventHandler {
         auto pos      = detail::point<float> (ev) / view.scale_factor();
         WidgetRef ref = view._widget.widget_at (pos);
 
+        InputEvent event;
+
         if (ref.valid()) {
+            event.pos = ref->convert (&view._widget, pos);
             if (view._hovered != ref) {
                 VIEW_DBG ("hovered changed: " << ref->__name);
+                ref->pointer_in (event);
                 view._hovered = ref;
             }
 
-            InputEvent event;
-            event.pos = ref->convert (&view._widget, pos);
             ref->motion (event);
         } else if (view._hovered) {
             VIEW_DBG ("hovered cleared");
+
+            if (auto h = view._hovered.lock()) {
+                event.pos = h->convert (&view._widget, pos);
+                h->pointer_out (event);
+            }
             view._hovered = nullptr;
         }
 
