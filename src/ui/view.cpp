@@ -61,7 +61,7 @@ struct View::EventHandler {
         }
 
         auto& w = view._widget;
-        w.set_bounds (w.x(), w.y(), (int) ev.width, (int) ev.height);
+        w.set_bounds (w.x(), w.y(), ev.width / view.scale_factor(), ev.height / view.scale_factor());
         VIEW_DBG ("pugl: configure: " << w.bounds().str());
         return PUGL_SUCCESS;
     }
@@ -71,7 +71,12 @@ struct View::EventHandler {
             VIEW_DBG ("expose: hint");
             return PUGL_SUCCESS;
         }
-        view.expose (detail::rect<int> (ev));
+
+        auto x = (float)ev.x;// / (float)view.scale_factor();
+        auto y = (float)ev.y;// / (float)view.scale_factor();
+        auto w = (float)ev.width;// / (float)view.scale_factor();
+        auto h = (float)ev.height;// / (float)view.scale_factor();
+        view.expose (Rectangle<float>{x,y,w,h}.as<int>());
         return PUGL_SUCCESS;
     }
 
@@ -121,7 +126,7 @@ struct View::EventHandler {
     }
 
     static PuglStatus motion (View& view, const PuglMotionEvent& ev) {
-        auto pos = detail::point<float> (ev);
+        auto pos = detail::point<float> (ev) / view.scale_factor();
         WidgetRef ref = view._widget.widget_at (pos);
 
         if (ref.valid()) {
@@ -143,7 +148,7 @@ struct View::EventHandler {
 
     static PuglStatus button_press (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
-        event.pos = detail::point<float> (ev);
+        event.pos = detail::point<float>(ev) / view.scale_factor();
 
         if (auto w = view._hovered.lock()) {
             event.pos = w->convert (&view._widget, event.pos);
@@ -158,7 +163,7 @@ struct View::EventHandler {
 
     static PuglStatus button_release (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
-        event.pos = detail::point<float> (ev);
+        event.pos = detail::point<float> (ev) / view.scale_factor();
         auto hovered = view._hovered;
 
         if (auto w = hovered.lock()) {
@@ -253,7 +258,7 @@ void View::set_view_hint (int hint, int value) {
 }
 
 uintptr_t View::handle() { return puglGetNativeView ((PuglView*) _view); }
-double View::scale_factor() const noexcept { return puglGetScaleFactor ((PuglView*) _view); }
+float View::scale_factor() const noexcept { return static_cast<float> (puglGetScaleFactor ((PuglView*) _view)); }
 
 void View::set_visible (bool visible) {
     if (visible)
@@ -265,20 +270,21 @@ void View::set_visible (bool visible) {
 bool View::visible() const { return puglGetVisible ((PuglView*) _view); }
 
 void View::set_size (int width, int height) {
-    puglSetSize ((PuglView*) _view, width, height);
+    puglSetSize ((PuglView*) _view, width * scale_factor(), height * scale_factor());
 }
 
 Rectangle<int> View::bounds() const {
     auto f = puglGetFrame ((PuglView*) _view);
     return {
-        static_cast<int> (f.x),
-        static_cast<int> (f.y),
-        static_cast<int> (f.width),
-        static_cast<int> (f.height)
+        static_cast<int> ((float)f.x / scale_factor()),
+        static_cast<int> ((float)f.y / scale_factor()),
+        static_cast<int> ((float)f.width / scale_factor()),
+        static_cast<int> ((float)f.height / scale_factor())
     };
 }
 
 void View::set_bounds (Bounds b) {
+    b *= scale_factor();
     puglSetFrame ((PuglView*) _view, detail::frame (b));
 }
 

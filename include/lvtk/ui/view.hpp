@@ -19,7 +19,7 @@ public:
     uintptr_t handle();
 
     /** Returns the scale factor of this view. */
-    double scale_factor() const noexcept;
+    float scale_factor() const noexcept;
 
     void set_visible (bool visible);
     bool visible() const;

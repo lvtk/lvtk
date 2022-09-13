@@ -10,9 +10,10 @@ namespace nvg {
 /** Surface backed by a NanoVG context */
 class Surface final : public OpenGLSurface {
 public:
-    Surface();
+    explicit Surface (float scale = 1.f);
     ~Surface();
 
+    float scale_factor() const noexcept;
     void translate (const Point<int>& pt) override;
     void set_clip_bounds (const Rectangle<int>& r) override;
     Rectangle<int> clip_bounds() const override;

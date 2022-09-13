@@ -43,6 +43,20 @@ struct Point {
         return *this;
     }
 
+    template<typename OT>
+    Point operator* (OT m) const noexcept {
+        using T = typename std::common_type<Val, OT>::type;
+        return { (T)((T)x * (T)m), 
+                 (T)((T)y * (T)m) };
+    }
+
+    template<typename OT>
+    Point operator/ (OT d) const noexcept {
+        using T = typename std::common_type<Val, OT>::type;
+        return { (T)((T)x / (T)d), 
+                 (T)((T)y / (T)d) };
+    }
+
     std::string str() const noexcept {
         String st;
         st << x << " " << y;
