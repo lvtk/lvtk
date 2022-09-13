@@ -1,12 +1,14 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-#include "lvtk/ui/widget.hpp"
-#include "lvtk/ui/main.hpp"
-#include "lvtk/ui/style.hpp"
 #include <algorithm>
+#include <cassert>
 
-// =================== widget debugging ===================//
+#include <lvtk/ui/main.hpp>
+#include <lvtk/ui/style.hpp>
+#include <lvtk/ui/widget.hpp>
+
+// =================== widget debugging =======================//
 #define DBG_WIDGET 0
 #if DBG_WIDGET
 #    define MTRACE(i) std::clog << "[widget] " << i << std::endl

@@ -111,7 +111,6 @@ private:
         void resized() override {
             auto r1 = bounds().at (0);
             for (auto box : demos) {
-                assert (box != nullptr);
                 auto r2 = r1.slice_top (40).smaller (2, 1);
                 box->set_bounds (r2);
             }
@@ -128,7 +127,6 @@ private:
         std::vector<Button*> demos;
 
         void run_demo (int index) {
-            assert (index < (int) demos.size());
             for (int i = 0; i < (int) demos.size(); ++i) {
                 demos[i]->toggle (i == index);
             }
