@@ -72,10 +72,10 @@ struct View::EventHandler {
             return PUGL_SUCCESS;
         }
 
-        auto x = (float) ev.x;      // / (float)view.scale_factor();
-        auto y = (float) ev.y;      // / (float)view.scale_factor();
-        auto w = (float) ev.width;  // / (float)view.scale_factor();
-        auto h = (float) ev.height; // / (float)view.scale_factor();
+        auto x = (float) ev.x / (float)view.scale_factor();
+        auto y = (float) ev.y / (float)view.scale_factor();
+        auto w = (float) ev.width / (float)view.scale_factor();
+        auto h = (float) ev.height / (float)view.scale_factor();
         view.expose (Rectangle<float> { x, y, w, h }.as<int>());
         return PUGL_SUCCESS;
     }

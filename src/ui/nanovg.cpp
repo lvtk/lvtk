@@ -113,9 +113,9 @@ void Surface::save() { ctx->save(); }
 void Surface::restore() { ctx->restore(); }
 
 void Surface::begin_frame (int width, int height, float scale) {
-    // are nvg pixel ratio and PuglView scale same?
-    auto pixel_ratio = ctx->scale = scale;
-    nvgBeginFrame (ctx->ctx, width, height, pixel_ratio);
+    ctx->scale = scale;
+    nvgBeginFrame (ctx->ctx, ctx->scale * (float) width, 
+                             ctx->scale * (float) height, 1.f);
 }
 
 void Surface::end_frame() {

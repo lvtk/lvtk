@@ -43,12 +43,16 @@ public:
     OpenGLSurface() = default;
     virtual ~OpenGLSurface() = default;
 
-    // private:
-    //     friend class OpenGLView<OpenGLSurface>;
-    /** called immediately before rendering */
-    virtual void begin_frame (int width, int height, float scale) {}
+    /** Called immediately before rendering
+        
+        @param width Width in logical coords
+        @param height Height in logical coords
+        @param scale Scale factor in use by @ref OpenGLView
+    */
+    virtual void begin_frame (int width, int height, float scale) =0;
+
     /** called immediately after rendering */
-    virtual void end_frame() {}
+    virtual void end_frame() =0;
 };
 
 /** Surf template param must be an OpenGLView of some kind */
@@ -83,7 +87,11 @@ protected:
     }
 
     inline void expose (Bounds frame) override {
-        glViewport (frame.x, frame.y, frame.width, frame.height);
+        auto vframe = bounds() * scale_factor();
+        auto gl_frame = frame * scale_factor();
+        // flip y-coord
+        gl_frame.y = vframe.height - gl_frame.y - gl_frame.height;
+        glViewport (gl_frame.x, gl_frame.y, gl_frame.width, gl_frame.height);
         glClearColor (0.f, 0.f, 0.f, 1.0f);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (_surface) {
