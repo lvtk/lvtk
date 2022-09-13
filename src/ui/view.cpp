@@ -72,11 +72,11 @@ struct View::EventHandler {
             return PUGL_SUCCESS;
         }
 
-        auto x = (float)ev.x;// / (float)view.scale_factor();
-        auto y = (float)ev.y;// / (float)view.scale_factor();
-        auto w = (float)ev.width;// / (float)view.scale_factor();
-        auto h = (float)ev.height;// / (float)view.scale_factor();
-        view.expose (Rectangle<float>{x,y,w,h}.as<int>());
+        auto x = (float) ev.x;      // / (float)view.scale_factor();
+        auto y = (float) ev.y;      // / (float)view.scale_factor();
+        auto w = (float) ev.width;  // / (float)view.scale_factor();
+        auto h = (float) ev.height; // / (float)view.scale_factor();
+        view.expose (Rectangle<float> { x, y, w, h }.as<int>());
         return PUGL_SUCCESS;
     }
 
@@ -148,7 +148,7 @@ struct View::EventHandler {
 
     static PuglStatus button_press (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
-        event.pos = detail::point<float>(ev) / view.scale_factor();
+        event.pos = detail::point<float> (ev) / view.scale_factor();
 
         if (auto w = view._hovered.lock()) {
             event.pos = w->convert (&view._widget, event.pos);
@@ -276,10 +276,10 @@ void View::set_size (int width, int height) {
 Rectangle<int> View::bounds() const {
     auto f = puglGetFrame ((PuglView*) _view);
     return {
-        static_cast<int> ((float)f.x / scale_factor()),
-        static_cast<int> ((float)f.y / scale_factor()),
-        static_cast<int> ((float)f.width / scale_factor()),
-        static_cast<int> ((float)f.height / scale_factor())
+        static_cast<int> ((float) f.x / scale_factor()),
+        static_cast<int> ((float) f.y / scale_factor()),
+        static_cast<int> ((float) f.width / scale_factor()),
+        static_cast<int> ((float) f.height / scale_factor())
     };
 }
 
