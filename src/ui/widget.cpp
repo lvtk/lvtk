@@ -30,7 +30,21 @@ static bool test_pos (Widget& widget, Point<float> pos) {
            && widget.obstructed (ipos.x, ipos.y);
 }
 
-static Point<float> coord_from_parent_space (const Widget& widget, const Point<float> parent_coord) {
+} // namespace detail
+
+namespace convert {
+
+/** From pyhsical to logical coordinats. */
+static Point<float> to_scaled (float scale, Point<float> coord) {
+    return scale != 1.f ? coord / scale : coord;
+}
+
+/** From logical to physical coordinates. */
+static Point<float> to_unscaled (float scale, Point<float> coord) {
+    return scale != 1.f ? coord * scale : coord;
+}
+
+static Point<float> from_parent_space (const Widget& widget, const Point<float> parent_coord) {
     auto result = parent_coord;
     if (widget.elevated())
         return result;
@@ -38,17 +52,16 @@ static Point<float> coord_from_parent_space (const Widget& widget, const Point<f
     return result;
 }
 
-static Point<float> coord_from_parent_space (const Widget* parent, const Widget& target, Point<float> parent_coord) {
+static Point<float> from_ancestor_space (const Widget* parent, const Widget& target, Point<float> parent_coord) {
     auto direct = target.parent();
     if (direct == parent)
-        return coord_from_parent_space (target, parent_coord);
+        return from_parent_space (target, parent_coord);
 
-    return coord_from_parent_space (target,
-                                    coord_from_parent_space (parent, *direct, parent_coord));
+    return from_parent_space (target, from_ancestor_space (parent, *direct, parent_coord));
 }
 
-static Point<float> coord_to_parent_space (const Widget& widget,
-                                           const Point<float> local_coord) {
+static Point<float> to_parent_space (const Widget& widget,
+                                     const Point<float> local_coord) {
     auto result = local_coord;
     if (widget.elevated())
         return result;
@@ -56,19 +69,15 @@ static Point<float> coord_to_parent_space (const Widget& widget,
     return result;
 }
 
-} // namespace detail
-
-namespace convert {
-
 static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<float> pt) {
     while (src != nullptr) {
         if (src == tgt)
             return pt;
 
         if (src->contains (*tgt, true))
-            return detail::coord_from_parent_space (src, *tgt, pt);
+            return from_ancestor_space (src, *tgt, pt);
 
-        pt = detail::coord_to_parent_space (*src, pt);
+        pt = to_parent_space (*src, pt);
         src = src->parent();
     }
 
@@ -77,11 +86,11 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
         return pt;
 
     auto root = tgt->find_root();
-    pt = detail::coord_from_parent_space (*root, pt);
+    pt = from_parent_space (*root, pt);
     if (root == tgt)
         return pt;
 
-    return detail::coord_from_parent_space (root, *tgt, pt);
+    return from_ancestor_space (root, *tgt, pt);
 }
 
 } // namespace convert
@@ -183,7 +192,7 @@ bool Widget::obstructed (int x, int y) {
     auto pos = Point<int> { x, y }.as<float>();
 
     for (auto child : _widgets) {
-        if (child->visible() && detail::test_pos (*child, detail::coord_from_parent_space (*child, pos))) {
+        if (child->visible() && detail::test_pos (*child, convert::from_parent_space (*child, pos))) {
             return true;
         }
     }
@@ -194,7 +203,7 @@ bool Widget::obstructed (int x, int y) {
 Widget* Widget::widget_at (Point<float> pos) {
     if (_visible && detail::test_pos (*this, pos)) {
         for (auto child : _widgets) {
-            if (auto c2 = child->widget_at (detail::coord_from_parent_space (*child, pos)))
+            if (auto c2 = child->widget_at (convert::from_parent_space (*child, pos)))
                 return c2;
         }
         return this;
