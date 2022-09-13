@@ -43,10 +43,10 @@ public:
     void quit();
 
     /** Elevate a Widget to view with optional opaque parent */
-    void elevate (Widget& widget, uintptr_t parent, ViewFlags flags);
+    void elevate (Widget& widget, ViewFlags flags, uintptr_t parent);
 
     /** Elevate a Widget to view status with optional known parent */
-    void elevate (Widget& widget, View& parent, ViewFlags flags);
+    void elevate (Widget& widget, ViewFlags flags, View& parent);
 
     /** Find the view for this wiget */
     View* find_view (Widget& widget) const noexcept;
@@ -79,7 +79,7 @@ private:
     std::unique_ptr<Style> _style;
 
     /** Create an unrealized view for the given Widget. */
-    std::unique_ptr<View> create_view (Widget& widget, uintptr_t parent, ViewFlags flags);
+    std::unique_ptr<View> create_view (Widget& widget, ViewFlags flags, uintptr_t parent);
 
     Main()             = delete;
     Main (const Main&) = delete;

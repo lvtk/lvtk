@@ -217,7 +217,7 @@ template <class Wgt>
 static int run (lvtk::Main& context) {
     try {
         auto content = std::make_unique<Wgt> (context);
-        context.elevate (*content, 0, ViewFlag::RESIZABLE);
+        context.elevate (*content, ViewFlag::RESIZABLE, 0);
         bool quit = false;
         while (! quit) {
             context.loop (-1.0);

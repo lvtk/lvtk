@@ -296,7 +296,7 @@ Style& View::style() noexcept { return _main.style(); }
 const Style& View::style() const noexcept { return _main.style(); }
 
 void View::elevate (Widget& widget, ViewFlags flags) {
-    _main.elevate (widget, *this, flags);
+    _main.elevate (widget, flags, *this);
 }
 
 //==

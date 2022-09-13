@@ -46,7 +46,7 @@ public:
             content = std::make_unique<Content>();
             content->set_size (640, 360);
             content->set_visible (true);
-            _main.elevate (*content, (uintptr_t) parent.get(), 0);
+            _main.elevate (*content, 0, (uintptr_t) parent.get());
         }
 
         return *content;

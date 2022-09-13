@@ -75,7 +75,7 @@ void Main::quit() {
     __quit_flag = true;
 }
 
-std::unique_ptr<View> Main::create_view (Widget& widget, uintptr_t parent, ViewFlags flags) {
+std::unique_ptr<View> Main::create_view (Widget& widget, ViewFlags flags, uintptr_t parent) {
     auto view = _backend->create_view (*this, widget);
     if (! view)
         return nullptr;
@@ -91,11 +91,11 @@ std::unique_ptr<View> Main::create_view (Widget& widget, uintptr_t parent, ViewF
 
     return view;
 }
-void Main::elevate (Widget& widget, uintptr_t parent, ViewFlags flags) {
+void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     if (widget._view != nullptr)
         return;
 
-    auto view = create_view (widget, parent, flags);
+    auto view = create_view (widget, flags, parent);
     // bail out conditions?
 
     view->set_bounds (widget.bounds());
@@ -106,8 +106,8 @@ void Main::elevate (Widget& widget, uintptr_t parent, ViewFlags flags) {
     widget.notify_structure_changed();
 }
 
-void Main::elevate (Widget& widget, View& parent, ViewFlags flags) {
-    elevate (widget, parent.handle(), flags);
+void Main::elevate (Widget& widget, ViewFlags flags, View& parent) {
+    elevate (widget, flags, parent.handle());
 }
 
 View* Main::find_view (Widget& widget) const noexcept {
