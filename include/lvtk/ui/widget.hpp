@@ -85,13 +85,13 @@ public:
     /** True if pt falls within this Widget's local bounds */
     bool contains (Point<int> coord) const noexcept;
     /** True if pt falls within this Widget's local bounds */
-    bool contains (Point<double> coord) const noexcept;
+    bool contains (Point<float> coord) const noexcept;
 
     /** Convert a coordinate from one widget's space to another.
         @param source The Widget to convert from.
         @param coord  A coordinate in the source.
      */
-    Point<double> convert (const Widget* source, Point<double> coord) const;
+    Point<float> convert (const Widget* source, Point<float> coord) const;
 
     /** Convert a coordnate to view space.
         @param coord The coordnate in local space to convert

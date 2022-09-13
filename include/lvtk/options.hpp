@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include <lv2/urid/urid.h>        // for LV2_URID
-#include <stdint.h>               // for uint32_t
-#include <string.h>               // for memset
-#include <cassert>                // for assert
-#include <cstdlib>                // for free, malloc, realloc
+#include <cassert>         // for assert
+#include <cstdlib>         // for free, malloc, realloc
+#include <lv2/urid/urid.h> // for LV2_URID
+#include <stdint.h>        // for uint32_t
+#include <string.h>        // for memset
 
-#include <lv2/options/options.h>  // for (anonymous)
-#include <lvtk/ext/options.hpp>   // for Option, OptionsContext
+#include <lv2/options/options.h> // for (anonymous)
+#include <lvtk/ext/options.hpp>  // for Option, OptionsContext
 
 namespace lvtk {
 

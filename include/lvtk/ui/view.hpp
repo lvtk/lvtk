@@ -42,7 +42,7 @@ protected:
     void render (Surface& surface);
     void set_backend (uintptr_t);
     void set_view_hint (int, int);
-    
+
     virtual void expose (Bounds frame) {}
     virtual void created() {}
     virtual void destroyed() {}

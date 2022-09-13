@@ -12,7 +12,7 @@ class Widget;
 
 struct InputEvent {
     WeakRef<Widget> source;
-    Point<double> pos;
+    Point<float> pos;
     int x;
     int y;
 };

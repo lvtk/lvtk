@@ -11,7 +11,6 @@
 
 namespace lvtk {
 
-using Position = Point<double>;
 using Bounds = Rectangle<int>;
 
 /** Higher level graphics context.

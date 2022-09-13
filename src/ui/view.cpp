@@ -61,7 +61,7 @@ struct View::EventHandler {
         }
 
         auto& w = view._widget;
-        w.set_bounds (w.x(), w.y(), (int)ev.width, (int)ev.height);
+        w.set_bounds (w.x(), w.y(), (int) ev.width, (int) ev.height);
         VIEW_DBG ("pugl: configure: " << w.bounds().str());
         return PUGL_SUCCESS;
     }
@@ -121,8 +121,8 @@ struct View::EventHandler {
     }
 
     static PuglStatus motion (View& view, const PuglMotionEvent& ev) {
-        auto pos = detail::point<double> (ev);
-        WidgetRef ref = view._widget.widget_at (pos.as<float>());
+        auto pos = detail::point<float> (ev);
+        WidgetRef ref = view._widget.widget_at (pos);
 
         if (ref.valid()) {
             if (view._hovered != ref) {
@@ -131,7 +131,7 @@ struct View::EventHandler {
             }
 
             InputEvent event;
-            event.pos = ref->convert (&view._widget, pos).as<double>();
+            event.pos = ref->convert (&view._widget, pos);
             ref->motion (event);
         } else if (view._hovered) {
             VIEW_DBG ("hovered cleared");
@@ -143,7 +143,7 @@ struct View::EventHandler {
 
     static PuglStatus button_press (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
-        event.pos = detail::point<double> (ev);
+        event.pos = detail::point<float> (ev);
 
         if (auto w = view._hovered.lock()) {
             event.pos = w->convert (&view._widget, event.pos);
@@ -158,7 +158,7 @@ struct View::EventHandler {
 
     static PuglStatus button_release (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
-        event.pos = detail::point<double> (ev);
+        event.pos = detail::point<float> (ev);
         auto hovered = view._hovered;
 
         if (auto w = hovered.lock()) {

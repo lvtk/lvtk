@@ -30,8 +30,7 @@ static bool test_pos (Widget& widget, Point<float> pos) {
            && widget.obstructed (ipos.x, ipos.y);
 }
 
-static Point<float> coord_from_parent_space (const Widget& widget,
-                                             const Point<float> parent_coord) {
+static Point<float> coord_from_parent_space (const Widget& widget, const Point<float> parent_coord) {
     auto result = parent_coord;
     if (widget.elevated())
         return result;
@@ -57,15 +56,19 @@ static Point<float> coord_to_parent_space (const Widget& widget,
     return result;
 }
 
-static Point<float> convert_coord (const Widget* tgt, const Widget* src, Point<float> pt) {
+} // namespace detail
+
+namespace convert {
+
+static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<float> pt) {
     while (src != nullptr) {
         if (src == tgt)
             return pt;
 
         if (src->contains (*tgt, true))
-            return coord_from_parent_space (src, *tgt, pt);
+            return detail::coord_from_parent_space (src, *tgt, pt);
 
-        pt = coord_to_parent_space (*src, pt);
+        pt = detail::coord_to_parent_space (*src, pt);
         src = src->parent();
     }
 
@@ -74,14 +77,14 @@ static Point<float> convert_coord (const Widget* tgt, const Widget* src, Point<f
         return pt;
 
     auto root = tgt->find_root();
-    pt = coord_from_parent_space (*root, pt);
+    pt = detail::coord_from_parent_space (*root, pt);
     if (root == tgt)
         return pt;
 
-    return coord_from_parent_space (root, *tgt, pt);
+    return detail::coord_from_parent_space (root, *tgt, pt);
 }
 
-} // namespace detail
+} // namespace convert
 
 Widget::Widget() { _weak_status.reset (this); }
 Widget::~Widget() { _weak_status.reset (nullptr); }
@@ -225,8 +228,8 @@ Style& Widget::style() {
     assert (false);
 }
 
-Point<double> Widget::convert (const Widget* source, Point<double> pt) const {
-    return detail::convert_coord (this, source, pt.as<float>()).as<double>();
+Point<float> Widget::convert (const Widget* source, Point<float> pt) const {
+    return convert::coordinate (this, source, pt);
 }
 
 Point<int> Widget::to_view_space (Point<int> pt) {
@@ -234,7 +237,7 @@ Point<int> Widget::to_view_space (Point<int> pt) {
 }
 
 Point<float> Widget::to_view_space (Point<float> pt) {
-    return detail::convert_coord (nullptr, this, pt);
+    return convert::coordinate (nullptr, this, pt);
 }
 
 void Widget::render (Graphics& g) {
@@ -256,15 +259,15 @@ bool Widget::contains (const Widget& widget, bool deep) const {
 }
 
 bool Widget::contains (int x, int y) const noexcept {
-    return contains (Point<int> { x, y }.as<double>());
+    return contains (Point<int> { x, y }.as<float>());
 }
 
 bool Widget::contains (Point<int> pt) const noexcept {
-    return contains (pt.as<double>());
+    return contains (pt.as<float>());
 }
 
-bool Widget::contains (Point<double> pt) const noexcept {
-    return _bounds.at (0, 0).as<double>().contains (pt);
+bool Widget::contains (Point<float> pt) const noexcept {
+    return _bounds.at (0, 0).as<float>().contains (pt);
 }
 
 //=================================================================
