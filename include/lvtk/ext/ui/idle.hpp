@@ -41,7 +41,7 @@ struct Idle : Extension<I> {
 protected:
     inline static void map_extension_data (ExtensionMap& dmap) {
         static const LV2UI_Idle_Interface _idle_iface = { _idle };
-        dmap[LV2_UI__idleInterface] = &_idle_iface;
+        dmap[LV2_UI__idleInterface]                   = &_idle_iface;
     }
 
 private:

@@ -12,6 +12,82 @@
 namespace lvtk {
 namespace demo {
 
+class MenuBar : public Widget {
+public:
+    MenuBar()
+        : file_menu (*this) {
+        add (file);
+        file.text = "File";
+        file.set_visible (true);
+        file.clicked = [this]() {
+            // file_menu.set_bounds (x() + 2, height() + 2, std::max(100, file.width() - 4), 300);
+            // file_menu.set_visible (true);
+            // if (auto view = find_view())
+            //     view->elevate (file_menu);
+        };
+
+        add (help);
+        help.set_visible (true);
+        help.text = "Help";
+        set_size (300, 24);
+    }
+    ~MenuBar() {}
+
+protected:
+    bool obstructed (int, int) override { return true; }
+
+    void paint (Graphics& g) override {
+        g.set_color (Color (0xeeeeeeff));
+        g.fill_rect (bounds().at (0));
+    }
+
+    void resized() override {
+        auto b = bounds().smaller (0, 1);
+        file.set_bounds (b.slice_left (48));
+        b.slice_left (2);
+        help.set_bounds (b.slice_left (48));
+    }
+
+private:
+    class Item : public Widget {
+    public:
+        std::function<void()> clicked;
+
+        void paint (Graphics& g) override {
+            g.set_color (Color (0x111111ff));
+            g.text (text, 12, (height() / 2) - 7);
+        }
+
+        void pressed (InputEvent ev) override {
+            if (clicked)
+                clicked();
+        }
+
+        bool obstructed (int, int) override { return true; }
+        String text;
+    };
+
+    class Menu : public Widget {
+    public:
+        Menu (MenuBar& bar) : menubar (bar) {}
+        ~Menu() {}
+        bool obstructed (int, int) override { return true; }
+        void paint (Graphics& g) override {
+            g.set_color (Color (0xefefefff));
+            g.fill_rect (bounds().at (0));
+        }
+
+        void pressed (InputEvent ev) override {
+            set_visible (false);
+            if (auto root = menubar.find_view())
+                root->__pugl_post_redisplay();
+        };
+        MenuBar& menubar;
+    } file_menu;
+
+    Item file, help;
+};
+
 #define SIDEBAR_WIDTH 200
 
 enum ID {
@@ -44,13 +120,11 @@ public:
 
     void resized() override {
         auto r = bounds().at (0, 0);
-        r.width = SIDEBAR_WIDTH;
-        sidebar.set_bounds (r);
+        menu.set_bounds (r.slice_top (menu.height()));
+        r.slice_top (1);
+        sidebar.set_bounds (r.slice_left (SIDEBAR_WIDTH));
         if (demo) {
-            auto r2 = bounds().at (0);
-            r2.x = r.width;
-            r2.width -= r.width;
-            demo->set_bounds (r2.smaller (4));
+            demo->set_bounds (r.smaller (4));
         }
     }
 
@@ -62,6 +136,7 @@ public:
 private:
     Main& main;
     int current_demo = -1;
+    MenuBar menu;
 
     void run_demo (int index) {
         if (current_demo == index)
@@ -142,7 +217,7 @@ template <class Wgt>
 static int run (lvtk::Main& context) {
     try {
         auto content = std::make_unique<Wgt> (context);
-        context.elevate (*content, 0);
+        context.elevate (*content, 0, ViewFlag::RESIZABLE);
         bool quit = false;
         while (! quit) {
             context.loop (-1.0);

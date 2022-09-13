@@ -165,7 +165,7 @@ inline static table
 
     // turn of "operator[] so attributes defined in lua
     // can be resolved
-    auto M_mt = M[metatable_key];
+    auto M_mt          = M[metatable_key];
     M_mt["__newindex"] = lua_nil;
 
     // Called when widget is instantiated by lvtk.object
@@ -351,7 +351,7 @@ int luaopen_lvtk_Main (lua_State* L) {
             // if not rais a lua error
             if (tbl.is<table>()) {
                 if (auto proxy = lvtk::proxy::userdata<lvtk::proxy::Widget> ((table)tbl))
-                    self.elevate (*proxy, 0);
+                    self.elevate (*proxy, 0, 0);
             } else {
                 // std::clog << "not a table: \n";
             }

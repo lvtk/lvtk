@@ -79,12 +79,12 @@ private:
         LV2_Descriptor desc;
         desc.URI = (const char*) malloc ((1 + strlen (uri)) * sizeof (char));
         strcpy ((char*) desc.URI, uri);
-        desc.instantiate = P::_instantiate;
-        desc.activate = P::_activate;
-        desc.connect_port = P::_connect_port;
-        desc.run = P::_run;
-        desc.deactivate = P::_deactivate;
-        desc.cleanup = P::_cleanup;
+        desc.instantiate    = P::_instantiate;
+        desc.activate       = P::_activate;
+        desc.connect_port   = P::_connect_port;
+        desc.run            = P::_run;
+        desc.deactivate     = P::_deactivate;
+        desc.cleanup        = P::_cleanup;
         desc.extension_data = P::_extension_data;
         descriptors().push_back (desc);
         P::initialize_extensions();

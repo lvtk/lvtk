@@ -46,7 +46,7 @@ public:
             content = std::make_unique<Content>();
             content->set_size (640, 360);
             content->set_visible (true);
-            _main.elevate (*content, (uintptr_t) parent.get());
+            _main.elevate (*content, (uintptr_t) parent.get(), 0);
         }
 
         return *content;
@@ -57,7 +57,7 @@ private:
 
     class Button : public Widget {
     public:
-        Button() = default;
+        Button()          = default;
         virtual ~Button() = default;
 
         void paint (Graphics& g) override {
@@ -103,8 +103,8 @@ private:
             auto r1 = bounds().at (0, 0);
             std::clog << "container resized: " << r1.str() << std::endl;
             r1.width /= 2;
-            auto r2 = r1;
-            r2.x = r1.width;
+            auto r2           = r1;
+            r2.x              = r1.width;
             const int padding = 12;
             r1.x += padding;
             r1.y += padding;
@@ -146,8 +146,8 @@ private:
 
         void resized() override {
             auto r = bounds().at (0, 0);
-            r.x = 20;
-            r.y = 20;
+            r.x    = 20;
+            r.y    = 20;
             r.width -= (r.x * 2);
             r.height -= (r.y * 2);
             buttons.set_bounds (r);

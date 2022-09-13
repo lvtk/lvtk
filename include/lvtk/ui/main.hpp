@@ -8,6 +8,7 @@
 
 #include <lvtk/context.hpp>
 #include <lvtk/string.hpp>
+#include <lvtk/ui/view.hpp>
 
 namespace lvtk {
 
@@ -42,10 +43,10 @@ public:
     void quit();
 
     /** Elevate a Widget to view with optional opaque parent */
-    void elevate (Widget& widget, uintptr_t parent);
+    void elevate (Widget& widget, uintptr_t parent, ViewFlags flags);
 
     /** Elevate a Widget to view status with optional known parent */
-    void elevate (Widget& widget, View& parent);
+    void elevate (Widget& widget, View& parent, ViewFlags flags);
 
     /** Find the view for this wiget */
     View* find_view (Widget& widget) const noexcept;
@@ -78,17 +79,17 @@ private:
     std::unique_ptr<Style> _style;
 
     /** Create an unrealized view for the given Widget. */
-    std::unique_ptr<View> create_view (Widget& widget, uintptr_t parent = 0);
+    std::unique_ptr<View> create_view (Widget& widget, uintptr_t parent, ViewFlags flags);
 
-    Main() = delete;
+    Main()             = delete;
     Main (const Main&) = delete;
-    Main (Main&&) = delete;
+    Main (Main&&)      = delete;
     Main& operator= (const Main&) = delete;
     Main& operator= (Main&&) = delete;
 };
 
 struct Backend {
-    Backend() = delete;
+    Backend()          = delete;
     virtual ~Backend() = default;
     const String& name() const noexcept { return _name; }
     virtual std::unique_ptr<View> create_view (Main&, Widget&) = 0;
@@ -100,7 +101,7 @@ protected:
 private:
     String _name;
     Backend (const Backend&) = delete;
-    Backend (Backend&&) = delete;
+    Backend (Backend&&)      = delete;
     Backend& operator= (const Backend&) = delete;
     Backend& operator= (Backend&&) = delete;
 };

@@ -6,7 +6,7 @@
 
 struct WeakRefTest {
     void basics() {
-        auto uptr1 = std::make_unique<TestObject>();
+        auto uptr1   = std::make_unique<TestObject>();
         TestRef ref1 = uptr1.get();
         BOOST_REQUIRE (ref1.lock() != nullptr);
         BOOST_REQUIRE (ref1.valid());
@@ -18,7 +18,7 @@ struct WeakRefTest {
     }
 
     void subclass() {
-        auto uptr1 = std::make_unique<SubObject>();
+        auto uptr1   = std::make_unique<SubObject>();
         TestRef ref1 = uptr1.get();
         BOOST_REQUIRE (ref1.lock() != nullptr);
         BOOST_REQUIRE (ref1.valid());

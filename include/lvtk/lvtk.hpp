@@ -61,7 +61,7 @@ struct Feature : LV2_Feature {
 
     Feature (const LV2_Feature& feature) {
         data = feature.data;
-        URI = feature.URI;
+        URI  = feature.URI;
     }
 
     /** @returns true if this Feature's URI matches */
@@ -125,14 +125,14 @@ struct FeatureList final : public std::vector<Feature> {
  */
 template <class D, class P = D*>
 struct FeatureData {
-    using data_type = D;
+    using data_type     = D;
     using data_ptr_type = P;
 
     /** A uri for this data */
     const std::string URI;
 
 public:
-    FeatureData() = delete;
+    FeatureData()  = delete;
     ~FeatureData() = default;
 
     /** Returns true if the passed feature is for this Feature Data

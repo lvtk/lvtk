@@ -38,12 +38,12 @@ public:
             gains.last = gains.next;
         } else {
             // smoothed gain
-            float gain = gains.last;
+            float gain     = gains.last;
             uint32_t begin = 0;
 
             while (begin < nframes) {
                 uint32_t remain = nframes - begin;
-                uint32_t todo = remain > 16 ? 16 : remain;
+                uint32_t todo   = remain > 16 ? 16 : remain;
                 gain += lpf * (gains.next - gain);
                 for (uint32_t c = 0; c < 2; ++c)
                     for (uint32_t f = begin; f < begin + todo; ++f)

@@ -24,10 +24,10 @@ namespace lvtk {
 */
 class OptionArray {
 public:
-    using size_type = uint32_t;
-    using pointer = Option*;
-    using reference = Option&;
-    using const_pointer = const Option*;
+    using size_type       = uint32_t;
+    using pointer         = Option*;
+    using reference       = Option&;
+    using const_pointer   = const Option*;
     using const_reference = const Option&;
 
     /** A referenced Option array.
@@ -63,7 +63,7 @@ public:
         opts = (Option*) malloc (sizeof (Option));
         memset (&opts[0], 0, sizeof (Option));
         allocated = true;
-        count = 1;
+        count     = 1;
     }
 
     ~OptionArray() {
@@ -88,13 +88,13 @@ public:
             return *this;
         opts = (Option*) realloc (opts, ++count * sizeof (Option));
         memset (&opts[count - 1], 0, sizeof (Option));
-        auto& opt = opts[count - 2];
+        auto& opt   = opts[count - 2];
         opt.context = context;
         opt.subject = subject;
-        opt.key = key;
-        opt.size = size;
-        opt.type = type;
-        opt.value = value;
+        opt.key     = key;
+        opt.size    = size;
+        opt.type    = type;
+        opt.value   = value;
         return *this;
     }
 
@@ -133,7 +133,7 @@ public:
 
     private:
         Option* opts = nullptr;
-        uint32_t i = 0;
+        uint32_t i   = 0;
     };
 
     /** Begin iterator */
@@ -145,7 +145,7 @@ public:
 private:
     bool allocated = false;
     uint32_t count = 0;
-    Option* opts = nullptr;
+    Option* opts   = nullptr;
 };
 
 } // namespace lvtk

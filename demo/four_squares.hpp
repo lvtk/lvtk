@@ -9,7 +9,7 @@ namespace demo {
 
 class Box : public lvtk::Widget {
 public:
-    Box() = default;
+    Box()          = default;
     virtual ~Box() = default;
 
     void paint (Graphics& g) override {
@@ -55,10 +55,10 @@ public:
     void resized() override {
         auto r1 = bounds().at (0);
         for (int i = 0; i < 4; ++i) {
-            auto r2 = r1;
-            r2.width = r1.width / 2;
+            auto r2   = r1;
+            r2.width  = r1.width / 2;
             r2.height = r1.height / 2;
-            auto box = boxes[i];
+            auto box  = boxes[i];
 
             switch (i) {
                 case 0: // top left

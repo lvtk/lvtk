@@ -170,7 +170,7 @@ protected:
     /** @private */
     static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_Worker_Interface _worker = { _work, _work_response, _end_run };
-        dmap[LV2_WORKER__interface] = &_worker;
+        dmap[LV2_WORKER__interface]               = &_worker;
     }
 
 private:

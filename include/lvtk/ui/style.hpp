@@ -55,7 +55,7 @@ public:
         return {};
     }
 
-    virtual void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) = 0;
+    virtual void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down)    = 0;
     virtual void draw_button_text (Graphics& g, TextButton& b, bool highlight, bool down) = 0;
 
 private:

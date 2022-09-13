@@ -20,18 +20,18 @@
 struct WorkerPlug : lvtk::Plugin<WorkerPlug, lvtk::Worker> {
     WorkerPlug (const lvtk::Args& args) : Plugin (args) {}
 
-    static constexpr const uint32_t work_value = 1111;
+    static constexpr const uint32_t work_value            = 1111;
     static constexpr const uint32_t work_value_multiplier = 5;
-    static constexpr const uint32_t work_size = sizeof (uint32_t);
+    static constexpr const uint32_t work_size             = sizeof (uint32_t);
 
-    bool work_called = false;
+    bool work_called          = false;
     bool work_response_called = false;
-    bool end_run_called = false;
+    bool end_run_called       = false;
 
     void request_work() {
-        work_called = false;
+        work_called          = false;
         work_response_called = false;
-        end_run_called = false;
+        end_run_called       = false;
 
         auto value = work_value;
         schedule_work (work_size, &value);
@@ -61,18 +61,18 @@ struct WorkerTest {
         BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         LV2_Worker_Schedule schedule = {
-            .handle = this,
+            .handle        = this,
             .schedule_work = _schedule_work
         };
 
         LV2_Feature feature = {
-            .URI = LV2_WORKER__schedule,
+            .URI  = LV2_WORKER__schedule,
             .data = &schedule
         };
 
         const LV2_Feature* features[] = { &feature, nullptr };
-        auto handle = desc.instantiate (&desc, 44100.0, "/fake/path", features);
-        auto plugin = static_cast<WorkerPlug*> (handle);
+        auto handle                   = desc.instantiate (&desc, 44100.0, "/fake/path", features);
+        auto plugin                   = static_cast<WorkerPlug*> (handle);
 
         plugin->request_work();
         BOOST_REQUIRE (work_was_requested);
@@ -99,9 +99,9 @@ private:
     bool work_was_requested = false;
     uint32_t work_data = 0, work_size = 0;
     static LV2_Worker_Status _schedule_work (LV2_Worker_Schedule_Handle handle, uint32_t size, const void* data) {
-        auto self = static_cast<WorkerTest*> (handle);
-        self->work_size = size;
-        self->work_data = *(uint32_t*) data;
+        auto self                = static_cast<WorkerTest*> (handle);
+        self->work_size          = size;
+        self->work_data          = *(uint32_t*) data;
         self->work_was_requested = true;
         return LV2_WORKER_SUCCESS;
     }

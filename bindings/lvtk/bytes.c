@@ -67,7 +67,7 @@ static int f_free (lua_State* L) {
 // @param bytes Bytes to get from
 // @int index Index in the array
 static int f_get (lua_State* L) {
-    LvtkBytes* b = (LvtkBytes*) lua_touserdata (L, 1);
+    LvtkBytes* b      = (LvtkBytes*) lua_touserdata (L, 1);
     lua_Integer index = luaL_checkinteger (L, 2);
     luaL_argcheck (L, b != NULL, 1, "`bytes' expected");
     luaL_argcheck (L, index >= 1 && index <= b->size, 2, "index out of range");
@@ -81,7 +81,7 @@ static int f_get (lua_State* L) {
 // @int index Index in the array
 // @int value Value to set in the range 0x00 to 0xFF inclusive
 static int f_set (lua_State* L) {
-    LvtkBytes* b = (LvtkBytes*) lua_touserdata (L, 1);
+    LvtkBytes* b      = (LvtkBytes*) lua_touserdata (L, 1);
     lua_Integer index = luaL_checkinteger (L, 2);
     lua_Integer value = luaL_checkinteger (L, 3);
     luaL_argcheck (L, b != NULL, 1, "`bytes' expected");

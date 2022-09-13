@@ -33,7 +33,7 @@ public:
         BOOST_REQUIRE_EQUAL (atom.c_obj(), (const LV2_Atom*) nullptr);
 
         const LV2_Atom_Float afloat = { { sizeof (float), urids.map (LV2_ATOM__Float) }, 100.f };
-        atom = lvtk::Atom ((void*) &afloat);
+        atom                        = lvtk::Atom ((void*) &afloat);
         BOOST_ASSERT (atom.has_type_and_equals (urids.map (LV2_ATOM__Float), 100.f));
         BOOST_ASSERT (atom.total_size() == sizeof (float) + sizeof (*atom.c_obj()));
         BOOST_ASSERT (atom.size() == sizeof (float));
@@ -49,10 +49,10 @@ public:
     void run_sequence() {
         clear_buffer();
         auto* const cseq = buffer_as<LV2_Atom_Sequence>();
-        cseq->atom.type = urids.map (LV2_ATOM__Sequence);
-        cseq->atom.size = sizeof (LV2_Atom_Sequence_Body);
-        cseq->body.unit = urids.map (LV2_ATOM__frameTime);
-        cseq->body.pad = 0;
+        cseq->atom.type  = urids.map (LV2_ATOM__Sequence);
+        cseq->atom.size  = sizeof (LV2_Atom_Sequence_Body);
+        cseq->body.unit  = urids.map (LV2_ATOM__frameTime);
+        cseq->body.pad   = 0;
 
         lvtk::Sequence seq (cseq);
         BOOST_ASSERT (seq.size() == sizeof (LV2_Atom_Sequence_Body));
@@ -60,9 +60,9 @@ public:
 
         uint8_t evbuf[sizeof (lvtk::AtomEvent) + 3];
         lvtk::AtomEvent* const event = (lvtk::AtomEvent*) evbuf;
-        event->time.frames = 0;
-        event->body.type = urids.map (LV2_MIDI__MidiEvent);
-        event->body.size = 3;
+        event->time.frames           = 0;
+        event->body.type             = urids.map (LV2_MIDI__MidiEvent);
+        event->body.size             = 3;
         // note on
         ((uint8_t*) LV2_ATOM_BODY (&event->body))[0] = 0x80;
         ((uint8_t*) LV2_ATOM_BODY (&event->body))[1] = 0x7f;
@@ -77,7 +77,7 @@ public:
         BOOST_REQUIRE_EQUAL (seq.size(),
                              (nev * lv2_atom_pad_size ((uint32_t) sizeof (lvtk::AtomEvent) + 3)) + (uint32_t) sizeof (LV2_Atom_Sequence_Body));
 
-        uint32_t cnt = 0;
+        uint32_t cnt  = 0;
         int64_t frame = 0;
         for (const auto& ev : seq) {
             BOOST_REQUIRE_EQUAL (urids.map (LV2_MIDI__MidiEvent), ev.body.type);
@@ -90,7 +90,7 @@ public:
         BOOST_REQUIRE_EQUAL (nev, cnt);
 
         // same test but with LV2 macro
-        cnt = 0;
+        cnt   = 0;
         frame = 0;
         LV2_ATOM_SEQUENCE_FOREACH (seq.c_obj(), iter) {
             auto& ev = *iter;
@@ -103,11 +103,11 @@ public:
 
         BOOST_REQUIRE_EQUAL (nev, cnt);
 
-        event->body.size = 3;
-        event->body.type = 111;
+        event->body.size   = 3;
+        event->body.type   = 111;
         event->time.frames = 10;
         seq.insert (*event);
-        cnt = 0;
+        cnt   = 0;
         frame = 0;
         for (const auto& ev : seq) {
             if (cnt == 1) {

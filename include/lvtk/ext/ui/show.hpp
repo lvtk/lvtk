@@ -43,7 +43,7 @@ protected:
     inline static void map_extension_data (ExtensionMap& dmap) {
         Idle<I>::map_extension_data (dmap); // idle required for show Hide
         static const LV2UI_Show_Interface _show_iface = { _show, _hide };
-        dmap[LV2_UI__showInterface] = &_show_iface;
+        dmap[LV2_UI__showInterface]                   = &_show_iface;
     }
 
 private:

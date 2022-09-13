@@ -76,18 +76,18 @@ struct Logger final : FeatureData<LV2_Log_Log> {
         @param map  A LV2_URID_Map to inititialize with
      */
     inline void init (LV2_URID_Map* const map) {
-        Entry = map->map (map->handle, LV2_LOG__Entry);
-        Error = map->map (map->handle, LV2_LOG__Error);
-        Note = map->map (map->handle, LV2_LOG__Note);
-        Trace = map->map (map->handle, LV2_LOG__Trace);
+        Entry   = map->map (map->handle, LV2_LOG__Entry);
+        Error   = map->map (map->handle, LV2_LOG__Error);
+        Note    = map->map (map->handle, LV2_LOG__Note);
+        Trace   = map->map (map->handle, LV2_LOG__Trace);
         Warning = map->map (map->handle, LV2_LOG__Warning);
     }
 
 private:
-    uint32_t Entry = 0;
-    uint32_t Error = 0;
-    uint32_t Note = 0;
-    uint32_t Trace = 0;
+    uint32_t Entry   = 0;
+    uint32_t Error   = 0;
+    uint32_t Note    = 0;
+    uint32_t Trace   = 0;
     uint32_t Warning = 0;
 };
 

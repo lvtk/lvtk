@@ -18,8 +18,8 @@
 struct StatePlug : lvtk::Plugin<StatePlug, lvtk::State> {
     StatePlug (const lvtk::Args& args) : Plugin (args) {}
 
-    static constexpr const uint32_t key = 100;
-    static constexpr const uint32_t value = 999;
+    static constexpr const uint32_t key        = 100;
+    static constexpr const uint32_t value      = 999;
     static constexpr const uint32_t value_type = 111;
 
     lvtk::StateStatus save (lvtk::StateStore& store,
@@ -46,7 +46,7 @@ public:
 
         lvtk::URIDirectory uris;
         const LV2_Feature* features[] = { uris.get_map_feature(), uris.get_unmap_feature(), nullptr };
-        auto handle = desc.instantiate (&desc, 44100.0, "/fake/path", features);
+        auto handle                   = desc.instantiate (&desc, 44100.0, "/fake/path", features);
         BOOST_REQUIRE (handle != nullptr);
         auto iface = (const LV2_State_Interface*) desc.extension_data (LV2_STATE__interface);
         BOOST_REQUIRE (iface != nullptr);
@@ -64,7 +64,7 @@ public:
     }
 
 private:
-    bool store_called = false;
+    bool store_called    = false;
     bool retrieve_called = false;
     static LV2_State_Status _store (LV2_State_Handle handle,
                                     uint32_t key,
@@ -72,7 +72,7 @@ private:
                                     size_t size,
                                     uint32_t type,
                                     uint32_t flags) {
-        auto self = static_cast<StateTest*> (handle);
+        auto self          = static_cast<StateTest*> (handle);
         self->store_called = true;
         return LV2_STATE_SUCCESS;
     }
@@ -82,7 +82,7 @@ private:
                                   size_t* size,
                                   uint32_t* type,
                                   uint32_t* flags) {
-        auto self = static_cast<StateTest*> (handle);
+        auto self             = static_cast<StateTest*> (handle);
         self->retrieve_called = true;
         return nullptr;
     }

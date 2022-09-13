@@ -14,10 +14,10 @@ namespace detail {
 static constexpr const char* default_font_face = "sans";
 
 #ifdef NANOVG_GL2
-static constexpr auto create = nvgCreateGL2;
+static constexpr auto create  = nvgCreateGL2;
 static constexpr auto destroy = nvgDeleteGL2;
 #else
-static constexpr auto create = nvgCreateGL3;
+static constexpr auto create  = nvgCreateGL3;
 static constexpr auto destroy = nvgDeleteGL3;
 #endif
 } // namespace detail
@@ -57,9 +57,9 @@ private:
         Rectangle<float> clip;
 
         State& operator= (const State& o) {
-            color = o.color;
+            color  = o.color;
             origin = o.origin;
-            clip = o.clip;
+            clip   = o.clip;
             return *this;
         }
     };
@@ -101,12 +101,12 @@ Rectangle<int> Surface::clip_bounds() const {
 }
 
 void Surface::set_fill (const Fill& fill) {
-    auto c = fill.color();
+    auto c      = fill.color();
     auto& color = ctx->state.color;
-    color.r = c.fred();
-    color.g = c.fgreen();
-    color.b = c.fblue();
-    color.a = c.falpha();
+    color.r     = c.fred();
+    color.g     = c.fgreen();
+    color.b     = c.fblue();
+    color.a     = c.falpha();
 }
 
 void Surface::save() { ctx->save(); }
@@ -114,8 +114,7 @@ void Surface::restore() { ctx->restore(); }
 
 void Surface::begin_frame (int width, int height, float scale) {
     ctx->scale = scale;
-    nvgBeginFrame (ctx->ctx, ctx->scale * (float) width, 
-                             ctx->scale * (float) height, 1.f);
+    nvgBeginFrame (ctx->ctx, ctx->scale * (float) width, ctx->scale * (float) height, 1.f);
 }
 
 void Surface::end_frame() {

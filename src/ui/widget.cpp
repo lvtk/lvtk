@@ -77,7 +77,7 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
         if (src->contains (*tgt, true))
             return from_ancestor_space (src, *tgt, pt);
 
-        pt = to_parent_space (*src, pt);
+        pt  = to_parent_space (*src, pt);
         src = src->parent();
     }
 
@@ -86,7 +86,7 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
         return pt;
 
     auto root = tgt->find_root();
-    pt = from_parent_space (*root, pt);
+    pt        = from_parent_space (*root, pt);
     if (root == tgt)
         return pt;
 
@@ -117,12 +117,12 @@ void Widget::repaint() {
 
 //=============================================================================
 void Widget::set_bounds (int x, int y, int width, int height) {
-    const bool was_moved = _bounds.x != x || _bounds.y != y;
+    const bool was_moved   = _bounds.x != x || _bounds.y != y;
     const bool was_resized = _bounds.width != width || _bounds.height != height;
 
-    _bounds.x = x;
-    _bounds.y = y;
-    _bounds.width = width;
+    _bounds.x      = x;
+    _bounds.y      = y;
+    _bounds.width  = width;
     _bounds.height = height;
 
     if (visible() && was_resized)

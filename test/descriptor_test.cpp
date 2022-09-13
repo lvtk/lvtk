@@ -64,9 +64,9 @@ public:
 
     void missing_host_feature() {
         lvtk::Descriptor<PlugWithRequiredHostFeature> reg ("http://fakeuri.com", { LV2_URID__map });
-        const auto& desc = lvtk::descriptors().back();
+        const auto& desc              = lvtk::descriptors().back();
         const LV2_Feature* features[] = { nullptr };
-        LV2_Handle handle = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
+        LV2_Handle handle             = desc.instantiate (&desc, 44100.0, "/usr/local/lv2", features);
         BOOST_ASSERT (handle == nullptr);
         if (handle && desc.cleanup)
             desc.cleanup (handle);

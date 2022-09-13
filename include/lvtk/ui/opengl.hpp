@@ -40,7 +40,7 @@ namespace lvtk {
 /** Surface which uses OpenGL directly. */
 class OpenGLSurface : public Surface {
 public:
-    OpenGLSurface() = default;
+    OpenGLSurface()          = default;
     virtual ~OpenGLSurface() = default;
 
     /** Called immediately before rendering
@@ -49,10 +49,10 @@ public:
         @param height Height in logical coords
         @param scale Scale factor in use by @ref OpenGLView
     */
-    virtual void begin_frame (int width, int height, float scale) =0;
+    virtual void begin_frame (int width, int height, float scale) = 0;
 
     /** called immediately after rendering */
-    virtual void end_frame() =0;
+    virtual void end_frame() = 0;
 };
 
 /** Surf template param must be an OpenGLView of some kind */
@@ -71,7 +71,6 @@ public:
         set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 3);
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 3);
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
-        set_view_hint (PUGL_RESIZABLE, PUGL_TRUE);
     }
 
     ~OpenGLView() {
@@ -87,7 +86,7 @@ protected:
     }
 
     inline void expose (Bounds frame) override {
-        auto vframe = bounds() * scale_factor();
+        auto vframe   = bounds() * scale_factor();
         auto gl_frame = frame * scale_factor();
         // flip y-coord
         gl_frame.y = vframe.height - gl_frame.y - gl_frame.height;
@@ -108,7 +107,7 @@ private:
 template <class Surf, class V = OpenGLView<Surf>>
 struct OpenGL : public Backend {
     using surface_type = Surf;
-    using view_type = V;
+    using view_type    = V;
     OpenGL (const std::string& name) : Backend (name) {}
     std::unique_ptr<View> create_view (Main& c, Widget& w) override {
         return std::make_unique<V> (c, w);

@@ -23,14 +23,14 @@ class Symbols final {
 public:
     /** Create an empty symbol map and initialized LV2 URID features */
     Symbols() {
-        map_feature.URI = LV2_URID__map;
-        map_data.handle = (void*) this;
-        map_data.map = &Symbols::_map;
+        map_feature.URI  = LV2_URID__map;
+        map_data.handle  = (void*) this;
+        map_data.map     = &Symbols::_map;
         map_feature.data = &map_data;
 
-        unmap_feature.URI = LV2_URID__unmap;
-        unmap_data.handle = this;
-        unmap_data.unmap = _unmap;
+        unmap_feature.URI  = LV2_URID__unmap;
+        unmap_data.handle  = this;
+        unmap_data.unmap   = _unmap;
         unmap_feature.data = &unmap_data;
     }
 
@@ -44,7 +44,7 @@ public:
     inline uint32_t map (const char* key) {
         if (! contains (key)) {
             const uint32_t urid (1 + (uint32_t) mapped.size());
-            mapped[key] = urid;
+            mapped[key]    = urid;
             unmapped[urid] = std::string (key);
             return urid;
         }

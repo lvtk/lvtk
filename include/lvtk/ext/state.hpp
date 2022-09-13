@@ -56,8 +56,8 @@ struct StateRetrieve {
         @returns Associated 'value' data for the given key
       */
     const void* operator() (uint32_t key,
-                            size_t* size = nullptr,
-                            uint32_t* type = nullptr,
+                            size_t* size    = nullptr,
+                            uint32_t* type  = nullptr,
                             uint32_t* flags = nullptr) const {
         return f_retrieve (p_handle, key, size, type, flags);
     }
@@ -132,7 +132,7 @@ protected:
     /** @private */
     inline static void map_extension_data (ExtensionMap& extensions) {
         static const LV2_State_Interface _state = { _save, _restore };
-        extensions[LV2_STATE__interface] = &_state;
+        extensions[LV2_STATE__interface]        = &_state;
     }
 
 private:

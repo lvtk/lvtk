@@ -68,7 +68,7 @@ public:
     }
 
 private:
-    LV2UI_Controller controller = nullptr;
+    LV2UI_Controller controller     = nullptr;
     LV2UI_Write_Function port_write = nullptr;
 };
 
@@ -123,10 +123,10 @@ private:
         LV2UI_Descriptor desc;
         desc.URI = (const char*) malloc ((1 + uri.length()) * sizeof (char));
         strcpy ((char*) desc.URI, uri.c_str());
-        desc.URI = strdup (uri.c_str());
-        desc.instantiate = U::_instantiate;
-        desc.port_event = U::_port_event;
-        desc.cleanup = U::_cleanup;
+        desc.URI            = strdup (uri.c_str());
+        desc.instantiate    = U::_instantiate;
+        desc.port_event     = U::_port_event;
+        desc.cleanup        = U::_cleanup;
         desc.extension_data = U::_extension_data;
         ui_descriptors().push_back (desc);
         U::map_extension_data();

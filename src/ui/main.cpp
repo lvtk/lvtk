@@ -1,6 +1,8 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <iostream>
+
 #include <lvtk/ui/button.hpp>
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/style.hpp>
@@ -73,29 +75,39 @@ void Main::quit() {
     __quit_flag = true;
 }
 
-std::unique_ptr<View> Main::create_view (Widget& widget, uintptr_t parent) {
+std::unique_ptr<View> Main::create_view (Widget& widget, uintptr_t parent, ViewFlags flags) {
     auto view = _backend->create_view (*this, widget);
+    if (! view)
+        return nullptr;
+
+    const bool transient = false;
+
     if (view && parent)
-        view->set_parent (parent);
+        view->set_parent (parent, transient);
+
+    view->set_view_hint (PUGL_RESIZABLE, (int) (flags & ViewFlag::RESIZABLE));
+    // if (flags & ViewFlag::POPUP)
+    //     view->set_view_hint (PUGL_VIEW_TYPE, PUGL_POPUP_MENU_VIEW);
+
     return view;
 }
-
-void Main::elevate (Widget& widget, uintptr_t parent) {
+void Main::elevate (Widget& widget, uintptr_t parent, ViewFlags flags) {
     if (widget._view != nullptr)
         return;
 
-    auto view = create_view (widget, parent);
+    auto view = create_view (widget, parent, flags);
     // bail out conditions?
 
-    view->set_size (widget.width(), widget.height());
+    view->set_bounds (widget.bounds());
+    std::clog << view->bounds().str() << std::endl;
     view->realize();
     view->set_visible (widget.visible());
     widget._view = std::move (view);
     widget.notify_structure_changed();
 }
 
-void Main::elevate (Widget& widget, View& parent) {
-    elevate (widget, parent.handle());
+void Main::elevate (Widget& widget, View& parent, ViewFlags flags) {
+    elevate (widget, parent.handle(), flags);
 }
 
 View* Main::find_view (Widget& widget) const noexcept {

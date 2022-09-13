@@ -8,7 +8,7 @@ namespace lvtk {
 
 class Button : public lvtk::Widget {
 public:
-    Button() = default;
+    Button()          = default;
     virtual ~Button() = default;
 
     std::function<void()> clicked;
@@ -54,7 +54,7 @@ private:
 
 class TextButton : public Button {
 public:
-    TextButton() = default;
+    TextButton()          = default;
     virtual ~TextButton() = default;
 
     String text() const noexcept { return _text; }

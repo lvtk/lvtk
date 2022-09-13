@@ -4,13 +4,22 @@
 #pragma once
 
 #include <lvtk/ui/graphics.hpp>
-#include <lvtk/ui/main.hpp>
 #include <lvtk/ui/style.hpp>
 #include <lvtk/weak_ref.hpp>
 
 namespace lvtk {
 
+class Main;
 class Widget;
+
+struct ViewFlag {
+    enum {
+        TRIVIAL   = (1 << 0), // View is trivial, like a popup menu.
+        RESIZABLE = (1 << 1)  // View is resizable.
+    };
+};
+
+using ViewFlags = uint32_t;
 
 class View {
 protected:
@@ -31,8 +40,11 @@ public:
     /** Add this view to the desktop. */
     void realize();
 
-    Style& style() noexcept { return _main.style(); }
-    const Style& style() const noexcept { return _main.style(); }
+    Main& main() noexcept { return _main; }
+    Style& style() noexcept;
+    const Style& style() const noexcept;
+
+    void elevate (Widget& widget, ViewFlags flags);
 
     //====== TESTING ========
     void __pugl_post_redisplay();
@@ -56,7 +68,7 @@ private:
 
     struct EventHandler;
 
-    void set_parent (uintptr_t parent);
+    void set_parent (uintptr_t parent, bool transient);
 
     LVTK_WEAK_REFABLE (View);
 };

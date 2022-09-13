@@ -46,7 +46,7 @@ namespace lvtk {
  */
 class DynManifest {
 public:
-    DynManifest() = default;
+    DynManifest()          = default;
     virtual ~DynManifest() = default;
 
     /** Get the subjects

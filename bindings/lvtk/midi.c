@@ -14,10 +14,10 @@
 
 static int f_msg3bytes (lua_State* L, uint8_t status) {
     LvtkPacked msg = { .packed = 0x00 };
-    msg.bytes.b1 = status | (uint8_t) (lua_tointeger (L, 1) - 1);
-    msg.bytes.b2 = (uint8_t) lua_tointeger (L, 2);
-    msg.bytes.b3 = (uint8_t) lua_tointeger (L, 3);
-    msg.bytes.b4 = 0x00;
+    msg.bytes.b1   = status | (uint8_t) (lua_tointeger (L, 1) - 1);
+    msg.bytes.b2   = (uint8_t) lua_tointeger (L, 2);
+    msg.bytes.b3   = (uint8_t) lua_tointeger (L, 3);
+    msg.bytes.b4   = 0x00;
     lua_pushinteger (L, msg.packed);
     return 1;
 }

@@ -95,7 +95,7 @@ protected:
     /** @private */
     inline static void map_extension_data (ExtensionMap& dmap) {
         static const LV2_Options_Interface _options = { _get, _set };
-        dmap[LV2_OPTIONS__interface] = &_options;
+        dmap[LV2_OPTIONS__interface]                = &_options;
     }
 
 private:

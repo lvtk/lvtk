@@ -12,23 +12,23 @@ namespace lvtk {
 // supported.... although it probably is possible.
 namespace proxy {
 
-static constexpr const char* impl_key = "__impl";
-static constexpr const char* base_key = "__base";
-static constexpr const char* atts_key = "__atts";
-static constexpr const char* props_key = "__props";
+static constexpr const char* impl_key    = "__impl";
+static constexpr const char* base_key    = "__base";
+static constexpr const char* atts_key    = "__atts";
+static constexpr const char* props_key   = "__props";
 static constexpr const char* methods_key = "__methods";
 
 template <typename Obj>
 static inline Obj* userdata (const sol::table& ctx) {
     if (! ctx.valid())
         return nullptr;
-    auto mt = ctx[sol::metatable_key];
+    auto mt     = ctx[sol::metatable_key];
     Obj* result = nullptr;
 
     try {
         if (mt[impl_key].get_type() == sol::type::userdata) {
             sol::object ud = mt[impl_key];
-            result = ud.as<Obj*>();
+            result         = ud.as<Obj*>();
         }
     } catch (const std::exception&) {
     }
@@ -42,7 +42,7 @@ static inline void widget_set_bounds (Wgt& self, const sol::object& obj) {
         self.set_bounds (obj.as<Bounds>());
     } else if (obj.is<sol::table>()) {
         sol::table tr = obj;
-        auto b = self.bounds();
+        auto b        = self.bounds();
         self.set_bounds (
             tr.get_or ("x", b.x),
             tr.get_or ("y", b.y),
@@ -54,7 +54,7 @@ static inline void widget_set_bounds (Wgt& self, const sol::object& obj) {
 // does nothing yet.
 class Object {
 public:
-    Object() = default;
+    Object()  = default;
     ~Object() = default;
 };
 
@@ -160,11 +160,11 @@ sol::table Widget::add (const sol::object& child) {
 
 sol::table Widget::bounds_table() {
     sol::state_view L (widget.lua_state());
-    auto r = bounds();
-    auto t = L.create_table();
-    t["x"] = r.x;
-    t["y"] = r.y;
-    t["width"] = r.width;
+    auto r      = bounds();
+    auto t      = L.create_table();
+    t["x"]      = r.x;
+    t["y"]      = r.y;
+    t["width"]  = r.width;
     t["height"] = r.height;
     return t;
 }

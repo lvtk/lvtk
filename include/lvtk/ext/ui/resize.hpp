@@ -51,7 +51,7 @@ protected:
     /** @private */
     static void map_extension_data (ExtensionMap& emap) {
         static LV2UI_Resize _resize = { nullptr, _ui_resize };
-        emap[LV2_UI__resize] = &_resize;
+        emap[LV2_UI__resize]        = &_resize;
     }
 
 private:

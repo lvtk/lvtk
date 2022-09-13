@@ -33,11 +33,11 @@ public:
         lvtk::URIDirectory uris;
 
         LV2_Log_Log log;
-        log.handle = this;
-        log.printf = _printf;
+        log.handle  = this;
+        log.printf  = _printf;
         log.vprintf = _vprintf;
         LV2_Feature flog;
-        flog.URI = LV2_LOG__log;
+        flog.URI  = LV2_LOG__log;
         flog.data = (void*) &log;
 
         const LV2_Feature* features[] = {
@@ -65,7 +65,7 @@ private:
     static int _printf (LV2_Log_Handle, LV2_URID, const char*, ...) { return 0; }
 
     static int _vprintf (LV2_Log_Handle handle, LV2_URID type, const char* msg, va_list args) {
-        auto& buffer = static_cast<LogTest*> (handle)->buffer;
+        auto& buffer                             = static_cast<LogTest*> (handle)->buffer;
         static_cast<LogTest*> (handle)->msg_type = type;
         memset (buffer, 0, buffer_size);
         return vsprintf (buffer, msg, args);

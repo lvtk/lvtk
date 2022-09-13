@@ -29,11 +29,11 @@ struct PathItem {
 template <typename Coord>
 class BasicPath {
 public:
-    using coord_type = Coord;
+    using coord_type  = Coord;
     using vector_type = std::vector<Coord>;
-    using value_type = PathItem<coord_type>;
+    using value_type  = PathItem<coord_type>;
 
-    BasicPath() = default;
+    BasicPath()  = default;
     ~BasicPath() = default;
 
     void clear() { _data.clear(); }
@@ -99,8 +99,8 @@ public:
                     _item.y3 = *_i++;
                     break;
                 case PathOp::CLOSE:
-                    _item.x1 = _item.y1 =
-                        _item.x2 = _item.y2 =
+                    _item.x1         = _item.y1 =
+                        _item.x2     = _item.y2 =
                             _item.x3 = _item.y3 = 0.f;
                     break;
                 default:

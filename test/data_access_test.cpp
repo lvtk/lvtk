@@ -39,7 +39,7 @@ struct DataAccessTest {
         args.bundle = "/fake/path";
         args.plugin = "http://fakeuri.com";
         LV2_Extension_Data_Feature data_data;
-        data_data.data_access = desc.extension_data;
+        data_data.data_access    = desc.extension_data;
         LV2_Feature data_feature = { LV2_DATA_ACCESS_URI, &data_data };
         args.features.push_back (data_feature);
         std::unique_ptr<DataAccessUI> ui (new DataAccessUI (args));

@@ -43,7 +43,7 @@ protected:
 
     void resized() override {
         int pad = 4;
-        auto r = bounds().at (0).slice_bottom (40).smaller (4);
+        auto r  = bounds().at (0).slice_bottom (40).smaller (4);
         button1.set_bounds (r.slice_left (120));
         button3.set_bounds (r.slice_right (120));
         r.slice_right (pad);

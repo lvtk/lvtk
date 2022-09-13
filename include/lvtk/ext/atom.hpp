@@ -416,7 +416,7 @@ struct Sequence final {
         friend struct Sequence;
         iterator (LV2_Atom_Sequence* seq, AtomEvent* ev)
             : event (ev), sequence (seq) {}
-        LV2_Atom_Event* event = nullptr;
+        LV2_Atom_Event* event       = nullptr;
         LV2_Atom_Sequence* sequence = nullptr;
     };
 
@@ -627,7 +627,7 @@ struct Vector final {
 
         /** Reference another iterator */
         inline iterator& operator= (const iterator& other) {
-            this->vec = other.vec;
+            this->vec    = other.vec;
             this->offset = other.offset;
             return *this;
         }
@@ -636,7 +636,7 @@ struct Vector final {
         friend struct Vector;
         iterator (LV2_Atom_Vector* v, uint32_t os = 0) : vec (v), offset (os) {}
         LV2_Atom_Vector* vec = nullptr;
-        uint32_t offset = 0;
+        uint32_t offset      = 0;
     };
 
     /** Returns an iterator to the begining of the vector */

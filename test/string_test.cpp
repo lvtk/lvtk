@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE (String)
 BOOST_AUTO_TEST_CASE (ctors) {
     using lvtk::String;
     auto a = String();
-    a = String ("lv2");
+    a      = String ("lv2");
     BOOST_REQUIRE_EQUAL (a, "lv2");
     a = String (String (std::string ("rules")));
     BOOST_REQUIRE_EQUAL (a, "rules");

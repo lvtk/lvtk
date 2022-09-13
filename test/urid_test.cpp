@@ -19,9 +19,9 @@ namespace lvtk {
 
 class Console {
     Console() {
-        log_feature.URI = LV2_LOG__log;
-        log_data.handle = this;
-        log_data.printf = _printf;
+        log_feature.URI  = LV2_LOG__log;
+        log_data.handle  = this;
+        log_data.printf  = _printf;
         log_data.vprintf = _vprintf;
     }
 
@@ -60,7 +60,7 @@ public:
         BOOST_REQUIRE_EQUAL (std::string ("https://dummy.org/B"),
                              std::string (urids.unmap (urid_B)));
 
-        const auto* map = (LV2_URID_Map*) urids.get_map_feature()->data;
+        const auto* map   = (LV2_URID_Map*) urids.get_map_feature()->data;
         const auto* unmap = (LV2_URID_Unmap*) urids.get_unmap_feature()->data;
         BOOST_REQUIRE_EQUAL (std::string ("https://dummy.org/A"),
                              std::string (unmap->unmap (map->handle, urid_A)));

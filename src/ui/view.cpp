@@ -72,10 +72,10 @@ struct View::EventHandler {
             return PUGL_SUCCESS;
         }
 
-        auto x = (float) ev.x / (float)view.scale_factor();
-        auto y = (float) ev.y / (float)view.scale_factor();
-        auto w = (float) ev.width / (float)view.scale_factor();
-        auto h = (float) ev.height / (float)view.scale_factor();
+        auto x = (float) ev.x / (float) view.scale_factor();
+        auto y = (float) ev.y / (float) view.scale_factor();
+        auto w = (float) ev.width / (float) view.scale_factor();
+        auto h = (float) ev.height / (float) view.scale_factor();
         view.expose (Rectangle<float> { x, y, w, h }.as<int>());
         return PUGL_SUCCESS;
     }
@@ -126,7 +126,7 @@ struct View::EventHandler {
     }
 
     static PuglStatus motion (View& view, const PuglMotionEvent& ev) {
-        auto pos = detail::point<float> (ev) / view.scale_factor();
+        auto pos      = detail::point<float> (ev) / view.scale_factor();
         WidgetRef ref = view._widget.widget_at (pos);
 
         if (ref.valid()) {
@@ -163,7 +163,7 @@ struct View::EventHandler {
 
     static PuglStatus button_release (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
-        event.pos = detail::point<float> (ev) / view.scale_factor();
+        event.pos    = detail::point<float> (ev) / view.scale_factor();
         auto hovered = view._hovered;
 
         if (auto w = hovered.lock()) {
@@ -185,7 +185,7 @@ struct View::EventHandler {
     static PuglStatus nothing (View&, const PuglAnyEvent&) { return PUGL_SUCCESS; }
 
     static inline PuglStatus dispatch (PuglView* v, const PuglEvent* ev) {
-        auto view = static_cast<View*> (puglGetHandle (v));
+        auto view         = static_cast<View*> (puglGetHandle (v));
         PuglStatus status = PUGL_SUCCESS;
 
 #define CASE3(t, fn, arg)         \
@@ -234,7 +234,7 @@ struct View::EventHandler {
 View::View (Main& m, Widget& w)
     : _main (m),
       _widget (w) {
-    _view = (uintptr_t) puglNewView ((PuglWorld*) m.world());
+    _view  = (uintptr_t) puglNewView ((PuglWorld*) m.world());
     auto v = (PuglView*) _view;
     puglSetHandle (v, this);
     puglSetEventFunc (v, EventHandler::dispatch);
@@ -292,14 +292,25 @@ void View::realize() {
     puglRealize ((PuglView*) _view);
 }
 
+Style& View::style() noexcept { return _main.style(); }
+const Style& View::style() const noexcept { return _main.style(); }
+
+void View::elevate (Widget& widget, ViewFlags flags) {
+    _main.elevate (widget, *this, flags);
+}
+
 //==
 void View::render (Surface& ctx) {
     Graphics g (ctx);
     _widget.render (g);
 }
 
-void View::set_parent (uintptr_t parent) {
-    if (parent)
+void View::set_parent (uintptr_t parent, bool transient) {
+    if (! parent)
+        return;
+    if (transient)
+        puglSetTransientParent ((PuglView*) _view, parent);
+    else
         puglSetParentWindow ((PuglView*) _view, parent);
 }
 

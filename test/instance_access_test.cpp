@@ -31,14 +31,14 @@ public:
         const auto& desc = lvtk::descriptors().back();
         BOOST_REQUIRE (strcmp (desc.URI, "http://fakeuri.com") == 0);
         const LV2_Feature* const features[] = { nullptr };
-        auto instance = desc.instantiate (&desc, 44100.0, "/fake/path", features);
+        auto instance                       = desc.instantiate (&desc, 44100.0, "/fake/path", features);
         BOOST_REQUIRE (instance != nullptr);
         if (! instance)
             return;
 
         lvtk::UIArgs args;
-        args.bundle = "/fake/path";
-        args.plugin = "http://fakeuri.com";
+        args.bundle              = "/fake/path";
+        args.plugin              = "http://fakeuri.com";
         LV2_Feature inst_feature = { LV2_INSTANCE_ACCESS_URI, instance };
         args.features.push_back (inst_feature);
 

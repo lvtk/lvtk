@@ -42,7 +42,7 @@ struct Embed::Window {
         if (parent != nullptr) {
             create_proxy();
             // TODO: use Pugl's parenting facilities
-            main.elevate (*proxy, *parent);
+            main.elevate (*proxy, *parent, 0);
             proxy->set_visible (true);
             parent->set_size (100, 100);
         } else {
@@ -54,7 +54,7 @@ struct Embed::Window {
         if (! parent.valid())
             return;
         auto b = parent->bounds();
-        b.x = 200;
+        b.x    = 200;
         parent->set_bounds (b);
     }
 
