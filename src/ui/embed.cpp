@@ -1,4 +1,5 @@
 
+#include <iostream>
 
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/main.hpp>

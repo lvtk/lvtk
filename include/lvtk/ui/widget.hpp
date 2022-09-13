@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <lv2/ui/ui.h>
 
 #include "lvtk/ui/graphics.hpp"
@@ -15,15 +14,8 @@ namespace lvtk {
 
 class Widget {
 public:
-    Widget() {
-        _weak_status.reset (this);
-    }
-
-    virtual ~Widget() {
-        _weak_status.reset (nullptr);
-    }
-
-    // void observe (WidgetObserver&);
+    Widget();
+    virtual ~Widget();
 
     Widget* parent() const noexcept { return _parent; }
 
@@ -35,15 +27,27 @@ public:
         return widget;
     }
 
+    /** Remove a child widget.
+        @param widget The widget to remove
+     */
     void remove (Widget* widget);
+
+    /** Remove a child widget.
+        @param widget The widget to remove.
+     */
     void remove (Widget& widget);
 
+    /** Returns true if this widget is visible. */
     bool visible() const noexcept;
+
+    /** Change this widget's visibility.
+        @param visible True if it should be visible
+     */
     void set_visible (bool visible);
 
+    /** Request this widget be repainted. */
     void repaint();
 
-    //==========================================
     bool opaque() const noexcept { return _opaque; }
     void set_opaque (bool opaque) { _opaque = opaque; }
 

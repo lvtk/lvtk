@@ -1,6 +1,8 @@
 #pragma once
 
 #include <functional>
+#include <iostream>
+
 #include <lvtk/ui/button.hpp>
 
 namespace lvtk {

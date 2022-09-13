@@ -83,6 +83,9 @@ static Point<float> convert_coord (const Widget* tgt, const Widget* src, Point<f
 
 } // namespace detail
 
+Widget::Widget() { _weak_status.reset (this); }
+Widget::~Widget() { _weak_status.reset (nullptr); }
+
 //=============================================================================
 bool Widget::visible() const noexcept { return _visible; }
 
