@@ -253,7 +253,7 @@ void View::set_view_hint (int hint, int value) {
 }
 
 uintptr_t View::handle() { return puglGetNativeView ((PuglView*) _view); }
-double View::scale() const noexcept { return puglGetScaleFactor ((PuglView*) _view); }
+double View::scale_factor() const noexcept { return puglGetScaleFactor ((PuglView*) _view); }
 
 void View::set_visible (bool visible) {
     if (visible)

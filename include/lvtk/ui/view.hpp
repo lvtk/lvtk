@@ -17,7 +17,9 @@ protected:
 public:
     virtual ~View();
     uintptr_t handle();
-    double scale() const noexcept;
+
+    /** Returns the scale factor of this view. */
+    double scale_factor() const noexcept;
 
     void set_visible (bool visible);
     bool visible() const;
@@ -26,6 +28,7 @@ public:
     Bounds bounds() const;
     void set_bounds (Bounds b);
 
+    /** Add this view to the desktop. */
     void realize();
 
     Style& style() noexcept { return _main.style(); }
@@ -39,6 +42,7 @@ protected:
     void render (Surface& surface);
     void set_backend (uintptr_t);
     void set_view_hint (int, int);
+    
     virtual void expose (Bounds frame) {}
     virtual void created() {}
     virtual void destroyed() {}

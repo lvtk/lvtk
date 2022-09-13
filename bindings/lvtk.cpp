@@ -397,9 +397,9 @@ LVTK_LUALIB
 int luaopen_lvtk_View (lua_State* L) {
     auto T = lua::bind<lvtk::View> (L, "lvtk", "View",
         "visible",  property (&View::visible, &View::set_visible),
-        "bounds",   &View::bounds,
-        "scale",    &View::scale,
-        "set_size", &View::set_size
+        "bounds",       &View::bounds,
+        "scale_factor", &View::scale_factor,
+        "set_size",     &View::set_size
     );
     stack::push (L, T);
     return 1;
