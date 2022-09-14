@@ -80,7 +80,7 @@ private:
         void pressed (InputEvent ev) override {
             set_visible (false);
             if (auto root = menubar.find_view())
-                root->__pugl_post_redisplay();
+                root->repaint ({});
         };
         MenuBar& menubar;
     } file_menu;

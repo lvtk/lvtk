@@ -46,9 +46,8 @@ public:
 
     void elevate (Widget& widget, ViewFlags flags);
 
-    //====== TESTING ========
-    void __pugl_post_redisplay();
-    //=======================
+    void repaint (Bounds);
+
 protected:
     View (Main& context, Widget& widget);
     void render (Surface& surface);

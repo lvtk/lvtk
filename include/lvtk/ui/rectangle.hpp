@@ -234,6 +234,22 @@ struct Rectangle {
         width -= amount;
         return s;
     }
+
+    bool intersects (Rectangle o) const noexcept {
+        return (x + width) > o.x && (y + height) > o.y
+               && x < (o.x + o.width) && y < (o.y + o.height)
+               && width > Val() && height > Val()
+               && o.width > Val() && o.height > Val();
+    }
+
+    Rectangle<Val> intersection (Rectangle<Val> o) const noexcept {
+        Rectangle<Val> r;
+        r.x      = std::max (x, o.x);
+        r.y      = std::max (y, o.y);
+        r.width  = std::min (x + width, o.x + o.width) - r.x;
+        r.height = std::min (y + height, o.y + o.height) - r.y;
+        return r.height >= Val() && r.width >= Val() ? r : Rectangle<Val>();
+    }
 };
 
 } // namespace lvtk

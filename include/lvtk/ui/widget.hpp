@@ -159,6 +159,7 @@ private:
 
     void add_internal (Widget*);
     void render_internal (Graphics&);
+    void repaint_internal (Bounds);
 
     void notify_structure_changed();
     void notify_children_changed();

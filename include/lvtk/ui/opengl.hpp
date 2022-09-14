@@ -95,7 +95,10 @@ protected:
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if (_surface) {
             _surface->begin_frame (frame.width, frame.height, scale_factor());
+            _surface->save();
+            _surface->set_clip_bounds (frame);
             render (*_surface);
+            _surface->restore();
             _surface->end_frame();
         }
     }

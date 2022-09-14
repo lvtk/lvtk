@@ -111,8 +111,7 @@ void Widget::set_visible (bool v) {
 
 //=============================================================================
 void Widget::repaint() {
-    if (auto view = find_view())
-        view->__pugl_post_redisplay();
+    repaint_internal (bounds().at (0));
 }
 
 //=============================================================================
@@ -279,8 +278,38 @@ bool Widget::contains (Point<float> pt) const noexcept {
     return _bounds.at (0, 0).as<float>().contains (pt);
 }
 
+#if 0
+static bool clipObscuredRegions (const Widget& w, const std::vector<Widget*>& widgets,
+                                 Graphics& g, const Rectangle<int> cr, Point<int> delta) {
+    bool wasClipped = false;
+
+    for (int i = widgets.size(); --i >= 0;) {
+        auto& child = *widgets[i];
+
+        if (child.visible()) { // && ! child.isTransformed()) {
+            auto ncr = cr.intersection (child.bounds());
+
+            if (! ncr.empty()) {
+                if (child.opaque()) { // && child.componentTransparency == 0) {
+                    // g.excludeClipRegion (newClip + delta);
+                    wasClipped = true;
+                } else {
+                    auto childPos = child.bounds().pos();
+
+                    if (clipObscuredRegions (child, g, ncr - childPos, childPos + delta))
+                        wasClipped = true;
+                }
+            }
+        }
+    }
+
+    return wasClipped;
+}
+#endif
+
 //=================================================================
 void Widget::render_internal (Graphics& g) {
+    auto cb = g.clip_bounds();
     paint (g);
 
     for (auto cw : _widgets) {
@@ -290,6 +319,25 @@ void Widget::render_internal (Graphics& g) {
         g.translate (cw->bounds().pos());
         cw->render (g);
         g.restore();
+    }
+}
+
+void Widget::repaint_internal (Bounds b) {
+    if (! visible())
+        return;
+    b = bounds().at (0).intersection (b);
+    if (b.empty())
+        return;
+
+    if (elevated()) {
+        _view->repaint (b);
+    } else {
+        if (_parent != nullptr) {
+            auto p = convert::to_parent_space (*this, b.pos().as<float>());
+            b.x    = detail::round_int (p.x);
+            b.y    = detail::round_int (p.y);
+            _parent->repaint_internal (b);
+        }
     }
 }
 

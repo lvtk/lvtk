@@ -85,14 +85,14 @@ float Surface::scale_factor() const noexcept {
 
 void Surface::translate (const Point<int>& pt) {
     auto& state = ctx->state;
-    state.origin += pt.as<float>() * ctx->scale;
+    state.origin += (pt.as<float>() * ctx->scale);
 }
 
 void Surface::set_clip_bounds (const Rectangle<int>& r) {
     auto rf = r.as<float>() * ctx->scale;
     if (rf == ctx->state.clip)
         return;
-    nvgScissor (ctx->ctx, rf.x, rf.y, rf.width, rf.height);
+    // nvgScissor (ctx->ctx, rf.x, rf.y, rf.width, rf.height);
     ctx->state.clip = rf;
 }
 

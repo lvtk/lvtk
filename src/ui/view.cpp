@@ -12,6 +12,7 @@
 #include <pugl/pugl.h>
 
 // flip these for verbose logging
+#include <iostream>
 // #define VIEW_DBG(x) std::clog << x << std::endl;
 #define VIEW_DBG(x)
 
@@ -76,7 +77,10 @@ struct View::EventHandler {
         auto y = (float) ev.y / view.scale_factor();
         auto w = (float) ev.width / view.scale_factor();
         auto h = (float) ev.height / view.scale_factor();
-        view.expose (Rectangle<float> { x, y, w, h }.as<int>());
+        auto r = Rectangle<float> { x, y, w, h }.as<int>();
+
+        std::clog << "expose: " << view._widget.bounds().str() << std::endl;
+        view.expose (r);
         return PUGL_SUCCESS;
     }
 
@@ -111,8 +115,10 @@ struct View::EventHandler {
 
     static PuglStatus focus_in (View& view, const PuglFocusEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus focus_out (View& view, const PuglFocusEvent& ev) { return PUGL_SUCCESS; }
+
     static PuglStatus key_press (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus key_release (View& view, const PuglKeyEvent& ev) { return PUGL_SUCCESS; }
+
     static PuglStatus text (View& view, const PuglTextEvent& ev) { return PUGL_SUCCESS; }
 
     static PuglStatus pointer_in (View& view, const PuglCrossingEvent& ev) {
@@ -158,6 +164,8 @@ struct View::EventHandler {
     static PuglStatus button_press (View& view, const PuglButtonEvent& ev) {
         InputEvent event;
         event.pos = detail::point<float> (ev) / view.scale_factor();
+
+        std::clog << "button: " << (int) ev.button << std::endl;
 
         if (auto w = view._hovered.lock()) {
             event.pos = w->convert (&view._widget, event.pos);
@@ -308,6 +316,16 @@ void View::elevate (Widget& widget, ViewFlags flags) {
     _main.elevate (widget, flags, *this);
 }
 
+void View::repaint (Bounds area) {
+    bool force = true;
+    if (area.empty() || force) {
+        puglPostRedisplay ((PuglView*) _view);
+    } else {
+        area *= scale_factor();
+        puglPostRedisplayRect ((PuglView*) _view, { (PuglCoord) area.x, (PuglCoord) area.y, (PuglSpan) area.width, (PuglSpan) area.height });
+    }
+}
+
 //==
 void View::render (Surface& ctx) {
     Graphics g (ctx);
@@ -321,10 +339,6 @@ void View::set_parent (uintptr_t parent, bool transient) {
         puglSetTransientParent ((PuglView*) _view, parent);
     else
         puglSetParentWindow ((PuglView*) _view, parent);
-}
-
-void View::__pugl_post_redisplay() {
-    puglPostRedisplay ((PuglView*) _view);
 }
 
 } // namespace lvtk
