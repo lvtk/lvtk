@@ -37,7 +37,7 @@ shared_module ('lvtk',
     cpp_args : lvtk_lua_cpp_args,
     gnu_symbol_visibility : 'hidden',
     dependencies: [ pugl_gl_dep, lvtk_internal_dep ],
-    objects : [ liblvtk_nanovg.extract_all_objects (recursive : true),
+    objects : [ liblvtk_gl.extract_all_objects (recursive : true),
                 liblvtk_ui.extract_all_objects (recursive : true)],
     install : true,
     install_dir : lvtk_lua_cmod_subdir)
