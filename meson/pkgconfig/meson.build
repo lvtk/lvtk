@@ -11,6 +11,6 @@ pkg.generate (liblvtk_gl,
     name        : 'LVTK OpenGL',
     filebase    : 'lvtk-gl-3',
     version     : meson.project_version(),
-    description : 'NanoVG backend for LVTK',
+    description : 'OpenGL backend for LVTK',
     subdirs     : 'lvtk-3',
     requires    : [])
