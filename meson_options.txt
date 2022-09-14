@@ -1,4 +1,2 @@
-option (
-  'readline', type: 'boolean', value: true,
-  description: 'Use GNU readline (or libedit) if available'
-)
+option('unit-tests', type: 'feature', value: 'auto',
+    description: 'Build tests')
