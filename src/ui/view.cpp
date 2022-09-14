@@ -145,6 +145,8 @@ struct View::EventHandler {
 
             if (auto h = view._hovered.lock()) {
                 event.pos = h->convert (&view._widget, pos);
+                event.pos.x = std::min (std::max (0.f, event.pos.x), (float)h->width());
+                event.pos.y = std::min (std::max (0.f, event.pos.y), (float)h->height());
                 h->pointer_out (event);
             }
             view._hovered = nullptr;
