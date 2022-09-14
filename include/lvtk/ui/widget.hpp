@@ -10,6 +10,10 @@
 #include "lvtk/ui/view.hpp"
 #include "lvtk/weak_ref.hpp"
 
+#ifndef LVTK_WIDGET_USE_CLIPPING
+#    define LVTK_WIDGET_USE_CLIPPING 0
+#endif
+
 namespace lvtk {
 
 class Widget {

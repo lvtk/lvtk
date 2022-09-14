@@ -1,8 +1,8 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
-#include <iostream>
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/style.hpp>
@@ -94,8 +94,6 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
 }
 
 } // namespace convert
-
-
 
 Widget::Widget() { _weak_status.reset (this); }
 Widget::~Widget() { _weak_status.reset (nullptr); }
@@ -288,15 +286,14 @@ struct Widget::Render {
         for (int i = w._widgets.size(); --i >= 0;) {
             auto& child = *w._widgets[i];
 
-            if (!child.visible()) 
+            if (! child.visible())
                 continue;
-            
+
             auto ncr = cr.intersection (child.bounds());
             if (ncr.empty())
                 continue;
 
             if (child.opaque()) {
-                std::clog << "clip opaque\n";
                 g.intersect_clip (ncr + delta);
                 ++nclips;
             } else {
@@ -309,33 +306,64 @@ struct Widget::Render {
         return nclips > 0;
     }
 
-    static void render_child (Widget& child, Graphics& g) {
-        g.translate (child.bounds().pos());
-        child.render (g);
+    static void render_child (Widget& cw, Graphics& g) {
+        g.translate (cw.bounds().pos());
+        cw.render (g);
+    }
+
+    static void render_all_unclipped (Widget& widget, Graphics& g) {
+        auto cb = g.last_clip();
+
+        g.save();
+        widget.paint (g);
+        g.restore();
+
+        for (auto cw : widget._widgets) {
+            if (! cw->visible())
+                continue;
+
+            g.save();
+
+            if (cb.intersects (cw->bounds())) {
+                render_child (*cw, g);
+            }
+
+            g.restore();
+        }
+    }
+
+    static void render_all (Widget& widget, Graphics& g) {
+        auto cb = g.last_clip();
+
+        g.save();
+        if (! (clip_widgets_blocking (widget, g, cb, {}) && g.clip_empty())) {
+            widget.paint (g);
+        }
+        g.restore();
+
+        for (auto cw : widget._widgets) {
+            if (! cw->visible())
+                continue;
+
+            g.save();
+
+            if (cb.intersects (cw->bounds())) {
+                g.clip (cw->bounds().at (0));
+                if (! g.clip_empty())
+                    render_child (*cw, g);
+            }
+
+            g.restore();
+        }
     }
 };
 
 void Widget::render_internal (Graphics& g) {
-    auto cb = g.last_clip();
-
-    g.save();
-    //if (! (Render::clip_widgets_blocking (*this, g, cb, {}) && g.clip_empty())) {
-        paint (g);
-    //}
-    g.restore();
-
-    for (auto cw : _widgets) {
-        if (! cw->visible())
-            continue;
-        
-        g.save();
-       
-        if (cb.intersects (cw->bounds())) {
-            Render::render_child (*cw, g);
-        }
-
-        g.restore();
-    }
+#if LVTK_WIDGET_USE_CLIPPING
+    Render::render_all (*this, g);
+#else
+    Render::render_all_unclipped (*this, g);
+#endif
 }
 
 void Widget::repaint_internal (Bounds b) {

@@ -105,7 +105,6 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     // bail out conditions?
 
     view->set_bounds (widget.bounds());
-    std::clog << view->bounds().str() << std::endl;
     view->realize();
     view->set_visible (widget.visible());
     widget._view = std::move (view);

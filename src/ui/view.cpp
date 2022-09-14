@@ -80,7 +80,7 @@ struct View::EventHandler {
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
         // std::clog << "expose: " << r.str() << std::endl;
-        view.expose (r.intersection (view.bounds().at(0)));
+        view.expose (r.intersection (view.bounds().at (0)));
         return PUGL_SUCCESS;
     }
 
@@ -165,7 +165,7 @@ struct View::EventHandler {
         InputEvent event;
         event.pos = detail::point<float> (ev) / view.scale_factor();
 
-        std::clog << "button: " << (int) ev.button << std::endl;
+        VIEW_DBG ("button: " << (int) ev.button);
 
         if (auto w = view._hovered.lock()) {
             event.pos = w->convert (&view._widget, event.pos);
@@ -317,8 +317,10 @@ void View::elevate (Widget& widget, ViewFlags flags) {
 }
 
 void View::repaint (Bounds area) {
-    bool force = true;
-    if (area.empty() || force) {
+#if ! LVTK_WIDGET_USE_CLIPPING
+    area = {};
+#endif
+    if (area.empty()) {
         puglPostRedisplay ((PuglView*) _view);
     } else {
         area *= scale_factor();

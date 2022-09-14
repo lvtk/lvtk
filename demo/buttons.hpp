@@ -17,9 +17,6 @@ public:
         button1.clicked = [this]() {
             message = "Cancel clicked!";
             repaint();
-            auto gp = button1.to_view_space (button1.bounds().pos());
-            std::clog << "local: " << button1.bounds().pos().str() << " gp: " << gp.str()
-                      << " pb: " << bounds().str() << std::endl;
         };
 
         add (button2);

@@ -29,12 +29,12 @@ public:
     void set_color (Color color) { surface.set_fill (color); }
     void fill_rect (const Rectangle<float>& r) { surface.fill_rect (r); }
     void fill_rect (const Rectangle<int>& r) { surface.fill_rect (r.as<float>()); }
-    
+
     void clip (Bounds c) { surface.clip (c); }
     void intersect_clip (Bounds c) { surface.intersect_clip (c); }
     Bounds last_clip() const noexcept { return surface.last_clip(); }
     bool clip_empty() const noexcept { return surface.last_clip().empty(); }
-    
+
     void text (const std::string& text, float x, float y) {
         surface.__text_top_left (text, x, y);
     }

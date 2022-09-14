@@ -86,15 +86,19 @@ protected:
     }
 
     inline void expose (Bounds frame) override {
-        const auto vb = bounds().at(0) * scale_factor();
-        glViewport (vb.x, vb.y, vb.width, vb.height);
-        if (_needs_cleared) {
-            glClearColor (0.f, 0.f, 0.f, 1.0f);
+        const auto scale = scale_factor();
+        const auto vb    = bounds().at (0);
+        glViewport (0, 0, vb.width * scale, vb.height * scale);
+
+        if (needs_cleared) {
+            glClearColor (bg_color.fred(), bg_color.fgreen(), bg_color.fblue(), bg_color.falpha());
             glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            _needs_cleared = true;
+            needs_cleared = false;
         }
+
         if (_surface) {
-            _surface->begin_frame (frame.width, frame.height, scale_factor());
+            _surface->begin_frame (vb.width, vb.height, scale);
+            _surface->save();
             _surface->clip (frame);
             render (*_surface);
             _surface->restore();
@@ -104,7 +108,8 @@ protected:
 
 private:
     std::unique_ptr<OpenGLSurface> _surface;
-    bool _needs_cleared = true;
+    bool needs_cleared = true;
+    Color bg_color { 0x000000ff };
 };
 
 template <class Surf, class V = OpenGLView<Surf>>

@@ -27,16 +27,16 @@ public:
     }
 
     float m00 { 1.f }, m01 { 0.f }, m02 { 0.f },
-          m10 { 0.f }, m11 { 1.f }, m12 { 0.f };
+        m10 { 0.f }, m11 { 1.f }, m12 { 0.f };
 };
 
 class Surface {
 public:
-    Surface()          = default;
-    virtual ~Surface() = default;
+    Surface()                                   = default;
+    virtual ~Surface()                          = default;
     virtual float scale_factor() const noexcept = 0;
 
-    virtual void translate (const Point<int>& pt) = 0;    
+    virtual void translate (const Point<int>& pt) = 0;
     virtual void transform (const Affine& mat) {}
 
     virtual void clip (const Rectangle<int>& r)           = 0;
