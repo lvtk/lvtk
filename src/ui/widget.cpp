@@ -48,7 +48,7 @@ static Point<float> from_parent_space (const Widget& widget, const Point<float> 
     auto result = parent_coord;
     if (widget.elevated())
         return result;
-    result -= widget.bounds().pos().as<float>();
+    result -= widget.pos().as<float>();
     return result;
 }
 
@@ -65,7 +65,7 @@ static Point<float> to_parent_space (const Widget& widget,
     auto result = local_coord;
     if (widget.elevated())
         return result;
-    result += widget.bounds().pos().as<float>();
+    result += widget.pos().as<float>();
     return result;
 }
 
@@ -236,6 +236,13 @@ Style& Widget::style() {
     assert (false);
 }
 
+void Widget::set_opaque (bool opaque) {
+    if (_opaque == opaque)
+        return;
+    _opaque = opaque;
+    repaint();
+}
+
 Point<float> Widget::convert (const Widget* source, Point<float> pt) const {
     return convert::coordinate (this, source, pt);
 }
@@ -284,21 +291,21 @@ struct Widget::Render {
         int nclips = 0;
 
         for (int i = w._widgets.size(); --i >= 0;) {
-            auto& child = *w._widgets[i];
+            auto& cw = *w._widgets[i];
 
-            if (! child.visible())
+            if (! cw.visible())
                 continue;
 
-            auto ncr = cr.intersection (child.bounds());
+            auto ncr = cr.intersection (cw.bounds());
             if (ncr.empty())
                 continue;
 
-            if (child.opaque()) {
+            if (cw.opaque()) {
                 g.intersect_clip (ncr + delta);
                 ++nclips;
             } else {
-                auto cpos = child.bounds().pos();
-                if (clip_widgets_blocking (child, g, ncr - cpos, cpos + delta))
+                auto cpos = cw.pos();
+                if (clip_widgets_blocking (cw, g, ncr - cpos, cpos + delta))
                     ++nclips;
             }
         }
@@ -307,7 +314,7 @@ struct Widget::Render {
     }
 
     static void render_child (Widget& cw, Graphics& g) {
-        g.translate (cw.bounds().pos());
+        g.translate (cw.pos());
         cw.render (g);
     }
 

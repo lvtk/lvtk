@@ -23,8 +23,10 @@ public:
 
     Widget* parent() const noexcept { return _parent; }
 
+    /** Add a child widget. */
     void add (Widget& widget);
 
+    /** Add a child widget. */
     template <class Wgt>
     Wgt* add (Wgt* widget) {
         add_internal (widget);
@@ -52,26 +54,46 @@ public:
     /** Request this widget be repainted. */
     void repaint();
 
+    /** Returns true if this widget reports being opaque. */
     bool opaque() const noexcept { return _opaque; }
-    void set_opaque (bool opaque) { _opaque = opaque; }
 
-    //==================
-    virtual void resized() {}
-    virtual void moved() {}
-
-    virtual void paint (Graphics&) {}
-    virtual void motion (InputEvent) {}
-    virtual void pressed (InputEvent) {}
-    virtual void released (InputEvent) {}
-    //============
-
+    /** Returns this widget's bounding box. */
     Bounds bounds() const noexcept { return _bounds; }
+
+    /** Returns the xy position of this widget.
+        Same as calling widget.bounds().pos()
+    */
+    Point<int> pos() const noexcept { return { _bounds.x, _bounds.y }; }
+
+    /** Returns the x-coordinate of this widget parent space. */
     int x() const noexcept { return _bounds.x; }
+    /** Returns the y-coordinate of this widget parent space. */
     int y() const noexcept { return _bounds.y; }
+    /** Returns the width of this widget. */
     int width() const noexcept { return _bounds.width; }
+    /** Returns the height of this widget. */
     int height() const noexcept { return _bounds.height; }
+
+    /** Change this widget's bounds
+        
+        @param x 
+        @param y 
+        @param width 
+        @param height 
+     */
     void set_bounds (int x, int y, int width, int height);
+
+    /** Change this widget's bounds
+        
+        @param b 
+     */
     void set_bounds (Bounds b);
+
+    /** Resize this widget
+     
+        @param width
+        @param height
+    */
     void set_size (int width, int height);
 
     /** Returns true if the Widget can receive events at coordate xy. */
@@ -143,6 +165,15 @@ public:
     //=========================================================================
 
 protected:
+    void set_opaque (bool opaque);
+
+    virtual void resized() {}
+    virtual void moved() {}
+
+    virtual void paint (Graphics&) {}
+    virtual void motion (InputEvent) {}
+    virtual void pressed (InputEvent) {}
+    virtual void released (InputEvent) {}
     virtual void pointer_in (InputEvent ev) {}
     virtual void pointer_out (InputEvent ev) {}
 
