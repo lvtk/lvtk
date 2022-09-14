@@ -293,7 +293,7 @@ int luaopen_lvtk_Graphics (lua_State* L) {
     static constexpr const char* ns = "lvtk";
     static constexpr const char* name = "Graphics";
     auto M = lua::bind<lvtk::Graphics> (L, ns, name,
-        "clip_bounds", &Graphics::clip_bounds,
+        "last_clip", &Graphics::last_clip,
         "translate", &Graphics::translate,
         "save", &Graphics::save,
         "restore", &Graphics::restore,

@@ -165,6 +165,7 @@ private:
     void notify_children_changed();
     void notify_moved_resized (bool, bool);
 
+    struct Render;
     LVTK_WEAK_REFABLE (Widget)
 };
 

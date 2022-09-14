@@ -79,8 +79,8 @@ struct View::EventHandler {
         auto h = (float) ev.height / view.scale_factor();
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
-        std::clog << "expose: " << view._widget.bounds().str() << std::endl;
-        view.expose (r);
+        // std::clog << "expose: " << r.str() << std::endl;
+        view.expose (r.intersection (view.bounds().at(0)));
         return PUGL_SUCCESS;
     }
 

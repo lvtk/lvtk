@@ -1,6 +1,6 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
-
+#include <iostream>
 #include <algorithm>
 #include <cassert>
 
@@ -94,6 +94,8 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
 }
 
 } // namespace convert
+
+
 
 Widget::Widget() { _weak_status.reset (this); }
 Widget::~Widget() { _weak_status.reset (nullptr); }
@@ -278,46 +280,60 @@ bool Widget::contains (Point<float> pt) const noexcept {
     return _bounds.at (0, 0).as<float>().contains (pt);
 }
 
-#if 0
-static bool clipObscuredRegions (const Widget& w, const std::vector<Widget*>& widgets,
-                                 Graphics& g, const Rectangle<int> cr, Point<int> delta) {
-    bool wasClipped = false;
+//=================================================================
+struct Widget::Render {
+    static bool clip_widgets_blocking (const Widget& w, Graphics& g, const Rectangle<int> cr, Point<int> delta) {
+        int nclips = 0;
 
-    for (int i = widgets.size(); --i >= 0;) {
-        auto& child = *widgets[i];
+        for (int i = w._widgets.size(); --i >= 0;) {
+            auto& child = *w._widgets[i];
 
-        if (child.visible()) { // && ! child.isTransformed()) {
+            if (!child.visible()) 
+                continue;
+            
             auto ncr = cr.intersection (child.bounds());
+            if (ncr.empty())
+                continue;
 
-            if (! ncr.empty()) {
-                if (child.opaque()) { // && child.componentTransparency == 0) {
-                    // g.excludeClipRegion (newClip + delta);
-                    wasClipped = true;
-                } else {
-                    auto childPos = child.bounds().pos();
-
-                    if (clipObscuredRegions (child, g, ncr - childPos, childPos + delta))
-                        wasClipped = true;
-                }
+            if (child.opaque()) {
+                std::clog << "clip opaque\n";
+                g.intersect_clip (ncr + delta);
+                ++nclips;
+            } else {
+                auto cpos = child.bounds().pos();
+                if (clip_widgets_blocking (child, g, ncr - cpos, cpos + delta))
+                    ++nclips;
             }
         }
+
+        return nclips > 0;
     }
 
-    return wasClipped;
-}
-#endif
+    static void render_child (Widget& child, Graphics& g) {
+        g.translate (child.bounds().pos());
+        child.render (g);
+    }
+};
 
-//=================================================================
 void Widget::render_internal (Graphics& g) {
-    auto cb = g.clip_bounds();
-    paint (g);
+    auto cb = g.last_clip();
+
+    g.save();
+    //if (! (Render::clip_widgets_blocking (*this, g, cb, {}) && g.clip_empty())) {
+        paint (g);
+    //}
+    g.restore();
 
     for (auto cw : _widgets) {
         if (! cw->visible())
             continue;
+        
         g.save();
-        g.translate (cw->bounds().pos());
-        cw->render (g);
+       
+        if (cb.intersects (cw->bounds())) {
+            Render::render_child (*cw, g);
+        }
+
         g.restore();
     }
 }

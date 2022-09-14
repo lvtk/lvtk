@@ -37,9 +37,6 @@ public:
     Bounds bounds() const;
     void set_bounds (Bounds b);
 
-    /** Add this view to the desktop. */
-    void realize();
-
     Main& main() noexcept { return _main; }
     Style& style() noexcept;
     const Style& style() const noexcept;
@@ -65,10 +62,10 @@ private:
     uintptr_t _view;
     WeakRef<Widget> _hovered;
 
-    struct EventHandler;
-
     void set_parent (uintptr_t parent, bool transient);
+    void realize();
 
+    struct EventHandler;
     LVTK_WEAK_REFABLE (View);
 };
 
