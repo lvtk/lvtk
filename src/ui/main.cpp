@@ -31,7 +31,7 @@ static inline PuglWorldFlags world_flags() {
 class DefaultStyle : public Style {
 public:
     DefaultStyle() {
-        set_color ((int) ColorIDs::BUTTON_BASE, Color (0x333333ff));
+        set_color ((int) ColorIDs::BUTTON_BASE, Color (0x464646ff));
         set_color ((int) ColorIDs::BUTTON_ON, Color (0x252525ff));
         set_color ((int) ColorIDs::BUTTON_TEXT_OFF, Color (0xeeeeeeff));
         set_color ((int) ColorIDs::BUTTON_TEXT_ON, Color (0xddddddff));
@@ -40,9 +40,15 @@ public:
     ~DefaultStyle() {}
 
     void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) override {
-        auto bc = highlight || down ? find_color (ColorIDs::BUTTON_BASE)
-                                    : find_color (ColorIDs::BUTTON_BASE).brighter (0.1);
-        g.set_color (w.toggled() ? find_color (ColorIDs::BUTTON_ON) : bc);
+        auto bc = w.toggled() ? find_color (ColorIDs::BUTTON_ON) : find_color (ColorIDs::BUTTON_BASE);
+        if (highlight || down) {
+            if (! down)
+                bc = bc.brighter (-0.015f);
+            else
+                bc = bc.brighter (-0.035f);
+        }
+
+        g.set_color (bc);
         g.fill_rect (w.bounds().at (0));
     }
 

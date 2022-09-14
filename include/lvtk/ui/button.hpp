@@ -28,7 +28,17 @@ protected:
         paint_button (g, _over, _down);
     }
 
-    bool obstructed (int x, int y) override { return true; }
+    bool obstructed (int, int) override { return true; }
+
+    void pointer_in (InputEvent) override {
+        _over = true;
+        repaint();
+    }
+
+    void pointer_out (InputEvent) override {
+        _over = false;
+        repaint();
+    }
 
     void pressed (InputEvent ev) override {
         _down = true;
