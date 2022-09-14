@@ -24,7 +24,7 @@ subdir ('ui/res')
 subdir ('nanovg')
 lvtk_nanovg_deps = [ lvtk_ui_dep, pugl_gl_dep, dl_dep ]
 liblvtk_nanovg = library ('lvtk-nanovg-3',
-    ['ui/nanovg.cpp', lvtk_res_sources ],
+    ['ui/nanovg.cpp', 'ui/opengl.cpp', lvtk_res_sources ],
     link_with : [],
     gnu_symbol_visibility : 'default',
     cpp_args : [ lvtk_nanovg_cpp_args ],

@@ -1,7 +1,7 @@
 
 #include <lvtk/ui/main.hpp>
+#include <lvtk/ui/opengl.hpp>
 #include <lvtk/ui/view.hpp>
-#include <lvtk/ui/nanovg.hpp>
 
 #include "demo.hpp"
 
@@ -29,6 +29,6 @@ static int run (lvtk::Main& context, int, char**) {
 }
 
 int main (int argc, char** argv) {
-    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::NanoVG>());
+    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
     return run (context, argc, argv);
 }

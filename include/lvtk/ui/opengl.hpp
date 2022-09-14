@@ -4,122 +4,14 @@
 #pragma once
 
 #include <lvtk/ui/main.hpp>
-#include <lvtk/ui/surface.hpp>
 #include <lvtk/ui/view.hpp>
-
-#ifdef GL_SILENCE_DEPRECATION
-#    undef GL_SILENCE_DEPRECATION
-#endif
-#define GL_SILENCE_DEPRECATION
-#define PUGL_DISABLE_DEPRECATED
-#include <pugl/gl.h>
-#include <pugl/pugl.h>
-
-// /// A hint for configuring a view
-// typedef enum {
-//   PUGL_USE_COMPAT_PROFILE,    ///< Use compatible (not core) OpenGL profile
-//   PUGL_USE_DEBUG_CONTEXT,     ///< True to use a debug OpenGL context
-//   PUGL_CONTEXT_VERSION_MAJOR, ///< OpenGL context major version
-//   PUGL_CONTEXT_VERSION_MINOR, ///< OpenGL context minor version
-//   PUGL_RED_BITS,              ///< Number of bits for red channel
-//   PUGL_GREEN_BITS,            ///< Number of bits for green channel
-//   PUGL_BLUE_BITS,             ///< Number of bits for blue channel
-//   PUGL_ALPHA_BITS,            ///< Number of bits for alpha channel
-//   PUGL_DEPTH_BITS,            ///< Number of bits for depth buffer
-//   PUGL_STENCIL_BITS,          ///< Number of bits for stencil buffer
-//   PUGL_SAMPLES,               ///< Number of samples per pixel (AA)
-//   PUGL_DOUBLE_BUFFER,         ///< True if double buffering should be used
-//   PUGL_SWAP_INTERVAL,         ///< Number of frames between buffer swaps
-//   PUGL_RESIZABLE,             ///< True if view should be resizable
-//   PUGL_IGNORE_KEY_REPEAT,     ///< True if key repeat events are ignored
-//   PUGL_REFRESH_RATE,          ///< Refresh rate in Hz
-// } PuglViewHint;
+#include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
 
-/** Surface which uses OpenGL directly. */
-class OpenGLSurface : public Surface {
-public:
-    OpenGLSurface()          = default;
-    virtual ~OpenGLSurface() = default;
-
-    /** Called immediately before rendering
-        
-        @param width Width in logical coords
-        @param height Height in logical coords
-        @param scale Scale factor in use by @ref OpenGLView
-    */
-    virtual void begin_frame (int width, int height, float scale) = 0;
-
-    /** called immediately after rendering */
-    virtual void end_frame() = 0;
-};
-
-/** Surf template param must be an OpenGLView of some kind */
-template <class Surf>
-class OpenGLView : public View {
-public:
-    using surface_type = Surf;
-
-    /** OpenGL base view.
-        @param context The context creating the fiew
-        @param widget  The widget being elevated that will own this view;
-     */
-    OpenGLView (Main& context, Widget& widget)
-        : View (context, widget) {
-        set_backend ((uintptr_t) puglGlBackend());
-        set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 3);
-        set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 3);
-        set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
-    }
-
-    ~OpenGLView() {
-        _surface.reset();
-    }
-
-protected:
-    inline void created() override {
-        if (! _surface) {
-            _surface = std::make_unique<Surf>();
-        }
-        View::created();
-    }
-
-    inline void expose (Bounds frame) override {
-        const auto scale = scale_factor();
-        const auto vb    = bounds().at (0);
-        glViewport (0, 0, vb.width * scale, vb.height * scale);
-
-        if (needs_cleared) {
-            glClearColor (bg_color.fred(), bg_color.fgreen(), bg_color.fblue(), bg_color.falpha());
-            glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            needs_cleared = false;
-        }
-
-        if (_surface) {
-            _surface->begin_frame (vb.width, vb.height, scale);
-            _surface->save();
-            _surface->clip (frame);
-            render (*_surface);
-            _surface->restore();
-            _surface->end_frame();
-        }
-    }
-
-private:
-    std::unique_ptr<OpenGLSurface> _surface;
-    bool needs_cleared = true;
-    Color bg_color { 0x000000ff };
-};
-
-template <class Surf, class V = OpenGLView<Surf>>
 struct OpenGL : public Backend {
-    using surface_type = Surf;
-    using view_type    = V;
-    OpenGL (const std::string& name) : Backend (name) {}
-    std::unique_ptr<View> create_view (Main& c, Widget& w) override {
-        return std::make_unique<V> (c, w);
-    }
+    OpenGL() : Backend ("OpenGL") {}
+    std::unique_ptr<View> create_view (Main& c, Widget& w) override;
 };
 
 } // namespace lvtk

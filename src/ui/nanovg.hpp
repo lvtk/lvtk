@@ -2,16 +2,21 @@
 // SPDX-License-Identifier: ISC
 
 #pragma once
-#include <lvtk/ui/opengl.hpp>
+
+#include <lvtk/ui/rectangle.hpp>
+#include <lvtk/ui/surface.hpp>
 
 namespace lvtk {
 namespace nvg {
 
 /** Surface backed by a NanoVG context */
-class Surface final : public OpenGLSurface {
+class Surface final : public lvtk::Surface {
 public:
     explicit Surface (float scale = 1.f);
     ~Surface();
+
+    void begin_frame (int width, int height, float pixel_ratio);
+    void end_frame();
 
     float scale_factor() const noexcept override;
     void translate (const Point<int>& pt) override;
@@ -22,10 +27,7 @@ public:
     void set_fill (const Fill& fill) override;
     void save() override;
     void restore() override;
-    void begin_frame (int width, int height, float pixel_ratio) override;
-    void end_frame() override;
     void fill_rect (const Rectangle<float>& r) override;
-
     void __text_top_left (const std::string&, float, float) override;
 
 private:
@@ -36,12 +38,4 @@ private:
 inline static constexpr const char* GL_BACKEND_NAME = "NanoVG";
 
 } // namespace nvg
-
-/** NanoVG Backend.
-    Pass one of these to Main to use NanoVG for rendering
- */
-struct NanoVG : OpenGL<nvg::Surface> {
-    NanoVG() : OpenGL (nvg::GL_BACKEND_NAME) {}
-};
-
 } // namespace lvtk

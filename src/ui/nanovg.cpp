@@ -1,10 +1,12 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include "gl.hpp"
 
-#include <lvtk/ui/nanovg.hpp>
+#include "../nanovg/nanovg.h"
 #include "../nanovg/nanovg_gl.h"
 #include "Roboto-Regular.ttf.h"
+#include "nanovg.hpp"
 
 using Surface = lvtk::nvg::Surface;
 

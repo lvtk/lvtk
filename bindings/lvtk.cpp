@@ -4,7 +4,7 @@
 #include "proxy.hpp"
 #include <lvtk/lvtk.hpp>
 #include <lvtk/string.hpp>
-#include <lvtk/ui/nanovg.hpp>
+#include <lvtk/ui/opengl.hpp>
 
 #include "./lvtk/bindings.h"
 
@@ -369,7 +369,7 @@ int luaopen_lvtk_Main (lua_State* L) {
         "new", factories ([]() {
             auto obj = std::make_unique<lvtk::Main>(
                 lvtk::Mode::PROGRAM,
-                std::make_unique<lvtk::NanoVG>()
+                std::make_unique<lvtk::OpenGL>()
             );
 
             return obj;

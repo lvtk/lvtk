@@ -1,3 +1,5 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #include <algorithm>
 #include <iostream>
@@ -9,7 +11,7 @@
 #include <lvtk/ui.hpp>
 
 #include <lvtk/ui/main.hpp>
-#include <lvtk/ui/nanovg.hpp>
+#include <lvtk/ui/opengl.hpp>
 #include <lvtk/ui/widget.hpp>
 
 #include <lvtk/ext/urid.hpp>
@@ -53,7 +55,7 @@ public:
     }
 
 private:
-    lvtk::Main _main { lvtk::Mode::MODULE, std::make_unique<lvtk::NanoVG>() };
+    lvtk::Main _main { lvtk::Mode::MODULE, std::make_unique<lvtk::OpenGL>() };
 
     class Button : public Widget {
     public:
