@@ -33,7 +33,7 @@ static bool test_pos (Widget& widget, Point<float> pos) {
 } // namespace detail
 
 namespace convert {
-
+#if 0 // disabled until needed
 /** From pyhsical to logical coordinats. */
 static Point<float> to_scaled (float scale, Point<float> coord) {
     return scale != 1.f ? coord / scale : coord;
@@ -43,6 +43,7 @@ static Point<float> to_scaled (float scale, Point<float> coord) {
 static Point<float> to_unscaled (float scale, Point<float> coord) {
     return scale != 1.f ? coord * scale : coord;
 }
+#endif
 
 static Point<float> from_parent_space (const Widget& widget, const Point<float> parent_coord) {
     auto result = parent_coord;

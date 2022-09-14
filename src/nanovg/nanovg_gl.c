@@ -25,8 +25,6 @@
 #include <string.h>
 #include <math.h>
 
-#include "android.h"
-
 #ifdef NANOVG_USE_GLEW
 #  include <GL/glew.h>
 static int glew_initialized = 0;

@@ -4,7 +4,6 @@ lvtk_nanovg_sources = '''
     glad.c
 '''.split()
 
-
 lvtk_nanovg_c_args = [ '-D@0@=1'.format(host_machine.system() == 'linux' ? 'NANOVG_GL3' : 'NANOVG_GL2') ]
 
 lvtk_nanovg_cpp_args = lvtk_nanovg_c_args

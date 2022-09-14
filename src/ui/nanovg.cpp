@@ -1,10 +1,10 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-#include <lvtk/ui/nanovg.hpp>
 
+#include <lvtk/ui/nanovg.hpp>
+#include "../nanovg/nanovg_gl.h"
 #include "Roboto-Regular.ttf.h"
-#include "nanovg/nanovg_gl.h"
 
 using Surface = lvtk::nvg::Surface;
 
@@ -13,13 +13,16 @@ namespace nvg {
 namespace detail {
 static constexpr const char* default_font_face = "sans";
 
-#ifdef NANOVG_GL2
+#if defined(NANOVG_GL2)
 static constexpr auto create  = nvgCreateGL2;
 static constexpr auto destroy = nvgDeleteGL2;
-#else
+#elif defined(NANOVG_GL3)
 static constexpr auto create  = nvgCreateGL3;
 static constexpr auto destroy = nvgDeleteGL3;
+#else
+#    error "No GL version specified for NanoVG"
 #endif
+
 } // namespace detail
 
 class Surface::Context {

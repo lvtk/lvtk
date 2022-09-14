@@ -21,8 +21,6 @@
 #include <math.h>
 #include <memory.h>
 
-#include "android.h"
-
 #include "nanovg.h"
 
 #define FONTSTASH_IMPLEMENTATION
