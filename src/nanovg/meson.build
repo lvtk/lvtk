@@ -4,7 +4,9 @@ lvtk_nanovg_sources = '''
     glad.c
 '''.split()
 
-lvtk_nanovg_c_args = [ '-DNANOVG_GL3=1' ]
+
+lvtk_nanovg_c_args = [ '-D@0@=1'.format(host_machine.system() == 'linux' ? 'NANOVG_GL3' : 'NANOVG_GL2') ]
+
 lvtk_nanovg_cpp_args = lvtk_nanovg_c_args
 if host_machine.system() == 'linux'
     lvtk_nanovg_c_args += '-Wno-implicit-function-declaration'
