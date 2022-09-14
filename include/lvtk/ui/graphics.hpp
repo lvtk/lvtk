@@ -29,7 +29,7 @@ public:
     void set_color (Color color) { surface.set_fill (color); }
     void fill_rect (const Rectangle<float>& r) { surface.fill_rect (r); }
     void fill_rect (const Rectangle<int>& r) { surface.fill_rect (r.as<float>()); }
-    Bounds clip_bounds() const noexcept { return surface.clip_bounds(); }
+    Bounds clip_bounds() const noexcept { return surface.last_clip(); }
 
     void text (const std::string& text, float x, float y) {
         surface.__text_top_left (text, x, y);

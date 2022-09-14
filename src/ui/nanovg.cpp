@@ -84,20 +84,28 @@ float Surface::scale_factor() const noexcept {
 }
 
 void Surface::translate (const Point<int>& pt) {
-    auto& state = ctx->state;
-    state.origin += (pt.as<float>() * ctx->scale);
+    nvgTranslate (ctx->ctx, (float) pt.x, (float) pt.y);
 }
 
-void Surface::set_clip_bounds (const Rectangle<int>& r) {
-    auto rf = r.as<float>() * ctx->scale;
-    if (rf == ctx->state.clip)
-        return;
-    // nvgScissor (ctx->ctx, rf.x, rf.y, rf.width, rf.height);
-    ctx->state.clip = rf;
+void Surface::transform (const Affine& mat) {
+    nvgTransform (ctx->ctx, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
 }
 
-Rectangle<int> Surface::clip_bounds() const {
-    return (ctx->state.clip / ctx->scale).as<int>();
+void Surface::clip (const Rectangle<int>& r) {
+    ctx->state.clip = r.as<float>();
+    nvgScissor (ctx->ctx,
+                ctx->state.clip.x * ctx->scale,
+                ctx->state.clip.y * ctx->scale,
+                ctx->state.clip.width * ctx->scale,
+                ctx->state.clip.height * ctx->scale);
+}
+
+void Surface::intersect_clip (const Rectangle<int>& r) {
+    nvgIntersectScissor (ctx->ctx, r.x * ctx->scale, r.y * ctx->scale, r.width * ctx->scale, r.height * ctx->scale);
+}
+
+Rectangle<int> Surface::last_clip() const {
+    return (ctx->state.clip).as<int>();
 }
 
 void Surface::set_fill (const Fill& fill) {
@@ -112,9 +120,9 @@ void Surface::set_fill (const Fill& fill) {
 void Surface::save() { ctx->save(); }
 void Surface::restore() { ctx->restore(); }
 
-void Surface::begin_frame (int width, int height, float scale) {
-    ctx->scale = scale;
-    nvgBeginFrame (ctx->ctx, ctx->scale * (float) width, ctx->scale * (float) height, 1.f);
+void Surface::begin_frame (int width, int height, float pixel_ratio) {
+    ctx->scale = 1.0;
+    nvgBeginFrame (ctx->ctx, ctx->scale * (float) width, ctx->scale * (float) height, pixel_ratio);
 }
 
 void Surface::end_frame() {
@@ -139,6 +147,7 @@ void Surface::__text_top_left (const std::string& text, float x, float y) {
     nvgFontFace (ctx->ctx, detail::default_font_face);
     nvgTextAlign (ctx->ctx, NVG_ALIGN_TOP | NVG_ALIGN_LEFT);
     nvgFillColor (ctx->ctx, ctx->state.color);
+
     nvgText (ctx->ctx,
              ctx->state.origin.x + (x * ctx->scale),
              ctx->state.origin.y + (y * ctx->scale),
