@@ -7,13 +7,6 @@ pkg.generate (
     description : 'LV2 Plugin C++ Library',
     subdirs     : 'lvtk-3',
     requires    : [])
-pkg.generate (liblvtk_ui,
-    name        : 'LVTK UI',
-    filebase    : 'lvtk-ui-3',
-    version     : meson.project_version(),
-    description : 'LV2 C++ Gui librrary',
-    subdirs     : 'lvtk-3',
-    requires    : [])
 pkg.generate (liblvtk_gl,
     name        : 'LVTK OpenGL',
     filebase    : 'lvtk-gl-3',
