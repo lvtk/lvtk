@@ -81,11 +81,11 @@ private:
     /** Create an unrealized view for the given Widget. */
     std::unique_ptr<View> create_view (Widget& widget, ViewFlags flags, uintptr_t parent);
 
-    Main()             = delete;
-    Main (const Main&) = delete;
-    Main (Main&&)      = delete;
+    Main()                        = delete;
+    Main (const Main&)            = delete;
+    Main (Main&&)                 = delete;
     Main& operator= (const Main&) = delete;
-    Main& operator= (Main&&) = delete;
+    Main& operator= (Main&&)      = delete;
 };
 
 struct Backend {
@@ -100,10 +100,10 @@ protected:
 
 private:
     String _name;
-    Backend (const Backend&) = delete;
-    Backend (Backend&&)      = delete;
+    Backend (const Backend&)            = delete;
+    Backend (Backend&&)                 = delete;
     Backend& operator= (const Backend&) = delete;
-    Backend& operator= (Backend&&) = delete;
+    Backend& operator= (Backend&&)      = delete;
 };
 
 } // namespace lvtk

@@ -6,7 +6,8 @@
 
 namespace lvtk {
 
-struct Embed::Window {
+class Embed::Window {
+public:
     Main& main;
     Embed& owner;
     ViewRef parent;

@@ -19,6 +19,11 @@ lvtk_lua_mod_subdir = '@0@/@1@/@2@'.format (
 lvtk_lua_includes = include_directories (
     'lua', 'lua/@0@'.format(lvtk_lua_version_full))
 
+lvtk_lua_cpp_args = []
+if host_machine.system() == 'darwin'
+    lvtk_lua_cpp_args += ['-Wno-unknown-warning-option'] # sol2
+endif
+
 # build low level modules
 subdir ('lvtk')
 
@@ -29,6 +34,7 @@ shared_module ('lvtk',
     name_prefix: '',
     name_suffix : lvtk_lua_modules_suffix,
     include_directories : lvtk_lua_includes,
+    cpp_args : lvtk_lua_cpp_args,
     gnu_symbol_visibility : 'hidden',
     dependencies: [ pugl_gl_dep, lvtk_internal_dep ],
     objects : [ liblvtk_nanovg.extract_all_objects (recursive : true),

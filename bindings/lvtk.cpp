@@ -71,10 +71,6 @@ static inline void require_widget_deps (lua_State* L) {
         require ('lvtk.Graphics')
     )");
 }
-static inline void require_Widget (lua_State* L) {
-    state_view view (L);
-    view.script ("require ('lvtk.Widget')");
-}
 
 //====== Class binding helpers
 /** Bind adding tostring meta method */
