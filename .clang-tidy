@@ -40,6 +40,7 @@ Checks: >
   -fuchsia-overloaded-operator,
   -fuchsia-statically-constructed-objects,
   -google-readability-casting,
+  -google-runtime-references,
   -hicpp-avoid-c-arrays,
   -hicpp-deprecated-headers,
   -hicpp-explicit-conversions,
