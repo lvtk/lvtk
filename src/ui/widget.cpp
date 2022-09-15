@@ -158,8 +158,6 @@ void Widget::add_internal (Widget* widget) {
     if (widget->visible())
         widget->repaint();
 
-    // TODO: zorder
-
     _widgets.push_back (widget);
 
     // child events
@@ -235,6 +233,7 @@ Style& Widget::style() {
     if (auto v = find_view())
         return v->style();
     assert (false);
+    return find_root()->style();
 }
 
 void Widget::set_opaque (bool opaque) {
