@@ -55,7 +55,7 @@ private:
 
         void paint (Graphics& g) override {
             g.set_color (Color (0x111111ff));
-            g.text (text, 12, (height() / 2) - 7);
+            g.draw_text (text, bounds().at (0).as<float>(), Alignment::CENTERED);
         }
 
         void pressed (InputEvent ev) override {
@@ -103,6 +103,8 @@ static std::string name (int did) {
             break;
         case BUTTONS:
             return "Buttons";
+            break;
+        default:
             break;
     }
 
@@ -154,6 +156,8 @@ private:
             case BUTTONS:
                 demo.reset (new Buttons());
                 break;
+            default:
+                break;
         }
 
         if (demo) {
@@ -172,7 +176,7 @@ private:
                 auto box = add (new TextButton());
                 box->set_visible (true);
                 box->set_text (demo::name (i));
-                box->clicked = std::bind (&SideBar::run_demo, this, i);
+                box->clicked = [this, i]() { run_demo (i); };
                 demos.push_back (box);
             }
 

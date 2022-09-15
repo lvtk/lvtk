@@ -151,7 +151,7 @@ public:
     Widget* find_root() const noexcept;
     ViewRef find_view() const noexcept;
     uintptr_t find_handle() const noexcept;
-    operator LV2UI_Widget() noexcept { return (LV2UI_Widget) find_handle(); }
+    operator LV2UI_Widget() const noexcept { return (LV2UI_Widget) find_handle(); }
 
     Style& style();
 

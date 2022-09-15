@@ -57,7 +57,9 @@ public:
         if (highlight || down)
             c = c.brighter (0.05);
         g.set_color (c);
-        g.text (w.text(), 10, 12);
+
+        auto r = w.bounds().at (0).as<float>();
+        g.draw_text (w.text(), r, Alignment::CENTERED);
     }
 };
 

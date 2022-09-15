@@ -12,7 +12,7 @@ namespace nvg {
 /** Surface backed by a NanoVG context */
 class Surface final : public lvtk::Surface {
 public:
-    explicit Surface (float scale = 1.f);
+    Surface();
     ~Surface();
 
     void begin_frame (int width, int height, float pixel_ratio);
@@ -28,7 +28,10 @@ public:
     void save() override;
     void restore() override;
     void fill_rect (const Rectangle<float>& r) override;
-    void __text_top_left (const std::string&, float, float) override;
+    bool text (const std::string&, float, float, Alignment) override;
+
+    Font font() const noexcept override;
+    void set_font (const Font& font) override;
 
 private:
     class Context;

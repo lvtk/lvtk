@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include <lvtk/ui/alignment.hpp>
 #include <lvtk/ui/fill.hpp>
+#include <lvtk/ui/font.hpp>
 #include <lvtk/ui/path.hpp>
 #include <lvtk/ui/rectangle.hpp>
 
@@ -32,24 +34,41 @@ public:
 
 class Surface {
 public:
-    Surface()                                   = default;
-    virtual ~Surface()                          = default;
-    virtual float scale_factor() const noexcept = 0;
+    Surface()          = default;
+    virtual ~Surface() = default;
 
-    virtual void translate (const Point<int>& pt) = 0;
-    virtual void transform (const Affine& mat) {}
+    // clang-format off
+    virtual float scale_factor() const noexcept =0;
+    
+    virtual void translate (const Point<int>& pt) =0;
+    virtual void transform (const Affine& mat) =0;
+    
+    virtual void clip (const Rectangle<int>& r) =0;
+    virtual Rectangle<int> last_clip() const =0;
+    virtual void intersect_clip (const Rectangle<int>& r) =0;
+    
+    virtual void save() =0;
+    virtual void restore() =0;
+    
+    virtual Font font() const noexcept =0;
 
-    virtual void clip (const Rectangle<int>& r)           = 0;
-    virtual Rectangle<int> last_clip() const              = 0;
-    virtual void intersect_clip (const Rectangle<int>& r) = 0;
+    virtual void set_font (const Font& font) =0;
+    virtual void set_fill (const Fill& fill) =0;
 
-    virtual void save()    = 0;
-    virtual void restore() = 0;
+    virtual void fill_rect (const Rectangle<float>& r) =0;
+    // clang-format on
 
-    virtual void set_fill (const Fill& fill)           = 0;
-    virtual void fill_rect (const Rectangle<float>& r) = 0;
+    /** Draw some text.
+        
+        Implementations should draw the text with the current font at x/y.
+        Alignment applies the the point, not the space being drawn in to.
 
-    virtual void __text_top_left (const std::string& text, float x, float y) {}
+        @param text The text to draw.
+        @param x The x coordinate
+        @param y The y coordinate
+        @param align How align around the x/y point.
+     */
+    virtual bool text (const std::string& text, float x, float y, Alignment align) { return false; }
 };
 
 } // namespace lvtk

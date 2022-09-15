@@ -6,14 +6,24 @@
 
 namespace lvtk {
 
+/**
+    @brief A generic button
+ */
 class Button : public lvtk::Widget {
 public:
     Button()          = default;
     virtual ~Button() = default;
 
+    /** Executed when the button is clicked */
     std::function<void()> clicked;
 
+    /** Returns true if this button is in a toggled state. */
     bool toggled() const noexcept { return _toggled; }
+
+    /** Toggle or de-toggle this button
+     
+        @param toggled True if it should be on
+    */
     void toggle (bool toggled) {
         if (toggled == _toggled)
             return;
@@ -62,9 +72,11 @@ private:
     }
 };
 
+/** A button which displays some text */
 class TextButton : public Button {
 public:
-    TextButton()          = default;
+    TextButton() = default;
+    TextButton (const String& text) : _text (text) {}
     virtual ~TextButton() = default;
 
     String text() const noexcept { return _text; }

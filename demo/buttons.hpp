@@ -35,7 +35,11 @@ public:
 protected:
     void paint (Graphics& g) override {
         g.set_color (0xeeeeeeff);
-        g.text (message, width() / 2, height() / 2);
+        g.set_font (Font (24.f));
+
+        auto r = bounds().at (0);
+        r.slice_bottom (40);
+        g.draw_text (message, r.as<float>(), Alignment::CENTERED);
     }
 
     void resized() override {

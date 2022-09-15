@@ -16,7 +16,11 @@ public:
         g.set_color (is_on ? color_on : color_off);
         g.fill_rect (bounds().at (0, 0));
         g.set_color (color_text);
-        g.text (__name, width() / 2, height() / 2);
+
+        auto r = bounds().at (0).as<float>().slice_bottom (height() / 2);
+
+        g.set_font_height (12.f);
+        g.draw_text (__name, r, Alignment::CENTERED);
     }
 
     bool obstructed (int x, int y) override { return true; }
