@@ -23,8 +23,8 @@ using TypefacePtr = std::shared_ptr<Typeface>;
 
 /** Style flags for a Font. */
 struct FontStyle {
-    enum {
-        NORMAL    = 0,          ///< Normal font
+    enum : uint32_t {
+        NORMAL    = 0u,          ///< Normal font
         BOLD      = (1u << 0u), ///< Bold font
         ITALIC    = (1u << 1u), ///< Italic font
         UNDERLINE = (1u << 2u)  ///< Underline font
@@ -44,7 +44,12 @@ public:
     }
 
     /** Specify a font with height and style flags */
-    Font (float height, uint8_t style) : _state (std::make_shared<State>()) {
+    Font (uint32_t style) : _state (std::make_shared<State>()) {
+        _state->flags  = style;
+    }
+
+    /** Specify a font with height and style flags */
+    Font (float height, uint32_t style) : _state (std::make_shared<State>()) {
         _state->height = height;
         _state->flags  = style;
     }
@@ -77,14 +82,16 @@ public:
     /** Returns true if this font is underlined */
     bool underline() const noexcept { return (_state->flags & FontStyle::UNDERLINE) != 0; }
 
+    uint8_t flags() const noexcept { return _state->flags; }
+
     /** Duplicate this font with new style flags.
      
         @param style The StyleFlag's to use.
     */
-    Font with_flags (uint32_t style) {
+    Font with_style (uint8_t flags) {
         Font f;
         *f._state       = *_state;
-        f._state->flags = style;
+        f._state->flags = flags;
         return f;
     }
 
@@ -97,6 +104,13 @@ public:
         *f._state        = *_state;
         f._state->height = height;
         return f;
+    }
+
+    bool operator== (const Font& o) const noexcept {
+        return _state == o._state || *_state == *o._state;
+    }
+    bool operator!= (const Font& o) const noexcept {
+        return _state != o._state || *_state != *o._state;
     }
 
 private:
@@ -112,6 +126,12 @@ private:
             flags  = o.flags;
             face   = o.face;
             return *this;
+        }
+        bool operator== (const State& o) const noexcept {
+            return height == o.height && flags == o.flags && face == o.face;
+        }
+        bool operator!= (const State& o) const noexcept {
+            return ! operator== (o);
         }
     };
     std::shared_ptr<State> _state;

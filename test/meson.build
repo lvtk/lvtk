@@ -15,6 +15,7 @@ lvtk_unit_test_sources = '''
 
     observer_test.cpp
     string_test.cpp
+    ui_font_test.cpp
     ui_path_test.cpp
     weak_ref_test.cpp
 
@@ -39,6 +40,7 @@ lvtk_unit_tests = '''
     URID
     Worker
     
+    Font
     Observer
     String
     Path

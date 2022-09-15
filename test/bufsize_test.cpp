@@ -83,8 +83,6 @@ private:
     uint32_t type;
 };
 
-using namespace lvtk;
-
 BOOST_AUTO_TEST_SUITE (BufSize)
 
 BOOST_AUTO_TEST_CASE (buffer_details) {
