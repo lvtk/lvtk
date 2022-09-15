@@ -20,7 +20,7 @@ public:
 
     float scale_factor() const noexcept override;
     void translate (const Point<int>& pt) override;
-    void transform (const Affine& mat) override;
+    void transform (const Transform& mat) override;
     void clip (const Rectangle<int>& r) override;
     void intersect_clip (const Rectangle<int>& r) override;
     Rectangle<int> last_clip() const override;

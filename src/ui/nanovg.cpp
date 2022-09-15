@@ -115,7 +115,7 @@ void Surface::translate (const Point<int>& pt) {
     nvgTranslate (ctx->ctx, (float) pt.x, (float) pt.y);
 }
 
-void Surface::transform (const Affine& mat) {
+void Surface::transform (const Transform& mat) {
     nvgTransform (ctx->ctx, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
 }
 

@@ -83,6 +83,7 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-qualified-auto,
   -readability-redundant-member-init,
+  -performance-unnecessary-value-param,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file

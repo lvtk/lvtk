@@ -11,11 +11,11 @@
 
 namespace lvtk {
 
-class Affine final {
+class Transform final {
 public:
-    Affine() = default;
+    Transform() = default;
 
-    bool operator== (const Affine& o) const noexcept {
+    bool operator== (const Transform& o) const noexcept {
         return m00 == o.m00
                && m01 == o.m01
                && m02 == o.m02
@@ -24,7 +24,7 @@ public:
                && m12 == o.m12;
     }
 
-    bool operator!= (const Affine& o) const noexcept {
+    bool operator!= (const Transform& o) const noexcept {
         return ! operator== (o);
     }
 
@@ -41,11 +41,11 @@ public:
     virtual float scale_factor() const noexcept =0;
     
     virtual void translate (const Point<int>& pt) =0;
-    virtual void transform (const Affine& mat) =0;
+    virtual void transform (const Transform& mat) =0;
     
     virtual void clip (const Rectangle<int>& r) =0;
-    virtual Rectangle<int> last_clip() const =0;
     virtual void intersect_clip (const Rectangle<int>& r) =0;
+    virtual Rectangle<int> last_clip() const =0;
     
     virtual void save() =0;
     virtual void restore() =0;
