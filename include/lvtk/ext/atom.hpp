@@ -228,7 +228,7 @@ struct Atom final {
     inline double as_double() const { return ((LV2_Atom_Double*) atom)->body; }
 
     /** Returns the atom casted to LV2_Atom_Object */
-    const Object as_object() const { return Object ((LV2_Atom_Object*) atom); }
+    Object as_object() const { return Object ((LV2_Atom_Object*) atom); }
 
     /** Get the body as a string */
     inline const char* as_string() const { return (const char*) LV2_ATOM_BODY (atom); }
