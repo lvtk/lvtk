@@ -64,13 +64,13 @@ public:
         auto plugin          = std::unique_ptr<BufSizePlug> (new BufSizePlug (args));
         const auto& pdetails = plugin->buffer_details();
 
-        BOOST_ASSERT ((bool) pdetails.min);
-        BOOST_ASSERT (details.min == pdetails.min);
-        BOOST_ASSERT ((bool) pdetails.max);
-        BOOST_ASSERT (details.max == pdetails.max);
+        BOOST_REQUIRE_EQUAL ((bool) pdetails.min, true);
+        BOOST_REQUIRE_EQUAL (details.min.value(), pdetails.min.value());
+        BOOST_REQUIRE_EQUAL ((bool) pdetails.max, true);
+        BOOST_REQUIRE_EQUAL (details.max.value(), pdetails.max.value());
 
-        BOOST_ASSERT (! (bool) pdetails.nominal);
-        BOOST_ASSERT (details.nominal != pdetails.nominal);
+        BOOST_REQUIRE_EQUAL (! (bool) pdetails.nominal, true);
+        BOOST_REQUIRE_EQUAL (details.nominal.value(), pdetails.nominal.value_or(details.nominal.value()));
     }
 
 private:
