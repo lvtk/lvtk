@@ -13,8 +13,8 @@
                 "/System/Library/Frameworks",
                 "/Library/Frameworks"
             ],
-            "compilerPath": "/usr/local/bin/gcc-6",
-            "cStandard": "c11",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c99",
             "cppStandard": "c++14",
             "intelliSenseMode": "clang-x64",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
