@@ -83,7 +83,9 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-qualified-auto,
   -readability-redundant-member-init,
+
   -performance-unnecessary-value-param,
+  -cppcoreguidelines-init-variables,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file
