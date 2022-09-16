@@ -61,9 +61,9 @@ public:
     Color brighter (float amount) const noexcept {
         // assert (amount >= 0.0f);
         amount = 1.0f / (1.0f + amount);
-        return Color ((uint8_t) (255 - (amount * (255 - red()))),
-                      (uint8_t) (255 - (amount * (255 - green()))),
-                      (uint8_t) (255 - (amount * (255 - blue()))),
+        return Color ((uint8_t) (255 - (amount * (255.f - (float)red()))),
+                      (uint8_t) (255 - (amount * (255.f - (float)green()))),
+                      (uint8_t) (255 - (amount * (255.f - (float)blue()))),
                       alpha());
     }
 

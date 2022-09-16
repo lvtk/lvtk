@@ -18,7 +18,8 @@ public:
         _pixels = o._pixels;
         return *this;
     }
-    long use_count() const noexcept { return _pixels.use_count(); }
+
+    auto use_count() const noexcept { return _pixels.use_count(); }
 
 private:
     std::shared_ptr<Pixels> _pixels;

@@ -13,9 +13,9 @@ class Main;
 class Widget;
 
 struct ViewFlag {
-    enum {
-        TRIVIAL   = (1 << 0), // View is trivial, like a popup menu.
-        RESIZABLE = (1 << 1)  // View is resizable.
+    enum : uint32_t {
+        TRIVIAL   = (1u << 0u), // View is trivial, like a popup menu.
+        RESIZABLE = (1u << 1u)  // View is resizable.
     };
 };
 

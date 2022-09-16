@@ -15,13 +15,13 @@ class Graphics;
 class TextButton;
 class Widget;
 
-using ColorID = int;
-
-enum class ColorIDs : ColorID {
-    BUTTON_BASE = 1,
-    BUTTON_ON,
-    BUTTON_TEXT_OFF,
-    BUTTON_TEXT_ON
+struct ColorID {
+    enum : int {
+        BUTTON_BASE = 1,
+        BUTTON_ON,
+        BUTTON_TEXT_OFF,
+        BUTTON_TEXT_ON
+    };
 };
 
 class Style {
@@ -34,16 +34,8 @@ public:
         _weak_status.reset();
     }
 
-    void set_color (ColorIDs ID, Color color) {
-        set_color (static_cast<int> (ID), color);
-    }
-
     void set_color (int ID, Color color) {
         _colors.insert (ColorItem { ID, color });
-    }
-
-    Color find_color (ColorIDs ID) const noexcept {
-        return find_color (static_cast<int> (ID));
     }
 
     Color find_color (int ID) const noexcept {
@@ -55,8 +47,10 @@ public:
         return {};
     }
 
-    virtual void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down)    = 0;
-    virtual void draw_button_text (Graphics& g, TextButton& b, bool highlight, bool down) = 0;
+    // clang-format off
+    virtual void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) =0;
+    virtual void draw_button_text (Graphics& g, TextButton& b, bool highlight, bool down) =0;
+    // clang-format on
 
 private:
     struct ColorItem {

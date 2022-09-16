@@ -3,12 +3,14 @@
 
 #pragma once
 
+#include <vector>
+
 #include <lv2/ui/ui.h>
 
-#include "lvtk/ui/graphics.hpp"
-#include "lvtk/ui/input.hpp"
-#include "lvtk/ui/view.hpp"
-#include "lvtk/weak_ref.hpp"
+#include <lvtk/ui/graphics.hpp>
+#include <lvtk/ui/input.hpp>
+#include <lvtk/ui/view.hpp>
+#include <lvtk/weak_ref.hpp>
 
 #ifndef LVTK_WIDGET_USE_CLIPPING
 #    define LVTK_WIDGET_USE_CLIPPING 0
