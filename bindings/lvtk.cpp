@@ -310,8 +310,8 @@ int luaopen_lvtk_Graphics (lua_State* L) {
 LVTK_LUALIB
 int luaopen_lvtk_Surface (lua_State* L) {
     static constexpr const char* ns = "lvtk";
-    static constexpr const char* name = "Surface";
-    auto M = lua::bind<lvtk::Surface> (L, ns, name,
+    static constexpr const char* name = "DrawingContext";
+    auto M = lua::bind<lvtk::DrawingContext> (L, ns, name,
         "dummy", []() {}
     );
 

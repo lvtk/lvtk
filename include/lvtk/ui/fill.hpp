@@ -8,7 +8,7 @@
 
 namespace lvtk {
 
-/** A type of Fill used by Surfaces
+/** A type of Fill used by DrawingContext
     i.e. fill Solid, Image, Gradient.
  */
 class Fill {

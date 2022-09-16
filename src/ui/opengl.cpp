@@ -7,7 +7,7 @@
 
 namespace lvtk {
 
-using OpenGLContext = nvg::Surface;
+using OpenGLContext = nvg::Context;
 
 /** Surf template param must be an OpenGLView of some kind */
 template <class Surf>

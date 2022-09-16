@@ -4,7 +4,7 @@
 #include <lvtk/ui/graphics.hpp>
 
 namespace lvtk {
-Graphics::Graphics (Surface& d)
+Graphics::Graphics (DrawingContext& d)
     : surface (d) {}
 
 void Graphics::set_font (const Font& font) { surface.set_font (font); }

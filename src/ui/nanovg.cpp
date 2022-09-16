@@ -10,8 +10,6 @@
 #include "Roboto-Regular.ttf.h"
 #include "nanovg.hpp"
 
-using Surface = lvtk::nvg::Surface;
-
 namespace lvtk {
 namespace nvg {
 namespace detail {
@@ -31,7 +29,7 @@ static constexpr auto destroy = nvgDeleteGL3;
 
 namespace convert {
 static int alignment (Alignment align) {
-    int flags = 0;
+    uint32_t flags = 0;
 
     if ((align.flags() & Alignment::LEFT) != 0)
         flags |= NVG_ALIGN_LEFT;
@@ -46,20 +44,20 @@ static int alignment (Alignment align) {
     if ((align.flags() & Alignment::MIDDLE) != 0)
         flags |= NVG_ALIGN_MIDDLE;
 
-    return flags;
+    return static_cast<int> (flags);
 };
 
 } // namespace convert
 
-class Surface::Context {
+class Context::Ctx {
     int _font = 0;
 
 public:
-    Context() : ctx (detail::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {
+    Ctx() : ctx (detail::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {
         _font = nvgCreateFontMem (ctx, detail::default_font_face, (uint8_t*) Roboto_Regular_ttf, Roboto_Regular_ttf_size, 0);
     }
 
-    ~Context() {
+    ~Ctx() {
         if (ctx)
             detail::destroy (ctx);
     }
@@ -78,7 +76,7 @@ public:
     }
 
 private:
-    friend class Surface;
+    friend class nvg::Context;
     NVGcontext* ctx { nullptr };
     struct State {
         NVGcolor color;
@@ -98,28 +96,28 @@ private:
     std::vector<State> stack;
 };
 
-Surface::Surface()
-    : ctx (std::make_unique<Context>()) {
+Context::Context()
+    : ctx (std::make_unique<Ctx>()) {
     set_fill (Color (0.f, 0.f, 0.f, 1.f));
 }
 
-Surface::~Surface() {
+Context::~Context() {
     ctx.reset();
 }
 
-float Surface::scale_factor() const noexcept {
+float Context::scale_factor() const noexcept {
     return ctx->internal_scale;
 }
 
-void Surface::translate (const Point<int>& pt) {
+void Context::translate (const Point<int>& pt) {
     nvgTranslate (ctx->ctx, (float) pt.x, (float) pt.y);
 }
 
-void Surface::transform (const Transform& mat) {
+void Context::transform (const Transform& mat) {
     nvgTransform (ctx->ctx, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
 }
 
-void Surface::clip (const Rectangle<int>& r) {
+void Context::clip (const Rectangle<int>& r) {
     ctx->state.clip = r.as<float>();
     nvgScissor (ctx->ctx,
                 ctx->state.clip.x,
@@ -128,18 +126,18 @@ void Surface::clip (const Rectangle<int>& r) {
                 ctx->state.clip.height);
 }
 
-void Surface::intersect_clip (const Rectangle<int>& r) {
+void Context::intersect_clip (const Rectangle<int>& r) {
     nvgIntersectScissor (ctx->ctx, r.x, r.y, r.width, r.height);
 }
 
-Rectangle<int> Surface::last_clip() const {
+Rectangle<int> Context::last_clip() const {
     return (ctx->state.clip).as<int>();
 }
 
-Font Surface::font() const noexcept { return ctx->state.font; }
-void Surface::set_font (const Font& font) { ctx->state.font = font; }
+Font Context::font() const noexcept { return ctx->state.font; }
+void Context::set_font (const Font& font) { ctx->state.font = font; }
 
-void Surface::set_fill (const Fill& fill) {
+void Context::set_fill (const Fill& fill) {
     auto c      = fill.color();
     auto& color = ctx->state.color;
     color.r     = c.fred();
@@ -148,10 +146,10 @@ void Surface::set_fill (const Fill& fill) {
     color.a     = c.falpha();
 }
 
-void Surface::save() { ctx->save(); }
-void Surface::restore() { ctx->restore(); }
+void Context::save() { ctx->save(); }
+void Context::restore() { ctx->restore(); }
 
-void Surface::begin_frame (int width, int height, float scale) {
+void Context::begin_frame (int width, int height, float scale) {
     ctx->internal_scale = scale;
     nvgBeginFrame (ctx->ctx,
                    (float) width,
@@ -159,11 +157,11 @@ void Surface::begin_frame (int width, int height, float scale) {
                    ctx->internal_scale);
 }
 
-void Surface::end_frame() {
+void Context::end_frame() {
     nvgEndFrame (ctx->ctx);
 }
 
-void Surface::fill_rect (const Rectangle<float>& r) {
+void Context::fill_rect (const Rectangle<float>& r) {
     nvgBeginPath (ctx->ctx);
 
     nvgRect (ctx->ctx,
@@ -176,7 +174,7 @@ void Surface::fill_rect (const Rectangle<float>& r) {
     nvgFill (ctx->ctx);
 }
 
-bool Surface::text (const std::string& text, float x, float y, Alignment align) {
+bool Context::text (const std::string& text, float x, float y, Alignment align) {
     nvgFontSize (ctx->ctx, ctx->state.font.height());
     nvgFontFace (ctx->ctx, detail::default_font_face);
     nvgTextAlign (ctx->ctx, convert::alignment (align));

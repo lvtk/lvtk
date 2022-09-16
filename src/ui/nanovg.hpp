@@ -3,17 +3,16 @@
 
 #pragma once
 
-#include <lvtk/ui/rectangle.hpp>
-#include <lvtk/ui/surface.hpp>
+#include <lvtk/ui/graphics.hpp>
 
 namespace lvtk {
 namespace nvg {
 
-/** Surface backed by a NanoVG context */
-class Surface final : public lvtk::Surface {
+/** DrawingContext backed by a NanoVG context */
+class Context final : public lvtk::DrawingContext {
 public:
-    Surface();
-    ~Surface();
+    Context();
+    ~Context();
 
     void begin_frame (int width, int height, float pixel_ratio);
     void end_frame();
@@ -34,11 +33,9 @@ public:
     void set_font (const Font& font) override;
 
 private:
-    class Context;
-    std::unique_ptr<Context> ctx;
+    class Ctx;
+    std::unique_ptr<Ctx> ctx;
 };
-
-inline static constexpr const char* GL_BACKEND_NAME = "NanoVG";
 
 } // namespace nvg
 } // namespace lvtk

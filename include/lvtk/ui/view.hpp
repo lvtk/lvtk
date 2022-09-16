@@ -47,7 +47,7 @@ public:
 
 protected:
     View (Main& context, Widget& widget);
-    void render (Surface& surface);
+    void render (DrawingContext& surface);
     void set_backend (uintptr_t);
     void set_view_hint (int, int);
 

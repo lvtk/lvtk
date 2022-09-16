@@ -329,7 +329,7 @@ void View::repaint (Bounds area) {
 }
 
 //==
-void View::render (Surface& ctx) {
+void View::render (DrawingContext& ctx) {
     Graphics g (ctx);
     _widget.render (g);
 }
