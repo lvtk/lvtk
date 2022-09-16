@@ -42,7 +42,7 @@ struct Alignment final {
     /** Create an invalid alignment */
     Alignment() {}
     /** Create an alignment from flags */
-    Alignment (uint16_t flags) : _flags (flags) {}
+    Alignment (uint8_t flags) : _flags (flags) {}
     /** Copy this alignment */
     Alignment (const Alignment& o) : _flags (o._flags) {}
     Alignment& operator= (const Alignment& o) {
