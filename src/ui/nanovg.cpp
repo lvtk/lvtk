@@ -1,6 +1,8 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <vector>
+
 #include <lvtk/ui/font.hpp>
 
 #include "gl.hpp"
@@ -13,6 +15,7 @@
 namespace lvtk {
 namespace nvg {
 namespace detail {
+
 static constexpr const char* default_font_face = "sans";
 
 #if defined(NANOVG_GL2)
