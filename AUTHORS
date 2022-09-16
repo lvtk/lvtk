@@ -1,5 +1,4 @@
-LVTK3 is authored by Michael Fisher <mfisher@lvtk.org>
+LVTK3 is authored by Michael Fisher <mfisher@lvtk.org> with contributions from:
 
-Gain Smoothing in Volume plugin is based on Robin Gareus' property example:
-https://github.com/x42/property_example.lv2/blob/master/src/property_example.c 
-
+David Robillard <d@drobilla.net>
+Robin Gareus <robin@gareus.org>
