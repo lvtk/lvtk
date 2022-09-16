@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace lvtk {
-namespace graphics {
 
 /** A type of operation used when processing path data */
 enum class PathOp {
@@ -18,31 +17,27 @@ enum class PathOp {
 };
 
 /** The element_type for BasicPath<T>::iterator */
-template <typename Coord>
 struct PathItem {
     PathOp type { PathOp::MOVE };
-    Coord x1 {}, y1 {},
+    float x1 {}, y1 {},
         x2 {}, y2 {},
         x3 {}, y3 {};
 };
 
-template <typename Coord>
-class BasicPath {
+class Path {
 public:
-    using coord_type  = Coord;
-    using vector_type = std::vector<Coord>;
-    using value_type  = PathItem<coord_type>;
+    using value_type  = PathItem;
 
-    BasicPath()  = default;
-    ~BasicPath() = default;
+    Path()  = default;
+    ~Path() = default;
 
     void clear() { _data.clear(); }
 
-    void move (coord_type x, coord_type y) {
+    void move (float x, float y) {
         add_op (PathOp::MOVE, x, y);
     }
 
-    void line (coord_type x, coord_type y) {
+    void line (float x, float y) {
         if (_data.empty())
             move (0, 0);
         add_op (PathOp::LINE, x, y);
@@ -50,25 +45,25 @@ public:
 
     template <class Pt>
     void line (Pt pt) {
-        line (static_cast<coord_type> (pt.x), static_cast<coord_type> (pt.y));
+        line (static_cast<float> (pt.x), static_cast<float> (pt.y));
     }
 
-    void quad (coord_type x1, coord_type y1, coord_type x2, coord_type y2) {
+    void quad (float x1, float y1, float x2, float y2) {
         if (_data.empty())
             move (0, 0);
         add_op (PathOp::QUADRATIC, x1, y1, x2, y2);
     }
 
-    void cubic (coord_type x1, coord_type y1,
-                coord_type x2, coord_type y2,
-                coord_type x3, coord_type y3) {
+    void cubic (float x1, float y1,
+                float x2, float y2,
+                float x3, float y3) {
         if (_data.empty())
             move (0, 0);
         add_op (PathOp::CUBIC, x1, y1, x2, y2, x3, y3);
     }
 
     void close() {
-        if (! _data.empty() && static_cast<coord_type> (PathOp::CLOSE) != _data.back())
+        if (! _data.empty() && static_cast<float> (PathOp::CLOSE) != _data.back())
             add_op (PathOp::CLOSE);
     }
 
@@ -77,9 +72,6 @@ public:
             _item.type = static_cast<PathOp> (*_i++);
             switch (_item.type) {
                 case PathOp::MOVE:
-                    _item.x1 = *_i++;
-                    _item.y1 = *_i++;
-                    break;
                 case PathOp::LINE:
                     _item.x1 = *_i++;
                     _item.y1 = *_i++;
@@ -123,9 +115,9 @@ public:
         bool operator!= (const iterator& o) { return _i != o._i; };
 
     private:
-        friend class BasicPath;
-        explicit iterator (typename vector_type::const_iterator i) : _i (i) {}
-        typename vector_type::const_iterator _i;
+        friend class Path;
+        explicit iterator (std::vector<float>::const_iterator i) : _i (i) {}
+        std::vector<float>::const_iterator _i;
         value_type _item;
     };
 
@@ -136,15 +128,14 @@ public:
     void reserve (std::size_t n) { _data.reserve (_data.size() + n); }
 
 private:
-    vector_type _data;
+    std::vector<float> _data;
     template <typename T>
-    void add_op (T v) { _data.push_back (static_cast<coord_type> (v)); }
+    void add_op (T v) { _data.push_back (static_cast<float> (v)); }
     template <typename T, typename... Args>
     void add_op (T op, Args... args) {
-        add_op (static_cast<coord_type> (op));
+        add_op (static_cast<float> (op));
         add_op (args...);
     }
 };
 
-} // namespace graphics
 } // namespace lvtk

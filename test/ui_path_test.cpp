@@ -5,7 +5,7 @@
 
 struct PathTest {
     void iterator() {
-        using FloatPath = lvtk::graphics::BasicPath<float>;
+        using FloatPath = lvtk::Path;
         FloatPath path;
         int numops = 0;
         path.move (100, 100);
