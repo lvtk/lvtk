@@ -19,12 +19,6 @@ public:
         add (file);
         file.text = "File";
         file.set_visible (true);
-        file.clicked = [this]() {
-            // file_menu.set_bounds (x() + 2, height() + 2, std::max(100, file.width() - 4), 300);
-            // file_menu.set_visible (true);
-            // if (auto view = find_view())
-            //     view->elevate (file_menu);
-        };
 
         add (help);
         help.set_visible (true);

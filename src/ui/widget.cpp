@@ -1,5 +1,6 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
+
 #include <algorithm>
 #include <cassert>
 #include <iostream>

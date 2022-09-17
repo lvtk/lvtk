@@ -9,6 +9,7 @@
 
 #include "../nanovg/nanovg.h"
 #include "../nanovg/nanovg_gl.h"
+#include "Roboto-Bold.ttf.h"
 #include "Roboto-Regular.ttf.h"
 #include "nanovg.hpp"
 
@@ -16,7 +17,8 @@ namespace lvtk {
 namespace nvg {
 namespace detail {
 
-static constexpr const char* default_font_face = "sans";
+static constexpr const char* default_font_face      = "Roboto-Normal";
+static constexpr const char* default_font_face_bold = "Roboto-Bold";
 
 #if defined(NANOVG_GL2)
 static constexpr auto create  = nvgCreateGL2;
@@ -53,11 +55,21 @@ static int alignment (Alignment align) {
 } // namespace convert
 
 class Context::Ctx {
-    int _font = 0;
+    int _font_normal = 0;
+    int _font_bold   = 0;
 
 public:
     Ctx() : ctx (detail::create (NVG_ANTIALIAS | NVG_STENCIL_STROKES)) {
-        _font = nvgCreateFontMem (ctx, detail::default_font_face, (uint8_t*) Roboto_Regular_ttf, Roboto_Regular_ttf_size, 0);
+        _font_normal = nvgCreateFontMem (ctx,
+                                         detail::default_font_face,
+                                         (uint8_t*) Roboto_Regular_ttf,
+                                         Roboto_Regular_ttf_size,
+                                         0);
+        _font_bold = nvgCreateFontMem (ctx,
+                                         detail::default_font_face_bold,
+                                         (uint8_t*) Roboto_Bold_ttf,
+                                         Roboto_Bold_ttf_size,
+                                         0);
     }
 
     ~Ctx() {
@@ -85,11 +97,13 @@ private:
         NVGcolor color;
         Rectangle<float> clip;
         Font font;
+        int font_id = 0;
 
         State& operator= (const State& o) {
             color = o.color;
             clip  = o.clip;
             font  = o.font;
+            font_id = o.font_id;
             return *this;
         }
     };
@@ -138,7 +152,10 @@ Rectangle<int> Context::last_clip() const {
 }
 
 Font Context::font() const noexcept { return ctx->state.font; }
-void Context::set_font (const Font& font) { ctx->state.font = font; }
+void Context::set_font (const Font& font) { 
+    ctx->state.font = font; 
+    ctx->state.font_id = font.bold() ? ctx->_font_bold : ctx->_font_normal;
+}
 
 void Context::set_fill (const Fill& fill) {
     auto c      = fill.color();
@@ -178,8 +195,9 @@ void Context::fill_rect (const Rectangle<float>& r) {
 }
 
 bool Context::text (const std::string& text, float x, float y, Alignment align) {
+    const auto& font = ctx->state.font;
     nvgFontSize (ctx->ctx, ctx->state.font.height());
-    nvgFontFace (ctx->ctx, detail::default_font_face);
+    nvgFontFaceId (ctx->ctx, ctx->state.font_id);
     nvgTextAlign (ctx->ctx, convert::alignment (align));
     nvgFillColor (ctx->ctx, ctx->state.color);
     nvgText (ctx->ctx, x, y, text.c_str(), nullptr);

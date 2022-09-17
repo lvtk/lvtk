@@ -15,6 +15,7 @@ public:
     Typeface()          = default;
     virtual ~Typeface() = default;
     // clang-format off
+    virtual std::string name() const noexcept =0;
     virtual const uint8_t* data() const noexcept =0;
     // clang-format on
 };
@@ -88,23 +89,13 @@ public:
      
         @param style The StyleFlag's to use.
     */
-    Font with_style (uint8_t flags) {
-        Font f;
-        *f._state       = *_state;
-        f._state->flags = flags;
-        return f;
-    }
+    Font with_style (uint8_t flags) const noexcept;
 
-    /** Duplicate this font with new height
+    /** Duplicate this font with new height.
      
         @param height The new height
     */
-    Font with_height (float height) const noexcept {
-        Font f;
-        *f._state        = *_state;
-        f._state->height = height;
-        return f;
-    }
+    Font with_height (float height) const noexcept;
 
     bool operator== (const Font& o) const noexcept {
         return _state == o._state || *_state == *o._state;

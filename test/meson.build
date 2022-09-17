@@ -24,7 +24,7 @@ lvtk_unit_test_sources = '''
 
 unit = executable ('unit',
     lvtk_unit_test_sources,
-    dependencies : [ boost_dep, lvtk_internal_dep ],
+    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_ui_dep ],
     cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 
 lvtk_unit_tests = '''
