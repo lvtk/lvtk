@@ -195,7 +195,6 @@ void Context::fill_rect (const Rectangle<float>& r) {
 }
 
 bool Context::text (const std::string& text, float x, float y, Alignment align) {
-    const auto& font = ctx->state.font;
     nvgFontSize (ctx->ctx, ctx->state.font.height());
     nvgFontFaceId (ctx->ctx, ctx->state.font_id);
     nvgTextAlign (ctx->ctx, convert::alignment (align));
