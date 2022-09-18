@@ -11,7 +11,7 @@ if host_machine.system() == 'linux'
     lvtk_nanovg_c_args += '-Wno-implicit-function-declaration'
 endif
 
-libnanovg = static_library ('nanovg',
+libnanovg = library ('nanovg',
     lvtk_nanovg_sources,
     c_args :lvtk_nanovg_c_args,
     gnu_symbol_visibility : 'hidden',

@@ -9,10 +9,17 @@ lvtk_ui_sources = '''
     ui.cpp
 '''.split()
 
-lvtk_ui_deps = [ lvtk_dep, puglpp_dep ]
-liblvtk_ui = static_library ('lvtk-ui-3',
+if get_option('default_library') == 'both'
+  if host_machine.system() == 'windows'
+    error('default_library=both is not supported on Windows')
+  endif
+endif
+
+lvtk_ui_deps = [ lvtk_dep, pugl_dep ]
+liblvtk_ui = library ('lvtk-ui-3',
     lvtk_ui_sources,
     cpp_args : [],
+    version : meson.project_version(),
     dependencies : lvtk_ui_deps,
     gnu_symbol_visibility : 'hidden',
     install : false)
@@ -31,8 +38,7 @@ liblvtk_gl = library ('lvtk-gl-3',
     gnu_symbol_visibility : 'hidden',
     cpp_args : [ lvtk_nanovg_cpp_args ],
     dependencies : [ lvtk_gl_deps ],
-    objects : [ libnanovg.extract_all_objects (recursive : false),
-                liblvtk_ui.extract_all_objects (recursive : false) ],
+    objects : [ libnanovg.extract_all_objects (recursive : false) ],
     install : true)
 lvtk_gl_dep = declare_dependency (
     link_with : [ liblvtk_gl ],

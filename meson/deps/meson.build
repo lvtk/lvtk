@@ -19,8 +19,8 @@ pugl_opts = [
     # 'default_library=static'
 ]
 
-puglpp_dep = dependency ('puglpp-0', 
-    fallback : [ 'pugl', 'puglpp_dep' ],
+pugl_dep = dependency ('pugl-0', 
+    fallback : [ 'pugl', 'pugl_dep' ],
     version : '>= 0.4.0',
     required : true,
     default_options : pugl_opts
