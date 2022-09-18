@@ -34,6 +34,13 @@
 
 #include <lv2/core/lv2.h>
 
+#define LVTK_DISABLE_COPY(ClassName)                  \
+    ClassName (const ClassName&)            = delete; \
+    ClassName& operator= (const ClassName&) = delete;
+#define LVTK_DISABLE_MOVE(ClassName)                   \
+    ClassName (const ClassName&&)            = delete; \
+    ClassName& operator= (const ClassName&&) = delete;
+
 namespace lvtk {
 /** @defgroup lvtk Core
     Misc classes and types
