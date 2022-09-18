@@ -45,7 +45,11 @@ static int glew_initialized = 0;
 #endif
 #define GL_SILENCE_DEPRECATION
 #define PUGL_DISABLE_DEPRECATED
+#ifdef _MSC_VER
+#include "glad/glad.h"
+#else
 #  include <pugl/gl.h>
+#endif
 // #include "glad/glad.h"
 #endif
 

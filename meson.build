@@ -22,7 +22,7 @@ subdir ('src')
 subdir ('bindings')
 
 ### Finals
-subdir ('lvtk.lv2')
+# subdir ('lvtk.lv2')
 
 ### Demo
 subdir ('demo')

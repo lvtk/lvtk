@@ -7,8 +7,6 @@
 #include "lvtk/lvtk.hpp"
 #include "lvtk/plugin.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/core/lv2.h>
 #include <lv2/worker/worker.h>
 
@@ -61,13 +59,11 @@ struct WorkerTest {
         BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         LV2_Worker_Schedule schedule = {
-            .handle        = this,
-            .schedule_work = _schedule_work
+            (void*)this, _schedule_work
         };
 
         LV2_Feature feature = {
-            .URI  = LV2_WORKER__schedule,
-            .data = &schedule
+            LV2_WORKER__schedule, (void*)&schedule
         };
 
         const LV2_Feature* features[] = { &feature, nullptr };

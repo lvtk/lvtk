@@ -78,7 +78,7 @@ private:
     template <typename FT>
     static inline uint8_t convert (FT v) {
         return static_cast<uint8_t> (
-            (FT) 255 * std::max ((FT) 0, std::min ((FT) 1, v)));
+            (FT)255 * std::max (FT(), std::min (FT(1), v)));
     }
 };
 

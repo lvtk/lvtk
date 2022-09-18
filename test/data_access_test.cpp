@@ -7,8 +7,6 @@
 #include "lvtk/plugin.hpp"
 #include "lvtk/ui.hpp"
 
-#include <cppunit/TestAssert.h>
-#include <cppunit/extensions/HelperMacros.h>
 #include <lv2/core/lv2.h>
 #include <lv2/data-access/data-access.h>
 #include <lv2/state/state.h>
