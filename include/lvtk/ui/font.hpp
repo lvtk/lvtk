@@ -48,33 +48,30 @@ public:
 
     ~Font() = default;
 
-    Font (const Font& o) : _state (o._state) {}
-    Font& operator= (const Font& o) {
-        _state = o._state;
-        return *this;
-    }
-
-    Font (Font&& o) : _state (std::move (o._state)) {}
-    Font& operator= (Font&& o) {
-        _state = std::move (o._state);
-        return *this;
-    }
+    /** Copy this font */
+    Font (const Font& o);
+    /** Copy this font */
+    Font& operator= (const Font& o);
+    /** Move this font */
+    Font (Font&& o);
+    /** Move this font */
+    Font& operator= (Font&& o);
 
     /** Teturns the Typeface that should be used for this font */
-    std::shared_ptr<Typeface> face() const noexcept { return _state->face; }
+    std::shared_ptr<Typeface> face() const noexcept;
 
     /** Returns the height of this font */
-    float height() const noexcept { return _state->height; }
+    float height() const noexcept;
     /** Returns true if this font is un-styled (normal) */
-    bool normal() const noexcept { return _state->flags == NORMAL; }
+    bool normal() const noexcept;
     /** Returns true if this font is bold */
-    bool bold() const noexcept { return (_state->flags & BOLD) != 0; }
+    bool bold() const noexcept;
     /** Returns true if this font is italic */
-    bool italic() const noexcept { return (_state->flags & ITALIC) != 0; }
+    bool italic() const noexcept;
     /** Returns true if this font is underlined */
-    bool underline() const noexcept { return (_state->flags & UNDERLINE) != 0; }
+    bool underline() const noexcept;
     /** Returns the style flags of this Font */
-    uint8_t flags() const noexcept { return _state->flags; }
+    uint8_t flags() const noexcept;
 
     /** Duplicate this font with new style flags.
      

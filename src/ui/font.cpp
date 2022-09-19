@@ -21,6 +21,26 @@ Font::Font (float height, uint8_t style) : _state (std::make_shared<State>()) {
     _state->flags  = style;
 }
 
+Font::Font (const Font& o) : _state (o._state) {}
+Font& Font::operator= (const Font& o) {
+    _state = o._state;
+    return *this;
+}
+
+Font::Font (Font&& o) : _state (std::move (o._state)) {}
+Font& Font::operator= (Font&& o) {
+    _state = std::move (o._state);
+    return *this;
+}
+
+std::shared_ptr<Typeface> Font::face() const noexcept { return _state->face; }
+float Font::height() const noexcept { return _state->height; }
+bool Font::normal() const noexcept { return _state->flags == NORMAL; }
+bool Font::bold() const noexcept { return (_state->flags & BOLD) != 0; }
+bool Font::italic() const noexcept { return (_state->flags & ITALIC) != 0; }
+bool Font::underline() const noexcept { return (_state->flags & UNDERLINE) != 0; }
+uint8_t Font::flags() const noexcept { return _state->flags; }
+
 Font Font::with_style (uint8_t flags) const noexcept {
     Font f;
     *f._state       = *_state;
