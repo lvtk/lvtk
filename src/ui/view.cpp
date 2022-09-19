@@ -308,7 +308,7 @@ void View::set_bounds (Bounds b) {
 
 void View::realize() {
     auto status = puglRealize ((PuglView*) _view);
-    int stop = 0;
+    (void) status;
 }
 
 Style& View::style() noexcept { return _main.style(); }

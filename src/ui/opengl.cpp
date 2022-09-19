@@ -40,7 +40,7 @@ protected:
             static bool glad_loaded = false;
             if (! glad_loaded) {
                 glad_loaded = gladLoadGL() != 0;
-                assert(glad_loaded);
+                assert (glad_loaded);
             }
 #endif
             _surface = std::make_unique<Surf>();

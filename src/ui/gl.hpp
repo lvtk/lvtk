@@ -9,8 +9,8 @@
 #define GL_SILENCE_DEPRECATION
 
 #if _WIN32
-#include "glad/glad.h"
-#define PUGL_NO_INCLUDE_GL_H 1
+#    include "glad/glad.h"
+#    define PUGL_NO_INCLUDE_GL_H 1
 #    ifdef NOMINMAX
 #        undef NOMINMAX
 #    endif
