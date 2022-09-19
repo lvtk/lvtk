@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
 
 class Main;
 
-class Embed final : public Widget {
+class LVTK_API Embed final : public Widget {
 public:
     Embed (Main& main);
     ~Embed();
@@ -26,6 +27,7 @@ protected:
 private:
     class Window;
     std::unique_ptr<Window> window;
+    LVTK_DISABLE_COPY (Embed);
 };
 
 } // namespace lvtk
