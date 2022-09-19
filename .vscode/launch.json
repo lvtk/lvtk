@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [ 
         {
+            "name": "(Windows) Demo",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/lvtk-demo.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
             "name": "Test",
             "type": "cppdbg",
             "request": "launch",
