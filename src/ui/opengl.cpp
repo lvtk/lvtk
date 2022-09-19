@@ -12,10 +12,10 @@ namespace lvtk {
 using OpenGLContext = nvg::Context;
 
 /** Surf template param must be an OpenGLView of some kind */
-template <class Surf>
+template <class Ctx>
 class OpenGLView : public lvtk::View {
 public:
-    using surface_type = Surf;
+    using context_type = Ctx;
 
     /** OpenGL base view.
         @param context The context creating the fiew
@@ -30,12 +30,12 @@ public:
     }
 
     ~OpenGLView() {
-        _surface.reset();
+        _context.reset();
     }
 
 protected:
     inline void created() override {
-        if (! _surface) {
+        if (! _context) {
 #if _WIN32
             static bool glad_loaded = false;
             if (! glad_loaded) {
@@ -43,15 +43,16 @@ protected:
                 assert (glad_loaded);
             }
 #endif
-            _surface = std::make_unique<Surf>();
+            _context = std::make_unique<Ctx>();
         }
         View::created();
     }
 
     inline void expose (Bounds frame) override {
+
         const auto scale = scale_factor();
         const auto vb    = bounds().at (0);
-        glViewport (0, 0, vb.width * scale, vb.height * scale);
+        glViewport (0, 0, (GLsizei)((float)vb.width * scale), (GLsizei)((float)vb.height * scale));
 
         if (needs_cleared) {
             glClearColor (bg_color.fred(), bg_color.fgreen(), bg_color.fblue(), bg_color.falpha());
@@ -59,18 +60,18 @@ protected:
             needs_cleared = false;
         }
 
-        if (_surface) {
-            _surface->begin_frame (vb.width, vb.height, scale);
-            _surface->save();
-            _surface->clip (frame);
-            render (*_surface);
-            _surface->restore();
-            _surface->end_frame();
+        if (_context) {
+            _context->begin_frame (vb.width, vb.height, scale);
+            _context->save();
+            _context->clip (frame);
+            render (*_context);
+            _context->restore();
+            _context->end_frame();
         }
     }
 
 private:
-    std::unique_ptr<Surf> _surface;
+    std::unique_ptr<Ctx> _context;
     bool needs_cleared = true;
     Color bg_color { 0x000000ff };
 };
