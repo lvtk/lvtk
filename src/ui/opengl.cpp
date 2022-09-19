@@ -1,6 +1,8 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <cassert>
+
 #include "gl.hpp"
 #include "nanovg.hpp"
 #include <lvtk/ui/opengl.hpp>
@@ -34,6 +36,13 @@ public:
 protected:
     inline void created() override {
         if (! _surface) {
+#if _WIN32
+            static bool glad_loaded = false;
+            if (! glad_loaded) {
+                glad_loaded = gladLoadGL() != 0;
+                assert(glad_loaded);
+            }
+#endif
             _surface = std::make_unique<Surf>();
         }
         View::created();

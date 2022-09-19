@@ -102,8 +102,8 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     auto view = create_view (widget, flags, parent);
     // bail out conditions?
 
-    view->set_bounds (widget.bounds());
     view->realize();
+    view->set_bounds (widget.bounds());
     view->set_visible (widget.visible());
     widget._view = std::move (view);
     widget.notify_structure_changed();

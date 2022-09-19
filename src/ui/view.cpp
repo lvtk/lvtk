@@ -253,6 +253,7 @@ View::View (Main& m, Widget& w)
       _widget (w) {
     _view  = (uintptr_t) puglNewView ((PuglWorld*) m.world());
     auto v = (PuglView*) _view;
+    puglSetSizeHint (v, PUGL_DEFAULT_SIZE, 10, 10);
     puglSetHandle (v, this);
     puglSetEventFunc (v, EventHandler::dispatch);
     _weak_status.reset (this);
@@ -306,7 +307,8 @@ void View::set_bounds (Bounds b) {
 }
 
 void View::realize() {
-    puglRealize ((PuglView*) _view);
+    auto status = puglRealize ((PuglView*) _view);
+    int stop = 0;
 }
 
 Style& View::style() noexcept { return _main.style(); }
