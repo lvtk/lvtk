@@ -84,33 +84,32 @@ public:
 class LVTK_API Graphics final {
 public:
     Graphics (DrawingContext& d);
+    Graphics()  = delete;
     ~Graphics() = default;
 
-    void translate (const Point<int>& delta) { surface.translate (delta); }
-    void clip (Bounds c) { surface.clip (c); }
-    void intersect_clip (Bounds c) { surface.intersect_clip (c); }
-    Bounds last_clip() const noexcept { return surface.last_clip(); }
-    bool clip_empty() const noexcept { return surface.last_clip().empty(); }
+    void translate (const Point<int>& delta);
+    void clip (Bounds c);
+    void intersect_clip (Bounds c);
+    Bounds last_clip() const noexcept;
+    bool clip_empty() const noexcept;
 
-    void save() { surface.save(); }
-    void restore() { surface.restore(); }
+    void save();
+    void restore();
 
     void set_font (const Font& font);
-    void set_font_height (float height);
+    void set_color (Color color);
 
-    void set_color (Color color) { surface.set_fill (color); }
-
-    void fill_rect (const Rectangle<float>& r) { surface.fill_rect (r); }
-    void fill_rect (const Rectangle<int>& r) { surface.fill_rect (r.as<float>()); }
+    void fill_rect (const Rectangle<float>& r);
+    void fill_rect (const Rectangle<int>& r);
 
     /** Draw some text */
     void draw_text (const std::string& text, Rectangle<float> area, Alignment align);
 
     /** Returns the context used by this Graphics instance. */
-    DrawingContext& context() { return surface; }
+    DrawingContext& context();
 
 private:
-    DrawingContext& surface;
+    DrawingContext& _context;
 };
 
 } // namespace lvtk

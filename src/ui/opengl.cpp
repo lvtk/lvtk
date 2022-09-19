@@ -49,10 +49,9 @@ protected:
     }
 
     inline void expose (Bounds frame) override {
-
         const auto scale = scale_factor();
         const auto vb    = bounds().at (0);
-        glViewport (0, 0, (GLsizei)((float)vb.width * scale), (GLsizei)((float)vb.height * scale));
+        glViewport (0, 0, (GLsizei) ((float) vb.width * scale), (GLsizei) ((float) vb.height * scale));
 
         if (needs_cleared) {
             glClearColor (bg_color.fred(), bg_color.fgreen(), bg_color.fblue(), bg_color.falpha());

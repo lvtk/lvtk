@@ -19,7 +19,7 @@ public:
 
         auto r = bounds().at (0).as<float>().slice_bottom (height() / 2);
 
-        g.set_font_height (12.f);
+        g.set_font (Font (12.f));
         g.draw_text (__name, r, Alignment::CENTERED);
     }
 

@@ -5,6 +5,7 @@ lvtk_ui_sources = '''
     ui/graphics.cpp
     ui/image.cpp
     ui/main.cpp
+    ui/style.cpp
     ui/view.cpp
     ui/widget.cpp
 '''.split()

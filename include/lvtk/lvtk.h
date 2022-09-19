@@ -39,12 +39,14 @@ extern "C" {
 #if __cplusplus
 } // extern "C"
 
-#    define LVTK_DISABLE_COPY(ClassName)       \
-        ClassName (const ClassName&) = delete; \
-        ClassName& operator= (const ClassName&) = delete;
-#    define LVTK_DISABLE_MOVE(ClassName)        \
-        ClassName (const ClassName&&) = delete; \
-        ClassName& operator= (const ClassName&&) = delete;
+// clang-format off
+#define LVTK_DISABLE_COPY(ClassName)                   \
+    ClassName (const ClassName&)            = delete;  \
+    ClassName& operator= (const ClassName&) = delete;
+#define LVTK_DISABLE_MOVE(ClassName)                   \
+    ClassName (const ClassName&&)            = delete; \
+    ClassName& operator= (const ClassName&&) = delete;
+// clang-format on
 #endif
 
 #endif

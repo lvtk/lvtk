@@ -5,6 +5,7 @@
 
 #include <set>
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/color.hpp>
 #include <lvtk/weak_ref.hpp>
 
@@ -24,28 +25,15 @@ struct ColorID {
     };
 };
 
-class Style {
+class LVTK_API Style {
 public:
-    Style() {
-        _weak_status.reset (this);
-    }
+    Style();
 
-    virtual ~Style() {
-        _weak_status.reset();
-    }
+    virtual ~Style();
 
-    void set_color (int ID, Color color) {
-        _colors.insert (ColorItem { ID, color });
-    }
+    void set_color (int ID, Color color);
 
-    Color find_color (int ID) const noexcept {
-        if (_colors.empty())
-            return {};
-        auto it = _colors.find (ColorItem { ID, {} });
-        if (it != _colors.end())
-            return (*it).color;
-        return {};
-    }
+    Color find_color (int ID) const noexcept;
 
     // clang-format off
     virtual void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) =0;
@@ -57,12 +45,13 @@ private:
         int ID;
         Color color;
         bool operator== (const ColorItem& o) const noexcept { return ID == o.ID; }
-        bool operator< (const ColorItem& o) const noexcept { return ID < o.ID; }
+        bool operator<(const ColorItem& o) const noexcept { return ID < o.ID; }
         bool operator> (const ColorItem& o) const noexcept { return ID > o.ID; }
     };
 
     std::set<ColorItem> _colors;
     LVTK_WEAK_REFABLE (Style);
+    LVTK_DISABLE_COPY (Style);
 };
 
 } // namespace lvtk

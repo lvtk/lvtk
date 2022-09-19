@@ -73,9 +73,8 @@ typedef void* LV2_Dyn_Manifest_Handle;
    MUST NOT try to interpret the value of handle.
 */
 LV2_SYMBOL_EXPORT
-int
-lv2_dyn_manifest_open(LV2_Dyn_Manifest_Handle*  handle,
-                      const LV2_Feature* const* features);
+int lv2_dyn_manifest_open (LV2_Dyn_Manifest_Handle* handle,
+                           const LV2_Feature* const* features);
 
 /**
    Fetch a "list" of subject URIs described in the dynamic manifest.
@@ -101,8 +100,7 @@ lv2_dyn_manifest_open(LV2_Dyn_Manifest_Handle*  handle,
    @return 0 on success, otherwise a non-zero error code.
 */
 LV2_SYMBOL_EXPORT
-int
-lv2_dyn_manifest_get_subjects(LV2_Dyn_Manifest_Handle handle, FILE* fp);
+int lv2_dyn_manifest_get_subjects (LV2_Dyn_Manifest_Handle handle, FILE* fp);
 
 /**
    Function that fetches data related to a specific URI.
@@ -135,10 +133,9 @@ lv2_dyn_manifest_get_subjects(LV2_Dyn_Manifest_Handle handle, FILE* fp);
    @return 0 on success, otherwise a non-zero error code.
 */
 LV2_SYMBOL_EXPORT
-int
-lv2_dyn_manifest_get_data(LV2_Dyn_Manifest_Handle handle,
-                          FILE*                   fp,
-                          const char*             uri);
+int lv2_dyn_manifest_get_data (LV2_Dyn_Manifest_Handle handle,
+                               FILE* fp,
+                               const char* uri);
 
 /**
    Function that ends the operations on the dynamic manifest generator.
@@ -152,8 +149,7 @@ lv2_dyn_manifest_get_data(LV2_Dyn_Manifest_Handle handle,
    @param handle Dynamic manifest generator handle.
 */
 LV2_SYMBOL_EXPORT
-void
-lv2_dyn_manifest_close(LV2_Dyn_Manifest_Handle handle);
+void lv2_dyn_manifest_close (LV2_Dyn_Manifest_Handle handle);
 
 #ifdef __cplusplus
 } /* extern "C" */
