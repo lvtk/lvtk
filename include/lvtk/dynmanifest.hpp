@@ -31,10 +31,10 @@
 
 #pragma once
 
-#include <lv2/dynmanifest/dynmanifest.h>
-
 #include <cstdio>
 #include <sstream>
+
+#include <lvtk/detail/dynmanifest.h>
 
 namespace lvtk {
 /** Dynamic Manifest helper class
@@ -81,7 +81,7 @@ static bool write_lines (const std::stringstream& lines, FILE* fp) {
     @ingroup dynmanifest
     @headerfile lvtk/dynmanifest.hpp
 */
-static void* lvtk_create_dyn_manifest();
+void* lvtk_create_dyn_manifest();
 
 extern "C" {
 
