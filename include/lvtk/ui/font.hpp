@@ -24,38 +24,27 @@ public:
 
 using TypefacePtr = std::shared_ptr<Typeface>;
 
-/** Style flags for a Font. */
-struct FontStyle {
-    enum : uint32_t {
+/** A font. */
+class LVTK_API Font final {
+public:
+    enum StyleFlag : uint8_t {
         NORMAL    = 0u,         ///< Normal font
         BOLD      = (1u << 0u), ///< Bold font
         ITALIC    = (1u << 1u), ///< Italic font
         UNDERLINE = (1u << 2u)  ///< Underline font
     };
-};
 
-/** A font. */
-class LVTK_API Font final {
-public:
     /** Specify a default font */
-    Font() : _state (std::make_shared<State>()) {}
+    Font();
 
     /** Specify a normal font with height */
-    Font (float height) : _state (std::make_shared<State>()) {
-        _state->height = height;
-        _state->flags  = FontStyle::NORMAL;
-    }
+    Font (float height);
 
     /** Specify a font with height and style flags */
-    Font (uint32_t style) : _state (std::make_shared<State>()) {
-        _state->flags = style;
-    }
+    Font (uint8_t style);
 
     /** Specify a font with height and style flags */
-    Font (float height, uint32_t style) : _state (std::make_shared<State>()) {
-        _state->height = height;
-        _state->flags  = style;
-    }
+    Font (float height, uint8_t style);
 
     ~Font() = default;
 
@@ -77,14 +66,14 @@ public:
     /** Returns the height of this font */
     float height() const noexcept { return _state->height; }
     /** Returns true if this font is un-styled (normal) */
-    bool normal() const noexcept { return _state->flags == FontStyle::NORMAL; }
+    bool normal() const noexcept { return _state->flags == NORMAL; }
     /** Returns true if this font is bold */
-    bool bold() const noexcept { return (_state->flags & FontStyle::BOLD) != 0; }
+    bool bold() const noexcept { return (_state->flags & BOLD) != 0; }
     /** Returns true if this font is italic */
-    bool italic() const noexcept { return (_state->flags & FontStyle::ITALIC) != 0; }
+    bool italic() const noexcept { return (_state->flags & ITALIC) != 0; }
     /** Returns true if this font is underlined */
-    bool underline() const noexcept { return (_state->flags & FontStyle::UNDERLINE) != 0; }
-
+    bool underline() const noexcept { return (_state->flags & UNDERLINE) != 0; }
+    /** Returns the style flags of this Font */
     uint8_t flags() const noexcept { return _state->flags; }
 
     /** Duplicate this font with new style flags.
@@ -99,19 +88,15 @@ public:
     */
     Font with_height (float height) const noexcept;
 
-    bool operator== (const Font& o) const noexcept {
-        return _state == o._state || *_state == *o._state;
-    }
-    bool operator!= (const Font& o) const noexcept {
-        return _state != o._state || *_state != *o._state;
-    }
+    bool operator== (const Font& o) const noexcept;
+    bool operator!= (const Font& o) const noexcept;
 
 private:
     static constexpr float default_height = 15.f;
     struct State {
         State() {}
         float height { default_height };
-        uint32_t flags { FontStyle::NORMAL };
+        uint8_t flags { Font::NORMAL };
         std::shared_ptr<Typeface> face;
         State (const State& o) { operator= (o); }
         State& operator= (const State& o) {

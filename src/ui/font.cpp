@@ -5,6 +5,22 @@
 
 namespace lvtk {
 
+Font::Font() : _state (std::make_shared<State>()) {}
+
+Font::Font (float height) : _state (std::make_shared<State>()) {
+    _state->height = height;
+    _state->flags  = Font::NORMAL;
+}
+
+Font::Font (uint8_t style) : _state (std::make_shared<State>()) {
+    _state->flags = style;
+}
+
+Font::Font (float height, uint8_t style) : _state (std::make_shared<State>()) {
+    _state->height = height;
+    _state->flags  = style;
+}
+
 Font Font::with_style (uint8_t flags) const noexcept {
     Font f;
     *f._state       = *_state;
@@ -17,6 +33,14 @@ Font Font::with_height (float height) const noexcept {
     *f._state        = *_state;
     f._state->height = height;
     return f;
+}
+
+bool Font::operator== (const Font& o) const noexcept {
+    return _state == o._state || *_state == *o._state;
+}
+
+bool Font::operator!= (const Font& o) const noexcept {
+    return _state != o._state || *_state != *o._state;
 }
 
 } // namespace lvtk
