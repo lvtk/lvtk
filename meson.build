@@ -43,6 +43,7 @@ executable (
     include_directories : [],
     link_with : [ liblvtk_demo ],
     dependencies : [ lvtk_gl_dep, threads_dep ],
+    win_subsystem : 'windows',
     install : true)
 
 ### Headers and PC

@@ -28,7 +28,19 @@ static int run (lvtk::Main& context, int, char**) {
     return run<lvtk::demo::Content> (context);
 }
 
+#ifdef _WIN32
+#include <windows.h>
+int WinMain (HINSTANCE hInstance,
+             HINSTANCE hPrevInstance,
+             LPSTR     lpCmdLine,
+             int       nShowCmd) 
+             {
+    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
+    return run<lvtk::demo::Content> (context);
+}
+#else
 int main (int argc, char** argv) {
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
     return run (context, argc, argv);
 }
+#endif

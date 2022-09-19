@@ -10,6 +10,7 @@ lvtk_ui_sources = '''
 '''.split()
 
 lvtk_ui_deps = [ lvtk_dep, pugl_dep ]
+add_project_arguments ('-DPUGL_STATIC', language : ['c', 'cpp'])
 
 liblvtk_ui = library ('lvtk-ui-3',
     lvtk_ui_sources,
@@ -37,6 +38,7 @@ liblvtk_gl = library ('lvtk-gl-3',
     version : meson.project_version(),
     gnu_symbol_visibility : 'hidden',
     link_with : [],
+    include_directories : [ 'nanovg' ],
     c_args : [ lvtk_gl_c_args ],
     cpp_args : [ lvtk_gl_cpp_args ],
     dependencies : [ lvtk_gl_deps ],
