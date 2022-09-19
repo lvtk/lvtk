@@ -1,6 +1,3 @@
-
-if host_machine.system() != 'windows'
-
 ## Unit Tests
 lvtk_unit_test_sources = '''
     atom_test.cpp
@@ -51,5 +48,3 @@ lvtk_unit_tests = '''
 foreach t : lvtk_unit_tests
     test (t, unit, args : [ '-t', t ])
 endforeach
-
-endif
