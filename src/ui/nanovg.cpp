@@ -144,7 +144,11 @@ void Context::clip (const Rectangle<int>& r) {
 }
 
 void Context::intersect_clip (const Rectangle<int>& r) {
-    nvgIntersectScissor (ctx->ctx, r.x, r.y, r.width, r.height);
+    nvgIntersectScissor (ctx->ctx, 
+        static_cast<float> (r.x), 
+        static_cast<float> (r.y), 
+        static_cast<float> (r.width), 
+        static_cast<float> (r.height));
 }
 
 Rectangle<int> Context::last_clip() const {
