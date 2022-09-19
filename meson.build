@@ -10,6 +10,16 @@ project ('lvtk', ['cpp', 'c'], version : '3.0.0',
 
 subdir ('meson/deps')
 
+
+if get_option('default_library') == 'both'
+  if host_machine.system() == 'windows'
+    error('default_library=both is not supported on Windows')
+  endif
+elif get_option('default_library') == 'static'
+    add_project_arguments(['-DLVTK_STATIC'],language: ['c', 'cpp'])
+endif
+
+### Header only deps
 lvtk_dep = declare_dependency (
     include_directories : [ 'include' ],
     dependencies : [ lv2_dep ])

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/color.hpp>
 #include <lvtk/ui/image.hpp>
 
@@ -11,7 +12,7 @@ namespace lvtk {
 /** A type of Fill used by DrawingContext
     i.e. fill Solid, Image, Gradient.
  */
-class Fill {
+class LVTK_API Fill {
 public:
     Fill() = default;
     void set_color (Color c) {

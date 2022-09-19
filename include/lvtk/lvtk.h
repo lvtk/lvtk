@@ -1,10 +1,8 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #ifndef LVTK_H_INCLUDED
 #define LVTK_H_INCLUDED
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef __cplusplus
 #    define LVTK_EXTERN extern "C"
@@ -12,21 +10,20 @@ extern "C" {
 #    define LVTK_EXTERN
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _WIN32
-// windows exports
-#    if defined(LVTK_SHARED_BUILD)
+#    if ! defined(LVTK_STATIC) && defined(LVTK_BUILD)
 #        define LVTK_API __declspec(dllexport)
-#        pragma warning(disable : 4251)
-#    elif defined(LVTK_SHARED)
+#    elif ! defined(LVTK_STATIC)
 #        define LVTK_API __declspec(dllimport)
-#        pragma warning(disable : 4251)
 #    endif
-#    define LVTK_PLUGIN_EXPORT LVTK_EXTERN __declspec(dllexport)
 #else
-#    if defined(LVTK_SHARED) || defined(LVTK_SHARED_BUILD)
+#    if ! defined(LVTK_STATIC)
 #        define LVTK_API __attribute__ ((visibility ("default")))
 #    endif
-#    define LVTK_PLUGIN_EXPORT LVTK_EXTERN __attribute__ ((visibility ("default")))
 #endif
 
 #define LVTK_EXPORT LVTK_EXTERN LVTK_API
@@ -35,13 +32,19 @@ extern "C" {
 #    define LVTK_API
 #endif
 
-// export macro: includes extern C if needed followed by visibility attribute;
 #ifndef LVTK_EXPORT
 #    define LVTK_EXPORT
 #endif
 
 #if __cplusplus
-}
+} // extern "C"
+
+#    define LVTK_DISABLE_COPY(ClassName)       \
+        ClassName (const ClassName&) = delete; \
+        ClassName& operator= (const ClassName&) = delete;
+#    define LVTK_DISABLE_MOVE(ClassName)        \
+        ClassName (const ClassName&&) = delete; \
+        ClassName& operator= (const ClassName&&) = delete;
 #endif
 
 #endif

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/graphics.hpp>
 #include <lvtk/ui/style.hpp>
 #include <lvtk/weak_ref.hpp>
@@ -12,7 +13,7 @@ namespace lvtk {
 class Main;
 class Widget;
 
-struct ViewFlag {
+struct LVTK_API ViewFlag {
     enum : uint32_t {
         TRIVIAL   = (1u << 0u), // View is trivial, like a popup menu.
         RESIZABLE = (1u << 1u)  // View is resizable.
@@ -21,8 +22,7 @@ struct ViewFlag {
 
 using ViewFlags = uint32_t;
 
-class View {
-protected:
+class LVTK_API View {
 public:
     virtual ~View();
     uintptr_t handle();

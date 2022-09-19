@@ -33,11 +33,11 @@ BOOST_AUTO_TEST_CASE (styles) {
     BOOST_REQUIRE_EQUAL (f.italic(), true);
     BOOST_REQUIRE_EQUAL (f.underline(), true);
 
-    auto f2 = Font (f.height(), FontStyle::BOLD | FontStyle::ITALIC | FontStyle::UNDERLINE);
+    auto f2          = Font (f.height(), FontStyle::BOLD | FontStyle::ITALIC | FontStyle::UNDERLINE);
     auto fonts_equal = f == f2;
-    BOOST_REQUIRE_EQUAL(fonts_equal, true);
-    
-    f2 = f2.with_height(f2.height() - 1.f);
+    BOOST_REQUIRE_EQUAL (fonts_equal, true);
+
+    f2                   = f2.with_height (f2.height() - 1.f);
     auto fonts_not_equal = f != f2;
     BOOST_REQUIRE_EQUAL (fonts_not_equal, true);
 }

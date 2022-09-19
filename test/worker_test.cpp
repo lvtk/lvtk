@@ -59,11 +59,11 @@ struct WorkerTest {
         BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         LV2_Worker_Schedule schedule = {
-            (void*)this, _schedule_work
+            (void*) this, _schedule_work
         };
 
         LV2_Feature feature = {
-            LV2_WORKER__schedule, (void*)&schedule
+            LV2_WORKER__schedule, (void*) &schedule
         };
 
         const LV2_Feature* features[] = { &feature, nullptr };

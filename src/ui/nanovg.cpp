@@ -65,11 +65,11 @@ public:
                                          (uint8_t*) Roboto_Regular_ttf,
                                          Roboto_Regular_ttf_size,
                                          0);
-        _font_bold = nvgCreateFontMem (ctx,
-                                         detail::default_font_face_bold,
-                                         (uint8_t*) Roboto_Bold_ttf,
-                                         Roboto_Bold_ttf_size,
-                                         0);
+        _font_bold   = nvgCreateFontMem (ctx,
+                                       detail::default_font_face_bold,
+                                       (uint8_t*) Roboto_Bold_ttf,
+                                       Roboto_Bold_ttf_size,
+                                       0);
     }
 
     ~Ctx() {
@@ -100,9 +100,9 @@ private:
         int font_id = 0;
 
         State& operator= (const State& o) {
-            color = o.color;
-            clip  = o.clip;
-            font  = o.font;
+            color   = o.color;
+            clip    = o.clip;
+            font    = o.font;
             font_id = o.font_id;
             return *this;
         }
@@ -144,11 +144,11 @@ void Context::clip (const Rectangle<int>& r) {
 }
 
 void Context::intersect_clip (const Rectangle<int>& r) {
-    nvgIntersectScissor (ctx->ctx, 
-        static_cast<float> (r.x), 
-        static_cast<float> (r.y), 
-        static_cast<float> (r.width), 
-        static_cast<float> (r.height));
+    nvgIntersectScissor (ctx->ctx,
+                         static_cast<float> (r.x),
+                         static_cast<float> (r.y),
+                         static_cast<float> (r.width),
+                         static_cast<float> (r.height));
 }
 
 Rectangle<int> Context::last_clip() const {
@@ -156,8 +156,8 @@ Rectangle<int> Context::last_clip() const {
 }
 
 Font Context::font() const noexcept { return ctx->state.font; }
-void Context::set_font (const Font& font) { 
-    ctx->state.font = font; 
+void Context::set_font (const Font& font) {
+    ctx->state.font    = font;
     ctx->state.font_id = font.bold() ? ctx->_font_bold : ctx->_font_normal;
 }
 

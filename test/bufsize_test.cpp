@@ -70,7 +70,7 @@ public:
         BOOST_REQUIRE_EQUAL (details.max.value(), pdetails.max.value());
 
         BOOST_REQUIRE_EQUAL (! (bool) pdetails.nominal, true);
-        BOOST_REQUIRE_EQUAL (details.nominal.value(), pdetails.nominal.value_or(details.nominal.value()));
+        BOOST_REQUIRE_EQUAL (details.nominal.value(), pdetails.nominal.value_or (details.nominal.value()));
     }
 
 private:

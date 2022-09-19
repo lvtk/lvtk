@@ -2,12 +2,12 @@
 #include <boost/test/unit_test.hpp>
 
 #ifndef _WIN32
-#include "lvtk/dynmanifest.hpp"
+#    include "lvtk/dynmanifest.hpp"
 
-#include <cstdio>
-#include <memory>
-#include <ostream>
-#include <string>
+#    include <cstdio>
+#    include <memory>
+#    include <ostream>
+#    include <string>
 
 class TestManifest : public lvtk::DynManifest {
 public:

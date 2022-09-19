@@ -7,10 +7,12 @@
 #include <memory>
 #include <string>
 
+#include <lvtk/lvtk.h>
+
 namespace lvtk {
 
 /** A typeface */
-class Typeface {
+class LVTK_API Typeface {
 public:
     Typeface()          = default;
     virtual ~Typeface() = default;
@@ -25,7 +27,7 @@ using TypefacePtr = std::shared_ptr<Typeface>;
 /** Style flags for a Font. */
 struct FontStyle {
     enum : uint32_t {
-        NORMAL    = 0u,          ///< Normal font
+        NORMAL    = 0u,         ///< Normal font
         BOLD      = (1u << 0u), ///< Bold font
         ITALIC    = (1u << 1u), ///< Italic font
         UNDERLINE = (1u << 2u)  ///< Underline font
@@ -33,7 +35,7 @@ struct FontStyle {
 };
 
 /** A font. */
-class Font final {
+class LVTK_API Font final {
 public:
     /** Specify a default font */
     Font() : _state (std::make_shared<State>()) {}
@@ -46,7 +48,7 @@ public:
 
     /** Specify a font with height and style flags */
     Font (uint32_t style) : _state (std::make_shared<State>()) {
-        _state->flags  = style;
+        _state->flags = style;
     }
 
     /** Specify a font with height and style flags */

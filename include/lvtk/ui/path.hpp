@@ -26,7 +26,7 @@ struct PathItem {
 
 class Path {
 public:
-    using value_type  = PathItem;
+    using value_type = PathItem;
 
     Path()  = default;
     ~Path() = default;

@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/view.hpp>
 #include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
 
-struct OpenGL : public Backend {
+struct LVTK_API OpenGL : public Backend {
     OpenGL() : Backend ("OpenGL") {}
     std::unique_ptr<View> create_view (Main& c, Widget& w) override;
 };

@@ -14,7 +14,7 @@ namespace lvtk {
 namespace detail {
 static inline PuglWorldType world_type (Mode mode) {
     if (mode == Mode::PROGRAM)
-        return PUGL_PROGRAM;           
+        return PUGL_PROGRAM;
     else if (mode == Mode::MODULE)
         return PUGL_MODULE;
     return PUGL_MODULE;

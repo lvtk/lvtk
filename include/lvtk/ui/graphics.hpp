@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/alignment.hpp>
 #include <lvtk/ui/color.hpp>
 #include <lvtk/ui/fill.hpp>
@@ -15,7 +16,7 @@ namespace lvtk {
 using Bounds = Rectangle<int>;
 
 /** A 2d transformation matrix */
-class Transform final {
+class LVTK_API Transform final {
 public:
     Transform() = default;
 
@@ -37,7 +38,7 @@ public:
 };
 
 /** Lower level graphics context. */
-class DrawingContext {
+class LVTK_API DrawingContext {
 public:
     DrawingContext()          = default;
     virtual ~DrawingContext() = default;
@@ -80,7 +81,7 @@ public:
     API is subject to change dramatically at any given time
     until we approach an alpha status.
  */
-class Graphics final {
+class LVTK_API Graphics final {
 public:
     Graphics (DrawingContext& d);
     ~Graphics() = default;

@@ -4,10 +4,10 @@
 #pragma once
 
 #if _WIN32
-#ifdef NOMINMAX
-#undef NOMINMAX
-#endif
-#define NOMINMAX
+#    ifdef NOMINMAX
+#        undef NOMINMAX
+#    endif
+#    define NOMINMAX
 #endif
 
 #ifdef GL_SILENCE_DEPRECATION

@@ -7,6 +7,7 @@
 
 #include <lv2/ui/ui.h>
 
+#include <lvtk/lvtk.h>
 #include <lvtk/ui/graphics.hpp>
 #include <lvtk/ui/input.hpp>
 #include <lvtk/ui/view.hpp>
@@ -18,7 +19,7 @@
 
 namespace lvtk {
 
-class Widget {
+class LVTK_API Widget {
 public:
     Widget();
     virtual ~Widget();

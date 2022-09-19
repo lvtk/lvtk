@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <lvtk/context.hpp>
+#include <lvtk/lvtk.h>
 #include <lvtk/string.hpp>
 #include <lvtk/ui/view.hpp>
 
@@ -28,7 +29,7 @@ class Widget;
 /** The context in which a UI or GUI app is running.
     Can create views and run the event loop
  */
-class Main : public Context {
+class LVTK_API Main : public Context {
 public:
     explicit Main (Mode mode, std::unique_ptr<Backend> backend);
     ~Main();
