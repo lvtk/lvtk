@@ -5,7 +5,10 @@ threads_dep = dependency('threads')
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
     version : '>= 1.18.0', 
-    required : true)
+    required : true,
+    default_options : [
+        'plugins=disabled'
+    ])
 
 pugl_opts = [
     'tests=disabled',
@@ -13,6 +16,7 @@ pugl_opts = [
     'cairo=disabled',
     'vulkan=disabled',
     'stub=false',
+    'docs=disabled'
     # 'default_library=static'
 ]
 
