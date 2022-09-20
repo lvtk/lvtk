@@ -10,7 +10,6 @@ project ('lvtk', ['cpp', 'c'], version : '3.0.0',
 
 subdir ('meson/deps')
 
-
 if get_option('default_library') == 'both'
   if host_machine.system() == 'windows'
     error('default_library=both is not supported on Windows')
@@ -47,6 +46,11 @@ executable (
     install : true)
 
 ### Headers and PC
+lvtk_headers = files ('''
+    include/lvtk/lvtk.hpp
+    include/lvtk/string.hpp
+'''.split())
+
 install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-3')
 subdir ('meson/pkgconfig')
 

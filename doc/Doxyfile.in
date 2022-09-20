@@ -1,0 +1,37 @@
+PROJECT_NAME           = LVTK
+PROJECT_BRIEF          = "A minimal portable API for LV2 plugins and GUIs"
+
+QUIET                  = YES
+WARN_AS_ERROR          = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_NO_PARAMDOC       = NO
+
+JAVADOC_AUTOBRIEF      = YES
+
+CASE_SENSE_NAMES       = YES
+EXCLUDE_SYMBOLS        = lvtk::detail
+EXTRACT_LOCAL_CLASSES  = NO
+EXTRACT_PRIVATE        = NO
+HIDE_IN_BODY_DOCS      = YES
+HIDE_UNDOC_CLASSES     = YES
+HIDE_UNDOC_MEMBERS     = YES
+REFERENCES_LINK_SOURCE = NO
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = api
+GENERATE_LATEX         = NO
+GENERATE_XML           = NO
+XML_PROGRAMLISTING     = NO
+SHOW_FILES             = NO
+
+MACRO_EXPANSION        = YES
+PREDEFINED             = LVTK_API \
+                         LVTK_EXPORT \
+                         LV2_SYMBOL_EXPORT
+
+RECURSIVE              = YES
+STRIP_FROM_PATH        = @LVTK_SRCDIR@
+INPUT                  = @LVTK_SRCDIR@/include
+EXAMPLE_PATH           = @LVTK_SRCDIR@/lvtk.lv2
+
+OUTPUT_DIRECTORY       = @DOX_OUTPUT@

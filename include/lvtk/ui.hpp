@@ -4,10 +4,10 @@
 /** @defgroup ui UI
     Writing an LV2 UI
 
-    UI descriptors are registered on the stack at the global scope. First
-    make a sublcass of @ref UI, then register it with @ref UIDescriptor.
+    UI Descriptors are registered on the stack at the global scope. First
+    make a sublcass of @ref lvtk::UI, then register it with @ref lvtk::UIDescriptor.
 
-    @see @ref UI
+    @see lvtk::UI
  */
 
 #pragma once

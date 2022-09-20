@@ -10,8 +10,8 @@
     C API.
 
     <b>Extension Mixins</b><br>
-    For both the @ref Plugin and the @ref UI classes there are other helper
-    classes called @ref Extension "Extensions" that you can use to add extra
+    For both the @ref lvtk::Plugin and the @ref lvtk::UI classes there are other helper
+    classes called @ref lvtk::Extension "Extensions" that you can use to add extra
     functionality to your plugin or UI.
 
     <b>Versioning</b><br>
@@ -91,7 +91,7 @@ struct FeatureList final : public std::vector<Feature> {
 
     /** Contstruct from raw LV2_Feature array
 
-        @param feature  LV2_Feature array to reference
+        @param features  LV2_Feature array to reference
     */
     FeatureList (const LV2_Feature* const* features) {
         for (int i = 0; features[i]; ++i) {

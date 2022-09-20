@@ -135,6 +135,8 @@ struct Worker : Extension<I> {
     /** Perform work as requested by schedule_work
 
         @param respond  Function to send responses with
+        @param size     The size of data
+        @param data     The data
      */
     WorkerStatus work (WorkerRespond& respond, uint32_t size, const void* data) { return LV2_WORKER_SUCCESS; }
 
@@ -143,7 +145,7 @@ struct Worker : Extension<I> {
         @param size Size of response data
         @param data The reponse data
      */
-    WorkerStatus work_response (uint32_t size, const void* body) { return LV2_WORKER_SUCCESS; }
+    WorkerStatus work_response (uint32_t size, const void* data) { return LV2_WORKER_SUCCESS; }
 
     /** Called at the end of a processing cycle */
     WorkerStatus end_run() { return LV2_WORKER_SUCCESS; }

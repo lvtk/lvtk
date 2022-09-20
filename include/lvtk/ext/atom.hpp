@@ -311,7 +311,7 @@ struct Sequence final {
     typedef const AtomEvent& const_reference;
 
     /** Create an Sequence from raw data
-        @param seq  Pointer to an LV2_Atom_Sequence
+        @param data  Pointer to an LV2_Atom_Sequence
      */
     Sequence (const void* data)
         : sequence ((LV2_Atom_Sequence*) data) {}
@@ -548,7 +548,7 @@ struct Forge final : LV2_Atom_Forge {
         return lv2_atom_forge_int (this, val);
     }
 
-    /** Write a double value @param val the value to write
+    /** Write a double value.
         @param val The value to write
         @returns    A reference to the Atom
      */

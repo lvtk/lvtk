@@ -48,8 +48,8 @@ struct Logger final : FeatureData<LV2_Log_Log> {
     /** Log message with va_list
 
         @param type     LV2_URID type to log
-        @fmt            Format / message
-        @ap             Arguments
+        @param fmt      Format / message
+        @param ap       Arguments
     */
     inline int vprintf (uint32_t type, const char* fmt, va_list ap) const {
         if (data != nullptr)
@@ -60,7 +60,7 @@ struct Logger final : FeatureData<LV2_Log_Log> {
     /** Log message with var args
 
         @param type     LV2_URID type to log
-        @fmt            Format / message
+        @param fmt      Format / message
     */
     inline int printf (uint32_t type, const char* fmt, ...) const {
         va_list argptr;

@@ -194,7 +194,8 @@ struct Rectangle {
     }
 
     /** Returns a reduced shape at same center.
-        @param amount How much to reduce by
+        @param ax How much to reduce the x-axis by
+        @param ay How much to reduce the y-axis by
     */
     Rectangle<Val> smaller (Val ax, Val ay) const noexcept {
         auto s = *this;

@@ -75,7 +75,7 @@ public:
 
     /** Duplicate this font with new style flags.
      
-        @param style The StyleFlag's to use.
+        @param flags Or of @ref StyleFlag.
     */
     Font with_style (uint8_t flags) const noexcept;
 

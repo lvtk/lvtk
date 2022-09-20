@@ -6,7 +6,7 @@
     Writing an LV2 Plugin
 
     Plugin descriptors are registered on the stack at the global scope. First
-    make a sublcass of @ref Plugin, then register it with @ref Descriptor.
+    make a sublcass of @ref lvtk::Plugin, then register it with @ref lvtk::Descriptor.
 
     <h3>Example</h3>
     @include "volume.cpp"
@@ -32,7 +32,7 @@ inline PluginDescriptors& descriptors() {
     return s_descriptors;
 }
 
-/** Registers a plugin instance of type @em`P`
+/** Registers a plugin instance of type @em `P`
 
     Create a static one of these to register your plugin instance type.
 
@@ -291,7 +291,7 @@ private:
     }
 };
 
-/* @} */
+
 } // namespace lvtk
 
 extern "C" {
@@ -305,3 +305,5 @@ LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor (uint32_t index) {
 }
 #endif
 }
+
+/* @} */

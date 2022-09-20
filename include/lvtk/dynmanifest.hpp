@@ -77,7 +77,7 @@ static bool write_lines (const std::stringstream& lines, FILE* fp) {
 
 } // namespace lvtk
 
-/** Implement this and return your subclassed @ref DynManifest object
+/** Implement this and return your subclassed @ref lvtk::DynManifest object
     @ingroup dynmanifest
     @headerfile lvtk/dynmanifest.hpp
 */

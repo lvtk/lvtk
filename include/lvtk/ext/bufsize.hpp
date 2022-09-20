@@ -17,8 +17,8 @@
 /** @defgroup bufsize Buf Size
     Access to buffer information
 
-    The @ref BufSize extension scans for buffer information provided by the
-    host, and populates a @ref BufferDetails accordingly. To use it, add
+    The @ref lvtk::BufSize extension scans for buffer information provided by the
+    host, and populates a @ref lvtk::BufferDetails accordingly. To use it, add
     BufSize to the template parameters of your Plugin and call buffer_details()
     for buffer info
 
