@@ -3,3 +3,5 @@ copyright = "2022, Michael Fisher"
 author = "Michael Fisher"
 version = "3.0"
 release = "@LVTK_VERSION@"
+
+master_doc = 'index'

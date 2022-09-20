@@ -9,7 +9,7 @@ Overview
 LVTK is a C++ library,
 but the bindings documented here provide a more idiomatic and type-safe API for C++.
 If you would rather use C,
-refer instead to the `C API documentation <../../c/singlehtml/index.html>`_.
+refer instead to the `C++ API documentation <api/index.html>`_.
 
 The C++ bindings are very lightweight and do not require virtual functions,
 RTTI,
@@ -23,9 +23,8 @@ The core API (excluding backend-specific components) is declared in ``lvtk.hpp``
 
    #include <lvtk/lvtk.hpp>
 
-The API revolves around two main objects: the `world` and the `view`.
-An application creates a world to manage top-level state,
-then creates one or more views to display.
+The core API revolves around two main objects: the `Plugin` and the `UI`.
+A developer uses these templates to create an LV2 plugin or UI.
 
 .. toctree::
 
