@@ -1,3 +1,7 @@
+doxygen = find_program ('doxygen', required : get_option('docs'))
+dot = find_program ('dot', required : false)
+sphinx_build = find_program ('sphinx-build', required : get_option('docs'))
+
 configure_file (
     input : 'reference.doxygen.in',
     output : 'reference.doxygen',

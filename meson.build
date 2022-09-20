@@ -51,7 +51,7 @@ install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-3')
 subdir ('meson/pkgconfig')
 
 ### Docs
-if doxygen.found() and dot.found()
+if not get_option('docs').disabled()
     subdir ('doc')
 endif
 

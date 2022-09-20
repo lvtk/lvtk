@@ -1,2 +1,4 @@
-option('unit-tests', type: 'feature', value: 'auto',
+option ('docs', type : 'feature', value : 'auto',
+    description : 'Build documentation')
+option ('unit-tests', type: 'feature', value: 'auto',
     description: 'Build tests')
