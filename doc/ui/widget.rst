@@ -1,6 +1,6 @@
 .. default-domain:: cpp
 .. highlight:: cpp
-.. namespace:: pugl
+.. namespace:: lvtk
 
 ###############
 Creating a View
@@ -21,14 +21,12 @@ so we will define a class for our view that contains everything needed:
 
 .. code-block:: cpp
 
-   class MyView : public pugl::View
+   class MyView : public lvtk::View
    {
    public:
-     explicit MyView(pugl::World& world)
-         : pugl::View{world}
-     {
-       setEventHandler(*this);
-     }
+      explicit MyView (pugl::World& world)
+            : pugl::View{world}
+      { }
 
      pugl::Status onEvent(const pugl::ConfigureEvent& event) noexcept;
      pugl::Status onEvent(const pugl::ExposeEvent& event) noexcept;
@@ -43,7 +41,7 @@ so we will define a class for our view that contains everything needed:
      }
 
    private:
-     // Some data...
+      // Some data...
    };
 
 LVTK will call an ``onEvent`` method of the event handler (the view in this case) for every event.
@@ -81,15 +79,14 @@ There are also several :type:`hints <LVTKViewHint>` for basic attributes that ca
 
 .. code-block:: cpp
 
-   view.setHint(pugl::ViewHint::resizable, true);
-   view.setHint(pugl::ViewHint::ignoreKeyRepeat, true);
+   view.set_hint (lvtk::ViewFlag::RESIZABLE, true);
 
 *********
 Embedding
 *********
 
 To embed the view in another window,
-you will need to somehow get the :type:`native view handle <pugl::NativeView>` for the parent,
+you will need to somehow get the :type:`native view handle <lvtk::NativeView>` for the parent,
 then set it with :func:`View::setParentWindow`.
 If the parent is a LVTK view,
 the native handle can be accessed with :func:`View::nativeView`.
@@ -135,26 +132,27 @@ the `Cairo context <https://www.cairographics.org/manual/cairo-cairo-t.html>`_ c
 Using OpenGL
 ============
 
-OpenGL-specific API is declared in the ``gl.hpp`` header:
+OpenGL-specific API is declared in the ``opengl.hpp`` header:
 
 .. code-block:: cpp
 
-   #include <pugl/gl.hpp>
+   #include <lvtk/ui/opengl.hpp>
 
-The OpenGL backend is provided by :func:`glBackend()`:
+The OpenGL backend is provided by :class:`lvtk::OpenGL`:
 
 .. code-block:: cpp
 
-   view.setBackend(pugl::glBackend());
+   lvtk::Main context (lvtk::Mode::PROGRAM, 
+                       std::make_unique<lvtk::OpenGL>());
 
 Some hints must also be set so that the context can be set up correctly.
 For example, to use OpenGL 3.3 Core Profile:
 
 .. code-block:: cpp
 
-   view.setHint(pugl::ViewHint::useCompatProfile, false);
-   view.setHint(pugl::ViewHint::contextVersionMajor, 3);
-   view.setHint(pugl::ViewHint::contextVersionMinor, 3);
+   view.set_hint (pugl::ViewHint::useCompatProfile, false);
+   view.set_hint (pugl::ViewHint::contextVersionMajor, 3);
+   view.set_hint (pugl::ViewHint::contextVersionMinor, 3);
 
 If you need to perform some setup using the OpenGL API,
 there are two ways to do so.

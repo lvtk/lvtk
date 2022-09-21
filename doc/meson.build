@@ -12,13 +12,9 @@ conf_py = configure_file (configuration: {
 
 lvtk_rst_sources = files ('''
     deployment.rst
-    event-loop.rst
-    events.rst
     index.rst
     overview.rst
     summary.rst
-    view.rst
-    world.rst
 '''.split())
 
 foreach f : lvtk_rst_sources
@@ -26,6 +22,7 @@ foreach f : lvtk_rst_sources
 endforeach
 
 subdir ('api')
+subdir ('ui')
 
 docs = custom_target(
   'html',
