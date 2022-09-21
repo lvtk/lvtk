@@ -2,9 +2,9 @@
 .. highlight:: cpp
 .. namespace:: lvtk
 
-#######
-Widgets
-#######
+#####
+Views
+#####
 
 A `view` is an object that receives events from Pugl and dispatches them
 to `Widget`. You may think of it as a window,

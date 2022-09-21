@@ -15,6 +15,9 @@ lvtk_rst_sources = files ('''
     index.rst
     overview.rst
     summary.rst
+    widgets.rst
+    plugins.rst
+    uis.rst
 '''.split())
 
 foreach f : lvtk_rst_sources

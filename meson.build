@@ -31,7 +31,7 @@ subdir ('src')
 subdir ('bindings')
 
 ### Finals
-# subdir ('lvtk.lv2')
+subdir ('lvtk.lv2')
 
 ### Demo
 subdir ('demo')
@@ -65,6 +65,7 @@ if not get_option('unit-tests').disabled()
 endif
 
 ### Summary
+summary('Docs', not get_option('docs').disabled(), bool_yn: true)
 summary('Tests', not get_option('unit-tests').disabled(), bool_yn: true)
 
 summary('Graphics', 'OpenGL', section : 'Gui')
