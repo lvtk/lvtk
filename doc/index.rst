@@ -6,9 +6,10 @@ LVTK
 
 .. toctree::
 
-    overview
-    plugins
-    uis
+    Overview <overview>
+    Extensions <extensions>
+    Plugin <plugins>
+    UI <uis>
     widgets
 
-    deployment
+    Developers <deployment>

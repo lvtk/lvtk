@@ -35,6 +35,11 @@ struct Map final : FeatureData<LV2_URID_Map> {
     Map (const Feature& f) : FeatureData (LV2_URID__map) {
         set (f);
     }
+    
+    Map (LV2_URID_Map* map) : FeatureData (LV2_URID__map) {
+        Feature f {LV2_URID__map, map };
+        set (f);
+    }
 
     /** Get URID integer from URI string
         @param uri  The URI string to map
@@ -73,25 +78,24 @@ struct URID : NullExtension {
     /** @private */
     URID (const FeatureList& features) {
         for (const auto& f : features) {
-            if (! map)
-                map.set (f);
-            if (! unmap)
-                unmap.set (f);
-            if (map && unmap)
+            if (! _map)
+                _map.set (f);
+            if (! _unmap)
+                _unmap.set (f);
+            if (_map && _unmap)
                 break;
         }
     }
 
-protected:
-    /** The Map is exposed as protected function object. You can call it as such.
-        e.g. `map ("http://someuri.com/#somekey");`
-     */
-    Map map;
+    /** Map a uri */
+    uint32_t map_uri (const std::string& uri) const noexcept {  return _map (uri); }
 
-    /** The Unmap is exposed as protected function object. You can call it as such.
-        e.g. `unmap (a_mapped_uri_int);`
-     */
-    Unmap unmap;
+    /** Unmap a URID */
+    std::string unmap_urid (uint32_t urid) const noexcept { return _unmap (urid); }
+
+private:
+    Map _map;
+    Unmap _unmap;
 };
 
 } // namespace lvtk

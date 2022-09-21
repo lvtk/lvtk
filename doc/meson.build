@@ -10,8 +10,10 @@ conf_py = configure_file (configuration: {
     input : 'conf.py.in',
     output : 'conf.py')
 
+
 lvtk_rst_sources = files ('''
     deployment.rst
+    extensions.rst
     index.rst
     overview.rst
     summary.rst
@@ -36,5 +38,7 @@ docs = custom_target(
   build_by_default: true,
   install: true,
   install_dir: get_option('datadir') / 'doc' / 'lvtk-3')
+
+subdir ('html/_static/js')
 
 endif

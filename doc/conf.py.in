@@ -5,3 +5,7 @@ version = "3.0"
 release = "@LVTK_VERSION@"
 
 master_doc = 'index'
+
+html_js_files = [
+    'js/custom.js'
+]

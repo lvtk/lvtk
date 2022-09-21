@@ -19,7 +19,7 @@
 struct LogPlug : lvtk::Plugin<LogPlug, lvtk::Log> {
     LogPlug (const lvtk::Args& args) : Plugin (args) {}
     void trace (const std::string& message) {
-        log << message;
+        logger() << message;
     }
 };
 

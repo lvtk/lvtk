@@ -75,11 +75,11 @@ struct BufferDetails final {
         @param options  The Options array to scan. MUST be valid with a
                         zeroed option at the end.
      */
-    void apply_options (Map& map, const Option* options) {
-        uint32_t minkey = map (LV2_BUF_SIZE__minBlockLength);
-        uint32_t maxkey = map (LV2_BUF_SIZE__maxBlockLength);
-        uint32_t nomkey = map (LV2_BUF_SIZE__nominalBlockLength);
-        uint32_t seqkey = map (LV2_BUF_SIZE__sequenceSize);
+    void apply_options (LV2_URID_Map* map, const Option* options) {
+        uint32_t minkey = map->map (map->handle, LV2_BUF_SIZE__minBlockLength);
+        uint32_t maxkey = map->map (map->handle, LV2_BUF_SIZE__maxBlockLength);
+        uint32_t nomkey = map->map (map->handle, LV2_BUF_SIZE__nominalBlockLength);
+        uint32_t seqkey = map->map (map->handle, LV2_BUF_SIZE__sequenceSize);
 
         for (uint32_t i = 0;; ++i) {
             const auto& opt = options[i];
@@ -95,6 +95,11 @@ struct BufferDetails final {
             else if (nomkey == opt.key)
                 nominal = *(uint32_t*) opt.value;
         }
+    }
+
+    /** Apply options with two LV2_Feature pointers. */
+    void apply_options (const LV2_Feature* const map, const LV2_Feature* const options) {
+        apply_options ((LV2_URID_Map*) map->data, (const Option*) options->data);
     }
 };
 

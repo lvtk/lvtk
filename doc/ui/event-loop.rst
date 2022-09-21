@@ -2,9 +2,9 @@
 .. highlight:: cpp
 .. namespace:: lvtk
 
-**********************
-Driving the Event Loop
-**********************
+----------
+Event Loop
+----------
 
 LVTK does not contain any threads or other event loop "magic".
 For flexibility, the event loop is driven manually by repeatedly calling :func:`Main::loop`,

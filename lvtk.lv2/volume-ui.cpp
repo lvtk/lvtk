@@ -26,7 +26,7 @@ public:
     VolumeUI (const UIArgs& args)
         : UI (args) {
         for (const auto& opt : OptionArray (options())) {
-            if (opt.key == map (LV2_UI__scaleFactor))
+            if (opt.key == map_uri (LV2_UI__scaleFactor))
                 m_scale_factor = *(float*) opt.value;
         }
     }

@@ -2,9 +2,9 @@
 .. highlight:: cpp
 .. namespace:: lvtk
 
-###############   
+---------------   
 Handling Events
-###############
+---------------
 
 Events are sent to a view when it has received user input,
 must be drawn, or in other situations that may need to be handled such as resizing.
@@ -30,9 +30,9 @@ For example, basic event handling for our above class might look something like:
      return drawMyAwesomeInterface(event.x, event.y, event.width, event.height);
    }
 
-*******
+-------
 Drawing
-*******
+-------
 
 Note that LVTK uses a different drawing model than many libraries,
 particularly those designed for game-style main loops like `SDL <https://libsdl.org/>`_ and `GLFW <https://www.glfw.org/>`_.

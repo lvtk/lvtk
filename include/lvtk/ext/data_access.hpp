@@ -27,7 +27,7 @@
 namespace lvtk {
 /** An LV2_Extension_Data_Feature function wrapper
 
-    Use these on the stack and call set_feature() passing the appropriate feature.
+    Use these on the stack and call set() passing the appropriate feature.
     @headerfile lvtk/ext/data_access.hpp
     @ingroup data_access
 */
@@ -48,9 +48,13 @@ struct ExtensionData final : FeatureData<LV2_Extension_Data_Feature> {
         @param uri  The uri string to query
         @returns    Not nullptr on Success
      */
-    const void* operator() (const std::string& uri) const {
+    const void* data_access (const std::string& uri) const {
         return nullptr != data ? data->data_access (uri.c_str())
                                : nullptr;
+    }
+
+    const void* operator() (const std::string& uri) const {
+        return data_access (uri);
     }
 };
 
@@ -63,7 +67,7 @@ struct DataAccess : NullExtension {
     /** @private */
     DataAccess (const FeatureList& features) {
         for (const auto& f : features)
-            if (data_access.set (f))
+            if (_extension_data.set (f))
                 break;
     }
 
@@ -74,13 +78,12 @@ struct DataAccess : NullExtension {
 
         @returns extension data or nullptr if not available
      */
-    inline const void* plugin_extension_data (const std::string& uri) const {
-        return data_access (uri);
+    inline const void* data_access (const std::string& uri) const {
+        return _extension_data.data_access (uri);
     }
 
-protected:
-    /** The data access function */
-    ExtensionData data_access;
+private:
+    ExtensionData _extension_data;
 };
 /* @} */
 } // namespace lvtk

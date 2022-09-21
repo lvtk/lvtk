@@ -102,11 +102,11 @@ struct Log : NullExtension {
         for (const auto& f : features) {
             int n_ok = 0;
             if (strcmp (f.URI, LV2_LOG__log) == 0) {
-                log.set (f);
+                _logger.set (f);
                 ++n_ok;
             }
             if (strcmp (f.URI, LV2_URID__map) == 0) {
-                log.init ((LV2_URID_Map*) f.data);
+                _logger.init ((LV2_URID_Map*) f.data);
                 ++n_ok;
             }
             if (n_ok >= 2)
@@ -114,9 +114,12 @@ struct Log : NullExtension {
         }
     }
 
-protected:
+     /** Use this logger to log messages with the host. @see Logger */
+    Logger& logger() noexcept { return _logger; }
+
+private:
     /** Use this logger to log messages with the host. @see Logger */
-    Logger log;
+    Logger _logger;
 };
 
 } // namespace lvtk

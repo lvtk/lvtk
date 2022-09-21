@@ -6,6 +6,8 @@ LV2 UIs easy.
 
 .. toctree::
 
-    ui/main
-    ui/views
-    ui/widget
+    Main <ui/main>
+    View <ui/views>
+    Widget <ui/widget>
+    Events <ui/events>
+    Fonts <ui/fonts>
