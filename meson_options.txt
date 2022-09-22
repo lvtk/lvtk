@@ -1,4 +1,6 @@
 option ('docs', type : 'feature', value : 'auto',
     description : 'Build documentation')
+option ('onlydocs', type : 'boolean', value : false,
+    description : 'Build documentation only')
 option ('unit-tests', type: 'feature', value: 'auto',
     description: 'Build tests')
