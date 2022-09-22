@@ -41,8 +41,8 @@ struct DataAccessTest {
         LV2_Feature data_feature = { LV2_DATA_ACCESS_URI, &data_data };
         args.features.push_back (data_feature);
         std::unique_ptr<DataAccessUI> ui (new DataAccessUI (args));
-        BOOST_ASSERT (nullptr != ui->plugin_extension_data (LV2_WORKER__interface));
-        BOOST_ASSERT (nullptr == ui->plugin_extension_data (LV2_STATE__interface));
+        BOOST_ASSERT (nullptr != ui->data_access (LV2_WORKER__interface));
+        BOOST_ASSERT (nullptr == ui->data_access (LV2_STATE__interface));
         ui.reset();
         lvtk::descriptors().pop_back(); // needed so descriptor count test doesn't fail
     }
