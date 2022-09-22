@@ -1,7 +1,4 @@
-if lua_program.found()
-
-# export LUA_PATH="bindings/?.lua"
-# export LUA_CPATH="build/bindings/?.so"
+if lua_dep.found() and lua_program.found()
 
 lvtk_lua_tests = '''
     loadall
