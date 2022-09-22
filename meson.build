@@ -8,6 +8,13 @@ project ('lvtk', ['cpp', 'c'], version : '3.0.0',
         'cpp_std=c++17',
     ])
 
+lvtk_headers = files ('''
+    include/lvtk/lvtk.hpp
+    include/lvtk/string.hpp
+'''.split())
+
+if not get_option('onlydocs')
+
 subdir ('meson/deps')
 
 if get_option('default_library') == 'both'
@@ -45,23 +52,21 @@ executable (
     win_subsystem : 'windows',
     install : true)
 
-### Headers and PC
-lvtk_headers = files ('''
-    include/lvtk/lvtk.hpp
-    include/lvtk/string.hpp
-'''.split())
+### Install Headers and PC
 
 install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-3')
 subdir ('meson/pkgconfig')
 
-### Docs
-if not get_option('docs').disabled()
-    subdir ('doc')
-endif
-
 ### Tests
 if not get_option('unit-tests').disabled()
     subdir('test')
+endif
+
+endif # only docs
+
+### Docs
+if not get_option('docs').disabled()
+    subdir ('doc')
 endif
 
 ### Summary
