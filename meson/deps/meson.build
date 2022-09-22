@@ -8,15 +8,16 @@ lv2_dep = dependency ('lv2',
     required : true,
     default_options : [
         'tests=auto',
-        'plugins=disabled'
+        'plugins=disabled',
+        'docs=disabled'
     ])
 
 pugl_opts = [
-    'tests=auto',
+    'tests=disabled',
     'examples=disabled',
     'cairo=disabled',
     'vulkan=disabled',
-    'stub=true',
+    'stub=false',
     'docs=disabled'
     # 'default_library=static'
 ]
