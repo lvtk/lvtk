@@ -129,7 +129,7 @@ Use this extension in a UI to get extension data from a plugin. It will add a
 
     class MyUI : public lvtk::UI<MyUI, lvtk::DataAccess> {
     public:
-        MyUI (lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (lvtk::UIArgs& args) : lvtk::UI (args) {
             if (const void* plugin_data = data_access ("http://theplugin/feature#data"))
                 handle_plugin_data (plugin_data);
         }
@@ -185,7 +185,7 @@ Use this extension in a UI to get the plugin instance handle. It will add a
 
     class MyUI : public lvtk::UI<MyUI, lvtk::InstanceAccess> {
     public:
-        MyUI (lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (lvtk::UIArgs& args) : lvtk::UI (args) {
             if (lvtk::Handle instance = plugin_instance())
                 handle_plugin_data (plugin_data);
         }
@@ -648,7 +648,7 @@ to drive your UI.  Return non-zero to stop receiving callbacks.
 
     class MyUI : public lvtk::UI<MyUI, lvtk::Idle> {
     public:
-        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (const lvtk::UIArgs& args) : lvtk::UI (args) {
         }
 
          int idle() {
@@ -686,7 +686,7 @@ It is a function object and also has a bool() operator, so....
 
     class MyUI : public lvtk::UI<MyUI, lvtk::Parent> {
     public:
-        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (const lvtk::UIArgs& args) : lvtk::UI (args) {
             // ... Inside your UI's constructor ....
 
             if (parent) {
@@ -727,7 +727,7 @@ from it's symbol.
 
     class MyUI : public lvtk::UI<MyUI, lvtk::PortMap> {
     public:
-        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (const lvtk::UIArgs& args) : lvtk::UI (args) {
             auto audio_port_1_index = port_map ("audio_01");
             // use the index how you see fit.
         }
@@ -770,7 +770,7 @@ to start or stop receiving notifications about ports in ``port_event``.
 
     class MyUI : public lvtk::UI<MyUI, lvtk::PortSubscribe> {
     public:
-        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (const lvtk::UIArgs& args) : lvtk::UI (args) {
             subscribe (port_index, protocol, subscribe_features);
         }
 
@@ -812,7 +812,7 @@ Adds :func:`show` and :func:`hide` callbacks to your UI.  It inherrits from
 
     class MyUI : public lvtk::UI<MyUI, lvtk::Show> {
     public:
-        MyUI (const lvtk::Args& args) : lvtk::UI (args) {}
+        MyUI (const lvtk::UIArgs& args) : lvtk::UI (args) {}
 
         int show() {
             // host is requesting you show your GUI
@@ -852,7 +852,7 @@ about gesture changes.
 
     class MyUI : public lvtk::UI<MyUI, lvtk::Touch> {
     public:
-        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        MyUI (const lvtk::UIArgs& args) : lvtk::UI (args) {
         }
 
         void send_gesture_change() {

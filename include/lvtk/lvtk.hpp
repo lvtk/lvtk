@@ -22,6 +22,7 @@
 
     @author Michael Fisher <mfisher@lvtk.org>
     @example volume.cpp
+    @example volume-ui.cpp
  */
 
 #pragma once
