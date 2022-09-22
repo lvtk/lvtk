@@ -1,3 +1,5 @@
+![Piplene](https://gitlab.com/lvtk/lvtk/badges/main/pipeline.svg)
+
 LVTK3
 =====
 
