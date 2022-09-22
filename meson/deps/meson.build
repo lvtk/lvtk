@@ -34,4 +34,4 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     required : true
 )
 
-boost_dep = (dependency ('boost'))
+boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
