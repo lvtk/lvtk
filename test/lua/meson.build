@@ -1,0 +1,23 @@
+if lua_program.found()
+
+# export LUA_PATH="bindings/?.lua"
+# export LUA_CPATH="build/bindings/?.so"
+
+lvtk_lua_tests = '''
+    loadall
+    bytes
+    include
+    midi
+    object
+    promise
+    round
+'''.split()
+foreach key : lvtk_lua_tests
+    # error ('LUA_CPATH="@0@/bindings/?.so"'.format (meson.current_build_dir()))
+    luafile = '@0@'.format(meson.project_source_root()) / 'test' / 'lua' / '@0@.lua'.format(key)
+    test (key, lua_program, args : [ luafile ], suite: 'lua',
+        env : ['LUA_PATH=@0@/bindings/?.lua'.format (meson.project_source_root()), 
+               'LUA_CPATH=@0@/bindings/?.so'.format (meson.project_build_root())])
+endforeach
+
+endif

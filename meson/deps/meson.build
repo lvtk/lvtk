@@ -35,3 +35,15 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 )
 
 boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
+
+lua_dep = dependency ('lua', required : false)
+if not lua_dep.found()
+    lua_dep = dependency ('lua5.3', required : false)
+endif
+if not lua_dep.found()
+    lua_dep = dependency ('lua5.4', required : false)
+endif
+
+if lua_dep.found()
+    lua_program = find_program ('lua')
+endif

@@ -48,3 +48,5 @@ lvtk_unit_tests = '''
 foreach t : lvtk_unit_tests
     test (t, unit, args : [ '-t', t ])
 endforeach
+
+subdir ('lua')
