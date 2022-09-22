@@ -6,6 +6,7 @@ release = "@LVTK_VERSION@"
 
 master_doc = 'index'
 
+html_theme = "sphinx_rtd_theme"
 html_js_files = [
     'js/custom.js'
 ]
