@@ -6,3 +6,4 @@ x64_rel:
   image: lv2plugin/debian-x64
   script:
     - meson setup build -Dbuildtype=release -Dunit-tests=disabled -Ddocs=disabled
+    - meson compile -C build -j2
