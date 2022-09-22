@@ -2,9 +2,9 @@
 .. highlight:: cpp
 .. namespace:: lvtk
 
-##################
-Context - GUI Main
-##################
+####
+Main
+####
 
 :struct:`lvtk::Main` is the top-level context for GUIs which represents a 
 running instance. Essentially it is a wrapper around PuglWorld with added 

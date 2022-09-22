@@ -2,42 +2,20 @@
 .. highlight:: cpp
 .. namespace:: lvtk
 
----------------   
-Handling Events
----------------
+######
+Events
+######
 
-Events are sent to a view when it has received user input,
-must be drawn, or in other situations that may need to be handled such as resizing.
+Events and user input documentation coming soon.
 
-Events are sent to the ``onEvent`` method that takes the matching event type.
-The application must handle at least :type:`ConfigureEvent`
-and :type:`ExposeEvent` to draw anything,
-but there are many other :type:`event types <pugl::EventType>`.
+--------
+Resizing
+--------
 
-For example, basic event handling for our above class might look something like:
-
-.. code-block:: cpp
-
-   pugl::Status
-   MyView::onEvent(const pugl::ConfigureEvent& event) noexcept
-   {
-     return resize(event.width, event.height);
-   }
-
-   pugl::Status
-   MyView::onEvent(const pugl::ExposeEvent& event) noexcept
-   {
-     return drawMyAwesomeInterface(event.x, event.y, event.width, event.height);
-   }
+coming soon....
 
 -------
 Drawing
 -------
 
-Note that LVTK uses a different drawing model than many libraries,
-particularly those designed for game-style main loops like `SDL <https://libsdl.org/>`_ and `GLFW <https://www.glfw.org/>`_.
-
-In that style of code, drawing is performed imperatively in the main loop,
-but with LVTK, the application must draw only while handling an expose event.
-This is because LVTK supports event-driven applications that only draw the damaged region when necessary,
-and handles exposure internally to provide optimized and consistent behavior across platforms.
+coming soon...
