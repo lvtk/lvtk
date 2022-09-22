@@ -242,7 +242,7 @@ private:
             }
         }
 
-        *widget = instance->get_widget();
+        *widget = instance->widget();
         return static_cast<LV2UI_Handle> (instance.release());
     }
 

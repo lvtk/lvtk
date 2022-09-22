@@ -7,7 +7,8 @@ UIs
 LVTK provides a core UI template that implements boilerplate code needed
 for an LV2 UI.  LV2 features are implemented via 
 :doc:`extension mixin templates <extensions>`. Below is an overview of how this
-works.  See the `C++ API Docs <classlvtk_1_1UI.html>`_ for more details.
+works.  See the `C++ API Docs <api/classlvtk_1_1UI.html>`_ for details on UI
+callbacks.
 
 .. code-block:: cpp
 

@@ -7,7 +7,8 @@ Plugins
 LVTK provides a core Plugin template that implements boilerplate code needed
 for an LV2 plugin.  LV2 features are implemented via 
 :doc:`extension mixin templates <extensions>`. Below is an overview of how this
-works.  See the `C++ API Docs <classlvtk_1_1Plugin.html>`_ for more details.
+works.  See the `C++ API Docs <api/classlvtk_1_1Plugin.html>`_ for more details
+on plugin callbacks.
 
 .. code-block:: cpp
 
