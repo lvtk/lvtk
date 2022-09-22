@@ -7,15 +7,16 @@ lv2_dep = dependency ('lv2',
     version : '>= 1.18.0', 
     required : true,
     default_options : [
+        'tests=auto',
         'plugins=disabled'
     ])
 
 pugl_opts = [
-    'tests=disabled',
+    'tests=auto',
     'examples=disabled',
     'cairo=disabled',
     'vulkan=disabled',
-    'stub=false',
+    'stub=true',
     'docs=disabled'
     # 'default_library=static'
 ]
