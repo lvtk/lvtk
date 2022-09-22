@@ -5,7 +5,7 @@ x64_rel:
   stage: build
   image: kushview/debian:bullseye
   script:
-    - meson setup build -Dbuildtype=release -Dunit-tests=enabled -Ddocs=enabled
+    - meson setup build -Dbuildtype=release -Dunit-tests=enabled -Ddocs=enabled -Dlv2:docs=auto -Dpugl:docs=auto
     - meson compile -C build
     - meson test -C build
 
