@@ -20,10 +20,11 @@ build:
   # before_script:
   #   - apt update && apt -y install make autoconf
   script:
-    - g++ helloworld.cpp -o mybinary
-  artifacts:
-    paths:
-      - mybinary
+    - meson setup build
+    - meson compile -C build
+  #artifacts:
+  #  paths:
+  #    - mybinary
       # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
       # cache:
       #   paths:
