@@ -12,6 +12,8 @@ Atom
 
    #include <lvtk/ext/atom.hpp>
 
+**Spec:** `<https://lv2plug.in/ns/ext/atom>`__
+
 This isn't an extension mixin, but rather a set of classes which make working
 with LV2 atoms, sequences, objects, and forging easier in an STL kind of way.  
 See the `C++ API Docs <api/group__atom.html>`_ for complete details.
@@ -48,6 +50,8 @@ BufSize
 .. code-block:: cpp
 
     #include <lvtk/ext/bufsize.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/buf-size>`__
 
 **Mixin Usage**
 
@@ -113,6 +117,8 @@ Data Access
 
    #include <lvtk/ext/data_access.hpp>
 
+**Spec:** `<https://lv2plug.in/ns/ext/data-access>`__
+
 **Mixin Usage**
 
 Use this extension in a UI to get extension data from a plugin. It will add a
@@ -166,6 +172,8 @@ Instance Access
 .. code-block:: cpp
 
    #include <lvtk/ext/instance_access.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/instance-access>`__
 
 **Mixin Usage**
 
@@ -221,6 +229,8 @@ Log
 
    #include <lvtk/ext/log.hpp>
 
+**Spec:** `<https://lv2plug.in/ns/ext/log>`__
+
 **Mixin Usage**
 
 Use this extension in a plugin or UI to log messages. It will add a
@@ -269,12 +279,26 @@ use LVTK base templates.
       - `Utility <api/structlvtk_1_1Logger.html>`__
       - N/A
 
+----
+MIDI
+----
+
+**Spec:** `<https://lv2plug.in/ns/ext/midi>`__
+
+-----
+Morph
+-----
+
+**Spec:** `<https://lv2plug.in/ns/ext/morph>`__
+
 -------
 Options
 -------
 .. code-block:: cpp
 
    #include <lvtk/ext/options.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/options>`__
 
 **Mixin Usage**
 
@@ -324,11 +348,31 @@ Use this extension in a plugin or UI to utilize LV2 Options. It will add a
       - N/A
 
 -----------
+Port Groups
+-----------
+
+**Spec:** `<https://lv2plug.in/ns/ext/port-groups>`__
+
+---------------
+Port Properties
+---------------
+
+**Spec:** `<https://lv2plug.in/ns/ext/port-props>`__
+
+-------
+Presets
+-------
+
+**Spec:** `<https://lv2plug.in/ns/ext/presets>`__
+
+-----------
 Resize Port
 -----------
 .. code-block:: cpp
 
    #include <lvtk/ext/resize_port.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/resize-port>`__
 
 **Mixin Usage**
 
@@ -381,6 +425,8 @@ State
 .. code-block:: cpp
 
    #include <lvtk/ext/state.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/state>`__
 
 **Mixin Usage**
 
@@ -448,11 +494,25 @@ or :class:`lvtk.StateRetrive` function object to read/write key/pairs.
       - N/A
 
 ----
+Time
+----
+
+**Spec:** `<https://lv2plug.in/ns/ext/time>`__
+
+-----
+Units
+-----
+
+**Spec:** `<https://lv2plug.in/ns/extensions/units>`__
+
+----
 URID
 ----
 .. code-block:: cpp
     
     #include <lvtk/ext/urid.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/urid>`__
 
 **Mixin Usage**
 
@@ -499,6 +559,8 @@ Worker
 .. code-block:: cpp
 
    #include <lvtk/ext/worker.hpp>
+
+**Spec:** `<https://lv2plug.in/ns/ext/worker>`__
 
 **Mixin Usage**
 
@@ -559,4 +621,257 @@ values.
       - N/A
     * - :class:`lvtk.Worker`
       - `Extension <api/structlvtk_1_1Worker.html>`__
+      - N/A
+
+----
+UI
+----
+
+UI specific extensions work the same as Plugin extensions.  There are a 
+handful of them and are all under the same `UI` specification.
+
+**Spec:** `<https://lv2plug.in/ns/extensions/ui>`__
+
+----
+Idle
+----
+.. code-block:: cpp
+    
+    #include <lvtk/ext/ui/idle.hpp>
+
+**Mixin Usage**
+
+Adds :func:`idle()` callback to your UI class. Called repeatedly by the host 
+to drive your UI.  Return non-zero to stop receiving callbacks.
+
+.. code-block:: cpp
+
+    class MyUI : public lvtk::UI<MyUI, lvtk::Idle> {
+    public:
+        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        }
+
+         int idle() {
+            // drive the event loop.
+            return 0; // keep going!
+        }
+    };
+
+**Reference**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+
+    * - Name
+      - C++
+      - Lua
+    * - :class:`lvtk.Idle`
+      - `Extension <api/structlvtk_1_1Idle.html>`__
+      - N/A
+
+------
+Parent
+------
+.. code-block:: cpp
+    
+    #include <lvtk/ext/ui/parent.hpp>
+
+Adds a :func:`parent` function object to use. It returns the parent widget, 
+or nullptr if not provided.
+It is a function object and also has a bool() operator, so....
+
+.. code-block:: cpp
+
+    class MyUI : public lvtk::UI<MyUI, lvtk::Parent> {
+    public:
+        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+            // ... Inside your UI's constructor ....
+
+            if (parent) {
+                auto* widget = reinterpret_cast<WidgetType*> (parent())
+                // do something with the parent widget, WidgetType* above
+                // would be an object of whatever toolkit you're using.
+            }
+        }
+    };
+
+**Reference**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+
+    * - Name
+      - C++
+      - Lua
+    * - :class:`lvtk.Parent`
+      - `Extension <api/structlvtk_1_1Parent.html>`__
+      - N/A
+
+--------
+Port Map
+--------
+.. code-block:: cpp
+    
+    #include <lvtk/ext/ui/port_map.hpp>
+
+**Mixin Usage**
+
+Adds a :func:`port_index` method to your UI.  Call it to get a port's index
+from it's symbol.
+
+.. code-block:: cpp
+
+    class MyUI : public lvtk::UI<MyUI, lvtk::PortMap> {
+    public:
+        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+            auto audio_port_1_index = port_map ("audio_01");
+            // use the index how you see fit.
+        }
+
+        void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) {
+            // handle port notifications.
+        }
+
+        void cleanup() {
+            unsubscribe (port_index, protocol, unsubscribe_features);
+        }
+
+**Reference**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+
+    * - Name
+      - C++
+      - Lua
+    * - :class:`lvtk.PortMap`
+      - `Extension <api/structlvtk_1_1PortMap.html>`__
+      - N/A
+
+--------------
+Port Subscribe
+--------------
+.. code-block:: cpp
+    
+    #include <lvtk/ext/ui/port_subscribe.hpp>
+
+**Mixin Usage**
+
+Adds :func:`subscribe` and :func:`unsubscribe` methods to your UI.  Call them
+to start or stop receiving notifications about ports in ``port_event``.
+
+.. code-block:: cpp
+
+    class MyUI : public lvtk::UI<MyUI, lvtk::PortSubscribe> {
+    public:
+        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+            subscribe (port_index, protocol, subscribe_features);
+        }
+
+        void port_event (uint32_t port, uint32_t size, uint32_t format, const void* data) {
+            // handle port notifications.
+        }
+
+        void cleanup() {
+            unsubscribe (port_index, protocol, unsubscribe_features);
+        }
+
+**Reference**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+
+    * - Name
+      - C++
+      - Lua
+    * - :class:`lvtk.PortSubscribe`
+      - `Extension <api/structlvtk_1_1PortSubscribe.html>`__
+      - N/A
+
+----
+Show
+----
+.. code-block:: cpp
+    
+    #include <lvtk/ext/ui/show.hpp>
+
+**Mixin Usage**
+
+Adds :func:`show` and :func:`hide` callbacks to your UI.  It inherrits from
+:class:`lvtk.Idle` so don't use Idle & Show together.... just use :class:`lvtk.Show`
+
+.. code-block:: cpp
+
+    class MyUI : public lvtk::UI<MyUI, lvtk::Show> {
+    public:
+        MyUI (const lvtk::Args& args) : lvtk::UI (args) {}
+
+        int show() {
+            // host is requesting you show your GUI
+        }
+
+        int hide() {
+            // host is requesting you hide your GUI
+        }
+
+**Reference**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+
+    * - Name
+      - C++
+      - Lua
+    * - :class:`lvtk.Show`
+      - `Extension <api/structlvtk_1_1Show.html>`__
+      - N/A
+
+-----
+Touch
+-----
+.. code-block:: cpp
+    
+    #include <lvtk/ext/ui/touch.hpp>
+
+**Mixin Usage**
+
+Adds a :func:`touch()` method to your UI class.  Use it to notify the host 
+about gesture changes.
+
+.. code-block:: cpp
+
+    class MyUI : public lvtk::UI<MyUI, lvtk::Touch> {
+    public:
+        MyUI (const lvtk::Args& args) : lvtk::UI (args) {
+        }
+
+        void send_gesture_change() {
+            auto port_index = 0;
+            auto grabbed = check_grabbed();
+            touch (port_index, grabbed);
+        }
+    };
+
+**Reference**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+
+    * - Name
+      - C++
+      - Lua
+    * - :class:`lvtk.Touch`
+      - `Extension <api/structlvtk_1_1Touch.html>`__
       - N/A

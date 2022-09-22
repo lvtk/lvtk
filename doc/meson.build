@@ -13,7 +13,9 @@ conf_py = configure_file (configuration: {
 
 lvtk_rst_sources = files ('''
     deployment.rst
+    dynmanifest.rst
     extensions.rst
+    highlevel.rst
     index.rst
     overview.rst
     summary.rst

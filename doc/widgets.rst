@@ -136,3 +136,11 @@ The view will be automatically realized if necessary.
    which may not.
    On Windows and X11, everything is a nestable window,
    but top-level windows are configured differently.
+
+.. toctree::
+
+   ui/main
+   ui/views
+   ui/widget
+   ui/events
+   ui/fonts

@@ -7,9 +7,13 @@ LVTK
 .. toctree::
 
     Overview <overview>
-    Extensions <extensions>
+    
     Plugin <plugins>
     UI <uis>
-    widgets
+    Extensions <extensions>
+    High Level <highlevel>
+    DynManifest <dynmanifest>
+    
+    Widgets <widgets>
 
     Developers <deployment>
