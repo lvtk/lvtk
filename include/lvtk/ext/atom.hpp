@@ -648,5 +648,5 @@ struct Vector final {
 private:
     LV2_Atom_Vector* vec = nullptr;
 };
-/** @} */
+
 } /* namespace lvtk */
