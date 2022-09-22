@@ -21,6 +21,7 @@ lvtk_rst_sources = files ('''
     summary.rst
     widgets.rst
     plugins.rst
+    projects.rst
     uis.rst
 '''.split())
 
