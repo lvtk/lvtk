@@ -5,10 +5,4 @@ x64_rel:
   stage: build
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Dbuildtype=release -Ddocs=disabled
-
-# run tests using the binary built before
-test:
-  stage: test
-  script:
-    - ninja -C build test
+    - meson setup build -Dbuildtype=release -Dunit-tests=disabled -Ddocs=disabled
