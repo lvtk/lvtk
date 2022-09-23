@@ -8,18 +8,20 @@
 
 namespace lvtk {
 
-/**
-    @brief A generic button
- */
+/** A generic button. 
+    @ingroup widgets
+    @headerfile lvtk/ui/button.hpp
+*/
 class Button : public lvtk::Widget {
 public:
-    Button()          = default;
     virtual ~Button() = default;
 
     /** Executed when the button is clicked */
     std::function<void()> clicked;
 
-    /** Returns true if this button is in a toggled state. */
+    /** Returns true if this button is in a toggled state.
+        @returns True when in a toggle state
+    */
     bool toggled() const noexcept { return _toggled; }
 
     /** Toggle or de-toggle this button
@@ -34,29 +36,42 @@ public:
     }
 
 protected:
+    /** Inherrit Button to write a custom button type */
+    Button() = default;
+
+    /** Override to paint your button.
+        @param g The graphics to use
+        @param highlight True if should be highlighted
+        @param down True if currently pressed
+    */
     virtual void paint_button (Graphics& g, bool highlight, bool down) {}
 
     void paint (Graphics& g) override {
         paint_button (g, _over, _down);
     }
 
+    /** @private */
     bool obstructed (int, int) override { return true; }
 
+    /** @private */
     void pointer_in (InputEvent) override {
         _over = true;
         repaint();
     }
 
+    /** @private */
     void pointer_out (InputEvent) override {
         _over = false;
         repaint();
     }
 
+    /** @private */
     void pressed (InputEvent ev) override {
         _down = true;
         repaint();
     }
 
+    /** @private */
     void released (InputEvent ev) override {
         _down = false;
         if (contains (ev.pos))

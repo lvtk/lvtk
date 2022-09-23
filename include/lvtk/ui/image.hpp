@@ -7,10 +7,12 @@
 
 namespace lvtk {
 
+/** @ingroup widgets */
 class Pixels {
 public:
 };
 
+/** @ingroup widgets */
 class Image {
 public:
     Image() = default;

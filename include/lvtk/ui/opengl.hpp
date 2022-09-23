@@ -10,6 +10,10 @@
 
 namespace lvtk {
 
+/** The OpenGL graphics backend.
+    @ingroup widgets
+    @headerfile lvtk/ui/opengl.hpp 
+*/
 struct LVTK_API OpenGL : public Backend {
     OpenGL() : Backend ("OpenGL") {}
     std::unique_ptr<View> create_view (Main& c, Widget& w) override;

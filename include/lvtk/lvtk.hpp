@@ -14,11 +14,16 @@
     classes called @ref lvtk::Extension "Extensions" that you can use to add extra
     functionality to your plugin or UI.
 
-    <b>Versioning</b><br>
-    This library is header only, thus ABI stability is not an issue. The API
+    <b>Library Versioning</b><br>
+    The core library is header only, thus ABI stability is not an issue. The API
     will be stable between major version bumps, at which the pkg-config name
     would change to prevent plugins from building against an incompatible
     version.
+
+    <b>ABI Versioning</b><br>
+    The widgets and host libraries is not header only, thus ABI stability is
+    a concern when adding new code. ABI version number will bump when compatibility
+    breaks.
 
     @author Michael Fisher <mfisher@lvtk.org>
     @example volume.cpp
@@ -37,17 +42,23 @@
 
 namespace lvtk {
 /** @defgroup lvtk Core
-    Misc classes and types
+    Core classes, types, and utilities.
     @{
  */
 
-/** Alias to LV2_Handle */
+/** Alias to LV2_Handle 
+    @ingroup lvtk
+*/
 using Handle = LV2_Handle;
 
-/** Map of extension data */
+/** Map of extension data
+    @ingroup lvtk
+*/
 using ExtensionMap = std::map<std::string, const void*>;
 
-/** Internal class which maintains a list of descriptors */
+/** Internal class which maintains a list of descriptors
+    @ingroup lvtk
+*/
 template <class D>
 struct DescriptorList final : public std::vector<D> {
     inline ~DescriptorList() {
@@ -56,15 +67,26 @@ struct DescriptorList final : public std::vector<D> {
     }
 };
 
-/** C++ version of an LV2_Feature */
+/** C++ version of an LV2_Feature 
+    @headerfile lvtk/lvtk.hpp
+    @ingroup lvtk
+*/
 struct Feature : LV2_Feature {
+    /** Blank feature */
     Feature() = default;
 
+    /** Reference another feature 
+        @param feature
+    */
     Feature (const LV2_Feature& feature) {
         data = feature.data;
         URI  = feature.URI;
     }
 
+    /** Reference another feature
+        @param feature_uri
+        @param feature_data
+    */
     Feature (const char* feature_uri, void* feature_data) {
         data = feature_data;
         URI  = feature_uri;
@@ -84,19 +106,23 @@ struct Feature : LV2_Feature {
 
     @note This contains external data from the host and should never
     itself be referenced by your plugin.
+
+    @headerfile lvtk/lvtk.hpp
+    @ingroup lvtk
  */
 struct FeatureList final : public std::vector<Feature> {
     /** Construct an empty feature list */
     FeatureList() = default;
 
-    /** Copy features. Data pointers are referenced */
+    /** Copy features. Data pointers are referenced
+        @param o The other list to add from.
+     */
     FeatureList (const FeatureList& o) {
         for (const auto& f : o)
             push_back (f);
     }
 
     /** Contstruct from raw LV2_Feature array
-
         @param features  LV2_Feature array to reference
     */
     FeatureList (const LV2_Feature* const* features) {
@@ -105,6 +131,10 @@ struct FeatureList final : public std::vector<Feature> {
         }
     }
 
+    /** @returns The data associated with a contained feature
+        @param uri The URI of the feature to look for
+        @returns The data ptr or nullptr if not found
+     */
     inline void* data (const std::string& uri) const {
         for (const auto& f : *this)
             if (f == uri)
@@ -112,7 +142,7 @@ struct FeatureList final : public std::vector<Feature> {
         return nullptr;
     }
 
-    /** Returns true if the uri is found */
+    /** @returns true if the uri is found */
     inline bool contains (const std::string& uri) const {
         return data (uri) != nullptr;
     }
@@ -128,6 +158,9 @@ struct FeatureList final : public std::vector<Feature> {
                 when D itself is a pointer.
 
     @see @ref WorkerSchedule, @ref Map, @ref Unmap, @ref Logger
+
+    @ingroup lvtk
+    @headerfile lvtk/lvtk.hpp
  */
 template <class D, class P = D*>
 struct FeatureData {

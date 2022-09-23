@@ -10,6 +10,7 @@ namespace lvtk {
 
 class Widget;
 
+/** @ingroup widgets */
 struct InputEvent {
     WeakRef<Widget> source;
     Point<float> pos;
@@ -17,7 +18,7 @@ struct InputEvent {
     int y;
 };
 
-// saving for later...
+/** @ingroup widgets */
 struct Event : public InputEvent {};
 
 } // namespace lvtk

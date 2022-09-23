@@ -14,7 +14,9 @@
 namespace lvtk {
 
 /** The running mode type of a UI context. 
-    @see Context
+    @see Main
+    @ingroup widgets
+    @headerfile lvtk/ui/main.hpp
  */
 enum class Mode {
     PROGRAM = 0, ///< Standalone application
@@ -28,9 +30,20 @@ class Widget;
 
 /** The context in which a UI or GUI app is running.
     Can create views and run the event loop
+    @ingroup widgets
+    @headerfile lvtk/ui/main.hpp
  */
 class LVTK_API Main : public Context {
 public:
+    /** Create a main object.
+     
+        This is the central event controller for GUIs.  It's job is to
+        elevate widgets to View status and keep track of events and
+        actions.
+
+        @param mode The running mode of the GUI
+        @param backend The backend to use for graphics
+     */
     explicit Main (Mode mode, std::unique_ptr<Backend> backend);
     ~Main();
 
@@ -89,11 +102,23 @@ private:
     Main& operator= (Main&&)      = delete;
 };
 
+/** Backend implementation.
+    @headerfile lvtk/ui/main.hpp
+    @ingroup widgets
+ */
 struct Backend {
     Backend()          = delete;
     virtual ~Backend() = default;
     const String& name() const noexcept { return _name; }
-    virtual std::unique_ptr<View> create_view (Main&, Widget&) = 0;
+
+    /** Your subclass must implement a view and return new
+        ones from this factory fuction
+    
+        @param main     The main object creating the view
+        @param widget   The widget being elevated
+        @see OpenGL
+    */
+    virtual std::unique_ptr<View> create_view (Main& main, Widget& widget) = 0;
 
 protected:
     Backend (const String& name)

@@ -8,8 +8,12 @@
 
 namespace lvtk {
 
+/** A utility class to help aligning text etc etc. 
+    @ingroup widgets
+    @headerfile lvtk/ui/alignment.hpp
+*/
 struct Alignment final {
-    enum : uint8_t {
+    enum Placement : uint8_t {
         LEFT   = (1u << 0u), ///< Align left.
         RIGHT  = (1u << 1u), ///< Align right.
         CENTER = (1u << 2u), ///< Align horizontally centered.

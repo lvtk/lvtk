@@ -15,7 +15,10 @@ namespace lvtk {
 
 using Bounds = Rectangle<int>;
 
-/** A 2d transformation matrix */
+/** A 2d transformation matrix.
+    @ingroup widgets
+    @headerfile lvtk/ui/graphics.hpp
+*/
 class LVTK_API Transform final {
 public:
     Transform() = default;
@@ -37,7 +40,10 @@ public:
         m10 { 0.f }, m11 { 1.f }, m12 { 0.f };
 };
 
-/** Lower level graphics context. */
+/** Lower level graphics context.
+    @ingroup widgets
+    @headerfile lvtk/ui/graphics.hpp
+*/
 class LVTK_API DrawingContext {
 public:
     DrawingContext()          = default;
@@ -80,6 +86,9 @@ public:
 /** Higher level graphics context.
     API is subject to change dramatically at any given time
     until we approach an alpha status.
+
+    @ingroup widgets
+    @headerfile lvtk/ui/graphics.hpp
  */
 class LVTK_API Graphics final {
 public:

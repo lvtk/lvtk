@@ -9,6 +9,9 @@
 
 namespace lvtk {
 
+/** A point. x y coordinate.
+    @ingroup widgets
+*/
 template <typename Val>
 struct Point {
     Val x {}, y {};
@@ -66,6 +69,9 @@ struct Point {
     }
 };
 
+/** A rectangle. x y width height.
+    @ingroup widgets
+*/
 template <typename Val>
 struct Rectangle {
     Val x {}, y {}, width {}, height {};

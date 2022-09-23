@@ -6,49 +6,73 @@
 
 namespace lvtk {
 
-template <typename T>
-using BasicString = std::basic_string<T>;
+/** A typical String type.
+    
+    Can be passed to functions which take const char* or std::string
+    as an argument.
 
+    @headerfile lvtk/string.hpp
+    @ingroup core
+ */
 class String final {
 public:
     using str_type = std::string;
 
+    /** Create an empty string */
     String() = default;
+    /** Create a string from a const char */
     String (const char* str) : _str (str) {}
+    /** Create a string from a std::string */
     String (const std::string& o) : _str (o) {}
 
+    /** Clear this string. */
     void clear() { _str.clear(); }
 
     // clang-format on
+
+    /** Append another String to this one */
     String& append (const String& o) {
         append (o.c_str());
         return *this;
     }
+
+    /** Append a std::string to this one */
     String& append (const std::string& o) {
         _str.append (o.c_str());
         return *this;
     }
+
+    /** Append a C string to this one */
     String& append (const char* o) {
         _str.append (o);
         return *this;
     }
+
+    /** append a single char. */
     String& append (char c) {
         _str.append (1, c);
         return *this;
     }
 
+    /** Append an int */
     String& append (int i) {
         _str.append (std::to_string (i));
         return *this;
     }
+
+    /** Append an int64 */
     String& append (int64_t i) {
         _str.append (std::to_string (i));
         return *this;
     }
+
+    /** Append a float */
     String& append (float i) {
         _str.append (std::to_string (i));
         return *this;
     }
+
+    /** Append a double */
     String& append (double i) {
         _str.append (std::to_string (i));
         return *this;
@@ -84,6 +108,7 @@ public:
         return _str > a._str;
     }
 
+    /** Returns the C string of this String */
     const char* c_str() const noexcept { return _str.c_str(); }
     operator const char*() const noexcept { return _str.c_str(); }
     const std::string& str() const noexcept { return _str; }

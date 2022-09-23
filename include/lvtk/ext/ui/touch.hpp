@@ -39,7 +39,8 @@ struct Touch : NullExtension {
     }
 
     /** Call this to notify the host of gesture changes.
-        @returns non-zero on error
+        @param port The Port Index
+        @param grabbed True if grabbed or false if not
      */
     void touch (uint32_t port, bool grabbed) {
         if (ui_touch != nullptr)

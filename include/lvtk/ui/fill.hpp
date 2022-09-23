@@ -11,6 +11,8 @@ namespace lvtk {
 
 /** A type of Fill used by DrawingContext
     i.e. fill Solid, Image, Gradient.
+    @ingroup widgets
+    @headerfile lvtk/ui/fill.hpp
  */
 class LVTK_API Fill {
 public:

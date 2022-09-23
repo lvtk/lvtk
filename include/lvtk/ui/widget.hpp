@@ -1,6 +1,13 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+/** @defgroup widgets Widgets
+    @ingroup ui
+    Part of the lvtk Widget's library.
+
+    @{
+*/
+
 #pragma once
 
 #include <vector>
@@ -19,11 +26,17 @@
 
 namespace lvtk {
 
+/** Base class for all Widgets and Windows.
+    @ingroup widgets
+    @headerfile lvtk/ui/widget.hpp
+*/
 class LVTK_API Widget {
 public:
+    /** Create a blank Widget */
     Widget();
     virtual ~Widget();
 
+    /** Returns the parent widget of this one. */
     Widget* parent() const noexcept { return _parent; }
 
     /** Add a child widget. */
@@ -209,3 +222,5 @@ private:
 
 using WidgetRef = WeakRef<Widget>;
 } // namespace lvtk
+
+/** @} */

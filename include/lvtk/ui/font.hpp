@@ -11,7 +11,10 @@
 
 namespace lvtk {
 
-/** A typeface */
+/** A typeface 
+    @ingroup widgets
+    @headerfile lvtk/ui/font.hpp
+*/
 class LVTK_API Typeface {
 public:
     Typeface()          = default;
@@ -22,9 +25,16 @@ public:
     // clang-format on
 };
 
+/** Shared Typeface ptr.
+    @ingroup widgets
+    @headerfile lvtk/ui/font.hpp
+ */
 using TypefacePtr = std::shared_ptr<Typeface>;
 
-/** A font. */
+/** A font.
+    @ingroup widgets
+    @headerfile lvtk/ui/font.hpp
+*/
 class LVTK_API Font final {
 public:
     enum StyleFlag : uint8_t {

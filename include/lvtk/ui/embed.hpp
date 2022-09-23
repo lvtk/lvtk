@@ -10,17 +10,23 @@ namespace lvtk {
 
 class Main;
 
+/** Embed native views in another Widget. 
+    @ingroup widgets
+    @headerfile lvtk/ui/embed.hpp
+ */
 class LVTK_API Embed final : public Widget {
 public:
+    /** Initialize an embeddable. */
     Embed (Main& main);
     ~Embed();
 
+    /** Returns the view of the embedded object */
     ViewRef host_view() const noexcept;
 
+protected:
+    /** @internal */
     void paint (Graphics& g) override;
     void resized() override;
-
-protected:
     void children_changed() override;
     void parent_structure_changed() override;
 

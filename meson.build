@@ -11,6 +11,8 @@ project ('lvtk', ['cpp', 'c'], version : '3.0.0',
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
     include/lvtk/string.hpp
+    include/lvtk/ui/alignment.hpp
+    include/lvtk/ui/widget.hpp
 '''.split())
 
 if not get_option('onlydocs')

@@ -24,6 +24,9 @@ struct PathItem {
         x3 {}, y3 {};
 };
 
+/** Drawable path.
+    @ingroup widgets
+*/
 class Path {
 public:
     using value_type = PathItem;

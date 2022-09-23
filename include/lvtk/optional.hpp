@@ -23,6 +23,7 @@ namespace lvtk {
     template <typename T>
     using Optional = std::experimental::optional<T>;
 #else
+    /** Alias of std::optional */
     template <typename T>
     using Optional = std::optional<T>;
 #endif
