@@ -75,7 +75,8 @@ endif
 summary('Docs', not get_option('docs').disabled(), bool_yn: true)
 summary('Tests', not get_option('unit-tests').disabled(), bool_yn: true)
 
-summary('Lua', true, section : 'Bindings', bool_yn: true)
+summary('Modules', true, section : 'Lua', bool_yn: true)
+summary('Version', lua_version, section : 'Lua')
 
 summary('Graphics', 'OpenGL', section : 'Gui')
 summary('Demo', true, bool_yn: true, section : 'Gui')

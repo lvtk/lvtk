@@ -36,18 +36,31 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     required : true
 )
 
-lilv_dep = dependency ('lilv-0', fallback : ['lilv', 'lilv_dep'], required : false)
+lilv_dep = dependency ('lilv-0', fallback : ['lilv', 'lilv_dep'], required : true)
 
 boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
 
-lua_dep = dependency ('lua', required : false)
-if not lua_dep.found()
-    lua_dep = dependency ('lua5.3', required : false)
-endif
-if not lua_dep.found()
-    lua_dep = dependency ('lua5.4', required : false)
+## Lua: Try to use 5.3 lua headers on the system. 
+#  Fallback to included 5.4 headers.
+lua_version = ''
+lua_program = find_program ('lua5.4', required : false)
+
+if not lua_program.found()
+    lua_program = find_program('lua5.3', required : false)
 endif
 
-if lua_dep.found()
-    lua_program = find_program ('lua')
+if not lua_program.found()
+    lua_program = find_program('lua')
 endif
+
+if lua_program.found()
+    lua_version = run_command('python', '../../scripts/luavers.py',
+        lua_program, check : true).stdout().strip()
+    lua_dep = dependency ('lua@0@'.format(lua_version), required : false)
+    if not lua_dep.found()
+        lua_dep = dependency ('lua', pkgconfig : '--cflags', required : false)
+    endif
+endif
+
+# true if using system
+lvtk_lua_system = lua_dep.found() and lua_program.found()
