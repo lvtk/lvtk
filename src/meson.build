@@ -48,3 +48,19 @@ lvtk_gl_dep = declare_dependency (
     link_with : [ liblvtk_gl ],
     include_directories : [],
     dependencies : lvtk_gl_deps)
+
+if lilv_dep.found()
+    lvtk_host_sources = files ('''
+        host/world.cpp
+    '''.split())
+    liblvtk_host = library ('lvtk-host', 
+        lvtk_host_sources,
+        version : meson.project_version(),
+        gnu_symbol_visibility : 'hidden',
+        dependencies : [ lvtk_dep, lilv_dep ],
+        install : true)
+    lvtk_host_dep = declare_dependency (
+        link_with : [ liblvtk_host ],
+        include_directories : [],
+        dependencies : [ lvtk_dep, lilv_dep ])
+endif

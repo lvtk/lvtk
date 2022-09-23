@@ -36,6 +36,8 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     required : true
 )
 
+lilv_dep = dependency ('lilv-0', fallback : ['lilv', 'lilv_dep'], required : false)
+
 boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
 
 lua_dep = dependency ('lua', required : false)
