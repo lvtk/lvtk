@@ -9,14 +9,6 @@
 #include <lvtk/host/module.hpp>
 #include <lvtk/host/world.hpp>
 
-#ifdef __linux__
-#    define LVTK_NATIVE_UI LV2_UI__X11UI
-#elif defined(__APPLE__)
-#    define LVTK_NATIVE_UI LV2_UI__CocoaUI
-#else
-#    define LVTK_NATIVE_UI LV2_UI__WindowsUI
-#endif
-
 namespace lvtk {
 
 namespace detail {
@@ -58,14 +50,14 @@ static SupportedUIs
         }
 
         const LilvNode* uitype = nullptr;
-        auto nwt               = lilv::Node (lilv_new_uri (world, LVTK_NATIVE_UI));
+        auto nwt               = lilv::Node (lilv_new_uri (world, LVTK_UI__NativeUI));
 
         // check if native UI
         if (lilv_ui_is_supported (lui, ui_supported, nwt, &uitype)) {
             if (uitype != nullptr && lilv_node_is_uri (uitype)) {
                 supported.push_back (sui);
                 sui.URI       = lilv::Node (lilv_ui_get_uri (lui)).as_string();
-                sui.container = LVTK_NATIVE_UI;
+                sui.container = LVTK_UI__NativeUI;
                 sui.widget    = lilv_node_as_uri (uitype);
                 supported.push_back (sui);
                 continue;
@@ -117,6 +109,12 @@ Instance::Instance() {
 Instance::~Instance() {
     impl.reset();
 }
+
+class InstanceUIImpl {
+public:
+    InstanceUIImpl(){}
+    ~InstanceUIImpl(){}
+};
 
 class WorldImpl {
 public:

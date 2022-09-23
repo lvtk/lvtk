@@ -6,8 +6,22 @@
                 "${workspaceFolder}/include/*",
                 "${workspaceFolder}/demo/*",
                 "${workspaceFolder}/src/*",
+                
                 "${workspaceFolder}/subprojects/lv2/include/*",
-                "${workspaceFolder}/subprojects/pugl/include/*"
+                "${workspaceFolder}/subprojects/lilv/include/*",
+                "${workspaceFolder}/subprojects/suil/include/*",
+                "${workspaceFolder}/subprojects/serd/include/*",
+                "${workspaceFolder}/subprojects/sord/include/*",
+                "${workspaceFolder}/subprojects/sratom/include/*",
+                "${workspaceFolder}/subprojects/pugl/include/*",
+
+                "../../subprojects/lv2/include/*",
+                "../../subprojects/lilv/include/*",
+                "../../subprojects/suil/include/*",
+                "../../subprojects/serd/include/*",
+                "../../subprojects/sord/include/*",
+                "../../subprojects/sratom/include/*",
+                "../../subprojects/pugl/include/*"
             ],
             "defines": [],
             "macFrameworkPath": [

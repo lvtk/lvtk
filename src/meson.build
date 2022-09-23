@@ -49,7 +49,7 @@ lvtk_gl_dep = declare_dependency (
     include_directories : [],
     dependencies : lvtk_gl_deps)
 
-if lilv_dep.found()
+if lilv_dep.found() and suil_dep.found()
     lvtk_host_sources = files ('''
         host/world.cpp
     '''.split())
@@ -57,10 +57,10 @@ if lilv_dep.found()
         lvtk_host_sources,
         version : meson.project_version(),
         gnu_symbol_visibility : 'hidden',
-        dependencies : [ lvtk_dep, lilv_dep ],
+        dependencies : [ lvtk_dep, lilv_dep, suil_dep ],
         install : true)
     lvtk_host_dep = declare_dependency (
         link_with : [ liblvtk_host ],
         include_directories : [],
-        dependencies : [ lvtk_dep, lilv_dep ])
+        dependencies : [ lvtk_dep, lilv_dep, suil_dep ])
 endif
