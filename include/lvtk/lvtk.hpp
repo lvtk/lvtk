@@ -11,7 +11,7 @@
 
     <b>Extension Mixins</b><br>
     For both the @ref lvtk::Plugin and the @ref lvtk::UI classes there are other helper
-    classes called @ref lvtk::Extension "Extensions" that you can use to add extra
+    classes called Extensions that you can use to add extra
     functionality to your plugin or UI.
 
     <b>Library Versioning</b><br>
@@ -41,6 +41,18 @@
 #include <lv2/core/lv2.h>
 
 namespace lvtk {
+/** @defgroup alias Alias 
+    Aliases to LV2 C-types 
+ */
+
+/** @defgroup utility Utility
+    Utility classes and functions
+ */
+
+/** @defgroup wrapper Wrapper
+    Wrappers around LV2 types.
+ */
+
 /** @defgroup lvtk Core
     Core classes, types, and utilities.
     @{

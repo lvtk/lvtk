@@ -136,7 +136,7 @@ private:
 /** UI Instance
 
     Inherrit this when making an LV2 UI.  The first template parameter
-    is the type of your super class.  The rest are @ref Extension mixins.
+    is the type of your super class.  The rest are Extension mixins.
 
     @tparam S    Your super class
     @tparam E    List of Extension mixins

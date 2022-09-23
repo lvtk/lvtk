@@ -1,22 +1,5 @@
-/* 
-    Copyright (c) 2019, Michael Fisher <mfisher@lvtk.org>
-
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted, provided that the above
-    copyright notice and this permission notice appear in all copies.
-
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
-
-/** @defgroup options Options
-    Dealing with LV2 Options
-*/
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #pragma once
 
@@ -28,26 +11,26 @@ namespace lvtk {
 
 /** Alias to `LV2_Options_Option`
     @headerfile lvtk/ext/options.hpp
-    @ingroup options
+    @ingroup alias
 */
 using Option = LV2_Options_Option;
 
 /** Equivalent to LV2_Options_Context
     @headerfile lvtk/ext/options.hpp
-    @ingroup options
+    @ingroup alias
 */
 using OptionsContext = LV2_Options_Context;
 
 /** Equivalent to LV2_Options_Status
     @headerfile lvtk/ext/options.hpp
-    @ingroup options
+    @ingroup alias
 */
 using OptionsStatus = LV2_Options_Status;
 
 /** The LV2 Options Feature
 
     @headerfile lvtk/ext/options.hpp
-    @ingroup options
+    @ingroup utility
  */
 struct OptionsData final : FeatureData<Option> {
     OptionsData() : FeatureData (LV2_OPTIONS__options) {}
@@ -55,7 +38,7 @@ struct OptionsData final : FeatureData<Option> {
 
 /** Adds support for LV2 options on your instance
     @headerfile lvtk/ext/options.hpp
-    @ingroup options
+    @ingroup ext
  */
 template <class I>
 struct Options : Extension<I> {

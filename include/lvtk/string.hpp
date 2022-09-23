@@ -12,7 +12,7 @@ namespace lvtk {
     as an argument.
 
     @headerfile lvtk/string.hpp
-    @ingroup core
+    @ingroup lvtk
  */
 class String final {
 public:

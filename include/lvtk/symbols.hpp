@@ -17,7 +17,8 @@ namespace lvtk {
     LV2 host to easily provide URID map/unmaping features to plugins.
 
     @headerfile lvtk/symbols.hpp
-    @ingroup core
+    @ingroup lvtk
+    @ingroup urid
  */
 class Symbols final {
 public:

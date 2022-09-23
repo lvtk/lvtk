@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: ISC
 
 /** @defgroup widgets Widgets
-    @ingroup ui
     Part of the lvtk Widget's library.
 
     @{

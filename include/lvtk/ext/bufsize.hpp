@@ -1,45 +1,5 @@
-/* 
-    Copyright (c) 2019, Michael Fisher <mfisher@lvtk.org>
-
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted, provided that the above
-    copyright notice and this permission notice appear in all copies.
-
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
-
-/** @defgroup bufsize Buf Size
-    Access to buffer information
-
-    The @ref lvtk::BufSize extension scans for buffer information provided by the
-    host, and populates a @ref lvtk::BufferDetails accordingly. To use it, add
-    BufSize to the template parameters of your Plugin and call buffer_details()
-    for buffer info
-
-    @code
-    class MyPlug : public lvtk::Plugin<MyPlug, lvtk::BufSize> {
-    public:
-        MyPlug (lvtk::Args& args) : lvtk::Plugin (args) {
-            const auto& details = buffer_details();
-
-            // setup plugin using details. members are optional
-            // and only set if provided by the host. e.g....
-
-            if (details.min && details.max) {
-                // got min/max do something with them
-            } else {
-                // wasn't set...
-            }
-        }
-    };
-    @endcode
-*/
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #pragma once
 
@@ -54,13 +14,13 @@
 #endif
 
 namespace lvtk {
-/* @{ */
 /** Description of buffer information.
 
     Used by the @ref BufSize extension to automatically scan for buffer details
     during instantiation. @see @ref BufSize
 
     @headerfile lvtk/ext/bufsize.hpp
+    @ingroup lvtk
  */
 struct BufferDetails final {
     Optional<uint32_t> min;           /**< <http://lv2plug.in/ns/ext/buf-size#minBlockLength> */
@@ -104,9 +64,12 @@ struct BufferDetails final {
 };
 
 /** LV2 Buf Size Extension
+    
+    @tparam Mod your Plugin type
     @headerfile lvtk/ext/bufsize.hpp
+    @ingroup ext 
  */
-template <class I>
+template <class Mod>
 struct BufSize : NullExtension {
     /** @private */
     BufSize (const FeatureList& features) {
@@ -136,5 +99,5 @@ struct BufSize : NullExtension {
 private:
     BufferDetails details;
 };
-/* @} */
+
 } // namespace lvtk

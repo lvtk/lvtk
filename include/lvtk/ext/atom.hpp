@@ -1,22 +1,5 @@
-/* 
-    Copyright (c) 2019, Michael Fisher <mfisher@lvtk.org>
-
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted, provided that the above
-    copyright notice and this permission notice appear in all copies.
-
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
-
-/** @defgroup atom Atom
-    Dealing with LV2 Atoms
-*/
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #pragma once
 
@@ -28,7 +11,10 @@
 #include <string>
 
 namespace lvtk {
-/* @{ */
+/** @ingroup alias
+    @{ 
+*/
+
 /** Alias to `LV2_Atom_Event` */
 using AtomEvent = LV2_Atom_Event;
 
@@ -44,8 +30,13 @@ using ForgeRef = LV2_Atom_Forge_Ref;
 /** Alias to `LV2_Atom_Object_Query` */
 using ObjectQuery = LV2_Atom_Object_Query;
 
+/** 
+    @} 
+ */
+
 /** An LV2_Atom_Object wrapper
     @headerfile lvtk/ext/atom.hpp
+    @ingroup wrapper
  */
 struct Object final {
     /** Create an Object from raw data. The data passed in will be casted
@@ -167,6 +158,7 @@ private:
     These are intended to be used on the stack
 
     @headerfile lvtk/ext/atom.hpp
+    @ingroup wrapper
  */
 struct Atom final {
     /** Create a null Atom */
@@ -303,6 +295,7 @@ private:
 
     @endcode
     @headerfile lvtk/ext/atom.hpp
+    @ingroup wrapper
 */
 struct Sequence final {
     typedef AtomEvent* pointer;
@@ -436,6 +429,7 @@ private:
 
 /** Class wrapper around LV2_Atom_Forge
     @headerfile lvtk/ext/atom.hpp
+    @ingroup wrapper
 */
 struct Forge final : LV2_Atom_Forge {
     /** Uninitialized Forge.
@@ -594,6 +588,7 @@ struct Forge final : LV2_Atom_Forge {
 
 /** An LV2_Atom_Vector Wrapper
     @headerfile lvtk/ext/atom.hpp
+    @ingroup wrapper
  */
 struct Vector final {
     inline Vector (ForgeRef ref) : vec ((LV2_Atom_Vector*) ref) {}

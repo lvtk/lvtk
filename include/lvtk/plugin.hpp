@@ -112,7 +112,7 @@ struct Args {
     @c args should be used in your constructor to get "details" about instantiation.
 
     Since this is a template, simulated dynamic binding is used for the callbacks.
-    When using @ref Extension "Extensions" no vtable lookups are invoked, like normal
+    When using extensions no vtable lookups are invoked, like normal
     dynamic binding would.
 
     <h3>Copy Audio Example</h3>
@@ -149,7 +149,7 @@ struct Args {
     part of a fully functional LV2 plugin with one audio input port and one audio
     output port that just copies the input to the output.
 
-    You can extend your instance by passing @ref Extension "Extensions" as
+    You can extend your instance by passing Extensions as
     template parameters to Instance (second template parameter and onwards).
 
     @tparam S   Your super class
@@ -218,7 +218,7 @@ public:
     void cleanup() {}
 
     /** Override this to add custom extension data without having to implement
-        an @ref Extension mixin.  Also, it will be called after the the mixins,
+        an Extension mixin.  Also, it will be called after the the mixins,
         so if needed you can effectively override mixin extension data.
      */
     static void map_extension_data (ExtensionMap&) {}
