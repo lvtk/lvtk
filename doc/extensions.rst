@@ -637,7 +637,7 @@ Idle
 ----
 .. code-block:: cpp
     
-    #include <lvtk/ext/ui/idle.hpp>
+    #include <lvtk/ext/idle.hpp>
 
 **Mixin Usage**
 
@@ -676,7 +676,7 @@ Parent
 ------
 .. code-block:: cpp
     
-    #include <lvtk/ext/ui/parent.hpp>
+    #include <lvtk/ext/parent.hpp>
 
 Adds a :func:`parent` function object to use. It returns the parent widget, 
 or nullptr if not provided.
@@ -716,7 +716,7 @@ Port Map
 --------
 .. code-block:: cpp
     
-    #include <lvtk/ext/ui/port_map.hpp>
+    #include <lvtk/ext/port_map.hpp>
 
 **Mixin Usage**
 
@@ -759,7 +759,7 @@ Port Subscribe
 --------------
 .. code-block:: cpp
     
-    #include <lvtk/ext/ui/port_subscribe.hpp>
+    #include <lvtk/ext/port_subscribe.hpp>
 
 **Mixin Usage**
 
@@ -801,7 +801,7 @@ Show
 ----
 .. code-block:: cpp
     
-    #include <lvtk/ext/ui/show.hpp>
+    #include <lvtk/ext/show.hpp>
 
 **Mixin Usage**
 
@@ -841,7 +841,7 @@ Touch
 -----
 .. code-block:: cpp
     
-    #include <lvtk/ext/ui/touch.hpp>
+    #include <lvtk/ext/touch.hpp>
 
 **Mixin Usage**
 

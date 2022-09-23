@@ -1,12 +1,12 @@
 #pragma once
 
-#include <lvtk/ext/ui/idle.hpp>
-#include <lvtk/ext/ui/parent.hpp>
-#include <lvtk/ext/ui/port_map.hpp>
-#include <lvtk/ext/ui/port_subscribe.hpp>
-#include <lvtk/ext/ui/resize.hpp>
-#include <lvtk/ext/ui/show.hpp>
-#include <lvtk/ext/ui/touch.hpp>
+#include <lvtk/ext/idle.hpp>
+#include <lvtk/ext/parent.hpp>
+#include <lvtk/ext/port_map.hpp>
+#include <lvtk/ext/port_subscribe.hpp>
+#include <lvtk/ext/resize.hpp>
+#include <lvtk/ext/show.hpp>
+#include <lvtk/ext/touch.hpp>
 
 #include <lvtk/ext/atom.hpp>
 #include <lvtk/ext/bufsize.hpp>

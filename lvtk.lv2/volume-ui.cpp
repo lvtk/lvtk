@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <iostream>
 
-#include <lvtk/ext/ui/idle.hpp>
-#include <lvtk/ext/ui/parent.hpp>
-#include <lvtk/ext/ui/resize.hpp>
+#include <lvtk/ext/idle.hpp>
+#include <lvtk/ext/parent.hpp>
+#include <lvtk/ext/resize.hpp>
 #include <lvtk/options.hpp>
 #include <lvtk/ui.hpp>
 
