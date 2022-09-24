@@ -99,10 +99,12 @@ struct View::EventHandler {
 
     static PuglStatus create (View& view, const PuglCreateEvent& ev) {
         view.created();
+        puglStartTimer ((PuglView*) view._view, 0, 14.0 / 1000.0);
         return PUGL_SUCCESS;
     }
 
     static PuglStatus destroy (View& view, const PuglDestroyEvent& ev) {
+        puglStopTimer ((PuglView*) view._view, 0);
         view.destroyed();
         return PUGL_SUCCESS;
     }
@@ -291,7 +293,7 @@ View::View (Main& m, Widget& w)
     puglSetSizeHint (v, PUGL_DEFAULT_SIZE, 10, 10);
     puglSetHandle (v, this);
     puglSetEventFunc (v, EventHandler::dispatch);
-    puglStartTimer (v, 0, 14.0 / 1000.0);
+    
     _weak_status.reset (this);
     _main._views.push_back (this);
 }
