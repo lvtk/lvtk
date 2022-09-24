@@ -15,6 +15,7 @@ lvtk_rst_sources = files ('''
     dynmanifest.rst
     extensions.rst
     highlevel.rst
+    hosting.rst
     index.rst
     overview.rst
     summary.rst

@@ -16,5 +16,7 @@ LVTK
     
     Widgets <widgets>
 
+    Hosting <hosting>
+    
     Projects Using <projects>
     Developers <deployment>
