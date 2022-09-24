@@ -21,6 +21,6 @@
 	rdfs:seeAlso <volume.ttl> .
 
 <https://lvtk.org/plugins/volume#ui>
-	a ui:X11UI ;
+	a ui:@UI_TYPE@ ;
 	lv2:binary <@UI_BINARY@> ;
 	rdfs:seeAlso <volume.ttl> .

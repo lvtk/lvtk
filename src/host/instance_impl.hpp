@@ -82,7 +82,7 @@ public:
 
         // terminate the array
         features.push_back (nullptr);
-#if 1
+#if 0
         std::clog << "[suil]           ui: " << info.URI << std::endl;
         std::clog << "[suil]    container: " << info.container << std::endl;
         std::clog << "[suil]       plugin: " << plugin_URI << std::endl;

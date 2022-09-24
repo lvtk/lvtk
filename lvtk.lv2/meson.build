@@ -1,5 +1,11 @@
 
 fs = import ('fs')
+ui_type = 'X11UI'
+if host_machine.system() == 'windows'
+    ui_type = 'WindowsUI'
+elif host_machine.system() == 'darwin'
+    ui_type = 'CocoaUI'
+endif
 
 plugin_install_dir = get_option('libdir') / 'lv2' / 'lvtk.lv2'
 
@@ -24,7 +30,8 @@ configure_file (
     output : 'manifest.ttl',
     configuration : {
         'PLUGIN_BINARY' : fs.name (plugin.full_path()),
-        'UI_BINARY' : fs.name (ui.full_path())
+        'UI_BINARY' : fs.name (ui.full_path()),
+        'UI_TYPE' : ui_type
     },
     install : true,
     install_dir : plugin_install_dir

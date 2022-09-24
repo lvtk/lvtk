@@ -14,3 +14,10 @@ pkg.generate (liblvtk_gl,
     description : 'OpenGL backend for LVTK',
     subdirs     : 'lvtk-3',
     requires    : [])
+pkg.generate (liblvtk_host,
+    name        : 'LVTK Host',
+    filebase    : 'lvtk-host-3.0',
+    version     : meson.project_version(),
+    description : 'LV2 hosting library',
+    subdirs     : 'lvtk-3',
+    requires    : [])

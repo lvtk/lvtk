@@ -48,10 +48,10 @@ static SupportedUIs supported_uis (LilvWorld* world, const LilvPlugin* plugin) {
             auto idle_node     = lilv::Node (lilv_new_uri (world, LV2_UI__idleInterface));
 
             if (auto ext_nodes = lilv_world_find_nodes (world, uri_node, ext_data_node, nullptr)) {
-                std::clog << "[world] checking ui extension data:" << std::endl;
+                // std::clog << "[world] checking ui extension data:" << std::endl;
                 LILV_FOREACH (nodes, iter, ext_nodes) {
                     lilv::Node node (lilv_nodes_get (ext_nodes, iter));
-                    std::clog << "[world]  " << node.as_string() << std::endl;
+                    // std::clog << "[world]  " << node.as_string() << std::endl;
                     if (lilv_node_equals (node, show_node))
                         sui.show = true;
                     else if (lilv_node_equals (node, idle_node))
@@ -81,7 +81,7 @@ static SupportedUIs supported_uis (LilvWorld* world, const LilvPlugin* plugin) {
 
         // no UI this far, check show interface
         if (sui.show) {
-            std::clog << "[world] supported ui: has show.";
+            // std::clog << "[world] supported ui: has show.";
             sui.show      = true;
             sui.container = LV2_UI__showInterface;
             sui.widget    = LV2_UI__showInterface;
@@ -279,32 +279,25 @@ std::vector<const LV2_Feature*> World::features() const noexcept {
 
 std::unique_ptr<Instance> World::instantiate (const std::string& uri) const noexcept {
     std::unique_ptr<Instance> inst;
-    std::clog << "[world] instantiate: " << uri << std::endl;
     auto nuri = lilv::Node (lilv_new_uri (impl->world, uri.c_str()));
 
     if (auto plugin = lilv_plugins_get_by_uri (impl->plugins(), nuri)) {
-        std::clog << "[world] instantiate: "
-                  << "found it!" << std::endl;
-
         auto fs = features();
         fs.push_back (nullptr);
         if (auto lpi = lilv_plugin_instantiate (plugin, impl->sample_rate, fs.data())) {
-            std::clog << "[world] instantiate: "
-                      << "created it!" << std::endl;
             inst.reset (new Instance (*const_cast<World*> (this)));
             inst->impl->plugin   = plugin;
             inst->impl->instance = lpi;
             inst->impl->info.uis = detail::supported_uis (impl->world, plugin);
         } else {
-            std::clog << "[world] instantiate: "
-                      << "failed creating it!" << std::endl;
+            // no instantiate
         }
     } else {
-        std::clog << "[world] instantiate: "
-                  << "didn't find it!" << std::endl;
+        // not found
     }
 
     if (inst != nullptr) {
+        // post setup
     }
 
     return inst;
