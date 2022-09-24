@@ -50,7 +50,11 @@ lvtk_unit_tests = '''
     World
 '''.split()
 foreach t : lvtk_unit_tests
-    test (t, unit, args : [ '-t', t ])
+    test (t, unit, args : [ '-t', t ],
+        env : [
+            'LV2_PATH=@0@'.format (meson.project_build_root())
+        ]
+    )
 endforeach
 
 subdir ('lua')

@@ -44,7 +44,7 @@ public:
         const auto& desc = lvtk::descriptors().back();
         BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
-        lvtk::URIDirectory uris;
+        lvtk::Symbols uris;
         const LV2_Feature* features[] = { uris.get_map_feature(), uris.get_unmap_feature(), nullptr };
         auto handle                   = desc.instantiate (&desc, 44100.0, "/fake/path", features);
         BOOST_REQUIRE (handle != nullptr);

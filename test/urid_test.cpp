@@ -42,7 +42,7 @@ private:
 } // namespace lvtk
 
 class URIDTest {
-    lvtk::URIDirectory urids;
+    lvtk::Symbols urids;
     uint32_t urid_A = 0;
     uint32_t urid_B = 0;
 

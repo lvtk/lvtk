@@ -100,7 +100,7 @@ struct Log : NullExtension {
         }
     }
 
-     /** Use this logger to log messages with the host. @see Logger */
+    /** Use this logger to log messages with the host. @see Logger */
     Logger& logger() noexcept { return _logger; }
 
 private:

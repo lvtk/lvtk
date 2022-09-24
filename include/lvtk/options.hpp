@@ -36,19 +36,24 @@ public:
         and NOT allocate memory. This is useful when iterating options provided
         by the host or from get/set in the Options mixin.
 
-        @note You MUST pass a valid pointer according to LV2 specifications
+        @note If the ref parameter is null, this WILL allocate an empty array.
+        Non-allocation only takes place when ref is a valid pointer to LV2_Options.
 
         @param ref  Naked Option array to reference
      */
     OptionArray (const Option* ref)
         : allocated (false), count (0), opts (const_cast<Option*> (ref)) {
-        for (;;) {
-            auto& opt = ref[count++];
-            if (opt.key == 0 || opt.value == nullptr) {
-                break;
+        if (ref == nullptr) {
+            allocate_empty();
+        } else {
+            for (;;) {
+                auto& opt = ref[count++];
+                if (opt.key == 0 || opt.value == nullptr) {
+                    break;
+                }
             }
         }
-        assert (count >= 1);
+        assert (opts != nullptr ? count >= 1 : true);
     }
 
     /** A new Option array.
@@ -59,12 +64,7 @@ public:
         
         This version is intended to be used by an LV2 host.
      */
-    OptionArray() {
-        opts = (Option*) malloc (sizeof (Option));
-        memset (&opts[0], 0, sizeof (Option));
-        allocated = true;
-        count     = 1;
-    }
+    OptionArray() { allocate_empty(); }
 
     ~OptionArray() {
         if (allocated && opts != nullptr)
@@ -143,6 +143,15 @@ public:
     iterator end() const { return iterator (opts, size()); }
 
 private:
+    inline void allocate_empty() {
+        if (count >= 1)
+            return;
+        opts = (Option*) malloc (sizeof (Option));
+        memset (&opts[0], 0, sizeof (Option));
+        allocated = true;
+        count     = 1;
+    }
+
     bool allocated = false;
     uint32_t count = 0;
     Option* opts   = nullptr;

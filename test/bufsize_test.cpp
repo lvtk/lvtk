@@ -78,7 +78,7 @@ private:
     LV2_Feature options_feature = { LV2_OPTIONS__options, nullptr };
     lvtk::BufferDetails details;
     lvtk::OptionArray options;
-    lvtk::URIDirectory urid;
+    lvtk::Symbols urid;
     uint32_t subject;
     uint32_t type;
 };

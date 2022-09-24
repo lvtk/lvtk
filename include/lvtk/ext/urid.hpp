@@ -18,9 +18,9 @@ struct Map final : FeatureData<LV2_URID_Map> {
     Map (const Feature& f) : FeatureData (LV2_URID__map) {
         set (f);
     }
-    
+
     Map (LV2_URID_Map* map) : FeatureData (LV2_URID__map) {
-        Feature f {LV2_URID__map, map };
+        Feature f { LV2_URID__map, map };
         set (f);
     }
 
@@ -71,7 +71,7 @@ struct URID : NullExtension {
     }
 
     /** Map a uri */
-    uint32_t map_uri (const std::string& uri) const noexcept {  return _map (uri); }
+    uint32_t map_uri (const std::string& uri) const noexcept { return _map (uri); }
 
     /** Unmap a URID */
     std::string unmap_urid (uint32_t urid) const noexcept { return _unmap (urid); }

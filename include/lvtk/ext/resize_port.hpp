@@ -38,7 +38,7 @@ struct PortResizer final : FeatureData<LV2_Resize_Port_Resize> {
         return (nullptr == data) ? LV2_RESIZE_PORT_ERR_UNKNOWN
                                  : data->resize (data->data, index, size);
     }
-   
+
     inline ResizePortStatus operator() (uint32_t index, size_t size) const {
         return resize (index, size);
     }
@@ -72,7 +72,7 @@ struct ResizePort : NullExtension {
         SHOULD make this as inexpensive as possible.
      */
     inline ResizePortStatus resize_port (uint32_t index, size_t size) const {
-        _resizer.resize (index, size);
+        return _resizer.resize (index, size);
     }
 
 private:

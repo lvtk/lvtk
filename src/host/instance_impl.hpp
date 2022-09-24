@@ -1,381 +1,302 @@
-// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
-// SPDX-License-Identifier: ISC
 
 #pragma once
 
-#include <lvtk/lvtk.h>
-#include <lv2/core/lv2.h>
-#include <lv2/ui/ui.h>
-#include <lv2/data-access/data-access.h>
-#include <lv2/instance-access/instance-access.h>
-
-#include <suil/suil.h>
-
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
-#ifdef __linux__
-#    define LVTK_UI__NativeUI LV2_UI__X11UI
-#elif defined(__APPLE__)
-#    define LVTK_UI__NativeUI LV2_UI__CocoaUI
-#else
-#    define LVTK_UI__NativeUI LV2_UI__WindowsUI
-#endif
+#include <lv2/core/lv2.h>
+#include <lv2/data-access/data-access.h>
+#include <lv2/instance-access/instance-access.h>
+#include <lv2/ui/ui.h>
+#include <suil/suil.h>
+
+#include <lvtk/host/instance.hpp>
+#include <lvtk/host/world.hpp>
 
 namespace lvtk {
 
+namespace detail {
+
 class World;
-
-/** A UI that is supported for loading */
-struct LVTK_API SupportedUI {
-    std::string URI;        ///< UI's URI
-    std::string container;  ///< Container type URI
-    std::string widget;     ///< Widget Type URI
-    bool show {false};      ///< Wants show interface
-    bool idle {false};      ///< Wants idle interface
-    unsigned quality {0};  ///< Quality of the GUI
-};
-
-/** A vector of supported UIs */
-class LVTK_API SupportedUIs : public std::vector<SupportedUI> {};
-
-/** Details about an LV2 plugin */
-struct LVTK_API PluginInfo {
-    std::string URI;                ///< Plugin's URI
-    std::string name;               ///< Plugin Name
-    std::string author_name;        ///< Plugin author
-    std::string author_homepage;    ///< Plugin homepage URL
-    std::string author_email;       ///< Author's email
-    SupportedUIs uis;               ///< UIs supported by the plugin.
-};
-
-/** @private */
-class InstanceImpl;
-
-/** A LV2 plugin instance.
- 
-    Powerd by Lilv
-*/
-class LVTK_API Instance final {
+class InstanceUI {
 public:
-    ~Instance();
+    InstanceUI (lvtk::World& w, lvtk::Instance& i, lvtk::InstanceUI& u)
+        : world (w), plugin (i), ui (u) {
+        host = suil_host_new (
+            Callbacks::port_write,
+            Callbacks::port_index,
+            Callbacks::subscribe,
+            Callbacks::unsubscribe);
+    }
 
-    /** Returns this Plugin's name */
-    std::string name() const noexcept;
+    ~InstanceUI() {
+        if (host)
+            suil_host_free (host);
+    }
 
-    void activate();
-    void deactivate();
-    void connect_port (uint32_t port, void* data);
-    void run (uint32_t nframes);
+    bool supports (const std::string& uri) const noexcept {
+        return std::find (supported.begin(), supported.end(), uri) != supported.end();
+    }
 
-private:
-    friend class World;
-    std::unique_ptr<InstanceImpl> impl;
-    Instance();
-};
+    bool loaded() const noexcept { return instance != nullptr; }
 
-/** @private */
-class InstanceUIImpl;
-
-class LVTK_API InstanceUI final {
-public:
-    ~InstanceUI();
-
-    /** Set this to handle touch notifications from the UI */
-    std::function<void(uint32_t, bool)> touched;
-
-    /** Called when the UI invokes LV2UI_Resize::ui_resize 
-        Use requestSize to request the UI changes it size from the host
-        return zero on success
-    */
-    std::function<int()> client_resized;
-
-    bool loaded() const { return _instance != nullptr; }
-
-    void unload()
-    {
-        // module.clearEditor();
-        
-        if (_instance)
-        {
-            suil_instance_free (_instance);
-            _instance = nullptr;
+    void unload() {
+        // todo: clear editor(s) from plugin instance
+        if (instance) {
+            suil_instance_free (instance);
+            instance = nullptr;
         }
     }
 
-    World& world() const { return _world; }
-    Instance& instance() const { return module; }
-
-    LV2UI_Widget widget() const
-    { 
-        return _instance != nullptr ? suil_instance_get_widget (_instance)
-                                   : nullptr;
+    void set_parent (uintptr_t ptr) {
+        parent.data = (void*) ptr;
     }
 
-    void portEvent (uint32_t port, uint32_t size, uint32_t format, const void* buffer)
-    {
-        if (_instance == nullptr)
-            return;
-        suil_instance_port_event (_instance, port, size, format, buffer);
-    }
-
-    bool is_native() const { return container_type == LVTK_UI__NativeUI; }
-
-    bool has_container_type (const std::string& type) const
-    {
-        return container_type == type;
-    }
-
-    bool is_a (const std::string& widget_type_uri) const
-    {
-        return widget_type_uri == widget_type;
-    }
-
-    void instantiate()
-    {
+    void instantiate() {
         if (loaded())
             return;
-        
-        std::vector<const LV2_Feature*> features;
-        // world.getFeatures (features);
+
+        auto features = world.features();
 
         // parent
         if (parent.data != nullptr)
             features.push_back (&parent);
-        
+
         // resize host side
-        host_resize_data.handle = this;
-        host_resize_data.ui_resize = InstanceUI::_host_resize;
-        resize_feature.data = (void*) &host_resize_data;
+        host_resize_data.handle    = this;
+        host_resize_data.ui_resize = InstanceUI::Callbacks::host_resize;
+        resize_feature.data        = (void*) &host_resize_data;
         features.push_back (&resize_feature);
 
         // instance access
-        // FIXME:
-        // if (auto handle = module.handle())
-        // {
-        //     instanceFeature.data = (void*) handle;
-        //     features.add (&instanceFeature);
-        // }
+        if (auto handle = plugin.handle()) {
+            instance_feature.data = (void*) handle;
+            features.push_back (&instance_feature);
+        }
 
         // data access
-        data_fdata.data_access = InstanceUI::_data_access;
-        data_feature.data = &data_fdata;
+        data_fdata.data_access = InstanceUI::Callbacks::data_access;
+        data_feature.data      = &data_fdata;
 
         // terminate the array
         features.push_back (nullptr);
-
-        // FIXME: create the instance
-        _instance = suil_instance_new (
-            nullptr, this,
-            container_type.c_str(),
-            plugin.c_str(),
-            ui.c_str(),
-            widget_type.c_str(),
-            bundle_path.c_str(),
-            binary_path.c_str(),
-            features.data()
-        );
+#if 1
+        std::clog << "[suil]           ui: " << info.URI << std::endl;
+        std::clog << "[suil]    container: " << info.container << std::endl;
+        std::clog << "[suil]       plugin: " << plugin_URI << std::endl;
+        std::clog << "[suil]  widget_type: " << info.widget << std::endl;
+        std::clog << "[suil]  bundle_path: " << bundle_path << std::endl;
+        std::clog << "[suil]  binary_path: " << binary_path << std::endl;
+#endif
+        instance = suil_instance_new (host,
+                                      this,
+                                      info.container.c_str(),
+                                      plugin_URI.c_str(),
+                                      info.URI.c_str(),
+                                      info.widget.c_str(),
+                                      bundle_path.c_str(),
+                                      binary_path.c_str(),
+                                      features.data());
 
         // Nullify all UI extensions
         ui_resize = nullptr;
-        ui_idle = nullptr;
-        ui_show = nullptr;
+        ui_idle   = nullptr;
+        ui_show   = nullptr;
 
-        if (nullptr == _instance)
+        if (nullptr == instance)
             return;
 
         // resize - plugin side
-        if (const auto* resizedata = suil_instance_extension_data (_instance, LV2_UI__resize))
+        if (const auto* resizedata = suil_instance_extension_data (instance, LV2_UI__resize))
             ui_resize = (LV2UI_Resize*) resizedata;
-        
+
         // Idle Interface
-        if (const auto* idledata = suil_instance_extension_data (_instance, LV2_UI__idleInterface))
+        if (const auto* idledata = suil_instance_extension_data (instance, LV2_UI__idleInterface))
             ui_idle = (LV2UI_Idle_Interface*) idledata;
-        
+
         // Show Interface
-        if (const auto* showdata = suil_instance_extension_data (_instance, LV2_UI__showInterface))
+        if (const auto* showdata = suil_instance_extension_data (instance, LV2_UI__showInterface))
             ui_show = (LV2UI_Show_Interface*) showdata;
     }
 
-    bool have_show_interface() const
-    { 
-        return _instance != nullptr &&
-            ui_show != nullptr && 
-            ui_show->show != nullptr &&
-            ui_show->hide != nullptr;
-    }
-
-    // fixme
-    bool requires_show_interface() const { return false; }
-
-    bool show()
-    {
-        if (! have_show_interface())
-            return false;
-        return 0 == ui_show->show ((LV2UI_Handle) suil_instance_get_handle (_instance));
-    }
-
-    bool hide()
-    {
-        if (! have_show_interface())
-            return false;
-        return 0 == ui_show->hide ((LV2UI_Handle) suil_instance_get_handle (_instance));
-    }
-
-    /** Returns true if the plugin provided LV2_UI__idleInterface */
-    bool have_idle_interface() const { return nullptr != ui_idle && nullptr != _instance; }
-    
-    void idle()
-    {
-        if (! have_idle_interface())
-            return;
-        ui_idle->idle ((LV2UI_Handle) suil_instance_get_handle (_instance));
-    }
-
-    void set_parent (uintptr_t ptr) 
-    {
-        parent.data = (void*) ptr;
-    }
-
-    /** returs true if the UI provided LV2_UI__resize */
-    bool have_client_resize() const
-    {
-        return ui_resize != nullptr &&
-            ui_resize->handle != nullptr &&
-            ui_resize->ui_resize != nullptr;
-    }
-
-    /** Request the UI update it's size. This is the Host side of
-        LV2_UI__resize
-     */
-    bool request_size (int width, int height)
-    {
-        return (have_client_resize()) ? ui_resize->ui_resize (ui_resize->handle, width, height)
-                                    : false;
-    }
-
-    /** Returns the width as reported by UI-side LV2_UI__resize */
-    int width() const noexcept { return client_width; }
-
-    /** Returns the width as reported by UI-side LV2_UI__resize */
-    int height() const noexcept { return client_height; }
-
 private:
-    friend class Instance;
-    friend class World;
-    std::unique_ptr<InstanceUIImpl> impl;
+    friend class lvtk::World;
+    friend class detail::World;
+    friend class lvtk::InstanceUI;
+    friend class lvtk::Instance;
+    friend class detail::Instance;
 
-    LV2UI_Idle_Interface *ui_idle = nullptr;
-    LV2UI_Show_Interface *ui_show = nullptr;
-    LV2UI_Resize* ui_resize = nullptr;
+    lvtk::World& world;
+    lvtk::Instance& plugin;
+    lvtk::InstanceUI& ui;
 
+    SupportedUI info;
+    std::string plugin_URI;
+    std::string bundle_path;
+    std::string binary_path;
+
+    std::vector<std::string> supported;
+
+    LV2UI_Idle_Interface* ui_idle = nullptr;
+    LV2UI_Show_Interface* ui_show = nullptr;
+    LV2UI_Resize* ui_resize       = nullptr;
     LV2_Feature parent { LV2_UI__parent, nullptr };
     LV2_Feature resize_feature { LV2_UI__resize, nullptr };
     LV2UI_Resize host_resize_data;
-    LV2_Feature instanceFeature { LV2_INSTANCE_ACCESS_URI, nullptr };
+    LV2_Feature instance_feature { LV2_INSTANCE_ACCESS_URI, nullptr };
     LV2_Feature data_feature { LV2_DATA_ACCESS_URI, nullptr };
     LV2_Extension_Data_Feature data_fdata;
 
-    int client_width = 0;
+    int client_width  = 0;
     int client_height = 0;
 
-    InstanceUI (World& w, Instance& m);
+    SuilHost* host         = nullptr;
+    SuilInstance* instance = nullptr;
 
-    World& _world;
-    Instance& module;
+    struct Callbacks {
+        static const void* data_access (const char* uri);
+        static int host_resize (LV2UI_Feature_Handle handle, int width, int height);
+        static void port_write (void* handle, uint32_t port, uint32_t size,
+                                uint32_t protocol, void const* buffer);
+        static uint32_t port_index (void* handle, const char* symbol);
 
-    SuilInstance* _instance = nullptr;
-    std::string container_type {};
-    std::string plugin {};
-    std::string ui {};
-    std::string widget_type {};
-    std::string bundle_path {};
-    std::string binary_path {};
-    bool requires_show = false;
+        static uint32_t subscribe (void* handle, uint32_t port_index,
+                                   uint32_t protocol, const LV2_Feature* const* features);
+        static uint32_t unsubscribe (void* handle, uint32_t port_index,
+                                     uint32_t protocol, const LV2_Feature* const* features);
 
-    static const void* _data_access (const char* uri)
-    {
-        return nullptr;
-    }
-
-    static int _host_resize (LV2UI_Feature_Handle handle, int width, int height)
-    {
-        auto* ui = static_cast<InstanceUI*> (handle);
-        // ui->client_width = width;
-        // ui->client_height = height;
-        // return (ui->onClientResize) ? ui->onClientResize() : 0;
-    }
-
-    static void _port_write (void* controller, uint32_t port, uint32_t size,
-                            uint32_t protocol, void const* buffer)
-    {
-        // auto& plugin = (static_cast<InstanceUI*> (controller))->getPlugin();
-        // plugin.write (port, size, protocol, buffer);
-    }
-
-    static uint32_t _port_index (void* controller, const char* symbol)
-    {
-        // auto& plugin = (static_cast<Instance*> (controller))->getPlugin();
-        // return plugin.getPortIndex (symbol);
-        return 0;
-    }
-
-    static uint32_t _subscribe (void* controller, uint32_t port_index, 
-                                   uint32_t protocol, const LV2_Feature *const *features)
-    {
-        return 0;
-    }
-
-    static uint32_t _unsubscribe (void* controller, uint32_t port_index, 
-                                     uint32_t protocol, const LV2_Feature *const *features)
-    {
-        return 0;
-    }
-
-    static void touch (void* controller, uint32_t port_index, bool grabbed)
-    {
-        auto* ui = (static_cast<InstanceUI*> (controller));
-        if (ui && ui->touched)
-            ui->touched (port_index, grabbed);
-    }
-
-private:
-    InstanceUI();
+        static void touch (void* handle, uint32_t port_index, bool grabbed);
+    };
 };
 
+} // namespace detail
+
+InstanceUI::InstanceUI (World& w, Instance& m) {
+    impl = std::make_unique<detail::InstanceUI> (w, m, *this);
 }
 
+InstanceUI::~InstanceUI() {}
+
+bool InstanceUI::loaded() const { return impl->loaded(); }
+
+void InstanceUI::unload() { impl->unload(); }
+
+World& InstanceUI::world() const { return impl->world; }
+Instance& InstanceUI::plugin_instance() const { return impl->plugin; }
+
+LV2UI_Widget InstanceUI::widget() const {
+    return impl->instance != nullptr ? suil_instance_get_widget (impl->instance)
+                                     : nullptr;
+}
+
+void InstanceUI::port_event (uint32_t port, uint32_t size, uint32_t format, const void* buffer) {
+    if (impl->instance == nullptr)
+        return;
+    suil_instance_port_event (impl->instance, port, size, format, buffer);
+}
+
+bool InstanceUI::is_native() const {
+    return impl->info.container == LVTK_UI__NativeUI;
+}
+
+bool InstanceUI::has_container_type (const std::string& type) const {
+    return impl->info.container == type;
+}
+
+bool InstanceUI::is_a (const std::string& widget_type_uri) const {
+    return widget_type_uri == impl->info.widget;
+}
+
+bool InstanceUI::have_show_interface() const {
+    return impl->instance != nullptr
+           && impl->ui_show != nullptr
+           && impl->ui_show->show != nullptr
+           && impl->ui_show->hide != nullptr;
+}
+
+// fixme
+bool InstanceUI::requires_show_interface() const { return false; }
+
+bool InstanceUI::show() {
+    if (! have_show_interface())
+        return false;
+    return 0 == impl->ui_show->show ((LV2UI_Handle) suil_instance_get_handle (impl->instance));
+}
+
+bool InstanceUI::hide() {
+    if (! have_show_interface())
+        return false;
+    return 0 == impl->ui_show->hide ((LV2UI_Handle) suil_instance_get_handle (impl->instance));
+}
+
+bool InstanceUI::have_idle_interface() const {
+    return nullptr != impl->ui_idle && nullptr != impl->instance;
+}
+
+void InstanceUI::idle() {
+    if (! have_idle_interface())
+        return;
+    impl->ui_idle->idle ((LV2UI_Handle) suil_instance_get_handle (impl->instance));
+}
+
+bool InstanceUI::have_client_resize() const {
+    return impl->ui_resize != nullptr
+           && impl->ui_resize->handle != nullptr
+           && impl->ui_resize->ui_resize != nullptr;
+}
+
+bool InstanceUI::request_size (int width, int height) {
+    return (have_client_resize()) ? impl->ui_resize->ui_resize (impl->ui_resize->handle, width, height)
+                                  : false;
+}
+
+int InstanceUI::width() const noexcept { return impl->client_width; }
+
+int InstanceUI::height() const noexcept { return impl->client_height; }
+
+const void* detail::InstanceUI::Callbacks::data_access (const char* uri) {
+    return nullptr;
+}
+
+int detail::InstanceUI::Callbacks::host_resize (LV2UI_Feature_Handle handle, int width, int height) {
+    auto self                 = &static_cast<detail::InstanceUI*> (handle)->ui;
+    self->impl->client_width  = width;
+    self->impl->client_height = height;
+    return (self->client_resized) ? self->client_resized() : 0;
+}
+
+void detail::InstanceUI::Callbacks::port_write (void* handle, uint32_t port, uint32_t size,
+                                                uint32_t protocol, void const* buffer) {
+    auto self = &static_cast<detail::InstanceUI*> (handle)->ui;
+    self->impl->plugin.write (port, size, protocol, buffer);
+}
+
+uint32_t detail::InstanceUI::Callbacks::port_index (void* handle, const char* symbol) {
+    auto self = &static_cast<detail::InstanceUI*> (handle)->ui;
+    return self->impl->plugin.port_index (symbol);
+}
+
+uint32_t detail::InstanceUI::Callbacks::subscribe (void* controller, uint32_t port_index,
+                                                   uint32_t protocol, const LV2_Feature* const* features) {
+    return 0;
+}
+
+uint32_t detail::InstanceUI::Callbacks::unsubscribe (void* controller, uint32_t port_index,
+                                                     uint32_t protocol, const LV2_Feature* const* features) {
+    return 0;
+}
+
+void detail::InstanceUI::Callbacks::touch (void* handle, uint32_t port_index, bool grabbed) {
+    auto* self = &static_cast<detail::InstanceUI*> (handle)->ui;
+    if (self->touched)
+        self->touched (port_index, grabbed);
+}
+
+} // namespace lvtk
+
 #if 0
-Skip to content
-Product
-Solutions
-Open Source
-Pricing
-Search
-Sign in
-Sign up
-This repository has been archived by the owner. It is now read-only.
-lvtk
-/
-jlv2
-Public archive
-Code
-Issues
-3
-Pull requests
-Actions
-Security
-Insights
-jlv2/modules/jlv2_host/host/Module.cpp
-@atsushieno
-atsushieno Error out if worker feature is null and an extension data is Worker i…
-…
-Latest commit 44ec197 on Sep 5, 2021
- History
- 2 contributors
-@mfisher31@atsushieno
-913 lines (767 sloc)  26.2 KB
 
 /*
     Copyright (c) 2014-2019  Michael Fisher <mfisher@kushview.net>
@@ -392,8 +313,8 @@ Latest commit 44ec197 on Sep 5, 2021
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#define JLV2_MODULE_EVENT_BUFFER_SIZE   4096
-#define JLV2_MODULE_RING_BUFFER_SIZE    4096
+#    define JLV2_MODULE_EVENT_BUFFER_SIZE 4096
+#    define JLV2_MODULE_RING_BUFFER_SIZE  4096
 
 namespace jlv2 {
 
@@ -531,7 +452,7 @@ private:
     HeapBlock<float> mins, maxes, defaults;    
     OwnedArray<PortBuffer> buffers;
 
-    LV2_Feature instanceFeature { LV2_INSTANCE_ACCESS_URI, nullptr };
+    LV2_Feature instance_feature { LV2_INSTANCE_ACCESS_URI, nullptr };
 };
 
 Module::Module (World& world_, const void* plugin_)
@@ -911,7 +832,7 @@ uint32 Module::getMidiPort() const
            return i;
    }
 
-   return LV2UI_INVALID_PORT_INDEX;
+   return LV2UI_INVALIDport_index;
 }
 
 uint32 Module::getNotifyPort() const
@@ -927,7 +848,7 @@ uint32 Module::getNotifyPort() const
         }
     }
 
-    return LV2UI_INVALID_PORT_INDEX;
+    return LV2UI_INVALIDport_index;
 }
 
 const LilvPlugin* Module::getPlugin() const { return plugin; }
@@ -1116,7 +1037,7 @@ uint32 Module::getPortIndex (const String& symbol) const
     for (const auto* port : priv->ports.getPorts())
         if (port->symbol == symbol)
             return static_cast<uint32> (port->index);
-    return LV2UI_INVALID_PORT_INDEX;
+    return LV2UI_INVALIDport_index;
 }
 
 InstanceUI* Module::createEditor()
@@ -1269,18 +1190,5 @@ void Module::write (uint32 port, uint32 size, uint32 protocol, const void* buffe
 }
 
 }
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
+
 #endif

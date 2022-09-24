@@ -30,7 +30,7 @@ public:
         const auto& desc = lvtk::descriptors().back();
         BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
-        lvtk::URIDirectory uris;
+        lvtk::Symbols uris;
 
         LV2_Log_Log log;
         log.handle  = this;

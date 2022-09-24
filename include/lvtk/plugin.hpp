@@ -291,7 +291,6 @@ private:
     }
 };
 
-
 } // namespace lvtk
 
 extern "C" {

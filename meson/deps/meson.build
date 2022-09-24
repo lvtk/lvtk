@@ -1,7 +1,10 @@
 cc = meson.get_compiler ('c')
+cpp = meson.get_compiler ('cpp')
 dl_dep = cc.find_library ('dl', required: false)
-threads_dep = dependency('threads')
 
+threads_dep = dependency ('threads')
+
+### Lv2 Core
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
     version : '>= 1.18.0', 
@@ -12,6 +15,7 @@ lv2_dep = dependency ('lv2',
         'docs=disabled'
     ])
 
+### Pugl
 pugl_opts = [
     'tests=disabled',
     'examples=disabled',
@@ -40,6 +44,7 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 lilv_dep = dependency ('lilv-0', fallback : ['lilv', 'lilv_dep'], required : true)
 suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : true)
 
+### Boost
 boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
 
 ## Lua: Try to use 5.3 lua headers on the system. 
@@ -66,3 +71,5 @@ endif
 
 # true if using system
 lvtk_lua_system = lua_dep.found() and lua_program.found()
+
+#

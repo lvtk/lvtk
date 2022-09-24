@@ -415,7 +415,50 @@ int luaopen_lvtk_Widget (lua_State* L) {
     return 1;
 }
 
+#include <lvtk/host/world.hpp>
+LVTK_LUALIB
+int luaopen_lvtk_World (lua_State* L) {
+    auto T = lua::bind<lvtk::World> (L, "lvtk", "World",
+        "load_all", &lvtk::World::load_all,
+        "instantiate", &lvtk::World::instantiate,
+        "new", factories ([]() {
+            return std::make_unique<lvtk::World>();
+        })
+    );
 
+    stack::push (L, T);
+    return 1;
+}
+
+#include <lvtk/host/instance.hpp>
+// using sol probably isn't good enough for realtime. This might
+// need re-written in vanilla lua.
+int luaopen_lvtk_Instance (lua_State* L) {
+    auto T = lua::bind<lvtk::Instance> (L, "lvtk", "Instance",
+        "activate", [](Instance&) {},
+        "deactivate", [](Instance&) {},
+        "run", [](Instance&) {},
+        "instantiate_ui", [](Instance&) {}
+    );
+
+    stack::push (L, T);
+    return 1;
+}
+
+int luaopen_lvtk_InstanceUI (lua_State* L) {
+    auto T = lua::bind<lvtk::InstanceUI> (L, "lvtk", "InstanceUI",
+        "loaded", &lvtk::InstanceUI::loaded,
+        "unload", &lvtk::InstanceUI::unload,
+        "widget", [](lvtk::InstanceUI& self) -> lua_Integer {
+            return (lua_Integer) self.widget();
+        }
+    );
+
+    stack::push (L, T);
+    return 1;
+}
+
+// main module
 LVTK_LUALIB
 int luaopen_lvtk (lua_State* L) {
     // lock and load
@@ -436,6 +479,7 @@ int luaopen_lvtk (lua_State* L) {
         Main        = require ('lvtk.Main'),
         View        = require ('lvtk.View'),
         Widget      = require ('lvtk.Widget'),
+        World       = require ('lvtk.World'),
         Symbols     = require ('lvtk.Symbols')
     }
     return M
