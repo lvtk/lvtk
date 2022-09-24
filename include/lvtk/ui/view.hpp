@@ -14,6 +14,11 @@
 
 namespace lvtk {
 
+namespace detail {
+    /** @private */
+    class View;
+}
+
 class Main;
 class Widget;
 
@@ -96,7 +101,9 @@ protected:
     virtual void destroyed() {}
 
 private:
+    friend class detail::View;
     friend class Main;
+    
     Main& _main;
     Widget& _widget;
     uintptr_t _view;
@@ -106,6 +113,7 @@ private:
     void realize();
 
     struct EventHandler;
+    std::unique_ptr<detail::View> impl;
     LVTK_WEAK_REFABLE (View);
 };
 

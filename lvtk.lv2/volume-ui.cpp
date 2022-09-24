@@ -45,9 +45,9 @@ public:
     LV2UI_Widget widget() {
         if (content == nullptr) {
             content = std::make_unique<Content>();
+            _main.elevate (*content, 0, (uintptr_t) parent.get());
             content->set_size (640, 360);
             content->set_visible (true);
-            _main.elevate (*content, 0, (uintptr_t) parent.get());
         }
 
         return *content;

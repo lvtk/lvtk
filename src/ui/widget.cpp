@@ -98,7 +98,13 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
 } // namespace convert
 
 Widget::Widget() { _weak_status.reset (this); }
-Widget::~Widget() { _weak_status.reset (nullptr); }
+Widget::~Widget() { 
+    _weak_status.reset (nullptr); 
+    if (auto p = parent())
+        p->remove (this);
+    if (_view)
+        _view.reset();
+}
 
 //=============================================================================
 bool Widget::visible() const noexcept { return _visible; }

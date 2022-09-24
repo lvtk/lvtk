@@ -46,11 +46,24 @@ static inline PuglRect frame (const Rect& r) {
     };
 }
 
-inline static void erase (std::vector<View*>& views, View* view) {
+template<class Obj>
+inline static void erase (std::vector<Obj*>& views, Obj* view) {
     auto it = std::find (views.begin(), views.end(), view);
     if (it != views.end())
         views.erase (it);
 }
+
+class View {
+public:
+    static constexpr uint32_t default_timer = 1000;
+    View (lvtk::View& o) : owner (o) {
+
+    }
+
+private:
+    friend class lvtk::View;
+    lvtk::View& owner;
+};
 
 } // namespace detail
 
@@ -102,7 +115,22 @@ struct View::EventHandler {
         return PUGL_SUCCESS;
     }
 
+    static void update_recursive (Widget& widget) {
+        if (widget.__wants_updates())
+            widget.__update();
+        for (auto& child : widget.__widgets())
+            update_recursive (*child);
+    }
+
+    static void idle_recursive (Widget& widget) {
+        if (widget.__wants_updates())
+            widget.__update();
+        for (auto& child : widget.__widgets())
+            update_recursive (*child);
+    }
+
     static PuglStatus update (View& view, const PuglUpdateEvent& ev) {
+        update_recursive (view._widget);
         return PUGL_SUCCESS;
     }
 
@@ -194,7 +222,12 @@ struct View::EventHandler {
 
     static PuglStatus scroll (View& view, const PuglScrollEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus client (View& view, const PuglClientEvent& ev) { return PUGL_SUCCESS; }
-    static PuglStatus timer (View& view, const PuglTimerEvent& ev) { return PUGL_SUCCESS; }
+    
+    static PuglStatus timer (View& view, const PuglTimerEvent& ev) { 
+        idle_recursive (view._widget);
+        return PUGL_SUCCESS;
+    }
+    
     static PuglStatus loop_enter (View& view, const PuglLoopEnterEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus loop_leave (View& view, const PuglLoopLeaveEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus data_offer (View& view, const PuglDataOfferEvent& ev) { return PUGL_SUCCESS; }
@@ -251,16 +284,20 @@ struct View::EventHandler {
 View::View (Main& m, Widget& w)
     : _main (m),
       _widget (w) {
+    impl = std::make_unique<detail::View> (*this);
+
     _view  = (uintptr_t) puglNewView ((PuglWorld*) m.world());
     auto v = (PuglView*) _view;
     puglSetSizeHint (v, PUGL_DEFAULT_SIZE, 10, 10);
     puglSetHandle (v, this);
     puglSetEventFunc (v, EventHandler::dispatch);
+    puglStartTimer (v, 0, 14.0 / 1000.0);
     _weak_status.reset (this);
     _main._views.push_back (this);
 }
 
 View::~View() {
+    puglStopTimer ((PuglView*) _view, 0);
     detail::erase (_main._views, this);
     _weak_status.reset();
     puglFreeView ((PuglView*) _view);

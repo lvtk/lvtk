@@ -22,9 +22,14 @@ public:
         unload_volume();
     }
 
+    bool obstructed (int x, int y) {
+        return true;
+    }
+
     void resized() override {
-        if (embed)
-            embed->set_bounds (bounds().at(0).smaller(10));
+        std::clog << "[embedding] resized: " << bounds().at(0).str() << std::endl;
+        if (embed && embed->visible())
+            embed->set_bounds (bounds());
     }
 
     void paint (Graphics& g) override {
@@ -33,6 +38,9 @@ public:
     }
 
     void unload_volume() {
+        idle = [](){};
+        if (embed)
+            remove (*embed);
         embed.reset();
 
         if (ui) {
@@ -45,29 +53,50 @@ public:
         }
     }
 
+    bool loaded() const { 
+        return ui != nullptr && embed != nullptr;
+    }
+
     void load_volume() {
-        unload_volume();
+        if (loaded())
+            return;
 
         plugin = world.instantiate (LVTK_PLUGINS__Volume);
         if (! plugin) {
             return;
         }
+        
         embed.reset (new Embed (main));
+        add (*embed);
+
         if (auto hv = embed->host_view()) {
             ui = plugin->instantiate_ui (hv->handle());
-            add (*embed);
-            embed->set_visible (true);
+            if (ui) {
+                embed->set_visible (true);
+                idle = [this]() { ui->idle(); };
+            }
         }
 
         resized();
         repaint();
     }
 
+    bool __wants_updates() override {
+        return true;
+    }
+
+    void __update() override {
+        if (! loaded())
+            load_volume();
+        idle();
+    };
+
 protected:
     void parent_structure_changed() override {
-        load_volume();
+        
     }
 private:
+    std::function<void()> idle { [](){} };
     lvtk::World world;
     lvtk::Main& main;
     std::unique_ptr<Embed> embed;

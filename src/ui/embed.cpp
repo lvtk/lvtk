@@ -30,8 +30,7 @@ public:
 
     void create_proxy() {
         proxy = std::make_unique<Proxy>();
-        proxy->set_size (360, 240);
-        proxy->set_visible (true);
+        proxy->set_size (1, 1);
     }
 
     void create_window() {
@@ -44,21 +43,33 @@ public:
 
         if (parent != nullptr) {
             create_proxy();
-            // TODO: use Pugl's parenting facilities
             main.elevate (*proxy, 0, *parent);
-            proxy->set_visible (true);
-            parent->set_size (100, 100);
+            if (auto pv = proxy->find_view()) {
+                // proxy->set_bounds (pv->bounds());
+                std::clog << pv->bounds().str();
+                proxy->set_visible (true);
+            }
         } else {
             std::clog << "[embed] window: didn't get parent view\n";
         }
     }
 
     void embed_resized() {
-        if (! parent.valid())
+        if (! proxy)
             return;
-        auto b = parent->bounds();
-        b.x    = 200;
-        parent->set_bounds (b);
+
+        if (auto pv = proxy->find_view()) {
+            auto r = pv->bounds();
+            auto p = owner.convert (nullptr, owner.pos().as<float>());
+            r.x = owner.x();
+            r.y = owner.y();
+            r.width = owner.width();
+            r.height = owner.height();
+            pv->set_bounds (r);
+
+            std::clog << "[r] bounds: " << r.str() << std::endl;
+            std::clog << "[pv] bounds: " << pv->bounds().str() << std::endl;
+        }
     }
 
     std::unique_ptr<Proxy> proxy;
