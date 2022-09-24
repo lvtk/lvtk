@@ -443,6 +443,7 @@ int luaopen_lvtk_World (lua_State* L) {
 #include <lvtk/host/instance.hpp>
 // using sol probably isn't good enough for realtime. This might
 // need re-written in vanilla lua.
+LVTK_LUALIB
 int luaopen_lvtk_Instance (lua_State* L) {
     auto T = lua::bind<lvtk::Instance> (L, "lvtk", "Instance",
         "name",             [](Instance&) {},
@@ -458,6 +459,7 @@ int luaopen_lvtk_Instance (lua_State* L) {
     return 1;
 }
 
+LVTK_LUALIB
 int luaopen_lvtk_InstanceUI (lua_State* L) {
     auto T = lua::bind<lvtk::InstanceUI> (L, "lvtk", "InstanceUI",
         "loaded", &lvtk::InstanceUI::loaded,

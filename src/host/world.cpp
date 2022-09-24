@@ -205,6 +205,10 @@ Instance::~Instance() {
     impl.reset();
 }
 
+const PluginInfo& Instance::info() const noexcept {
+    return impl->info;
+}
+
 std::unique_ptr<InstanceUI> Instance::instantiate_ui (uintptr_t parent) const noexcept {
     std::unique_ptr<InstanceUI> ui;
     const auto& supported = impl->info.uis;
