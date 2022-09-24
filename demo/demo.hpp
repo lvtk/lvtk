@@ -7,6 +7,7 @@
 
 #include "buttons.hpp"
 #include "four_squares.hpp"
+#include "embedding.hpp"
 #include "utils.hpp"
 
 namespace lvtk {
@@ -87,6 +88,7 @@ private:
 enum ID {
     FOUR_SQUARES = 0,
     BUTTONS,
+    EMBEDDING,
     NUM_DEMOS
 };
 
@@ -98,6 +100,8 @@ static std::string name (int did) {
         case BUTTONS:
             return "Buttons";
             break;
+        case EMBEDDING:
+            return "Embedding";
         default:
             break;
     }
@@ -149,6 +153,9 @@ private:
                 break;
             case BUTTONS:
                 demo.reset (new Buttons());
+                break;
+            case EMBEDDING:
+                demo.reset (new Embedding (main));
                 break;
             default:
                 break;
