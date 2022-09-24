@@ -45,9 +45,9 @@ public:
     LV2UI_Widget widget() {
         if (content == nullptr) {
             content = std::make_unique<Content>();
-            _main.elevate (*content, 0, (uintptr_t) parent.get());
-            content->set_size (640, 360);
+            content->set_size (360, 240);
             content->set_visible (true);
+            _main.elevate (*content, 0, (uintptr_t) parent.get());
         }
 
         return *content;
@@ -102,7 +102,7 @@ private:
 
         void resized() override {
             auto r1 = bounds().at (0, 0);
-            std::clog << "container resized: " << r1.str() << std::endl;
+            // std::clog << "container resized: " << r1.str() << std::endl;
             r1.width /= 2;
             auto r2           = r1;
             r2.x              = r1.width;

@@ -11,8 +11,7 @@ namespace demo {
 
 class Embedding : public Widget {
 public:
-    Embedding() = delete;
-    Embedding (Main& m) :main(m) {
+    Embedding () {
         set_size (640, 360);
         world.load_all();
         set_opaque (true);
@@ -22,12 +21,11 @@ public:
         unload_volume();
     }
 
-    bool obstructed (int x, int y) {
+    bool obstructed (int x, int y) override {
         return true;
     }
 
     void resized() override {
-        std::clog << "[embedding] resized: " << bounds().at(0).str() << std::endl;
         if (embed && embed->visible())
             embed->set_bounds (bounds());
     }
@@ -66,7 +64,7 @@ public:
             return;
         }
         
-        embed.reset (new Embed (main));
+        embed = std::make_unique<Embed>();
         add (*embed);
 
         if (auto hv = embed->host_view()) {
@@ -91,14 +89,9 @@ public:
         idle();
     };
 
-protected:
-    void parent_structure_changed() override {
-        
-    }
 private:
     std::function<void()> idle { [](){} };
     lvtk::World world;
-    lvtk::Main& main;
     std::unique_ptr<Embed> embed;
     std::unique_ptr<lvtk::Instance> plugin;
     std::unique_ptr<lvtk::InstanceUI> ui;

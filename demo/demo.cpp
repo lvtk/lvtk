@@ -4,9 +4,8 @@
 namespace lvtk {
 namespace demo {
 
-Content::Content (Main& m)
-    : main (m),
-      sidebar (*this) {
+Content::Content()
+    : sidebar (*this) {
     __name = "Content";
 
     add (sidebar);

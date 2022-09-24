@@ -22,6 +22,7 @@ class World;
 
 /** A World of LV2 plugins
     @ingroup host
+    @headerfile lvtk/host/world.hpp
 */
 class LVTK_API World final {
 public:
@@ -32,10 +33,18 @@ public:
     /** Load all plugins. */
     void load_all();
 
+    /** Get all plugin descriptions. */
     std::vector<PluginInfo> plugins() const noexcept;
+
+    /** Get all plugin URIs */
     std::vector<std::string> plugin_uris() const noexcept;
+
+    /** Get supported features */
     std::vector<const LV2_Feature*> features() const noexcept;
 
+    /** Instantiate a plugin by URI
+        @param uri The plugin URI to instantiate
+    */
     std::unique_ptr<Instance> instantiate (const std::string& uri) const noexcept;
 
     /** Set the default sample rate to use when instantiating plugins */

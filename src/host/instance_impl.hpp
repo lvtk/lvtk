@@ -121,6 +121,23 @@ public:
             ui_show = (LV2UI_Show_Interface*) showdata;
     }
 
+     /** Returns true if the plugin provided LV2_UI__idleInterface */
+    bool can_idle() const {
+        return nullptr != ui_idle && nullptr != instance;           
+    }
+
+
+    bool has_container_type (const std::string& type) const {
+        return info.container == type;
+    }
+
+    bool have_show_interface() const {
+        return instance != nullptr
+            && ui_show != nullptr
+            && ui_show->show != nullptr
+            && ui_show->hide != nullptr;
+    }
+
 private:
     friend class lvtk::World;
     friend class detail::World;
@@ -180,11 +197,9 @@ InstanceUI::InstanceUI (World& w, Instance& m) {
 InstanceUI::~InstanceUI() {}
 
 bool InstanceUI::loaded() const { return impl->loaded(); }
-
 void InstanceUI::unload() { impl->unload(); }
-
 World& InstanceUI::world() const { return impl->world; }
-Instance& InstanceUI::plugin_instance() const { return impl->plugin; }
+Instance& InstanceUI::plugin() const { return impl->plugin; }
 
 LV2UI_Widget InstanceUI::widget() const {
     return impl->instance != nullptr ? suil_instance_get_widget (impl->instance)
@@ -201,60 +216,27 @@ bool InstanceUI::is_native() const {
     return impl->info.container == LVTK_UI__NativeUI;
 }
 
-bool InstanceUI::has_container_type (const std::string& type) const {
-    return impl->info.container == type;
-}
-
 bool InstanceUI::is_a (const std::string& widget_type_uri) const {
     return widget_type_uri == impl->info.widget;
 }
 
-bool InstanceUI::have_show_interface() const {
-    return impl->instance != nullptr
-           && impl->ui_show != nullptr
-           && impl->ui_show->show != nullptr
-           && impl->ui_show->hide != nullptr;
-}
-
-// fixme
-bool InstanceUI::requires_show_interface() const { return false; }
-
 bool InstanceUI::show() {
-    if (! have_show_interface())
+    if (! impl->have_show_interface())
         return false;
     return 0 == impl->ui_show->show ((LV2UI_Handle) suil_instance_get_handle (impl->instance));
 }
 
 bool InstanceUI::hide() {
-    if (! have_show_interface())
+    if (! impl->have_show_interface())
         return false;
     return 0 == impl->ui_show->hide ((LV2UI_Handle) suil_instance_get_handle (impl->instance));
 }
 
-bool InstanceUI::have_idle_interface() const {
-    return nullptr != impl->ui_idle && nullptr != impl->instance;
-}
-
 void InstanceUI::idle() {
-    if (! have_idle_interface())
+    if (! impl->can_idle())
         return;
     impl->ui_idle->idle ((LV2UI_Handle) suil_instance_get_handle (impl->instance));
 }
-
-bool InstanceUI::have_client_resize() const {
-    return impl->ui_resize != nullptr
-           && impl->ui_resize->handle != nullptr
-           && impl->ui_resize->ui_resize != nullptr;
-}
-
-bool InstanceUI::request_size (int width, int height) {
-    return (have_client_resize()) ? impl->ui_resize->ui_resize (impl->ui_resize->handle, width, height)
-                                  : false;
-}
-
-int InstanceUI::width() const noexcept { return impl->client_width; }
-
-int InstanceUI::height() const noexcept { return impl->client_height; }
 
 const void* detail::InstanceUI::Callbacks::data_access (const char* uri) {
     return nullptr;
@@ -264,7 +246,7 @@ int detail::InstanceUI::Callbacks::host_resize (LV2UI_Feature_Handle handle, int
     auto self                 = &static_cast<detail::InstanceUI*> (handle)->ui;
     self->impl->client_width  = width;
     self->impl->client_height = height;
-    return (self->client_resized) ? self->client_resized() : 0;
+    return 0;
 }
 
 void detail::InstanceUI::Callbacks::port_write (void* handle, uint32_t port, uint32_t size,

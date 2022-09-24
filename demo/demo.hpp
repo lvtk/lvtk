@@ -113,7 +113,7 @@ static std::string name (int did) {
 
 class Content : public Widget {
 public:
-    Content (Main& m);
+    Content();
     ~Content();
 
     void motion (InputEvent ev) override {}
@@ -134,7 +134,6 @@ public:
     }
 
 private:
-    Main& main;
     int current_demo = -1;
     MenuBar menu;
 
@@ -155,7 +154,7 @@ private:
                 demo.reset (new Buttons());
                 break;
             case EMBEDDING:
-                demo.reset (new Embedding (main));
+                demo.reset (new Embedding());
                 break;
             default:
                 break;

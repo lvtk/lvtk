@@ -24,7 +24,10 @@ class InstanceUI;
 class World;
 class InstanceUI;
 
-/** A UI that is supported for loading */
+/** A UI that is supported for loading 
+    @ingroup host
+    @headerfile lvtk/host/instance.hpp
+*/
 struct LVTK_API SupportedUI {
     std::string URI;        ///< UI's URI
     std::string container;  ///< Container type URI
@@ -34,10 +37,16 @@ struct LVTK_API SupportedUI {
     unsigned quality { 0 }; ///< Quality of the GUI
 };
 
-/** A vector of supported UIs */
+/** A vector of supported UIs
+    @ingroup host
+    @headerfile lvtk/host/instance.hpp
+ */
 class LVTK_API SupportedUIs : public std::vector<SupportedUI> {};
 
-/** Details about an LV2 plugin */
+/** Details about an LV2 plugin
+    @ingroup host
+    @headerfile lvtk/host/instance.hpp
+ */
 struct LVTK_API PluginInfo {
     std::string URI;             ///< Plugin's URI
     std::string name;            ///< Plugin Name
@@ -48,8 +57,9 @@ struct LVTK_API PluginInfo {
 };
 
 /** A LV2 plugin instance.
- 
-    Powerd by Lilv
+    Powered by Lilv
+    @ingroup host
+    @headerfile lvtk/host/instance.hpp
 */
 class LVTK_API Instance final {
 public:
@@ -83,19 +93,17 @@ private:
     void write (uint32_t port, uint32_t size, uint32_t protocol, const void* data);
 };
 
-/** An Instance's UI */
+/** An Instance's UI
+    Powered by Lilv/Suil
+    @ingroup host
+    @headerfile lvtk/host/instance.hpp
+*/
 class LVTK_API InstanceUI final {
 public:
     ~InstanceUI();
 
     /** Set this to handle touch notifications from the UI */
     std::function<void (uint32_t, bool)> touched;
-
-    /** Called when the UI invokes LV2UI_Resize::ui_resize 
-        Use requestSize to request the UI changes it size from the host
-        return zero on success
-    */
-    std::function<int()> client_resized;
 
     /** Returns true if the UI has been instantiated */
     bool loaded() const;
@@ -107,44 +115,25 @@ public:
     World& world() const;
 
     /** Get the plugin instance this GUI is controlling */
-    Instance& plugin_instance() const;
+    Instance& plugin() const;
 
     /** Get the widget provided by the UI */
     LV2UI_Widget widget() const;
 
-    void port_event (uint32_t port, uint32_t size, uint32_t format, const void* buffer);
+    /** Returns true if this UI is native. */
     bool is_native() const;
-    bool has_container_type (const std::string& type) const;
+
+    /** Test the widget type reported by the UI module */
     bool is_a (const std::string& widget_type_uri) const;
 
-    bool have_show_interface() const;
-    bool requires_show_interface() const;
-
+    /** Idle the GUI if supported */
+    void idle();
+    
     /** Invoke show interface if supported */
     bool show();
 
     /** Invoke hide interface if supported */
     bool hide();
-
-    /** Returns true if the plugin provided LV2_UI__idleInterface */
-    bool have_idle_interface() const;
-
-    /** Idle the GUI if supported */
-    void idle();
-
-    /** returs true if the UI provided LV2_UI__resize */
-    bool have_client_resize() const;
-
-    /** Request the UI update it's size. This is the Host side of
-        LV2_UI__resize
-     */
-    bool request_size (int width, int height);
-
-    /** Returns the width as reported by UI-side LV2_UI__resize */
-    int width() const noexcept;
-
-    /** Returns the width as reported by UI-side LV2_UI__resize */
-    int height() const noexcept;
 
 private:
     friend class Instance;
@@ -155,6 +144,8 @@ private:
     InstanceUI() = delete;
     InstanceUI (World& w, Instance& m);
     std::unique_ptr<detail::InstanceUI> impl;
+
+    void port_event (uint32_t port, uint32_t size, uint32_t format, const void* buffer);
 };
 
 } // namespace lvtk

@@ -419,12 +419,22 @@ int luaopen_lvtk_Widget (lua_State* L) {
 LVTK_LUALIB
 int luaopen_lvtk_World (lua_State* L) {
     auto T = lua::bind<lvtk::World> (L, "lvtk", "World",
-        "load_all", &lvtk::World::load_all,
-        "instantiate", &lvtk::World::instantiate,
+        "load_all",         &lvtk::World::load_all,
+       
+        "plugins",          &lvtk::World::plugins,
+        "plugin_uris",      &lvtk::World::plugin_uris,
+        "features",         &lvtk::World::features,
+        "instantiate",      &lvtk::World::instantiate,
+        "set_sample_rate",  &lvtk::World::set_sample_rate,
         "new", factories ([]() {
             return std::make_unique<lvtk::World>();
         })
     );
+
+    lua::script (L, R"(
+        require ('lvtk.Instance')
+        require ('lvtk.InstanceUI')
+    )");
 
     stack::push (L, T);
     return 1;
@@ -435,10 +445,13 @@ int luaopen_lvtk_World (lua_State* L) {
 // need re-written in vanilla lua.
 int luaopen_lvtk_Instance (lua_State* L) {
     auto T = lua::bind<lvtk::Instance> (L, "lvtk", "Instance",
-        "activate", [](Instance&) {},
-        "deactivate", [](Instance&) {},
-        "run", [](Instance&) {},
-        "instantiate_ui", [](Instance&) {}
+        "name",             [](Instance&) {},
+        "activate",         [](Instance&) {},
+        "connect_port",     [](Instance&) {},
+        "run",              [](Instance&) {},
+        "deactivate",       [](Instance&) {},
+        "info",             &Instance::info,
+        "instantiate_ui",   [](Instance&){}
     );
 
     stack::push (L, T);
@@ -449,9 +462,16 @@ int luaopen_lvtk_InstanceUI (lua_State* L) {
     auto T = lua::bind<lvtk::InstanceUI> (L, "lvtk", "InstanceUI",
         "loaded", &lvtk::InstanceUI::loaded,
         "unload", &lvtk::InstanceUI::unload,
+        "world",  &lvtk::InstanceUI::world,
+        "plugin", &lvtk::InstanceUI::plugin,
         "widget", [](lvtk::InstanceUI& self) -> lua_Integer {
             return (lua_Integer) self.widget();
-        }
+        },
+        "native", &lvtk::InstanceUI::is_native,
+        "is_a", &lvtk::InstanceUI::is_a,
+        "idle", &lvtk::InstanceUI::idle,
+        "show", &lvtk::InstanceUI::show,
+        "hide", &lvtk::InstanceUI::hide
     );
 
     stack::push (L, T);

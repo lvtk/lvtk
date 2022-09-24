@@ -7,12 +7,12 @@
 #include <lvtk/ui/main.hpp>
 
 namespace lvtk {
+namespace detail {
 
-class Embed::Window {
+class Embed final {
 public:
-    Main& main;
-    Embed& owner;
-    ViewRef parent;
+    lvtk::Embed& owner;
+    ViewRef owner_view;
 
     class Proxy : public lvtk::Widget {
     public:
@@ -20,12 +20,11 @@ public:
         ~Proxy() {}
     };
 
-    Window (Main& m, Embed& x)
-        : main (m), owner (x) {
+    Embed (lvtk::Embed& x)  : owner (x) {
         create_window();
     }
 
-    ~Window() {
+    ~Embed() {
     }
 
     void create_proxy() {
@@ -37,81 +36,70 @@ public:
         if (proxy != nullptr)
             return;
 
-        parent = owner.find_view();
-        if (parent == nullptr)
-            parent = main.find_view (owner);
+        owner_view = owner.find_view();
 
-        if (parent != nullptr) {
+        if (owner_view != nullptr) {
             create_proxy();
-            main.elevate (*proxy, 0, *parent);
+            owner_view->elevate (*proxy, 0);
             if (auto pv = proxy->find_view()) {
-                // proxy->set_bounds (pv->bounds());
-                std::clog << pv->bounds().str();
                 proxy->set_visible (true);
             }
         } else {
-            std::clog << "[embed] window: didn't get parent view\n";
+            std::clog << "[embed] window: owner didn't get parent view\n";
         }
     }
 
-    void embed_resized() {
+    void resized() {
         if (! proxy)
             return;
 
         if (auto pv = proxy->find_view()) {
             auto r = pv->bounds();
-            auto p = owner.convert (nullptr, owner.pos().as<float>());
             r.x = owner.x();
             r.y = owner.y();
             r.width = owner.width();
             r.height = owner.height();
             pv->set_bounds (r);
-
-            std::clog << "[r] bounds: " << r.str() << std::endl;
-            std::clog << "[pv] bounds: " << pv->bounds().str() << std::endl;
         }
     }
 
     std::unique_ptr<Proxy> proxy;
 };
 
-Embed::Embed (Main& main)
-    : window (std::make_unique<Window> (main, *this)) {
+} /* namespace detail */
+
+Embed::Embed()
+    : impl (std::make_unique<detail::Embed> (*this)) {
     set_opaque (true);
 }
 
 Embed::~Embed() {
-    window.reset();
+    impl.reset();
 }
 
 ViewRef Embed::host_view() const noexcept {
-    return (window != nullptr && window->proxy != nullptr)
-               ? window->proxy->find_view()
+    return (impl != nullptr && impl->proxy != nullptr)
+               ? impl->proxy->find_view()
                : nullptr;
 }
 
 void Embed::paint (Graphics& g) {
-    g.set_color (0x222222ff);
+    g.set_color (0x040404ff);
     g.fill_rect (bounds().at (0));
 }
 
 void Embed::resized() {
-    window->embed_resized();
+    impl->resized();
 }
 
 void Embed::children_changed() {
-    std::clog << "[embed] children_changed()\n";
-    window->create_window();
+    impl->create_window();
 }
 
 void Embed::parent_structure_changed() {
-    std::clog << "[embed] parent_structure_changed\n";
     if (auto v = find_view()) {
-        std::clog << "[embed] find_fiew() != nullptr\n";
-        window->create_window();
-    } else {
-        std::clog << "[embed] find_fiew() == nullptr\n";
+        impl->create_window();
     }
 }
 
-} // namespace lvtk
+}

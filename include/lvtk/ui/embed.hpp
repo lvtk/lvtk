@@ -8,6 +8,10 @@
 
 namespace lvtk {
 
+namespace detail {
+    class Embed;
+}
+
 class Main;
 
 /** Embed native views in another Widget. 
@@ -16,11 +20,13 @@ class Main;
  */
 class LVTK_API Embed final : public Widget {
 public:
-    /** Initialize an embeddable. */
-    Embed (Main& main);
+    /** Initialize an embeddable widget */
+    Embed();
     ~Embed();
 
-    /** Returns the view of the embedded object */
+    /** Returns the view of the embedded object
+        @returns the host view of the proxy.
+     */
     ViewRef host_view() const noexcept;
 
 protected:
@@ -31,8 +37,7 @@ protected:
     void parent_structure_changed() override;
 
 private:
-    class Window;
-    std::unique_ptr<Window> window;
+    std::unique_ptr<detail::Embed> impl;
     LVTK_DISABLE_COPY (Embed);
 };
 
