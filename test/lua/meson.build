@@ -8,6 +8,8 @@ lvtk_lua_tests = '''
     object
     promise
     round
+
+    World
 '''.split()
 foreach key : lvtk_lua_tests
     # error ('LUA_CPATH="@0@/bindings/?.so"'.format (meson.current_build_dir()))
