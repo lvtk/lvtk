@@ -26,6 +26,33 @@ and the `UI <api/classlvtk_1_1UI.html>`_. A developer uses these templates to cr
 minimal LV2 plugin or UI.  Extension mixins are then used to implement LV2 features or
 utilize host-side features.
 
+**********
+Versioning
+**********
+
+LVTK uses two version types. A typical version number i.e. 3.0.0 and an ABI compatibility
+version. Installation works the same way as Gtkmm.
+
+**Library Version**
+
+The version of the library.
+
+- Current `@LVTK_VERSION@`
+- Format ${MAJOR}.${MINOR}.${PATCH}
+
+**ABI Version**
+
+The binary compatibility version.
+
+ABI does not affect header-only libraries or lua.  It only affects the widgets, host, and
+UI backend support libs.
+
+Libraries and headers get installed in subdirs relating to the ABI version. i.e.
+headers go to $includedir/lvtk-$abi and binary libraries to to $libdir/lvtk-$abi
+
+- Current = `@LVTK_ABI_VERSION@`
+- Format ${LIBRARY_MAJOR}.${ABI_COMPAT}
+
 ************
 Architecture
 ************

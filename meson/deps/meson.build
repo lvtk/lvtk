@@ -15,6 +15,19 @@ lv2_dep = dependency ('lv2',
         'docs=disabled'
     ])
 
+lvtk_lv2dir = get_option('lv2dir')
+if lvtk_lv2dir == ''
+  if target_machine.system() == 'darwin'
+    lvtk_lv2dir = '/Library/Audio/Plug-Ins/LV2'
+  elif target_machine.system() == 'haiku'
+    lvtk_lv2dir = '/boot/common/add-ons/lv2'
+  elif target_machine.system() == 'windows' and prefix == 'C:/'
+    lvtk_lv2dir = 'C:/Program Files/Common Files/LV2'
+  else
+    lvtk_lv2dir = get_option('prefix') / get_option('libdir') / 'lv2'
+  endif
+endif
+
 ### Pugl
 pugl_opts = [
     'tests=disabled',
@@ -23,7 +36,6 @@ pugl_opts = [
     'vulkan=disabled',
     'stub=false',
     'docs=disabled'
-    # 'default_library=static'
 ]
 
 pugl_dep = dependency ('pugl-0', 
@@ -44,9 +56,7 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 lilv_dep = dependency ('lilv-0', 
     fallback : ['lilv', 'lilv_dep' ], 
     required : true,
-    default_options : [
-        'serd:tests=disabled'
-    ])
+    default_options : [])
 suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : true)
 
 ### Boost

@@ -1,13 +1,13 @@
 
 fs = import ('fs')
-ui_type = 'X11UI'
+lvtk_ui_type = 'X11UI'
 if host_machine.system() == 'windows'
-    ui_type = 'WindowsUI'
+    lvtk_ui_type = 'WindowsUI'
 elif host_machine.system() == 'darwin'
-    ui_type = 'CocoaUI'
+    lvtk_ui_type = 'CocoaUI'
 endif
 
-plugin_install_dir = get_option('libdir') / 'lv2' / 'lvtk.lv2'
+plugin_install_dir = lvtk_lv2dir / 'lvtk.lv2'
 
 plugin = shared_module ('volume', 'volume.cpp',
     name_prefix : '',
@@ -19,7 +19,7 @@ plugin = shared_module ('volume', 'volume.cpp',
 
 ui = shared_module ('volume-ui', 'volume-ui.cpp',
     name_prefix : '',
-    dependencies : [ lvtk_gl_dep ],
+    dependencies : [ lvtk_opengl_dep ],
     install : true,
     install_dir : plugin_install_dir,
     gnu_symbol_visibility : 'hidden'
@@ -31,7 +31,7 @@ configure_file (
     configuration : {
         'PLUGIN_BINARY' : fs.name (plugin.full_path()),
         'UI_BINARY' : fs.name (ui.full_path()),
-        'UI_TYPE' : ui_type
+        'UI_TYPE' : lvtk_ui_type
     },
     install : true,
     install_dir : plugin_install_dir

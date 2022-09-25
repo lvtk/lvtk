@@ -1,5 +1,8 @@
 
-lvtk_ui_sources = '''
+lvtk_libdir = get_option('libdir')
+
+### LVTK Widgets
+lvtk_widgets_sources = '''
     ui/embed.cpp
     ui/font.cpp
     ui/graphics.cpp
@@ -10,55 +13,57 @@ lvtk_ui_sources = '''
     ui/widget.cpp
 '''.split()
 
-lvtk_ui_deps = [ lvtk_dep, pugl_dep ]
+lvtk_widgets_deps = [ lvtk_dep, pugl_dep ]
 add_project_arguments ('-DPUGL_STATIC', language : ['c', 'cpp'])
 
-liblvtk_ui = library ('lvtk-ui-3',
-    lvtk_ui_sources,
+liblvtk_widgets = library ('lvtk-widgets-@0@'.format (lvtk_abi_version),
+    lvtk_widgets_sources,
     c_args : [ '-DLVTK_BUILD' ],
     cpp_args : [ '-DLVTK_BUILD' ],
-    version : meson.project_version(),
-    dependencies : lvtk_ui_deps,
+    dependencies : lvtk_widgets_deps,
     gnu_symbol_visibility : 'hidden',
-    install : true)
-lvtk_ui_dep = declare_dependency (
-    link_with : liblvtk_ui,
+    install : true,
+    install_dir : lvtk_libdir)
+lvtk_widgets_dep = declare_dependency (
+    link_with : liblvtk_widgets,
     include_directories : [],
-    dependencies : lvtk_ui_deps)
+    dependencies : lvtk_widgets_deps)
 
+### LVTK OpenGL
 subdir ('ui/res')
 lvtk_gl_sources = ['ui/nanovg.cpp', 'ui/opengl.cpp', lvtk_res_sources ]
 lvtk_gl_c_args = ['-DLVTK_BUILD']
 lvtk_gl_cpp_args = lvtk_gl_c_args
 subdir ('nanovg')
 
-lvtk_gl_deps = [ lvtk_ui_dep, pugl_gl_dep, dl_dep ]
+lvtk_opengl_deps = [ lvtk_widgets_dep, pugl_gl_dep, dl_dep ]
 
-liblvtk_gl = library ('lvtk-gl-3',
+liblvtk_opengl = library ('lvtk-opengl-@0@'.format (lvtk_abi_version),
     lvtk_gl_sources,
-    version : meson.project_version(),
     gnu_symbol_visibility : 'hidden',
     link_with : [],
     include_directories : [ 'nanovg' ],
     c_args : [ lvtk_gl_c_args ],
     cpp_args : [ lvtk_gl_cpp_args ],
-    dependencies : [ lvtk_gl_deps ],
-    install : true)
-lvtk_gl_dep = declare_dependency (
-    link_with : [ liblvtk_gl ],
+    dependencies : [ lvtk_opengl_deps ],
+    install : true,
+    install_dir : lvtk_libdir)
+lvtk_opengl_dep = declare_dependency (
+    link_with : [ liblvtk_opengl ],
     include_directories : [],
-    dependencies : lvtk_gl_deps)
+    dependencies : lvtk_opengl_deps)
 
+### LVTK Hosting
 if lilv_dep.found() and suil_dep.found()
     lvtk_host_sources = files ('''
         host/world.cpp
     '''.split())
-    liblvtk_host = library ('lvtk-host', 
+    liblvtk_host = library ('lvtk-host-@0@'.format (lvtk_abi_version), 
         lvtk_host_sources,
-        version : meson.project_version(),
         gnu_symbol_visibility : 'hidden',
         dependencies : [ lvtk_dep, lilv_dep, suil_dep ],
-        install : true)
+        install : true,
+        install_dir : lvtk_libdir)
     lvtk_host_dep = declare_dependency (
         link_with : [ liblvtk_host ],
         include_directories : [],

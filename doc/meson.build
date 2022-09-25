@@ -9,6 +9,15 @@ conf_py = configure_file (configuration: {
     input : 'conf.py.in',
     output : 'conf.py')
 
+conf_py = configure_file (configuration: {
+        'LVTK_VERSION' : meson.project_version(),
+        'LVTK_ABI_VERSION'  : lvtk_abi_version
+    },
+    input : 'overview.rst.in',
+    output : 'overview.rst')
+
+    
+
 
 lvtk_rst_sources = files ('''
     deployment.rst
@@ -17,7 +26,6 @@ lvtk_rst_sources = files ('''
     highlevel.rst
     hosting.rst
     index.rst
-    overview.rst
     summary.rst
     widgets.rst
     plugins.rst
