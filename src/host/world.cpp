@@ -1,8 +1,9 @@
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <vector>
-
+#include <unistd.h>
 #include <lv2/ui/ui.h>
 
 #include <lvtk/lvtk.hpp>
@@ -124,7 +125,31 @@ public:
     }
 
     void load_all() {
+        // redirect stderr.... Lilv is a little crazy on the errors and
+        // warnings for little things.... like not being able to open
+        // a .DS_Store file.
+
+        #define bufsize 2048 + 1
+        char buffer[bufsize] = {0};
+        int out_pipe[2];
+        int saved_stderr;
+
+        saved_stderr = dup (STDERR_FILENO);
+
+        if (pipe (out_pipe) != 0 ) {          /* make a pipe */
+            // exit(1);
+        }
+
+        dup2 (out_pipe[1], STDERR_FILENO);   /* redirect stdout to the pipe */
+        close (out_pipe[1]);
+
         lilv_world_load_all (world);
+        
+        std::fflush (stderr);
+        read(out_pipe[0], buffer, bufsize); /* read from pipe into buffer */
+        dup2(saved_stderr, STDERR_FILENO);  /* reconnect stdout for testing */
+
+        #undef bufsize
     }
 
     const LilvPlugins* plugins() const noexcept {
