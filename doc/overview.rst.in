@@ -26,33 +26,6 @@ and the `UI <api/classlvtk_1_1UI.html>`_. A developer uses these templates to cr
 minimal LV2 plugin or UI.  Extension mixins are then used to implement LV2 features or
 utilize host-side features.
 
-**********
-Versioning
-**********
-
-LVTK uses two version types. A typical version number i.e. 3.0.0 and an ABI compatibility
-version. Installation works the same way as Gtkmm.
-
-**Library Version**
-
-The version of the library.
-
-- Current `@LVTK_VERSION@`
-- Format ${MAJOR}.${MINOR}.${PATCH}
-
-**ABI Version**
-
-The binary compatibility version.
-
-ABI does not affect header-only libraries or lua.  It only affects the widgets, host, and
-UI backend support libs.
-
-Libraries and headers get installed in subdirs relating to the ABI version. i.e.
-headers go to $includedir/lvtk-$abi and binary libraries to to $libdir/lvtk-$abi
-
-- Current = `@LVTK_ABI_VERSION@`
-- Format ${LIBRARY_MAJOR}.${ABI_COMPAT}
-
 ************
 Architecture
 ************
@@ -61,9 +34,69 @@ Architecture
 * Base plugin, UI, and extensions use NO virtual methods, thus reducing overhead.
 * Uses modern C++. A compiler supporting ``c++14`` or better is required.
 
-***********
-Terminology
-***********
+**********
+Versioning
+**********
+
+- **Library**: `@LVTK_VERSION@`
+- **ABI**: `@LVTK_ABI_VERSION@`
+
+LVTK uses two version types. A typical lib version and an ABI compatibility
+version. Installation of headers and shared object naming works the same way
+as Gtkmm.
+
+**Version Scheme**
+
+.. list-table::
+    :widths: auto
+    :header-rows: 0
+    :align: left
+
+    * - Library
+      - ``${MAJOR}.${MINOR}.${PATCH}``
+    * - ABI
+      - ``${LIBRARY_MAJOR}.${ABI_COMPAT}``
+
+
+**Binary Compatibility**
+
+ABI does not affect header-only libraries or lua.  It only affects the widgets, host, and
+UI backend support libs.
+
+Libraries and headers get installed in subdirs relating to the ABI version. i.e.
+headers go to $includedir/lvtk-$abi and binary libraries to to $libdir/lvtk-$abi
+
+*********
+Libraries
+*********
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :align: left
+    
+    * - Name
+      - Binary
+      - Description
+    * - Plugin
+      - No
+      - C++ Templates that implement boilerplate code for a LV2 Plugin
+    * - UI
+      - No
+      - C++ Templates that implement boilerplate code for a LV2 UI
+    * - Widgets
+      - Yes
+      - Extension to UI providing a light weight GUI toolkit for UIs and Apps
+    * - OpenGL
+      - Yes
+      - Provides OpenGL graphics for Widgets library.
+    * - Host
+      - Yes
+      - C++ Templates that implement boilerplate code for a LV2 UI
+
+********
+Glossary
+********
 
 For clarity, here is a glossary of terms used throughout this manual.
 
