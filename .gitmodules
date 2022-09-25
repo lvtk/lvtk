@@ -1,6 +1,0 @@
-[submodule "subprojects/pugl"]
-	path = subprojects/pugl
-	url = https://gitlab.com/lvtk/pugl
-[submodule "subprojects/lv2"]
-	path = subprojects/lv2
-	url = https://gitlab.com/lv2/lv2

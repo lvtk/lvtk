@@ -1,5 +1,6 @@
 [wrap-git]
 url = https://gitlab.com/lvtk/pugl
+push-url = https://gitlab.com/lvtk/pugl.git
 revision = lvtk
 
 [provide]
