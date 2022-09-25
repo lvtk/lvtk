@@ -76,7 +76,8 @@ if not lua_program.found()
 endif
 
 if lua_program.found()
-    lua_version = run_command('python', '../../scripts/luavers.py',
+    pymod = import('python')
+    lua_version = run_command(pymod.find_installation('python2'), '../../scripts/luavers.py',
         lua_program, check : true).stdout().strip()
     lua_dep = dependency ('lua@0@'.format(lua_version), required : false)
     if not lua_dep.found()
