@@ -441,6 +441,21 @@ int luaopen_lvtk_World (lua_State* L) {
 }
 
 #include <lvtk/host/instance.hpp>
+LVTK_LUALIB
+int luaopen_lvtk_PluginInfo (lua_State* L) {
+    auto T = lua::bind<lvtk::PluginInfo> (L, "lvtk", "PluginInfo",
+        "URI",             readonly_property (&lvtk::PluginInfo::URI),
+        "name",            readonly_property (&lvtk::PluginInfo::name),
+        "author_name",     readonly_property (&lvtk::PluginInfo::author_name),
+        "author_homepage", readonly_property (&lvtk::PluginInfo::author_homepage),
+        "author_email",    readonly_property (&lvtk::PluginInfo::author_email),
+        "uis",             readonly_property (&lvtk::PluginInfo::uis)
+    );
+
+    stack::push (L, T);
+    return 1;
+}
+
 // using sol probably isn't good enough for realtime. This might
 // need re-written in vanilla lua.
 LVTK_LUALIB
