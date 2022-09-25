@@ -449,7 +449,17 @@ int luaopen_lvtk_PluginInfo (lua_State* L) {
         "author_name",     readonly_property (&lvtk::PluginInfo::author_name),
         "author_homepage", readonly_property (&lvtk::PluginInfo::author_homepage),
         "author_email",    readonly_property (&lvtk::PluginInfo::author_email),
-        "uis",             readonly_property (&lvtk::PluginInfo::uis)
+        "uis",             readonly_property (&lvtk::PluginInfo::uis),
+        "new",  factories ([](table tbl) -> lvtk::PluginInfo { 
+            PluginInfo info;
+            info.URI = tbl.get_or ("URI", info.URI);
+            info.name = tbl.get_or ("name", info.name);
+            info.author_name = tbl.get_or ("author_name", info.author_name);
+            info.author_homepage = tbl.get_or ("author_homepage", info.author_homepage);
+            info.author_email = tbl.get_or ("author_email", info.author_email);
+            info.uis = tbl.get_or ("uis", info.uis);
+            return info;
+        })
     );
 
     stack::push (L, T);
