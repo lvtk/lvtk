@@ -128,27 +128,30 @@ public:
         // redirect stderr.... Lilv is a little crazy on the errors and
         // warnings for little things.... like not being able to open
         // a .DS_Store file.
-
+#define redirect_pipe 1
+#if redirect_pipe
         #define bufsize 2048 + 1
         char buffer[bufsize] = {0};
         int out_pipe[2];
         int saved_stderr;
 
-        saved_stderr = dup (STDERR_FILENO);
-
-        if (pipe (out_pipe) != 0 ) {          /* make a pipe */
-            // exit(1);
+        auto pipe_open = pipe (out_pipe) == 0;
+        if (pipe_open) {
+            saved_stderr = dup (STDERR_FILENO);
+            dup2 (out_pipe[1], STDERR_FILENO);   /* redirect stdout to the pipe */
+            close (out_pipe[1]);
         }
-
-        dup2 (out_pipe[1], STDERR_FILENO);   /* redirect stdout to the pipe */
-        close (out_pipe[1]);
-
+#endif
         lilv_world_load_all (world);
-        
         std::fflush (stderr);
-        read(out_pipe[0], buffer, bufsize); /* read from pipe into buffer */
-        dup2(saved_stderr, STDERR_FILENO);  /* reconnect stdout for testing */
 
+#if redirect_pipe
+        if (pipe_open) {
+            // read(out_pipe[0], buffer, bufsize); /* read from pipe into buffer */
+            dup2(saved_stderr, STDERR_FILENO);  /* reconnect stdout for testing */
+            close (out_pipe[0]);
+        }
+#endif
         #undef bufsize
     }
 

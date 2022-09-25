@@ -17,8 +17,11 @@ end
 
 local LVTK_PLUGINS__Volume = "https://lvtk.org/plugins/volume"
 local plugin = world.instantiate (w, LVTK_PLUGINS__Volume)
+if nplus > 0 then
+    assert (plugin ~= nil);
+end
 
-assert (nuris == nplus and nuris > 0 and plugin ~= nil)
+assert (nuris == nplus)
 
 plugin = world.instantiate (w, "fake plugin")
 assert (plugin == nil)

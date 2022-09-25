@@ -10,7 +10,7 @@ lv2_dep = dependency ('lv2',
     version : '>= 1.18.0', 
     required : true,
     default_options : [
-        'tests=auto',
+        'tests=disabled',
         'plugins=disabled',
         'docs=disabled'
     ])
@@ -41,7 +41,12 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 )
 
 ### Lilv & Suil
-lilv_dep = dependency ('lilv-0', fallback : ['lilv', 'lilv_dep'], required : true)
+lilv_dep = dependency ('lilv-0', 
+    fallback : ['lilv', 'lilv_dep' ], 
+    required : true,
+    default_options : [
+        'serd:tests=disabled'
+    ])
 suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : true)
 
 ### Boost
