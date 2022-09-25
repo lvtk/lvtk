@@ -2,16 +2,16 @@
 #pragma once
 
 #include "utils.hpp"
-#include <lvtk/ui/widget.hpp>
-#include <lvtk/ui/embed.hpp>
 #include <lvtk/host/world.hpp>
+#include <lvtk/ui/embed.hpp>
+#include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
 namespace demo {
 
 class Embedding : public Widget {
 public:
-    Embedding () {
+    Embedding() {
         set_size (640, 360);
         world.load_all();
         set_opaque (true);
@@ -36,7 +36,7 @@ public:
     }
 
     void unload_volume() {
-        idle = [](){};
+        idle = []() {};
         if (embed)
             remove (*embed);
         embed.reset();
@@ -63,7 +63,7 @@ public:
         if (! plugin) {
             return;
         }
-        
+
         embed = std::make_unique<Embed>();
         add (*embed);
 
@@ -90,7 +90,7 @@ public:
     };
 
 private:
-    std::function<void()> idle { [](){} };
+    std::function<void()> idle { []() {} };
     lvtk::World world;
     std::unique_ptr<Embed> embed;
     std::unique_ptr<lvtk::Instance> plugin;

@@ -9,7 +9,7 @@
 namespace lvtk {
 
 namespace detail {
-    class Embed;
+class Embed;
 }
 
 class Main;

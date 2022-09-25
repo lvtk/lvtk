@@ -349,6 +349,7 @@ Rectangle<int> View::bounds() const {
 
 void View::set_bounds (Bounds b) {
     b *= scale_factor();
+    std::clog << "[view] set_bounds: " << b.str() << std::endl;
     puglSetFrame ((PuglView*) _view, detail::frame (b));
 }
 

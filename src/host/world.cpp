@@ -1,10 +1,10 @@
 
 #include <algorithm>
 #include <iostream>
-#include <sstream>
-#include <vector>
-#include <unistd.h>
 #include <lv2/ui/ui.h>
+#include <sstream>
+#include <unistd.h>
+#include <vector>
 
 #include <lvtk/lvtk.hpp>
 #include <lvtk/options.hpp>
@@ -125,20 +125,17 @@ public:
     }
 
     void load_all() {
-        // redirect stderr.... Lilv is a little crazy on the errors and
-        // warnings for little things.... like not being able to open
-        // a .DS_Store file.
 #define redirect_pipe 1
 #if redirect_pipe
-        #define bufsize 2048 + 1
-        char buffer[bufsize] = {0};
+        static constexpr size_t bufsize = 2048 + 1;
+        char buffer [bufsize] = { 0 };
         int out_pipe[2];
         int saved_stderr;
 
         auto pipe_open = pipe (out_pipe) == 0;
         if (pipe_open) {
             saved_stderr = dup (STDERR_FILENO);
-            dup2 (out_pipe[1], STDERR_FILENO);   /* redirect stdout to the pipe */
+            dup2 (out_pipe[1], STDERR_FILENO); /* redirect stdout to the pipe */
             close (out_pipe[1]);
         }
 #endif
@@ -147,12 +144,13 @@ public:
 
 #if redirect_pipe
         if (pipe_open) {
+            (void)buffer;
             // read(out_pipe[0], buffer, bufsize); /* read from pipe into buffer */
-            dup2(saved_stderr, STDERR_FILENO);  /* reconnect stdout for testing */
+            dup2 (saved_stderr, STDERR_FILENO); /* reconnect stdout for testing */
             close (out_pipe[0]);
         }
 #endif
-        #undef bufsize
+#undef bufsize
     }
 
     const LilvPlugins* plugins() const noexcept {

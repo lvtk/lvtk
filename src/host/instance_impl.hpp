@@ -121,11 +121,10 @@ public:
             ui_show = (LV2UI_Show_Interface*) showdata;
     }
 
-     /** Returns true if the plugin provided LV2_UI__idleInterface */
+    /** Returns true if the plugin provided LV2_UI__idleInterface */
     bool can_idle() const {
-        return nullptr != ui_idle && nullptr != instance;           
+        return nullptr != ui_idle && nullptr != instance;
     }
-
 
     bool has_container_type (const std::string& type) const {
         return info.container == type;
@@ -133,9 +132,9 @@ public:
 
     bool have_show_interface() const {
         return instance != nullptr
-            && ui_show != nullptr
-            && ui_show->show != nullptr
-            && ui_show->hide != nullptr;
+               && ui_show != nullptr
+               && ui_show->show != nullptr
+               && ui_show->hide != nullptr;
     }
 
 private:
@@ -325,20 +324,6 @@ public:
         : owner (module) { }
 
     ~Private() { }
-
-    InstanceUI* createInstanceUI (const SupportedUI& supportedUI)
-    {
-        auto* uiptr = new InstanceUI (owner.getWorld(), owner);
-        uiptr->ui               = supportedUI.URI;
-        uiptr->plugin           = supportedUI.plugin;
-        uiptr->container_type    = supportedUI.container;
-        uiptr->widget_type       = supportedUI.widget;
-        uiptr->bundle_path       = supportedUI.bundle;
-        uiptr->binary_path       = supportedUI.binary;
-        uiptr->require_show      = supportedUI.useShowInterface;
-        this->ui = uiptr;
-        return uiptr;
-    }
 
     void sendControlValues()
     {

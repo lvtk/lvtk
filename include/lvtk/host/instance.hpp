@@ -128,7 +128,7 @@ public:
 
     /** Idle the GUI if supported */
     void idle();
-    
+
     /** Invoke show interface if supported */
     bool show();
 

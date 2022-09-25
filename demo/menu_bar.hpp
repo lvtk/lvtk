@@ -76,4 +76,5 @@ private:
     Item file, help;
 };
 
-}}
+} // namespace demo
+} // namespace lvtk

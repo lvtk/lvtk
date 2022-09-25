@@ -98,8 +98,8 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
 } // namespace convert
 
 Widget::Widget() { _weak_status.reset (this); }
-Widget::~Widget() { 
-    _weak_status.reset (nullptr); 
+Widget::~Widget() {
+    _weak_status.reset (nullptr);
     if (auto p = parent())
         p->remove (this);
     if (_view)
@@ -134,7 +134,7 @@ void Widget::set_bounds (int x, int y, int w, int h) {
 
     if (visible() && was_resized)
         repaint();
-    
+
     notify_moved_resized (was_moved, was_resized);
 }
 

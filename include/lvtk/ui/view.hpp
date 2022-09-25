@@ -15,9 +15,9 @@
 namespace lvtk {
 
 namespace detail {
-    /** @private */
-    class View;
-}
+/** @private */
+class View;
+} // namespace detail
 
 class Main;
 class Widget;
@@ -103,7 +103,7 @@ protected:
 private:
     friend class detail::View;
     friend class Main;
-    
+
     Main& _main;
     Widget& _widget;
     uintptr_t _view;

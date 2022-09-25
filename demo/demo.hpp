@@ -6,9 +6,9 @@
 #include <lvtk/ui/widget.hpp>
 
 #include "buttons.hpp"
+#include "embedding.hpp"
 #include "four_squares.hpp"
 #include "menu_bar.hpp"
-#include "embedding.hpp"
 #include "utils.hpp"
 
 namespace lvtk {
