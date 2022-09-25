@@ -51,7 +51,7 @@ public:
         }
     }
 
-    bool loaded() const { 
+    bool loaded() const {
         return ui != nullptr && embed != nullptr;
     }
 
@@ -67,7 +67,7 @@ public:
         embed = std::make_unique<Embed>();
         add (*embed);
 
-        if (auto hv = embed->host_view()) {
+        if (auto hv = embed->proxy_view()) {
             ui = plugin->instantiate_ui (hv->handle());
             if (ui) {
                 embed->set_visible (true);

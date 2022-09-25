@@ -69,6 +69,7 @@ void Content::run_demo (int index) {
 
     current_demo = index;
     resized();
+    repaint();
 }
 
 } // namespace demo

@@ -27,7 +27,7 @@ public:
     /** Returns the view of the embedded object
         @returns the host view of the proxy.
      */
-    ViewRef host_view() const noexcept;
+    ViewRef proxy_view() const noexcept;
 
 protected:
     /** @internal */

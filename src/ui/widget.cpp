@@ -123,18 +123,18 @@ void Widget::repaint() {
 }
 
 //=============================================================================
-void Widget::set_bounds (int x, int y, int width, int height) {
+void Widget::set_bounds (int x, int y, int w, int h) {
     const bool was_moved   = _bounds.x != x || _bounds.y != y;
-    const bool was_resized = _bounds.width != width || _bounds.height != height;
+    const bool was_resized = _bounds.width != w || _bounds.height != h;
 
     _bounds.x      = x;
     _bounds.y      = y;
-    _bounds.width  = width;
-    _bounds.height = height;
+    _bounds.width  = w;
+    _bounds.height = h;
 
     if (visible() && was_resized)
         repaint();
-
+    
     notify_moved_resized (was_moved, was_resized);
 }
 

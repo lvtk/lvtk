@@ -46,7 +46,7 @@ static inline PuglRect frame (const Rect& r) {
     };
 }
 
-template<class Obj>
+template <class Obj>
 inline static void erase (std::vector<Obj*>& views, Obj* view) {
     auto it = std::find (views.begin(), views.end(), view);
     if (it != views.end())
@@ -57,7 +57,6 @@ class View {
 public:
     static constexpr uint32_t default_timer = 1000;
     View (lvtk::View& o) : owner (o) {
-
     }
 
 private:
@@ -224,12 +223,12 @@ struct View::EventHandler {
 
     static PuglStatus scroll (View& view, const PuglScrollEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus client (View& view, const PuglClientEvent& ev) { return PUGL_SUCCESS; }
-    
-    static PuglStatus timer (View& view, const PuglTimerEvent& ev) { 
+
+    static PuglStatus timer (View& view, const PuglTimerEvent& ev) {
         idle_recursive (view._widget);
         return PUGL_SUCCESS;
     }
-    
+
     static PuglStatus loop_enter (View& view, const PuglLoopEnterEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus loop_leave (View& view, const PuglLoopLeaveEvent& ev) { return PUGL_SUCCESS; }
     static PuglStatus data_offer (View& view, const PuglDataOfferEvent& ev) { return PUGL_SUCCESS; }
@@ -293,7 +292,7 @@ View::View (Main& m, Widget& w)
     puglSetSizeHint (v, PUGL_DEFAULT_SIZE, 10, 10);
     puglSetHandle (v, this);
     puglSetEventFunc (v, EventHandler::dispatch);
-    
+
     _weak_status.reset (this);
     _main._views.push_back (this);
 }
@@ -327,7 +326,15 @@ void View::set_visible (bool visible) {
 bool View::visible() const { return puglGetVisible ((PuglView*) _view); }
 
 void View::set_size (int width, int height) {
-    puglSetSize ((PuglView*) _view, width * scale_factor(), height * scale_factor());
+    auto status = puglSetSize ((PuglView*) _view,
+                               static_cast<unsigned int> (width),
+                               static_cast<unsigned int> (height));
+    switch (status) {
+        case PUGL_SUCCESS:
+            break;
+        default:
+            break;
+    }
 }
 
 Rectangle<int> View::bounds() const {

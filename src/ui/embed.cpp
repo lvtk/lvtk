@@ -20,14 +20,22 @@ public:
         ~Proxy() {}
     };
 
-    Embed (lvtk::Embed& x)  : owner (x) {
+    Embed (lvtk::Embed& x) : owner (x) {
         create_window();
     }
 
     ~Embed() {
     }
 
+    void close_proxy() {
+        if (proxy) {
+            proxy->set_visible (false);
+            proxy.reset();
+        }
+    }
+
     void create_proxy() {
+        close_proxy();
         proxy = std::make_unique<Proxy>();
         proxy->set_size (1, 1);
     }
@@ -40,12 +48,15 @@ public:
 
         if (owner_view != nullptr) {
             create_proxy();
-            owner_view->elevate (*proxy, 0);
-            if (auto pv = proxy->find_view()) {
-                proxy->set_visible (true);
+            if (proxy) {
+                owner_view->elevate (*proxy, 0);
+                if (auto pv = proxy->find_view()) {
+                    std::clog << pv->bounds().str() << std::endl;
+                    proxy->set_visible (true);
+                }
             }
         } else {
-            std::clog << "[embed] window: owner didn't get parent view\n";
+            // std::clog << "[embed] window: owner didn't get parent view\n";
         }
     }
 
@@ -54,11 +65,9 @@ public:
             return;
 
         if (auto pv = proxy->find_view()) {
-            auto r = pv->bounds();
-            r.x = owner.x();
-            r.y = owner.y();
-            r.width = owner.width();
-            r.height = owner.height();
+            auto r   = pv->bounds();
+            r.x      = owner.x();
+            r.y      = owner.y();
             pv->set_bounds (r);
         }
     }
@@ -77,7 +86,7 @@ Embed::~Embed() {
     impl.reset();
 }
 
-ViewRef Embed::host_view() const noexcept {
+ViewRef Embed::proxy_view() const noexcept {
     return (impl != nullptr && impl->proxy != nullptr)
                ? impl->proxy->find_view()
                : nullptr;
@@ -102,4 +111,4 @@ void Embed::parent_structure_changed() {
     }
 }
 
-}
+} // namespace lvtk
