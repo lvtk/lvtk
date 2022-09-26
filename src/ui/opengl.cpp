@@ -7,6 +7,7 @@
 #include "nanovg.hpp"
 #include <lvtk/ui/opengl.hpp>
 
+#include <iostream>
 namespace lvtk {
 
 using OpenGLContext = nvg::Context;
@@ -35,6 +36,7 @@ public:
 
 protected:
     inline void created() override {
+        std::clog << "OpenGLView::created\n";
         if (! _context) {
 #if _WIN32
             static bool glad_loaded = false;

@@ -10,6 +10,8 @@
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
 
+#include "detail/view.hpp"
+
 namespace lvtk {
 namespace detail {
 static inline PuglWorldType world_type (Mode mode) {
@@ -87,7 +89,7 @@ std::unique_ptr<View> Main::create_view (Widget& widget, ViewFlags flags, uintpt
     const bool transient = false;
 
     if (view && parent)
-        view->set_parent (parent, transient);
+        view->impl->set_parent (parent, transient);
 
     view->set_view_hint (PUGL_RESIZABLE, (int) (flags & ViewFlag::RESIZABLE));
     // if (flags & ViewFlag::POPUP)
@@ -102,7 +104,9 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     auto view = create_view (widget, flags, parent);
     // bail out conditions?
 
-    view->realize();
+    std::clog << "Main::elevate\n";
+
+    view->impl->realize();
     view->set_bounds (widget.bounds());
     view->set_visible (widget.visible());
     widget._view = std::move (view);
@@ -117,7 +121,7 @@ View* Main::find_view (Widget& widget) const noexcept {
     for (auto view : _views) {
         if (view == widget._view.get())
             return view;
-        if (view->_widget.contains (widget, true))
+        if (view->widget().contains (widget, true))
             return view;
     }
     return nullptr;

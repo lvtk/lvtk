@@ -202,6 +202,8 @@ protected:
 private:
     friend class Main;
     friend class View;
+    friend class detail::View;
+    
     Widget* _parent = nullptr;
     std::unique_ptr<View> _view;
     std::vector<Widget*> _widgets;

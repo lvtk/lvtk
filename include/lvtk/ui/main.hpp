@@ -12,6 +12,10 @@
 #include <lvtk/ui/view.hpp>
 
 namespace lvtk {
+namespace detail {
+/** @private */
+class Main;
+}
 
 /** The running mode type of a UI context. 
     @see Main

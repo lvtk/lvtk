@@ -13,8 +13,9 @@
 */
 
 namespace lvtk {
-
 namespace detail {
+/** @private */
+class Main;
 /** @private */
 class View;
 } // namespace detail
@@ -70,11 +71,19 @@ public:
     void set_bounds (Bounds b);
 
     /** Returns the Main that initialized this view */
-    Main& main() noexcept { return _main; }
+    Main& main() noexcept;
 
     /** Returns the Style used by this view */
     Style& style() noexcept;
+
+    /** Returns the Style used by this view */
     const Style& style() const noexcept;
+
+    /** Returns the Widget that owns this View */
+    Widget& widget() noexcept;
+
+    /** Returns the Widget that owns this View */
+    const Widget& widget() const noexcept;
 
     /** Elevate a widget to view Status using this one as the Parent
         i.e. Show it in an OS window.
@@ -89,8 +98,14 @@ public:
 
 protected:
     View (Main& context, Widget& widget);
+
+    /** Subclasses should use this to render it's context */
     void render (DrawingContext& surface);
+
+    /** Subclasses should use this to set a PuglBackend */
     void set_backend (uintptr_t);
+
+    /** Subclasses should use this to set a PuglViewHint */
     void set_view_hint (int, int);
 
     /** Override this to render the widget */
@@ -103,16 +118,7 @@ protected:
 private:
     friend class detail::View;
     friend class Main;
-
-    Main& _main;
-    Widget& _widget;
-    uintptr_t _view;
-    WeakRef<Widget> _hovered;
-
-    void set_parent (uintptr_t parent, bool transient);
-    void realize();
-
-    struct EventHandler;
+    friend class detail::Main;
     std::unique_ptr<detail::View> impl;
     LVTK_WEAK_REFABLE (View);
 };
