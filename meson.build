@@ -76,6 +76,8 @@ endif
 
 ### Summary
 summary('Docs', not get_option('doc').disabled(), bool_yn: true)
+
+if not get_option ('onlydocs')
 summary('Tests', not get_option('test').disabled(), bool_yn: true)
 
 summary('Modules', true, section : 'Lua', bool_yn: true)
@@ -87,3 +89,4 @@ summary('Demo', true, bool_yn: true, section : 'Gui')
 summary('Prefix', get_option('prefix'), section: 'Paths')
 summary('Headers', get_option('prefix') / get_option('includedir'), section: 'Paths')
 summary('Libraries', get_option('prefix') / get_option('libdir'), section: 'Paths')
+endif
