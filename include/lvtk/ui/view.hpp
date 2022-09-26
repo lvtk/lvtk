@@ -23,18 +23,6 @@ class View;
 class Main;
 class Widget;
 
-/** Flags to configure a View 
-    @ingroup widgets
-    @headerfile lvtk/ui/view.hpp 
-*/
-struct LVTK_API ViewFlag {
-    /** Flags */
-    enum : uint32_t {
-        TRIVIAL   = (1u << 0u), ///< View is trivial, like a popup menu.
-        RESIZABLE = (1u << 1u)  ///< View is resizable.
-    };
-};
-
 /** Flag type for views.
     @ingroup widgets
     @headerfile lvtk/ui/view.hpp 
@@ -47,6 +35,12 @@ using ViewFlags = uint32_t;
 */
 class LVTK_API View {
 public:
+    /** Flags */
+    enum Flag : uint32_t {
+        TRIVIAL   = (1u << 0u), ///< View is trivial, like a popup menu.
+        RESIZABLE = (1u << 1u)  ///< View is resizable.
+    };
+
     virtual ~View();
 
     /** Returns the native window handle */

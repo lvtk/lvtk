@@ -91,7 +91,7 @@ std::unique_ptr<View> Main::create_view (Widget& widget, ViewFlags flags, uintpt
     if (view && parent)
         view->impl->set_parent (parent, transient);
 
-    view->set_view_hint (PUGL_RESIZABLE, (int) (flags & ViewFlag::RESIZABLE));
+    view->set_view_hint (PUGL_RESIZABLE, (int) (flags & View::RESIZABLE));
     // if (flags & ViewFlag::POPUP)
     //     view->set_view_hint (PUGL_VIEW_TYPE, PUGL_POPUP_MENU_VIEW);
 
