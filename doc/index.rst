@@ -11,12 +11,10 @@ LVTK
     Plugin <plugins>
     UI <uis>
     Extensions <extensions>
-    High Level <highlevel>
-    DynManifest <dynmanifest>
     Graphics <graphics>
     Widgets <widgets>
-
     Hosting <hosting>
-    
+    DynManifest <dynmanifest>
+    High Level <highlevel>
     Projects Using <projects>
     Developers <deployment>

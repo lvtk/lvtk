@@ -21,9 +21,6 @@
 #define LV2_DYN_MANIFEST_H_INCLUDED
 
 /**
-   @defgroup dynmanifest Dynamic Manifest
-   @ingroup lv2
-
    Support for dynamic data generation.
 
    See <http://lv2plug.in/ns/ext/dynmanifest> for details.

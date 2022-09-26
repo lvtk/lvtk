@@ -1,34 +1,6 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-/** @defgroup dynmanifest Dynamic Manifest
-    Dynamic Manifest support
-
-    <h3>Example</h3>
-    @code
-    #include <lvtk/dynmanifest.hpp>
-
-    class MyManifest : public lvtk::DynManifest {
-    public:
-        bool get_subjects (std::stringstream& lines) override {
-            lines << "@prefix doap:  <http://usefulinc.com/ns/doap#> . " << std::endl
-                    << "@prefix lv2:   <http://lv2plug.in/ns/lv2core#> . " << std::endl
-                    << "<http://myplugin.org> a lv2:Plugin ;" << std::endl;
-            return true;
-        }
-
-        bool get_data (std::stringstream& lines, const std::string& uri) override {
-            lines << "doap:name \"My Plugin\" ;" << std::endl;
-            return true;
-        }
-    };
-
-    void* lvtk_create_dyn_manifest() {
-        return new MyManifest();
-    }
-    @endcode
-*/
-
 #pragma once
 
 #include <cstdio>
@@ -41,7 +13,7 @@ namespace lvtk {
 
     To create a dynamic manifest, subclass this an implement it's pure virtual
     methods. Then implement lvtk_create_dyn_manifest().
-    @ingroup dynmanifest
+    @ingroup ext
     @headerfile lvtk/dynmanifest.hpp
  */
 class DynManifest {
@@ -68,7 +40,7 @@ public:
     You don't need to use this directly.  The internal dynmanifest
     callbacks use it to return data to the host.
 
-    @ingroup dynmanifest
+    @ingroup ext
 */
 static bool write_lines (const std::stringstream& lines, FILE* fp) {
     const auto data = lines.str();
@@ -78,7 +50,7 @@ static bool write_lines (const std::stringstream& lines, FILE* fp) {
 } // namespace lvtk
 
 /** Implement this and return your subclassed @ref lvtk::DynManifest object
-    @ingroup dynmanifest
+    @ingroup ext
     @headerfile lvtk/dynmanifest.hpp
 */
 void* lvtk_create_dyn_manifest();
