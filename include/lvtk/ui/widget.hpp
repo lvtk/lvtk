@@ -19,10 +19,6 @@
 #include <lvtk/ui/view.hpp>
 #include <lvtk/weak_ref.hpp>
 
-#ifndef LVTK_WIDGET_USE_CLIPPING
-#    define LVTK_WIDGET_USE_CLIPPING 0
-#endif
-
 namespace lvtk {
 namespace detail {
 /** @private */
@@ -163,12 +159,24 @@ public:
      */
     Widget* widget_at (Point<float> coord);
 
+    /** Find the root widget in this tree */
     Widget* find_root() const noexcept;
-    ViewRef find_view() const noexcept;
-    uintptr_t find_handle() const noexcept;
-    operator LV2UI_Widget() const noexcept { return (LV2UI_Widget) find_handle(); }
 
+    /** Find the view for this widget.
+        locates the first elevated parent widget
+    */
+    ViewRef find_view() const noexcept;
+
+    /** Find the native handle for this Widget */
+    uintptr_t find_handle() const noexcept;
+
+    /** Returns the current style used by this widget
+        @returns Style The style used
+    */
     Style& style();
+
+    /** Cast to a LV2UI_Widget */
+    operator LV2UI_Widget() const noexcept { return (LV2UI_Widget) find_handle(); }
 
     //=========================================================================
     // things for debugging only
@@ -200,25 +208,19 @@ protected:
     virtual void child_size_changed (Widget* child) {}
 
 private:
+    friend class detail::Widget;
     friend class Main;
     friend class detail::Main;
     friend class View;
     friend class detail::View;
     
     void add_internal (Widget*);
-    void render_internal (Graphics&);
-    void repaint_internal (Bounds);
-
-    void notify_structure_changed();
-    void notify_children_changed();
-    void notify_moved_resized (bool, bool);
-
-    struct Render;
 
     std::unique_ptr<detail::Widget> impl;
     LVTK_WEAK_REFABLE (Widget)
 };
 
+/** A Weak Reference to a Widget */
 using WidgetRef = WeakRef<Widget>;
 } // namespace lvtk
 

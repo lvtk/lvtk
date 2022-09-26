@@ -109,7 +109,7 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     view->set_bounds (widget.bounds());
     view->set_visible (widget.visible());
     widget.impl->view = std::move (view);
-    widget.notify_structure_changed();
+    widget.impl->notify_structure_changed();
 }
 
 void Main::elevate (Widget& widget, ViewFlags flags, View& parent) {
