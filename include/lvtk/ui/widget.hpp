@@ -77,21 +77,21 @@ public:
     bool opaque() const noexcept;
 
     /** Returns this widget's bounding box. */
-    Bounds bounds() const noexcept { return _bounds; }
+    Bounds bounds() const noexcept;
 
     /** Returns the xy position of this widget.
         Same as calling widget.bounds().pos()
     */
-    Point<int> pos() const noexcept { return { _bounds.x, _bounds.y }; }
+    Point<int> pos() const noexcept ;
 
     /** Returns the x-coordinate of this widget parent space. */
-    int x() const noexcept { return _bounds.x; }
+    int x() const noexcept ;
     /** Returns the y-coordinate of this widget parent space. */
-    int y() const noexcept { return _bounds.y; }
+    int y() const noexcept ;
     /** Returns the width of this widget. */
-    int width() const noexcept { return _bounds.width; }
+    int width() const noexcept ;
     /** Returns the height of this widget. */
-    int height() const noexcept { return _bounds.height; }
+    int height() const noexcept;
 
     /** Change this widget's bounds
         
@@ -205,8 +205,6 @@ private:
     friend class View;
     friend class detail::View;
     
-    Rectangle<int> _bounds;
-
     void add_internal (Widget*);
     void render_internal (Graphics&);
     void repaint_internal (Bounds);

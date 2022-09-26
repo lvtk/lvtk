@@ -21,7 +21,7 @@ private:
     lvtk::Widget* parent = nullptr;
     std::unique_ptr<lvtk::View> view;
     std::vector<lvtk::Widget*> widgets;
-
+    Rectangle<int> bounds;
     bool visible { false };
     bool opaque { false };
 };

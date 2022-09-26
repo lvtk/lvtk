@@ -130,15 +130,23 @@ void Widget::repaint() {
 
 bool Widget::opaque() const noexcept { return impl->opaque; }
 
-//=============================================================================
-void Widget::set_bounds (int x, int y, int w, int h) {
-    const bool was_moved   = _bounds.x != x || _bounds.y != y;
-    const bool was_resized = _bounds.width != w || _bounds.height != h;
+Bounds Widget::bounds() const noexcept { return impl->bounds; }
 
-    _bounds.x      = x;
-    _bounds.y      = y;
-    _bounds.width  = w;
-    _bounds.height = h;
+Point<int> Widget::pos() const noexcept { return { impl->bounds.x, impl->bounds.y }; }
+
+int Widget::x() const noexcept { return impl->bounds.x; }
+int Widget::y() const noexcept { return impl->bounds.y; }
+int Widget::width() const noexcept { return impl->bounds.width; }
+int Widget::height() const noexcept { return impl->bounds.height; }
+
+void Widget::set_bounds (int x, int y, int w, int h) {
+    const bool was_moved   = impl->bounds.x != x || impl->bounds.y != y;
+    const bool was_resized = impl->bounds.width != w || impl->bounds.height != h;
+
+    impl->bounds.x      = x;
+    impl->bounds.y      = y;
+    impl->bounds.width  = w;
+    impl->bounds.height = h;
 
     if (visible() && was_resized)
         repaint();
@@ -149,7 +157,7 @@ void Widget::set_bounds (int x, int y, int w, int h) {
 void Widget::set_bounds (Bounds b) { set_bounds (b.x, b.y, b.width, b.height); }
 
 void Widget::set_size (int width, int height) {
-    set_bounds (_bounds.x, _bounds.y, width, height);
+    set_bounds (impl->bounds.x, impl->bounds.y, width, height);
 }
 
 Widget* Widget::parent() const noexcept { return impl->parent; }
@@ -302,7 +310,7 @@ bool Widget::contains (Point<int> pt) const noexcept {
 }
 
 bool Widget::contains (Point<float> pt) const noexcept {
-    return _bounds.at (0, 0).as<float>().contains (pt);
+    return impl->bounds.at (0, 0).as<float>().contains (pt);
 }
 
 //=================================================================
