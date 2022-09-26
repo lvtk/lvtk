@@ -64,6 +64,7 @@ boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabl
 
 ## Lua: Try to use 5.3 lua headers on the system. 
 #  Fallback to included 5.4 headers.
+
 lua_version = ''
 lua_program = find_program ('lua5.4', required : false)
 lua_dep = dependency('', required : false)
@@ -87,5 +88,3 @@ endif
 
 # true if using system
 lvtk_lua_system = lua_dep.found() and lua_program.found()
-
-#
