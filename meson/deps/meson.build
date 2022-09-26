@@ -60,7 +60,7 @@ lilv_dep = dependency ('lilv-0',
 suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : true)
 
 ### Boost
-boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
+boost_dep = (dependency ('boost', required : not get_option('test').disabled()))
 
 ## Lua: Try to use 5.3 lua headers on the system. 
 #  Fallback to included 5.4 headers.

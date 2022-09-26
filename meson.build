@@ -63,20 +63,20 @@ install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-@0@'.format(
 subdir ('meson/pkgconfig')
 
 ### Tests
-if not get_option('unit-tests').disabled()
+if not get_option('test').disabled()
     subdir('test')
 endif
 
 endif # only docs
 
 ### Docs
-if not get_option('docs').disabled()
+if not get_option('doc').disabled()
     subdir ('doc')
 endif
 
 ### Summary
-summary('Docs', not get_option('docs').disabled(), bool_yn: true)
-summary('Tests', not get_option('unit-tests').disabled(), bool_yn: true)
+summary('Docs', not get_option('doc').disabled(), bool_yn: true)
+summary('Tests', not get_option('test').disabled(), bool_yn: true)
 
 summary('Modules', true, section : 'Lua', bool_yn: true)
 summary('Version', lua_version, section : 'Lua')

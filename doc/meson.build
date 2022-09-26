@@ -1,5 +1,5 @@
-doxygen = find_program ('doxygen', required : get_option('docs'))
-sphinx_build = find_program ('sphinx-build', required : get_option('docs'))
+doxygen = find_program ('doxygen', required : get_option('doc'))
+sphinx_build = find_program ('sphinx-build', required : get_option('doc'))
 
 if doxygen.found() and sphinx_build.found()
 
