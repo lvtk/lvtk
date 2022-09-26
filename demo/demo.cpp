@@ -6,7 +6,7 @@ namespace demo {
 
 Content::Content()
     : sidebar (*this) {
-    __name = "Content";
+    set_name ("lvtk::demo::Content");
 
     add (sidebar);
     sidebar.set_visible (true);
@@ -22,7 +22,7 @@ Content::Content()
 Content::~Content() {
 }
 
-void Content::motion (InputEvent ev) {}
+void Content::motion (const Event& ev) {}
 
 void Content::resized() {
     auto r = bounds().at (0, 0);

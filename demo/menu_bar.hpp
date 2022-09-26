@@ -46,7 +46,7 @@ private:
             g.draw_text (text, bounds().at (0).as<float>(), Alignment::CENTERED);
         }
 
-        void pressed (InputEvent ev) override {
+        void pressed (const Event& ev) override {
             if (clicked)
                 clicked();
         }
@@ -65,7 +65,7 @@ private:
             g.fill_rect (bounds().at (0));
         }
 
-        void pressed (InputEvent ev) override {
+        void pressed (const Event& ev) override {
             set_visible (false);
             if (auto root = menubar.find_view())
                 root->repaint ({});

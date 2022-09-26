@@ -8,17 +8,29 @@
 
 namespace lvtk {
 
+class Main;
+class View;
 class Widget;
 
-/** @ingroup widgets */
-struct InputEvent {
-    WeakRef<Widget> source;
-    Point<float> pos;
-    int x;
-    int y;
-};
+/** An event type sent about user input.
+    @ingroup widgets
+*/
+struct Event {
+    Main& main;             ///< Context of the event.
+    WeakRef<View> view;     ///< Originating view.
+    WeakRef<Widget> source; ///< The source Widget.
+    WeakRef<Widget> target; ///< The source Widget.
+    Point<float> pos;       ///< High resolution position.
+    int x;                  ///< Rounded X
+    int y;                  ///< Rounded Y
 
-/** @ingroup widgets */
-struct Event : public InputEvent {};
+    int num_clicks; ///< Number of clicks
+
+    Event (Main& m) : main (m) {}
+    Event (Main& m, View& v, Widget& s)
+        : main (m), view (&v), source (&s) {}
+    Event (Main& m, View& v, Widget& s, Widget& t)
+        : main (m), view (&v), source (&s), target (&t) {}
+};
 
 } // namespace lvtk

@@ -70,19 +70,14 @@ private:
             return true;
         }
 
-        void motion (InputEvent ev) override {
-            // std::clog << __name << " motion: "
-            //           << ev.pos.str() << std::endl;
-        }
-
-        void pressed (InputEvent ev) override {
-            std::clog << __name << "   down: "
+        void pressed (const Event& ev) override {
+            std::clog << name() << "   down: "
                       << ev.pos.str() << " bounds: "
                       << bounds().str() << std::endl;
         }
 
-        void released (InputEvent ev) override {
-            std::clog << __name << "     up: "
+        void released (const Event& ev) override {
+            std::clog << name() << "     up: "
                       << ev.pos.str() << std::endl;
         }
 
@@ -94,9 +89,9 @@ private:
         Container() {
             add (button1);
             button1.set_visible (true);
-            button1.__name = "button1";
+            button1.set_name ("button1");
             add (button2);
-            button2.__name = "button2";
+            button2.set_name ("button2");
             button2.set_visible (true);
         }
 
@@ -131,7 +126,7 @@ private:
     class Content : public Widget {
     public:
         Content() {
-            __name = "Content";
+            set_name ("lvtk::VolumeUI::Content");
             add (buttons);
             buttons.set_visible (true);
             set_size (360, 240);
@@ -141,7 +136,7 @@ private:
         ~Content() {
         }
 
-        void motion (InputEvent ev) override {
+        void motion (const Event& ev) override {
             // std::clog << "content motion\n";
         }
 

@@ -35,6 +35,12 @@ public:
     Widget();
     virtual ~Widget();
 
+    /** Set the name of this widget */
+    void set_name (const std::string& name);
+
+    /** Get the name of this widget */
+    const std::string& name() const noexcept;
+
     /** Returns the parent widget of this one. */
     Widget* parent() const noexcept;
 
@@ -182,7 +188,6 @@ public:
     // things for debugging only
     // this kind of access into the widget will eventually be stable with
     // an obverver system + object query system.
-    std::string __name;
     const std::vector<Widget*>& __widgets() const noexcept;
     virtual bool __wants_updates() { return false; }
     virtual void __update() {}
@@ -196,11 +201,12 @@ protected:
     virtual void moved() {}
 
     virtual void paint (Graphics&) {}
-    virtual void motion (InputEvent) {}
-    virtual void pressed (InputEvent) {}
-    virtual void released (InputEvent) {}
-    virtual void pointer_in (InputEvent ev) {}
-    virtual void pointer_out (InputEvent ev) {}
+    virtual void motion (const Event&) {}
+    virtual void drag (const Event&) {}
+    virtual void pressed (const Event&) {}
+    virtual void released (const Event&) {}
+    virtual void pointer_in (const Event&) {}
+    virtual void pointer_out (const Event& ev) {}
 
     virtual void children_changed() {}
     virtual void parent_structure_changed() {}

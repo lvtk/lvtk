@@ -182,6 +182,7 @@ private:
     friend class detail::View;
 
     lvtk::Widget& owner;
+    std::string name;
     lvtk::Widget* parent = nullptr;
     std::unique_ptr<lvtk::View> view;
     std::vector<lvtk::Widget*> widgets;

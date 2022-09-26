@@ -13,31 +13,43 @@ public:
     virtual ~Box() = default;
 
     void paint (Graphics& g) override {
-        g.set_color (is_on ? color_on : color_off);
-        g.fill_rect (bounds().at (0, 0));
+        auto fr = bounds().at (0, 0).as<float>();
+        g.set_color (color_off);
+        g.fill_rect (fr);
+
+        g.set_color (color_on);
+        fr.slice_top (divider_y);
+        g.fill_rect (fr);
         g.set_color (color_text);
 
         auto r = bounds().at (0).as<float>().slice_bottom (height() / 2);
 
         g.set_font (Font (12.f));
-        g.draw_text (__name, r, Alignment::CENTERED);
+        g.draw_text (name(), r, Alignment::CENTERED);
     }
 
     bool obstructed (int x, int y) override { return true; }
 
-    void motion (InputEvent) override {}
-    void pointer_in (InputEvent ev) override {}
-    void pointer_out (InputEvent ev) override {}
+    void drag (const Event& ev) override {
+        update_divider_y (ev);
+        repaint();
+    }
 
-    void pressed (InputEvent) override {
+    void pressed (const Event& ev) override {
+        update_divider_y (ev);
         is_on = ! is_on;
         repaint();
+    }
+
+    void update_divider_y (const Event& ev) {
+        divider_y = std::min ((float) height(), std::max (0.f, ev.pos.y));
     }
 
     bool is_on = false;
     Color color_text { 0xffffffff };
     Color color_on { 0x550000ff };
-    Color color_off { 0x444444ff };
+    Color color_off { 0x141414ff };
+    float divider_y = 0.f;
 };
 
 class FourSquares : public Widget {
@@ -46,7 +58,7 @@ public:
         for (int i = 0; i < 4; ++i) {
             auto box = add (new Box());
             box->set_visible (true);
-            box->__name = std::string ("Box ") + std::to_string (i + 1);
+            box->set_name (std::string ("Box ") + std::to_string (i + 1));
             boxes.push_back (box);
         }
 

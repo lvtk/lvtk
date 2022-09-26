@@ -26,7 +26,12 @@ Widget::~Widget() {
         impl->view.reset();
 }
 
-//=============================================================================
+const std::string& Widget::name() const noexcept { return impl->name; }
+
+void Widget::set_name (const std::string& name) {
+    impl->name = name;
+}
+
 bool Widget::visible() const noexcept { return impl->visible; }
 
 void Widget::set_visible (bool v) {

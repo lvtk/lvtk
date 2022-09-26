@@ -49,7 +49,7 @@ public:
 
 protected:
     /** @private */
-    void motion (InputEvent ev) override;
+    void motion (const Event& ev) override;
     /** @private */
     void resized() override;
     /** @private */

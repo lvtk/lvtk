@@ -74,9 +74,9 @@ public:
     void resized() override;
     bool obstructed (int x, int y) override;
     void paint (Graphics& g) override;
-    void motion (InputEvent ev) override;
-    void pressed (InputEvent ev) override;
-    void released (InputEvent ev) override;
+    void motion (const Event& ev) override;
+    void pressed (const Event& ev) override;
+    void released (const Event& ev) override;
     sol::table add_with_z (const sol::object& child, int zorder);
     sol::table add (const sol::object& child);
     sol::table bounds_table();
@@ -131,17 +131,17 @@ void Widget::paint (Graphics& g) {
     }
 }
 
-void Widget::motion (InputEvent ev) {
+void Widget::motion (const Event& ev) {
     if (sol::safe_function f = widget["motion"])
         f (widget, ev);
 }
 
-void Widget::pressed (InputEvent ev) {
+void Widget::pressed (const Event& ev) {
     if (sol::safe_function f = widget["pressed"])
         f (widget, ev);
 }
 
-void Widget::released (InputEvent ev) {
+void Widget::released (const Event& ev) {
     if (sol::safe_function f = widget["released"])
         f (widget, ev);
 }

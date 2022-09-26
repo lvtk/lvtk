@@ -54,25 +54,25 @@ protected:
     bool obstructed (int, int) override { return true; }
 
     /** @private */
-    void pointer_in (InputEvent) override {
+    void pointer_in (const Event&) override {
         _over = true;
         repaint();
     }
 
     /** @private */
-    void pointer_out (InputEvent) override {
+    void pointer_out (const Event& ev) override {
         _over = false;
         repaint();
     }
 
     /** @private */
-    void pressed (InputEvent ev) override {
+    void pressed (const Event& ev) override {
         _down = true;
         repaint();
     }
 
     /** @private */
-    void released (InputEvent ev) override {
+    void released (const Event& ev) override {
         _down = false;
         if (contains (ev.pos))
             notify_clicked();
