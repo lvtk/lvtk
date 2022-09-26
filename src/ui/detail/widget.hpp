@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <cassert>
+
 #ifndef LVTK_WIDGET_USE_CLIPPING
 #    define LVTK_WIDGET_USE_CLIPPING 0
 #endif
@@ -99,7 +101,6 @@ public:
     using Owner = lvtk::Widget;
 
     Widget (lvtk::Widget& o) : owner (o) {
-
     }
 
     void render_internal (Graphics& g) {
@@ -266,5 +267,5 @@ private:
     }
 };
 
-}
-}
+} // namespace detail
+} // namespace lvtk

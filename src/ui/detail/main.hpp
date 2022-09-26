@@ -4,8 +4,8 @@
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
 
-#include <lvtk/ui/main.hpp>
 #include <lvtk/ui/button.hpp>
+#include <lvtk/ui/main.hpp>
 #include <lvtk/ui/view.hpp>
 
 #include "./view.hpp"
@@ -62,11 +62,8 @@ public:
 
 class Main {
 public:
-    Main (lvtk::Main& o, const Mode m, std::unique_ptr<lvtk::Backend> b) 
-        : owner (o), mode(m),
-          world (puglNewWorld (detail::world_type (m), detail::world_flags())),
-          backend (std::move (b)),
-          style (std::make_unique<DefaultStyle>()) {}
+    Main (lvtk::Main& o, const Mode m, std::unique_ptr<lvtk::Backend> b)
+        : owner (o), mode (m), world (puglNewWorld (detail::world_type (m), detail::world_flags())), backend (std::move (b)), style (std::make_unique<DefaultStyle>()) {}
 
     std::unique_ptr<lvtk::View> create_view (lvtk::Widget& widget, ViewFlags flags, uintptr_t parent) {
         auto view = backend->create_view (owner, widget);
@@ -89,13 +86,14 @@ private:
     friend class lvtk::Main;
     friend class lvtk::View;
     friend class detail::View;
-    
+
     lvtk::Main& owner;
     const Mode mode;
-    PuglWorld* world {nullptr};
+    PuglWorld* world { nullptr };
     std::unique_ptr<lvtk::Backend> backend;
     std::vector<lvtk::View*> views;
     std::unique_ptr<lvtk::Style> style;
 };
 
-}}
+} // namespace detail
+} // namespace lvtk

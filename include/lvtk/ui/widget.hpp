@@ -23,7 +23,7 @@ namespace lvtk {
 namespace detail {
 /** @private */
 class Widget;
-}
+} // namespace detail
 
 /** Base class for all Widgets and Windows.
     @ingroup widgets
@@ -78,14 +78,14 @@ public:
     /** Returns the xy position of this widget.
         Same as calling widget.bounds().pos()
     */
-    Point<int> pos() const noexcept ;
+    Point<int> pos() const noexcept;
 
     /** Returns the x-coordinate of this widget parent space. */
-    int x() const noexcept ;
+    int x() const noexcept;
     /** Returns the y-coordinate of this widget parent space. */
-    int y() const noexcept ;
+    int y() const noexcept;
     /** Returns the width of this widget. */
-    int width() const noexcept ;
+    int width() const noexcept;
     /** Returns the height of this widget. */
     int height() const noexcept;
 
@@ -213,7 +213,7 @@ private:
     friend class detail::Main;
     friend class View;
     friend class detail::View;
-    
+
     void add_internal (Widget*);
 
     std::unique_ptr<detail::Widget> impl;

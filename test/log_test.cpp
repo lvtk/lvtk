@@ -41,8 +41,8 @@ public:
         flog.data = (void*) &log;
 
         const LV2_Feature* features[] = {
-            uris.get_map_feature(),
-            uris.get_unmap_feature(),
+            uris.map_feature(),
+            uris.unmap_feature(),
             &flog,
             nullptr
         };

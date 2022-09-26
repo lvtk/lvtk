@@ -20,7 +20,7 @@ public:
     AtomTest() {
         buffer.reset (new uint8_t[buffer_size]);
         clear_buffer();
-        forge.init ((LV2_URID_Map*) urids.get_map_feature()->data);
+        forge.init ((LV2_URID_Map*) urids.map_feature()->data);
     }
 
     void run_atom() {

@@ -39,8 +39,8 @@ public:
         BOOST_ASSERT (strcmp (LVTK_VOLUME_URI, desc.URI) == 0);
 
         const LV2_Feature* features[] = {
-            urids.get_map_feature(),
-            urids.get_unmap_feature(),
+            urids.map_feature(),
+            urids.unmap_feature(),
             nullptr
         };
 

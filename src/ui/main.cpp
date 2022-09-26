@@ -67,8 +67,8 @@ View* Main::find_view (Widget& widget) const noexcept {
 void* Main::handle() const noexcept {
     return puglGetNativeWorld (impl->world);
 }
-    uintptr_t Main::world() const noexcept { return (uintptr_t) impl->world; }
-    Style& Main::style() noexcept {return *impl->style; }
-    const Style& Main::style() const noexcept { return *impl->style; }
+uintptr_t Main::world() const noexcept { return (uintptr_t) impl->world; }
+Style& Main::style() noexcept { return *impl->style; }
+const Style& Main::style() const noexcept { return *impl->style; }
 
 } // namespace lvtk

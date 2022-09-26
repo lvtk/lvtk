@@ -3,10 +3,10 @@
 
 #include <algorithm>
 
-#include "lvtk/ui/input.hpp"
-#include "lvtk/ui/main.hpp"
-#include "lvtk/ui/view.hpp"
-#include "lvtk/ui/widget.hpp"
+#include <lvtk/ui/input.hpp>
+#include <lvtk/ui/main.hpp>
+#include <lvtk/ui/view.hpp>
+#include <lvtk/ui/widget.hpp>
 
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
@@ -56,13 +56,13 @@ inline static void erase (std::vector<Obj*>& views, Obj* view) {
         views.erase (it);
 }
 
-// The actual View impl. 
+// The actual View impl.
 class View {
 public:
     static constexpr uint32_t default_timer = 1000;
-    View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w) 
-        : owner (o), main(m), widget(w) {
-        view  = puglNewView ((PuglWorld*) m.world());
+    View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
+        : owner (o), main (m), widget (w) {
+        view = puglNewView ((PuglWorld*) m.world());
         puglSetSizeHint (view, PUGL_DEFAULT_SIZE, 1, 1);
         puglSetHandle (view, this);
         puglSetEventFunc (view, dispatch);
@@ -75,7 +75,7 @@ public:
     }
 
     void set_backend (uintptr_t b) {
-         puglSetBackend (view, (PuglBackend*) b);
+        puglSetBackend (view, (PuglBackend*) b);
     }
 
     void set_view_hint (int k, int v) {
@@ -86,13 +86,13 @@ public:
         if (transient)
             puglSetTransientParent (view, parent);
         else
-            puglSetParentWindow (view, (PuglNativeView)parent);
+            puglSetParentWindow (view, (PuglNativeView) parent);
     }
 
     float scale_factor() const noexcept {
         return puglGetScaleFactor (view);
     }
-    
+
     void realize() {
         auto status = puglRealize (view);
         (void) status;
@@ -105,7 +105,7 @@ private:
     lvtk::View& owner;
     lvtk::Main& main;
     lvtk::Widget& widget;
-    PuglView* view {nullptr};
+    PuglView* view { nullptr };
     WeakRef<lvtk::Widget> hovered;
 
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
@@ -114,9 +114,9 @@ private:
             return PUGL_SUCCESS;
         }
 
-        view.widget.set_bounds (view.widget.x(), 
-                                view.widget.y(), 
-                                ev.width / view.scale_factor(), 
+        view.widget.set_bounds (view.widget.x(),
+                                view.widget.y(),
+                                ev.width / view.scale_factor(),
                                 ev.height / view.scale_factor());
         VIEW_DBG2 ("pugl: configure: " << view.widget.bounds().str());
         return PUGL_SUCCESS;
@@ -134,7 +134,7 @@ private:
         auto h = (float) ev.height / view.scale_factor();
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
-        VIEW_DBG2("expose: " << r.str());
+        VIEW_DBG2 ("expose: " << r.str());
         view.owner.expose (r.intersection (view.owner.bounds().at (0)));
         return PUGL_SUCCESS;
     }
@@ -326,4 +326,4 @@ private:
 };
 
 } // namespace detail
-}
+} // namespace lvtk

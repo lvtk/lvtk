@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "lvtk/lvtk.hpp"
-
 #include <map>
 #include <memory>
+
+#include <lvtk/lvtk.hpp>
 
 namespace lvtk {
 /** A list of LV2_Descriptors. Used internally to manage registered plugins */

@@ -21,7 +21,7 @@ View::~View() {
 }
 
 void View::set_backend (uintptr_t b) {
-   impl->set_backend (b);
+    impl->set_backend (b);
 }
 
 void View::set_view_hint (int hint, int value) {
@@ -41,7 +41,7 @@ void View::set_visible (bool visible) {
 bool View::visible() const { return puglGetVisible (impl->view); }
 
 void View::set_size (int width, int height) {
-    VIEW_DBG("View::set_size(" << width << ", " << height);
+    VIEW_DBG ("View::set_size(" << width << ", " << height);
     auto status = puglSetSize (impl->view,
                                static_cast<unsigned int> (width),
                                static_cast<unsigned int> (height));
@@ -65,7 +65,7 @@ Rectangle<int> View::bounds() const {
 
 void View::set_bounds (Bounds b) {
     b *= scale_factor();
-    VIEW_DBG2("[view] set_bounds: " << b.str());
+    VIEW_DBG2 ("[view] set_bounds: " << b.str());
     puglSetFrame (impl->view, detail::frame (b));
 }
 
@@ -74,7 +74,7 @@ Style& View::style() noexcept { return impl->main.style(); }
 const Style& View::style() const noexcept { return impl->main.style(); }
 Widget& View::widget() noexcept { return impl->widget; }
 const Widget& View::widget() const noexcept { return impl->widget; }
-    
+
 void View::elevate (Widget& widget, ViewFlags flags) {
     impl->main.elevate (widget, flags, *this);
 }

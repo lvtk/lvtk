@@ -13,9 +13,9 @@
 
 namespace lvtk {
 
-Widget::Widget() { 
+Widget::Widget() {
     impl = std::make_unique<detail::Widget> (*this);
-    _weak_status.reset (this); 
+    _weak_status.reset (this);
 }
 
 Widget::~Widget() {

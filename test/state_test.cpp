@@ -45,7 +45,7 @@ public:
         BOOST_REQUIRE (strcmp (desc.URI, LVTK_TEST_PLUGIN_URI) == 0);
 
         lvtk::Symbols uris;
-        const LV2_Feature* features[] = { uris.get_map_feature(), uris.get_unmap_feature(), nullptr };
+        const LV2_Feature* features[] = { uris.map_feature(), uris.unmap_feature(), nullptr };
         auto handle                   = desc.instantiate (&desc, 44100.0, "/fake/path", features);
         BOOST_REQUIRE (handle != nullptr);
         auto iface = (const LV2_State_Interface*) desc.extension_data (LV2_STATE__interface);

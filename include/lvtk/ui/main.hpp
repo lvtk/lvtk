@@ -18,7 +18,7 @@ class Main;
 class View;
 /** @private */
 class Widget;
-}
+} // namespace detail
 
 /** The running mode type of a UI context. 
     @see Main
@@ -124,7 +124,7 @@ protected:
 
 private:
     std::string _name;
-    LVTK_DISABLE_COPY(Backend)
+    LVTK_DISABLE_COPY (Backend)
 };
 
 } // namespace lvtk

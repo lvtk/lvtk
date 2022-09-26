@@ -6,10 +6,10 @@
 #include <sstream>
 
 #if _WIN32
-    #define redirect_pipe 0
+#    define redirect_pipe 0
 #else
-    #include <unistd.h>
-    #define redirect_pipe 1
+#    include <unistd.h>
+#    define redirect_pipe 1
 #endif
 
 #include <lv2/ui/ui.h>
@@ -135,7 +135,7 @@ public:
     void load_all() {
 #if redirect_pipe
         static constexpr size_t bufsize = 2048 + 1;
-        char buffer [bufsize] = { 0 };
+        char buffer[bufsize]            = { 0 };
         int out_pipe[2];
         int saved_stderr;
 
@@ -151,7 +151,7 @@ public:
 
 #if redirect_pipe
         if (pipe_open) {
-            (void)buffer;
+            (void) buffer;
             // read(out_pipe[0], buffer, bufsize); /* read from pipe into buffer */
             dup2 (saved_stderr, STDERR_FILENO); /* reconnect stdout for testing */
             close (out_pipe[0]);
@@ -165,8 +165,8 @@ public:
     }
 
     void fill_features (std::vector<const LV2_Feature*>& fts) const noexcept {
-        fts.push_back (symbols.get_map_feature());
-        fts.push_back (symbols.get_unmap_feature());
+        fts.push_back (symbols.map_feature());
+        fts.push_back (symbols.unmap_feature());
         fts.push_back (&options_feature);
     }
 
