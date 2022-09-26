@@ -1,10 +1,18 @@
 
 #include <algorithm>
 #include <iostream>
-#include <lv2/ui/ui.h>
-#include <sstream>
-#include <unistd.h>
 #include <vector>
+
+#include <sstream>
+
+#if _WIN32
+    #define redirect_pipe 0
+#else
+    #include <unistd.h>
+    #define redirect_pipe 1
+#endif
+
+#include <lv2/ui/ui.h>
 
 #include <lvtk/lvtk.hpp>
 #include <lvtk/options.hpp>
@@ -125,7 +133,6 @@ public:
     }
 
     void load_all() {
-#define redirect_pipe 1
 #if redirect_pipe
         static constexpr size_t bufsize = 2048 + 1;
         char buffer [bufsize] = { 0 };

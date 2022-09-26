@@ -21,7 +21,7 @@ if lvtk_lv2dir == ''
     lvtk_lv2dir = '/Library/Audio/Plug-Ins/LV2'
   elif target_machine.system() == 'haiku'
     lvtk_lv2dir = '/boot/common/add-ons/lv2'
-  elif target_machine.system() == 'windows' and prefix == 'C:/'
+  elif target_machine.system() == 'windows'
     lvtk_lv2dir = 'C:/Program Files/Common Files/LV2'
   else
     lvtk_lv2dir = get_option('prefix') / get_option('libdir') / 'lv2'
@@ -66,13 +66,13 @@ boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabl
 #  Fallback to included 5.4 headers.
 lua_version = ''
 lua_program = find_program ('lua5.4', required : false)
-
+lua_dep = dependency('', required : false)
 if not lua_program.found()
     lua_program = find_program('lua5.3', required : false)
 endif
 
 if not lua_program.found()
-    lua_program = find_program('lua')
+    lua_program = find_program('lua', required : false)
 endif
 
 if lua_program.found()
