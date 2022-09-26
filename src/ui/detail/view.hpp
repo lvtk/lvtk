@@ -159,14 +159,14 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static void update_recursive (Widget& widget) {
+    static void update_recursive (lvtk::Widget& widget) {
         if (widget.__wants_updates())
             widget.__update();
         for (auto& child : widget.__widgets())
             update_recursive (*child);
     }
 
-    static void idle_recursive (Widget& widget) {
+    static void idle_recursive (lvtk::Widget& widget) {
         if (widget.__wants_updates())
             widget.__update();
         for (auto& child : widget.__widgets())

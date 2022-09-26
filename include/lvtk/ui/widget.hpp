@@ -24,6 +24,10 @@
 #endif
 
 namespace lvtk {
+namespace detail {
+/** @private */
+class Widget;
+}
 
 /** Base class for all Widgets and Windows.
     @ingroup widgets
@@ -36,7 +40,7 @@ public:
     virtual ~Widget();
 
     /** Returns the parent widget of this one. */
-    Widget* parent() const noexcept { return _parent; }
+    Widget* parent() const noexcept;
 
     /** Add a child widget. */
     void add (Widget& widget);
@@ -70,7 +74,7 @@ public:
     void repaint();
 
     /** Returns true if this widget reports being opaque. */
-    bool opaque() const noexcept { return _opaque; }
+    bool opaque() const noexcept;
 
     /** Returns this widget's bounding box. */
     Bounds bounds() const noexcept { return _bounds; }
@@ -144,25 +148,21 @@ public:
      */
     Point<float> to_view_space (Point<float> coord);
 
-    //=========================================================================
     /** Called by the View to render this Widget.
         Invokes Widget::paint on this and all children recursively
      */
     void render (Graphics& g);
 
-    //=========================================================================
     /** True if this Widget owns it's View. i.e. is the top level
         widget under the OS window 
      */
-    bool elevated() const noexcept { return _view != nullptr; }
+    bool elevated() const noexcept;
 
-    //=========================================================================
     /** Returns the Widget underneath the given coordinate.
         @param coord The coordinate to check in local space
      */
     Widget* widget_at (Point<float> coord);
 
-    //=========================================================================
     Widget* find_root() const noexcept;
     ViewRef find_view() const noexcept;
     uintptr_t find_handle() const noexcept;
@@ -175,9 +175,9 @@ public:
     // this kind of access into the widget will eventually be stable with
     // an obverver system + object query system.
     std::string __name;
-    const std::vector<Widget*> __widgets() const noexcept { return _widgets; }
+    const std::vector<Widget*>& __widgets() const noexcept;
     virtual bool __wants_updates() { return false; }
-    virtual void __update() {};
+    virtual void __update() {}
     // end debug things
     //=========================================================================
 
@@ -201,15 +201,11 @@ protected:
 
 private:
     friend class Main;
+    friend class detail::Main;
     friend class View;
     friend class detail::View;
     
-    Widget* _parent = nullptr;
-    std::unique_ptr<View> _view;
-    std::vector<Widget*> _widgets;
     Rectangle<int> _bounds;
-    bool _visible { false };
-    bool _opaque { false };
 
     void add_internal (Widget*);
     void render_internal (Graphics&);
@@ -220,6 +216,8 @@ private:
     void notify_moved_resized (bool, bool);
 
     struct Render;
+
+    std::unique_ptr<detail::Widget> impl;
     LVTK_WEAK_REFABLE (Widget)
 };
 

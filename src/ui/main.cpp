@@ -11,6 +11,7 @@
 #include <pugl/pugl.h>
 
 #include "detail/view.hpp"
+#include "detail/widget.hpp"
 
 namespace lvtk {
 namespace detail {
@@ -98,18 +99,16 @@ std::unique_ptr<View> Main::create_view (Widget& widget, ViewFlags flags, uintpt
     return view;
 }
 void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
-    if (widget._view != nullptr)
+    if (widget.impl->view != nullptr)
         return;
 
     auto view = create_view (widget, flags, parent);
     // bail out conditions?
 
-    std::clog << "Main::elevate\n";
-
     view->impl->realize();
     view->set_bounds (widget.bounds());
     view->set_visible (widget.visible());
-    widget._view = std::move (view);
+    widget.impl->view = std::move (view);
     widget.notify_structure_changed();
 }
 
@@ -119,7 +118,7 @@ void Main::elevate (Widget& widget, ViewFlags flags, View& parent) {
 
 View* Main::find_view (Widget& widget) const noexcept {
     for (auto view : _views) {
-        if (view == widget._view.get())
+        if (view == widget.impl->view.get())
             return view;
         if (view->widget().contains (widget, true))
             return view;

@@ -9,6 +9,8 @@
 #include <lvtk/ui/style.hpp>
 #include <lvtk/ui/widget.hpp>
 
+#include "detail/widget.hpp"
+
 // =================== widget debugging =======================//
 #define DBG_WIDGET 0
 #if DBG_WIDGET
@@ -25,7 +27,7 @@ namespace detail {
 template <typename T>
 static int round_int (T v) { return static_cast<int> (v); }
 
-static bool test_pos (Widget& widget, Point<float> pos) {
+static bool test_pos (lvtk::Widget& widget, Point<float> pos) {
     auto ipos = pos.as<int>();
     return widget.bounds().at (0, 0).contains (ipos)
            && widget.obstructed (ipos.x, ipos.y);
@@ -97,23 +99,27 @@ static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<floa
 
 } // namespace convert
 
-Widget::Widget() { _weak_status.reset (this); }
+Widget::Widget() { 
+    impl = std::make_unique<detail::Widget> (*this);
+    _weak_status.reset (this); 
+}
+
 Widget::~Widget() {
     _weak_status.reset (nullptr);
     if (auto p = parent())
         p->remove (this);
-    if (_view)
-        _view.reset();
+    if (impl->view)
+        impl->view.reset();
 }
 
 //=============================================================================
-bool Widget::visible() const noexcept { return _visible; }
+bool Widget::visible() const noexcept { return impl->visible; }
 
 void Widget::set_visible (bool v) {
-    if (_visible != v) {
-        _visible = v;
-        if (_view)
-            _view->set_visible (visible());
+    if (impl->visible != v) {
+        impl->visible = v;
+        if (impl->view)
+            impl->view->set_visible (visible());
     }
 }
 
@@ -121,6 +127,8 @@ void Widget::set_visible (bool v) {
 void Widget::repaint() {
     repaint_internal (bounds().at (0));
 }
+
+bool Widget::opaque() const noexcept { return impl->opaque; }
 
 //=============================================================================
 void Widget::set_bounds (int x, int y, int w, int h) {
@@ -144,7 +152,8 @@ void Widget::set_size (int width, int height) {
     set_bounds (_bounds.x, _bounds.y, width, height);
 }
 
-//=============================================================================
+Widget* Widget::parent() const noexcept { return impl->parent; }
+
 void Widget::add (Widget& widget) {
     add_internal (&widget);
 }
@@ -152,20 +161,20 @@ void Widget::add (Widget& widget) {
 void Widget::add_internal (Widget* widget) {
     assert (widget != this);
 
-    if (nullptr == widget || widget->_parent == this)
+    if (nullptr == widget || widget->impl->parent == this)
         return;
 
-    if (widget->_parent != nullptr)
-        widget->_parent->remove (widget);
-    else if (widget->_view)
-        widget->_view.reset();
+    if (widget->impl->parent != nullptr)
+        widget->impl->parent->remove (widget);
+    else if (widget->impl->view)
+        widget->impl->view.reset();
 
-    widget->_parent = this;
+    widget->impl->parent = this;
 
     if (widget->visible())
         widget->repaint();
 
-    _widgets.push_back (widget);
+    impl->widgets.push_back (widget);
 
     // child events
     widget->notify_structure_changed();
@@ -175,12 +184,12 @@ void Widget::add_internal (Widget* widget) {
 }
 
 void Widget::remove (Widget* widget) {
-    auto it = std::find (_widgets.begin(), _widgets.end(), widget);
-    if (it == _widgets.end())
+    auto it = std::find (impl->widgets.begin(), impl->widgets.end(), widget);
+    if (it == impl->widgets.end())
         return;
 
-    _widgets.erase (it);
-    widget->_parent = nullptr;
+    impl->widgets.erase (it);
+    widget->impl->parent = nullptr;
 
     // child events
     widget->notify_structure_changed();
@@ -196,7 +205,7 @@ void Widget::remove (Widget& widget) {
 bool Widget::obstructed (int x, int y) {
     auto pos = Point<int> { x, y }.as<float>();
 
-    for (auto child : _widgets) {
+    for (auto child : impl->widgets) {
         if (child->visible() && detail::test_pos (*child, convert::from_parent_space (*child, pos))) {
             return true;
         }
@@ -206,8 +215,8 @@ bool Widget::obstructed (int x, int y) {
 }
 
 Widget* Widget::widget_at (Point<float> pos) {
-    if (_visible && detail::test_pos (*this, pos)) {
-        for (auto child : _widgets) {
+    if (visible() && detail::test_pos (*this, pos)) {
+        for (auto child : impl->widgets) {
             if (auto c2 = child->widget_at (convert::from_parent_space (*child, pos)))
                 return c2;
         }
@@ -218,16 +227,16 @@ Widget* Widget::widget_at (Point<float> pos) {
 
 Widget* Widget::find_root() const noexcept {
     auto it = this;
-    while (it && it->_parent != nullptr)
-        it = it->_parent;
+    while (it && it->impl->parent != nullptr)
+        it = it->impl->parent;
     return it != nullptr ? const_cast<Widget*> (it) : nullptr;
 }
 
 ViewRef Widget::find_view() const noexcept {
     auto it = this;
-    while (it && it->_view == nullptr)
-        it = it->_parent;
-    return it != nullptr ? it->_view.get() : nullptr;
+    while (it && it->impl->view == nullptr)
+        it = it->impl->parent;
+    return it != nullptr ? it->impl->view.get() : nullptr;
 }
 
 uintptr_t Widget::find_handle() const noexcept {
@@ -243,10 +252,10 @@ Style& Widget::style() {
     return find_root()->style();
 }
 
-void Widget::set_opaque (bool opaque) {
-    if (_opaque == opaque)
+void Widget::set_opaque (bool op) {
+    if (impl->opaque == op)
         return;
-    _opaque = opaque;
+    impl->opaque = op;
     repaint();
 }
 
@@ -266,13 +275,17 @@ void Widget::render (Graphics& g) {
     render_internal (g);
 }
 
+bool Widget::elevated() const noexcept {
+    return impl->view != nullptr;
+}
+
 //=================================================================
 bool Widget::contains (const Widget& widget, bool deep) const {
     if (! deep)
-        return widget._parent == this;
+        return widget.impl->parent == this;
     auto c = &widget;
     while (c != nullptr) {
-        c = c->_parent;
+        c = c->impl->parent;
         if (c == this) {
             return true;
         }
@@ -297,8 +310,8 @@ struct Widget::Render {
     static bool clip_widgets_blocking (const Widget& w, Graphics& g, const Rectangle<int> cr, Point<int> delta) {
         int nclips = 0;
 
-        for (int i = w._widgets.size(); --i >= 0;) {
-            auto& cw = *w._widgets[i];
+        for (int i = w.impl->widgets.size(); --i >= 0;) {
+            auto& cw = *w.impl->widgets[i];
 
             if (! cw.visible())
                 continue;
@@ -332,7 +345,7 @@ struct Widget::Render {
         widget.paint (g);
         g.restore();
 
-        for (auto cw : widget._widgets) {
+        for (auto cw : widget.impl->widgets) {
             if (! cw->visible())
                 continue;
 
@@ -355,7 +368,7 @@ struct Widget::Render {
         }
         g.restore();
 
-        for (auto cw : widget._widgets) {
+        for (auto cw : widget.impl->widgets) {
             if (! cw->visible())
                 continue;
 
@@ -388,13 +401,13 @@ void Widget::repaint_internal (Bounds b) {
         return;
 
     if (elevated()) {
-        _view->repaint (b);
+        impl->view->repaint (b);
     } else {
-        if (_parent != nullptr) {
+        if (impl->parent != nullptr) {
             auto p = convert::to_parent_space (*this, b.pos().as<float>());
             b.x    = detail::round_int (p.x);
             b.y    = detail::round_int (p.y);
-            _parent->repaint_internal (b);
+            impl->parent->repaint_internal (b);
         }
     }
 }
@@ -405,11 +418,11 @@ void Widget::notify_structure_changed() {
     WidgetRef ref = this;
     parent_structure_changed();
 
-    for (int i = (int) _widgets.size(); --i >= 0;) {
-        _widgets[i]->notify_structure_changed();
+    for (int i = (int) impl->widgets.size(); --i >= 0;) {
+        impl->widgets[i]->notify_structure_changed();
         if (! ref.valid())
             return;
-        i = std::min (i, (int) _widgets.size());
+        i = std::min (i, (int) impl->widgets.size());
     }
 }
 
@@ -432,19 +445,23 @@ void Widget::notify_moved_resized (bool was_moved, bool was_resized) {
         if (! ref.valid())
             return;
 
-        for (int i = (int) _widgets.size(); --i >= 0;) {
-            _widgets[i]->parent_size_changed();
+        for (int i = (int) impl->widgets.size(); --i >= 0;) {
+            impl->widgets[i]->parent_size_changed();
             if (! ref.valid())
                 return;
-            i = std::min (i, (int) _widgets.size());
+            i = std::min (i, (int) impl->widgets.size());
         }
     }
 
-    if (_parent != nullptr)
-        _parent->child_size_changed (this);
+    if (impl->parent != nullptr)
+        impl->parent->child_size_changed (this);
 
     if (ref.valid()) { /* send a signal */
     };
+}
+
+const std::vector<Widget*>& Widget::__widgets() const noexcept {
+    return impl->widgets;
 }
 
 //=============================================================================
