@@ -13,7 +13,7 @@ LVTK
     Extensions <extensions>
     High Level <highlevel>
     DynManifest <dynmanifest>
-    
+    Graphics <graphics>
     Widgets <widgets>
 
     Hosting <hosting>

@@ -22,6 +22,7 @@ lvtk_rst_sources = files ('''
     extensions.rst
     highlevel.rst
     hosting.rst
+    graphics.rst
     index.rst
     summary.rst
     widgets.rst

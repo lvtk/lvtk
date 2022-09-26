@@ -18,4 +18,3 @@ Docs coming soon.  API under heavy development. -MRF
    ui/views
    ui/events
    ui/widget
-   ui/fonts

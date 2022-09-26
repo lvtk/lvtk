@@ -1,7 +1,6 @@
 lvtk_ui_rst_sources = files ('''
     event-loop.rst
     events.rst
-    fonts.rst
     main.rst
     views.rst
     widget.rst
