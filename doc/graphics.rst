@@ -35,7 +35,7 @@ Lowlevel drawing context. e.g. OpenGL uses nanovg for drawing.
 Graphics
 --------
 
-Highlevel drawing context.  Passed to widgets by the View to render all widgets.
+Highlevel drawing context.  Passed to widgets by the View for all rendering.
 
 -----
 Fonts
