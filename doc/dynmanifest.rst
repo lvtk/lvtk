@@ -4,7 +4,7 @@ Dynamic Manifest
 
 `Dynamic Manifest <https://lv2plug.in/ns/ext/dynmanifest>`__ support.  This 
 is a simple interface that implements dynmanifest boiler plate code in an easy
-to use C++ class & factory function.  See the examle below.
+to use C++ class & factory function.  See the example below.
 
 .. code-block:: cpp
 
