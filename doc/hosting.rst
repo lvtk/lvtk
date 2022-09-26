@@ -48,13 +48,13 @@ method.  It is up to client code what to do with the plugin.
       - `Wrapper <api/classlvtk_1_1Instance.html>`__
       - N/A
     * - :class:`lvtk.PluginInfo`
-      - `Wrapper <api/structlvtk_1_1PluginInfo.html>`__
+      - `Struct <api/structlvtk_1_1PluginInfo.html>`__
       - N/A
     * - :class:`lvtk.SupportedUI`
-      - `Wrapper <api/structlvtk_1_1SupportedUI.html>`__
+      - `Struct <api/structlvtk_1_1SupportedUI.html>`__
       - N/A
     * - :class:`lvtk.SupportedUIs`
-      - `Wrapper <api/classlvtk_1_1SupportedUIs.html>`__
+      - `Container <api/classlvtk_1_1SupportedUIs.html>`__
       - N/A
 
 ----------
