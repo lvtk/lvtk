@@ -127,7 +127,7 @@ public:
     }
 
 private:
-    lvtk::URIDirectory urids;
+    lvtk::Symbols urids;
     lvtk::Forge forge;
     std::unique_ptr<uint8_t[]> buffer;
     uint32_t buffer_size = 4096 * 2;

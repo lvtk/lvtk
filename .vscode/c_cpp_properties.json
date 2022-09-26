@@ -6,8 +6,22 @@
                 "${workspaceFolder}/include/*",
                 "${workspaceFolder}/demo/*",
                 "${workspaceFolder}/src/*",
+                
                 "${workspaceFolder}/subprojects/lv2/include/*",
-                "${workspaceFolder}/subprojects/pugl/include/*"
+                "${workspaceFolder}/subprojects/lilv/include/*",
+                "${workspaceFolder}/subprojects/suil/include/*",
+                "${workspaceFolder}/subprojects/serd/include/*",
+                "${workspaceFolder}/subprojects/sord/include/*",
+                "${workspaceFolder}/subprojects/sratom/include/*",
+                "${workspaceFolder}/subprojects/pugl/include/*",
+
+                "../../subprojects/lv2/include/*",
+                "../../subprojects/lilv/include/*",
+                "../../subprojects/suil/include/*",
+                "../../subprojects/serd/include/*",
+                "../../subprojects/sord/include/*",
+                "../../subprojects/sratom/include/*",
+                "../../subprojects/pugl/include/*"
             ],
             "defines": [],
             "macFrameworkPath": [
@@ -25,15 +39,37 @@
             "includePath": [
                 "${workspaceFolder}/include/*",
                 "${workspaceFolder}/demo/*",
+                "${workspaceFolder}/src/*",
+                
+                "/usr/include/lv2/*",
+                "/usr/include/lilv-0/*",
+                "/usr/include/suil-0/*",
+                "/usr/include/serd-0/*",
+                "/usr/include/sord-0/*",
+                "/usr/include/sratom-0/*",
+
                 "${workspaceFolder}/subprojects/lv2/include/*",
-                "${workspaceFolder}/subprojects/pugl/include/*"
+                "${workspaceFolder}/subprojects/lilv/include/*",
+                "${workspaceFolder}/subprojects/suil/include/*",
+                "${workspaceFolder}/subprojects/serd/include/*",
+                "${workspaceFolder}/subprojects/sord/include/*",
+                "${workspaceFolder}/subprojects/sratom/include/*",
+                "${workspaceFolder}/subprojects/pugl/include/*",
+
+                "../../subprojects/lv2/include/*",
+                "../../subprojects/lilv/include/*",
+                "../../subprojects/suil/include/*",
+                "../../subprojects/serd/include/*",
+                "../../subprojects/sord/include/*",
+                "../../subprojects/sratom/include/*",
+                "../../subprojects/pugl/include/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang++",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "compileCommands": "${workspaceFolder}/../../build/compile_commands.json"
         },
         {
             "name": "Win32",

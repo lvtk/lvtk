@@ -1,4 +1,5 @@
-project ('lvtk', ['cpp', 'c'], version : '3.0.0',
+project ('lvtk', ['cpp', 'c'], 
+    version : '3.0.0',
     meson_version : '>= 0.56.0',
     license: 'ISC',
     default_options: [
@@ -7,6 +8,8 @@ project ('lvtk', ['cpp', 'c'], version : '3.0.0',
         'c_std=c99',
         'cpp_std=c++17',
     ])
+
+lvtk_abi_version = '3.0'
 
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
@@ -50,32 +53,33 @@ executable (
     cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
     include_directories : [],
     link_with : [ liblvtk_demo ],
-    dependencies : [ lvtk_gl_dep, threads_dep ],
+    dependencies : [ lvtk_opengl_dep, threads_dep ],
     win_subsystem : 'windows',
     install : true)
 
 ### Install Headers and PC
 
-install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-3')
+install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-@0@'.format(lvtk_abi_version))
 subdir ('meson/pkgconfig')
 
 ### Tests
-if not get_option('unit-tests').disabled()
+if not get_option('test').disabled()
     subdir('test')
 endif
 
 endif # only docs
 
 ### Docs
-if not get_option('docs').disabled()
+if not get_option('doc').disabled()
     subdir ('doc')
 endif
 
 ### Summary
-summary('Docs', not get_option('docs').disabled(), bool_yn: true)
-summary('Tests', not get_option('unit-tests').disabled(), bool_yn: true)
+summary('Docs', not get_option('doc').disabled(), bool_yn: true)
+summary('Tests', not get_option('test').disabled(), bool_yn: true)
 
-summary('Lua', true, section : 'Bindings', bool_yn: true)
+summary('Modules', true, section : 'Lua', bool_yn: true)
+summary('Version', lua_version, section : 'Lua')
 
 summary('Graphics', 'OpenGL', section : 'Gui')
 summary('Demo', true, bool_yn: true, section : 'Gui')

@@ -15,7 +15,7 @@ public:
 /** @ingroup widgets */
 class Image {
 public:
-    Image() = default;
+    Image()        = default;
     Image& operator= (const Image& o) {
         _pixels = o._pixels;
         return *this;

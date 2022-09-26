@@ -109,6 +109,4 @@ private:
     }
 };
 
-using URIDirectory = Symbols;
-
 } // namespace lvtk

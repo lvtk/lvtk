@@ -18,12 +18,14 @@ lvtk_unit_test_sources = '''
     ui_path_test.cpp
     weak_ref_test.cpp
 
+    host_world_test.cpp
+
     main_unit.cpp
 '''.split()
 
 unit = executable ('unit',
     lvtk_unit_test_sources,
-    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_ui_dep ],
+    dependencies : [ lvtk_host_dep, boost_dep, lvtk_internal_dep, lvtk_widgets_dep ],
     cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 
 lvtk_unit_tests = '''
@@ -44,9 +46,15 @@ lvtk_unit_tests = '''
     String
     Path
     WeakRef
+
+    World
 '''.split()
 foreach t : lvtk_unit_tests
-    test (t, unit, args : [ '-t', t ])
+    test (t, unit, args : [ '-t', t ],
+        env : [
+            'LV2_PATH=@0@'.format (meson.project_build_root())
+        ]
+    )
 endforeach
 
 subdir ('lua')

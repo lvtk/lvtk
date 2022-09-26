@@ -16,11 +16,13 @@
             "name": "Test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/tests/unit",
+            "program": "${workspaceRoot}/build/test/unit",
             "cwd": "${workspaceRoot}/build",
             "args": [ ],
             "stopAtEntry": false,
-            "environment": [ ],
+            "environment":[
+                { "name": "LV2_PATH", "value": "${workspaceFolder}/build" }
+            ],
             "externalConsole": false,
             "logging": {
                 "moduleLoad": false
@@ -55,7 +57,7 @@
             "request": "launch",
             "program": "/usr/local/bin/jalv.gtk3",
             "cwd": "${workspaceRoot}/build",
-            "args": [ "http://lvtk.org/plugins/volume" ],
+            "args": [ "https://lvtk.org/plugins/volume" ],
             "stopAtEntry": false,
             "environment": [ {
                 "name": "LV2_PATH", "value": "${workspaceRoot}/build"

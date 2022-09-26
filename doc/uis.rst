@@ -29,7 +29,7 @@ Since this is a template, simulated dynamic binding is used for the callbacks.
 When using :class:`lvtk.Extension`  "extensions" no vtable lookups are invoked, 
 like normal dynamic binding would.
 
-Including the ``lvtk/plugin.hpp`` header also adds ``lv2_descriptor`` so you don't
+Including the ``lvtk/ui.hpp`` header also adds ``lv2ui_descriptor`` so you don't
 have to.
 
 ---------

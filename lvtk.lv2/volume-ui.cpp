@@ -7,6 +7,7 @@
 #include <lvtk/ext/idle.hpp>
 #include <lvtk/ext/parent.hpp>
 #include <lvtk/ext/resize.hpp>
+#include <lvtk/lvtk.h>
 #include <lvtk/options.hpp>
 #include <lvtk/ui.hpp>
 
@@ -16,8 +17,6 @@
 
 #include <lvtk/ext/urid.hpp>
 #include <lvtk/weak_ref.hpp>
-
-#define LVTK_VOLUME_UI_URI "http://lvtk.org/plugins/volume/ui"
 
 using namespace lvtk;
 
@@ -43,10 +42,10 @@ public:
     void port_event (uint32_t port, uint32_t size,
                      uint32_t format, const void* buffer) {}
 
-    LV2UI_Widget get_widget() {
+    LV2UI_Widget widget() {
         if (content == nullptr) {
             content = std::make_unique<Content>();
-            content->set_size (640, 360);
+            content->set_size (360, 240);
             content->set_visible (true);
             _main.elevate (*content, 0, (uintptr_t) parent.get());
         }
@@ -103,7 +102,7 @@ private:
 
         void resized() override {
             auto r1 = bounds().at (0, 0);
-            std::clog << "container resized: " << r1.str() << std::endl;
+            // std::clog << "container resized: " << r1.str() << std::endl;
             r1.width /= 2;
             auto r2           = r1;
             r2.x              = r1.width;
@@ -168,5 +167,5 @@ private:
     float m_scale_factor { 1.f };
 };
 
-static UIDescriptor<VolumeUI> s_volume_ui (
-    LVTK_VOLUME_UI_URI, { LV2_UI__parent });
+static UIDescriptor<VolumeUI> sVolumeUI (
+    LVTK_PLUGINS__VolumeUI, {});

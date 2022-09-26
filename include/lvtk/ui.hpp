@@ -270,12 +270,10 @@ private:
 extern "C" {
 
 #ifndef LVTK_NO_SYMBOL_EXPORT
-
 LV2_SYMBOL_EXPORT const LV2UI_Descriptor* lv2ui_descriptor (uint32_t index) {
     return (index < lvtk::ui_descriptors().size())
                ? &lvtk::ui_descriptors()[index]
                : NULL;
 }
-
 #endif
 }

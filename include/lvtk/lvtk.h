@@ -36,6 +36,20 @@ extern "C" {
 #    define LVTK_EXPORT
 #endif
 
+#define LVTK_ORG               "https://lvtk.org"
+#define LVTK_NS                LVTK_ORG "/ns"
+#define LVTK_PLUGINS_URI       "https://lvtk.org/plugins"
+#define LVTK_PLUGINS__Volume   LVTK_PLUGINS_URI "/volume"
+#define LVTK_PLUGINS__VolumeUI LVTK_PLUGINS__Volume "#ui"
+
+#ifdef __linux__
+#    define LVTK_UI__NativeUI LV2_UI__X11UI
+#elif defined(__APPLE__)
+#    define LVTK_UI__NativeUI LV2_UI__CocoaUI
+#else
+#    define LVTK_UI__NativeUI LV2_UI__WindowsUI
+#endif
+
 #if __cplusplus
 } // extern "C"
 

@@ -39,6 +39,7 @@
 #include <vector>
 
 #include <lv2/core/lv2.h>
+#include <lvtk/lvtk.h>
 
 namespace lvtk {
 /** @defgroup alias Alias 
@@ -103,7 +104,7 @@ struct Feature : LV2_Feature {
         data = feature_data;
         URI  = feature_uri;
     }
-    
+
     /** @returns true if this Feature's URI matches */
     inline bool operator== (const char* uri) const { return strcmp (uri, URI) == 0; }
 
@@ -207,7 +208,7 @@ public:
     inline bool set (const Feature* const feature) noexcept {
         return set (*feature);
     }
-    
+
     /** false if the data ptr is null */
     inline operator bool() const noexcept { return data != nullptr; }
 

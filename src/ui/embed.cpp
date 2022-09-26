@@ -6,100 +6,181 @@
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/main.hpp>
 
+#if __linux__
+#    include <X11/Xlib.h>
+#else
+#endif
+
 namespace lvtk {
+namespace detail {
 
-class Embed::Window {
+#ifdef __linux__
+bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _root) {
+    Window root, parent, *children = nullptr;
+    unsigned int num_children;
+
+    if (! XQueryTree (disp, window, &root, &parent, &children, &num_children))
+        return false;
+
+    if (children)
+        XFree ((char*) children);
+
+    window = parent;
+    _root  = root;
+    return true;
+}
+
+uintptr_t get_window_first_child (Display* disp, uintptr_t window) {
+    Window root, parent, *children = nullptr;
+    unsigned int num_children;
+
+    if (! XQueryTree (disp, window, &root, &parent, &children, &num_children))
+        return false;
+
+    std::clog << "get_window_first_child: num_children = " << num_children << std::endl;
+
+    Window child = 0;
+    if (children) {
+        child = children[0];
+        XFree ((char*) children);
+    }
+
+    return child;
+}
+
+static Rectangle<float> native_geometry (ViewRef pv) {
+    auto& main = pv->main();
+    auto disp  = (Display*) main.handle();
+
+    int x            = 0;
+    int y            = 0;
+    unsigned int w   = 0;
+    unsigned int h   = 0;
+    unsigned int bw  = 0;
+    unsigned int d   = 0;
+    uintptr_t root   = 0;
+    uintptr_t window = get_window_first_child (disp, pv->handle());
+    std::clog << "window = " << (int64_t) window << std::endl;
+    if (window != 0)
+        XGetGeometry (disp, window, &root, &x, &y, &w, &h, &bw, &d);
+    return { (float) x, (float) y, float (w), float (h) };
+}
+#else
+static Rectangle<float> native_geometry (ViewRef pv) {
+    return pv->bounds().as<float>();
+}
+#endif
+
+class Embed final {
 public:
-    Main& main;
-    Embed& owner;
-    ViewRef parent;
-
     class Proxy : public lvtk::Widget {
     public:
         Proxy() {}
         ~Proxy() {}
     };
 
-    Window (Main& m, Embed& x)
-        : main (m), owner (x) {
+    Embed (lvtk::Embed& x) : owner (x) {
         create_window();
     }
 
-    ~Window() {
+    ~Embed() {
+    }
+
+    void close_proxy() {
+        if (proxy) {
+            proxy->set_visible (false);
+            proxy.reset();
+        }
     }
 
     void create_proxy() {
+        close_proxy();
         proxy = std::make_unique<Proxy>();
-        proxy->set_size (360, 240);
-        proxy->set_visible (true);
+        proxy->set_size (1, 1);
     }
 
     void create_window() {
         if (proxy != nullptr)
             return;
 
-        parent = owner.find_view();
-        if (parent == nullptr)
-            parent = main.find_view (owner);
+        owner_view = owner.find_view();
 
-        if (parent != nullptr) {
+        if (owner_view != nullptr) {
             create_proxy();
-            // TODO: use Pugl's parenting facilities
-            main.elevate (*proxy, 0, *parent);
-            proxy->set_visible (true);
-            parent->set_size (100, 100);
+            if (proxy) {
+                owner_view->elevate (*proxy, 0);
+                if (auto pv = proxy->find_view()) {
+                    std::clog << pv->bounds().str() << std::endl;
+                    proxy->set_visible (true);
+                }
+            }
         } else {
-            std::clog << "[embed] window: didn't get parent view\n";
+            // std::clog << "[embed] window: owner didn't get parent view\n";
         }
     }
 
-    void embed_resized() {
-        if (! parent.valid())
+    void resized() {
+        if (! proxy)
             return;
-        auto b = parent->bounds();
-        b.x    = 200;
-        parent->set_bounds (b);
+
+        if (auto pv = proxy->find_view()) {
+            original_geometry = detail::native_geometry (pv);
+            const auto& og    = original_geometry;
+            Bounds r;
+
+            r.x      = owner.x();
+            r.y      = owner.y();
+            r.width  = int (og.width / pv->scale_factor());
+            r.height = int (og.height / pv->scale_factor());
+
+            if (! r.empty()) {
+                pv->set_bounds (r);
+                proxy->set_bounds (r.at (0));
+            }
+        }
     }
 
+private:
+    friend class lvtk::Embed;
+    lvtk::Embed& owner;
+    ViewRef owner_view;
+    Rectangle<float> original_geometry;
     std::unique_ptr<Proxy> proxy;
 };
 
-Embed::Embed (Main& main)
-    : window (std::make_unique<Window> (main, *this)) {
+} /* namespace detail */
+
+Embed::Embed()
+    : impl (std::make_unique<detail::Embed> (*this)) {
     set_opaque (true);
 }
 
 Embed::~Embed() {
-    window.reset();
+    impl.reset();
 }
 
-ViewRef Embed::host_view() const noexcept {
-    return (window != nullptr && window->proxy != nullptr)
-               ? window->proxy->find_view()
+ViewRef Embed::proxy_view() const noexcept {
+    return (impl != nullptr && impl->proxy != nullptr)
+               ? impl->proxy->find_view()
                : nullptr;
 }
 
 void Embed::paint (Graphics& g) {
-    g.set_color (0x222222ff);
+    g.set_color (0x040404ff);
     g.fill_rect (bounds().at (0));
 }
 
 void Embed::resized() {
-    window->embed_resized();
+    impl->resized();
 }
 
 void Embed::children_changed() {
-    std::clog << "[embed] children_changed()\n";
-    window->create_window();
+    impl->create_window();
 }
 
 void Embed::parent_structure_changed() {
-    std::clog << "[embed] parent_structure_changed\n";
     if (auto v = find_view()) {
-        std::clog << "[embed] find_fiew() != nullptr\n";
-        window->create_window();
-    } else {
-        std::clog << "[embed] find_fiew() == nullptr\n";
+        impl->create_window();
     }
 }
 

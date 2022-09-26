@@ -75,7 +75,7 @@ public:
         @returns The red value
     */
     uint8_t red() const noexcept { return pixel.component.r; }
-    
+
     /** Return the int green value
         @returns The green value
     */
@@ -85,10 +85,10 @@ public:
         @returns the int blue value
     */
     uint8_t blue() const noexcept { return pixel.component.b; }
-    
+
     /** Return the int alpha value
         @returns the int alpha value
-    */    
+    */
     uint8_t alpha() const noexcept { return pixel.component.a; }
 
     /** Return the float red value
@@ -100,7 +100,6 @@ public:
         @returns the float green value
     */
     float fgreen() const noexcept { return (float) pixel.component.g / 255.f; }
-
 
     /** Return the float blue value
         @returns the float blue value

@@ -1,17 +1,34 @@
 cc = meson.get_compiler ('c')
+cpp = meson.get_compiler ('cpp')
 dl_dep = cc.find_library ('dl', required: false)
-threads_dep = dependency('threads')
 
+threads_dep = dependency ('threads')
+
+### Lv2 Core
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
     version : '>= 1.18.0', 
     required : true,
     default_options : [
-        'tests=auto',
+        'tests=disabled',
         'plugins=disabled',
         'docs=disabled'
     ])
 
+lvtk_lv2dir = get_option('lv2dir')
+if lvtk_lv2dir == ''
+  if target_machine.system() == 'darwin'
+    lvtk_lv2dir = '/Library/Audio/Plug-Ins/LV2'
+  elif target_machine.system() == 'haiku'
+    lvtk_lv2dir = '/boot/common/add-ons/lv2'
+  elif target_machine.system() == 'windows'
+    lvtk_lv2dir = 'C:/Program Files/Common Files/LV2'
+  else
+    lvtk_lv2dir = get_option('prefix') / get_option('libdir') / 'lv2'
+  endif
+endif
+
+### Pugl
 pugl_opts = [
     'tests=disabled',
     'examples=disabled',
@@ -19,7 +36,6 @@ pugl_opts = [
     'vulkan=disabled',
     'stub=false',
     'docs=disabled'
-    # 'default_library=static'
 ]
 
 pugl_dep = dependency ('pugl-0', 
@@ -36,16 +52,39 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     required : true
 )
 
-boost_dep = (dependency ('boost', required : not get_option('unit-tests').disabled()))
+### Lilv & Suil
+lilv_dep = dependency ('lilv-0', 
+    fallback : ['lilv', 'lilv_dep' ], 
+    required : true,
+    default_options : [])
+suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : true)
 
-lua_dep = dependency ('lua', required : false)
-if not lua_dep.found()
-    lua_dep = dependency ('lua5.3', required : false)
-endif
-if not lua_dep.found()
-    lua_dep = dependency ('lua5.4', required : false)
+### Boost
+boost_dep = (dependency ('boost', required : not get_option('test').disabled()))
+
+## Lua: Try to use 5.3 lua headers on the system. 
+#  Fallback to included 5.4 headers.
+
+lua_version = ''
+lua_program = find_program ('lua5.4', required : false)
+lua_dep = dependency('', required : false)
+if not lua_program.found()
+    lua_program = find_program('lua5.3', required : false)
 endif
 
-if lua_dep.found()
-    lua_program = find_program ('lua')
+if not lua_program.found()
+    lua_program = find_program('lua', required : false)
 endif
+
+if lua_program.found()
+    pymod = import('python')
+    lua_version = run_command(pymod.find_installation('python2'), '../../scripts/luavers.py',
+        lua_program, check : true).stdout().strip()
+    lua_dep = dependency ('lua@0@'.format(lua_version), required : false)
+    if not lua_dep.found()
+        lua_dep = dependency ('lua', pkgconfig : '--cflags', required : false)
+    endif
+endif
+
+# true if using system
+lvtk_lua_system = lua_dep.found() and lua_program.found()

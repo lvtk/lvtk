@@ -176,6 +176,8 @@ public:
     // an obverver system + object query system.
     std::string __name;
     const std::vector<Widget*> __widgets() const noexcept { return _widgets; }
+    virtual bool __wants_updates() { return false; }
+    virtual void __update() {};
     // end debug things
     //=========================================================================
 

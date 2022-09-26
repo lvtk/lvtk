@@ -24,4 +24,4 @@ Color Style::find_color (int ID) const noexcept {
     return {};
 }
 
-}
+} // namespace lvtk

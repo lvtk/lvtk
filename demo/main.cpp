@@ -8,7 +8,7 @@
 template <class Wgt>
 static int run (lvtk::Main& context) {
     try {
-        auto content = std::make_unique<Wgt> (context);
+        auto content = std::make_unique<Wgt>();
         context.elevate (*content, lvtk::ViewFlag::RESIZABLE, 0);
         bool quit = false;
         while (! quit) {

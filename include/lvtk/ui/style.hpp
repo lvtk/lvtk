@@ -22,10 +22,10 @@ class Widget;
 */
 struct ColorID {
     enum Key : int {
-        BUTTON_BASE = 1,    ///< Base background color of standard buttons
-        BUTTON_ON,          ///< Base on color when button is "toggled"
-        BUTTON_TEXT_OFF,    ///< Base off color when button is not "toggled"
-        BUTTON_TEXT_ON      ///< Button text color when ON
+        BUTTON_BASE = 1, ///< Base background color of standard buttons
+        BUTTON_ON,       ///< Base on color when button is "toggled"
+        BUTTON_TEXT_OFF, ///< Base off color when button is not "toggled"
+        BUTTON_TEXT_ON   ///< Button text color when ON
     };
 };
 
@@ -75,7 +75,7 @@ private:
         int ID;
         Color color;
         bool operator== (const ColorItem& o) const noexcept { return ID == o.ID; }
-        bool operator<(const ColorItem& o) const noexcept { return ID < o.ID; }
+        bool operator< (const ColorItem& o) const noexcept { return ID < o.ID; }
         bool operator> (const ColorItem& o) const noexcept { return ID > o.ID; }
     };
 

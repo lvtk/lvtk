@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 
-#define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
+#define LVTK_VOLUME_URI "https://lvtk.org/plugins/volume"
 
 class Volume : public lvtk::Plugin<Volume> {
 public:

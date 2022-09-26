@@ -1,6 +1,5 @@
-doxygen = find_program ('doxygen', required : get_option('docs'))
-dox_to_sphinx = find_program ('../scripts/dox_to_sphinx.py', required : false)
-sphinx_build = find_program ('sphinx-build', required : get_option('docs'))
+doxygen = find_program ('doxygen', required : get_option('doc'))
+sphinx_build = find_program ('sphinx-build', required : get_option('doc'))
 
 if doxygen.found() and sphinx_build.found()
 
@@ -10,14 +9,20 @@ conf_py = configure_file (configuration: {
     input : 'conf.py.in',
     output : 'conf.py')
 
+overview = configure_file (configuration: {
+        'LVTK_VERSION' : meson.project_version(),
+        'LVTK_ABI_VERSION'  : lvtk_abi_version
+    },
+    input : 'overview.rst.in',
+    output : 'overview.rst')
 
 lvtk_rst_sources = files ('''
     deployment.rst
     dynmanifest.rst
     extensions.rst
     highlevel.rst
+    hosting.rst
     index.rst
-    overview.rst
     summary.rst
     widgets.rst
     plugins.rst

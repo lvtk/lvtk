@@ -15,7 +15,7 @@
 #include <vector>
 
 #ifndef LVTK_VOLUME_URI
-#    define LVTK_VOLUME_URI "http://lvtk.org/plugins/volume"
+#    define LVTK_VOLUME_URI "https://lvtk.org/plugins/volume"
 #endif
 
 // dummy plugin with worker interface
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    lvtk::URIDirectory urids;
+    lvtk::Symbols urids;
 };
 
 using namespace lvtk;
