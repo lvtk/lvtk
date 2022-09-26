@@ -3,10 +3,13 @@
 
 #pragma once
 
-#include <lv2/core/lv2.h>
-#include <lv2/urid/urid.h>
 #include <string>
 #include <unordered_map>
+
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
+
+#include <lvtk/lvtk.h>
 
 namespace lvtk {
 
@@ -113,6 +116,7 @@ public:
         _unmapf.data = _unmapref = um;
     }
 
+    /** Refer this Symbols to another one */
     void refer_to (Symbols& o) noexcept {
         refer_to ((LV2_URID_Map*) o._mapf.data,
                   (LV2_URID_Unmap*) o._unmapf.data);
@@ -142,6 +146,8 @@ private:
     static const char* _unmap (LV2_URID_Unmap_Handle self, uint32_t urid) {
         return (static_cast<Symbols*> (self))->unmap (urid);
     }
+
+    LVTK_DISABLE_COPY (Symbols)
 };
 
 } // namespace lvtk
