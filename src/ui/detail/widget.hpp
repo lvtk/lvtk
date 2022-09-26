@@ -103,11 +103,11 @@ public:
     }
 
     void render_internal (Graphics& g) {
-    #if LVTK_WIDGET_USE_CLIPPING
+#if LVTK_WIDGET_USE_CLIPPING
         render_all (*this, g);
-    #else
+#else
         render_all_unclipped (owner, g);
-    #endif
+#endif
     }
 
     void repaint_internal (Bounds b) {
