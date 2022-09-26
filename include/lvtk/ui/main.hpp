@@ -8,13 +8,16 @@
 
 #include <lvtk/context.hpp>
 #include <lvtk/lvtk.h>
-#include <lvtk/string.hpp>
 #include <lvtk/ui/view.hpp>
 
 namespace lvtk {
 namespace detail {
 /** @private */
 class Main;
+/** @private */
+class View;
+/** @private */
+class Widget;
 }
 
 /** The running mode type of a UI context. 
@@ -52,7 +55,7 @@ public:
     ~Main();
 
     /** Returns the running mode of this context. */
-    Mode mode() const noexcept { return _mode; }
+    Mode mode() const noexcept;
 
     /** Update this context. */
     void loop (double timeout);
@@ -77,11 +80,11 @@ public:
     void* handle() const noexcept;
 
     /** Returns the underlying PuglWorld. */
-    uintptr_t world() const noexcept { return _world; }
+    uintptr_t world() const noexcept;
 
     /** Returns the default style */
-    Style& style() noexcept { return *_style; }
-    const Style& style() const noexcept { return *_style; }
+    Style& style() noexcept;
+    const Style& style() const noexcept;
 
     /* things for testing */
     bool __quit_flag = false;
@@ -89,21 +92,12 @@ public:
 
 private:
     friend class Widget;
+    friend class detail::Widget;
     friend class View;
-    uintptr_t _world;
-    std::unique_ptr<Backend> _backend;
-    const Mode _mode;
-    std::vector<View*> _views;
-    std::unique_ptr<Style> _style;
+    friend class detail::View;
 
-    /** Create an unrealized view for the given Widget. */
-    std::unique_ptr<View> create_view (Widget& widget, ViewFlags flags, uintptr_t parent);
-
-    Main()             = delete;
-    Main (const Main&) = delete;
-    Main (Main&&)      = delete;
-    Main& operator= (const Main&) = delete;
-    Main& operator= (Main&&) = delete;
+    std::unique_ptr<detail::Main> impl;
+    LVTK_DISABLE_COPY (Main)
 };
 
 /** Backend implementation.
@@ -113,7 +107,7 @@ private:
 struct Backend {
     Backend()          = delete;
     virtual ~Backend() = default;
-    const String& name() const noexcept { return _name; }
+    const std::string& name() const noexcept { return _name; }
 
     /** Your subclass must implement a view and return new
         ones from this factory fuction
@@ -125,15 +119,12 @@ struct Backend {
     virtual std::unique_ptr<View> create_view (Main& main, Widget& widget) = 0;
 
 protected:
-    Backend (const String& name)
+    Backend (const std::string& name)
         : _name (name) {}
 
 private:
-    String _name;
-    Backend (const Backend&) = delete;
-    Backend (Backend&&)      = delete;
-    Backend& operator= (const Backend&) = delete;
-    Backend& operator= (Backend&&) = delete;
+    std::string _name;
+    LVTK_DISABLE_COPY(Backend)
 };
 
 } // namespace lvtk

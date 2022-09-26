@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: ISC
 
 #include <lvtk/ui/view.hpp>
+
+#include "detail/main.hpp"
 #include "detail/view.hpp"
 
 namespace lvtk {
@@ -9,12 +11,12 @@ namespace lvtk {
 View::View (Main& m, Widget& w) {
     impl = std::make_unique<detail::View> (*this, m, w);
     _weak_status.reset (this);
-    m._views.push_back (this);
+    m.impl->views.push_back (this);
 }
 
 View::~View() {
     _weak_status.reset();
-    detail::erase (impl->main._views, this);
+    detail::erase (main().impl->views, this);
     impl.reset();
 }
 
