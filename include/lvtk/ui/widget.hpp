@@ -205,8 +205,8 @@ protected:
     virtual void drag (const Event&) {}
     virtual void pressed (const Event&) {}
     virtual void released (const Event&) {}
-    virtual void pointer_in (const Event&) {}
-    virtual void pointer_out (const Event& ev) {}
+    virtual void enter (const Event&) {}
+    virtual void exit (const Event& ev) {}
 
     virtual void children_changed() {}
     virtual void parent_structure_changed() {}

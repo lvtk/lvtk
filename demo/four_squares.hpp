@@ -41,6 +41,16 @@ public:
         repaint();
     }
 
+    void released (const Event& ev) override {
+        std::clog << name() << " released" << std::endl;
+        if (ev.mods.left_button() && ev.num_clicks == 2) {
+            std::clog << name() << " double clicked\n";
+        }
+        if (ev.mods.popup()) {
+            std::clog << name() << " popup!" << std::endl;
+        }
+    }
+
     void update_divider_y (const Event& ev) {
         divider_y = std::min ((float) height(), std::max (0.f, ev.pos.y));
     }

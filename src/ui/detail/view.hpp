@@ -67,27 +67,44 @@ static Event event (lvtk::Main& m, lvtk::View& view, const Pev& pev) {
     return ev;
 }
 
-static Event event (lvtk::Main& m, lvtk::Widget& src, Point<float> pt) {
-    Event ev (m);
-    ev.source = &src;
-    ev.view   = src.find_view();
-    ev.pos    = pt;
-    ev.x      = static_cast<int> (ev.pos.x);
-    ev.y      = static_cast<int> (ev.pos.y);
-    return ev;
+static Event event (lvtk::Main& m,
+                    lvtk::Widget& src,
+                    lvtk::Widget& tgt,
+                    Modifier mods,
+                    Point<float> pos,
+                    int num_clicks) {
+    return { m,
+             tgt.convert (&src, pos),
+             mods,
+             &src,
+             &tgt,
+             num_clicks };
 }
+
+static Event event (lvtk::Main& m,
+                    lvtk::Widget& src,
+                    lvtk::Widget& tgt,
+                    Point<float> pos) {
+    return event (m, src, tgt, Modifier(), pos, 0);
+}
+
+// auto event = input::event (view.main, *tgt, tgt->convert (&view.widget, pos));
 
 struct ButtonEvent {
     PuglButtonEvent event;
-    WidgetRef source;
     ViewRef view;
+    lvtk::Widget* source;
+    lvtk::Widget* target;
+
+    bool down = false;
+
     ButtonEvent& operator= (const PuglButtonEvent& pev) {
         event = pev;
         return *this;
     }
 };
 
-#define LVTK_MAX_BUTTONS 10
+#define LVTK_MAX_BUTTONS 4
 class ButtonState {
 public:
     ButtonState() {
@@ -101,70 +118,106 @@ public:
         }
     }
 
+    /** Returns true if any button is down */
     bool is_down() const noexcept {
         for (int i = 0; i < LVTK_MAX_BUTTONS; ++i)
-            if (downs[i] == true)
+            if (down[i].down == true)
                 return true;
         return false;
     }
 
+    /** returns true if any button is down with widget as the target */
     bool is_down (lvtk::Widget& widget) const noexcept {
         for (int i = 0; i < LVTK_MAX_BUTTONS; ++i)
-            if (downs[i] == true && down[i].source == &widget)
+            if (down[i].down == true && down[i].target == &widget)
                 return true;
         return false;
     }
 
-    bool is_down (int button) const noexcept { return downs[button]; }
+    bool is_down (int button) const noexcept { return down[button].down; }
 
-    void pressed (const PuglButtonEvent& ev, lvtk::View& view) {
-        down_buton             = ev.button;
-        down[ev.button]        = ev;
-        down[ev.button].view   = &view;
-        down[ev.button].source = &view.widget();
-        downs[ev.button]       = true;
-    }
-
-    void released (const PuglButtonEvent& ev, lvtk::View& view) {
-        double dur           = ev.time - up[ev.button].event.time;
-        up_button            = ev.button;
-        up[up_button]        = ev;
-        up[up_button].view   = &view;
-        up[up_button].source = &view.widget();
-        downs[up_button]     = false;
-
-        if (dur < multiple_click_timeout) {
-            ++_num_clicks[up_button];
-        } else {
-            _num_clicks[up_button] = 0;
+    uint32_t button_to_flag (uint32_t button) {
+        switch (button) {
+            case 0:
+                return Modifier::LEFT_BUTTON;
+            case 1:
+                return Modifier::RIGHT_BUTTON;
+            case 2:
+                return Modifier::MIDDLE_BUTTON;
         }
+        return Modifier::NONE;
     }
 
-    double delta_time_up_down() const noexcept {
-        return up[up_button].event.time - down[up_button].event.time;
+    void pressed (const PuglButtonEvent& pev, lvtk::View& view) {
+        down[pev.button] = pev;
+        auto& ev         = down[pev.button];
+        ev.view          = &view;
+        ev.source        = &view.widget();
+        ev.down          = true;
+        mods             = mods.with_flags (button_to_flag (ev.event.button));
+
+        auto& rev = up[pev.button];
+        if ((pev.time - rev.event.time) > multiple_click_timeout)
+            click_count[pev.button] = 0;
+
+        rev.event  = {};
+        rev.down   = false;
+        rev.source = nullptr;
+        rev.view   = nullptr;
     }
 
-    int num_clicks (int button) const noexcept { return _num_clicks[button]; }
+    void released (const PuglButtonEvent& pev, lvtk::View& view) {
+        up[pev.button] = pev;
+        auto& ev       = up[pev.button];
+        ev.down        = false;
+        ev.view        = &view;
+        ev.source      = &view.widget();
+        mods           = mods.with_flags (button_to_flag (ev.event.button));
+
+        auto& dev = down[ev.event.button];
+        if ((ev.event.time - dev.event.time) <= multiple_click_timeout) {
+            ++click_count[ev.event.button];
+        } else {
+            click_count[ev.event.button] = 0;
+        }
+
+        dev.event  = {};
+        dev.down   = false;
+        dev.source = nullptr;
+        dev.view   = nullptr;
+    }
+
+    int num_clicks (int button) const noexcept {
+        return click_count[button];
+    }
 
     void set_click_timeout (double to) {
         multiple_click_timeout = to;
     }
 
-    void set_source (int btn, lvtk::Widget* widget) {
-        down[btn].source = widget;
-        up[btn].source   = widget;
+    void set_source (int button, lvtk::Widget* widget) {
+        down[button].source = widget;
+        up[button].source   = widget;
     }
 
-private:
-    double multiple_click_timeout = 0.5;
-    int down_buton                = -1;
-    int up_button                 = -1;
+    void set_target (int button, lvtk::Widget* widget) {
+        down[button].target = widget;
+        up[button].target   = widget;
+    }
 
+    Modifier modifiers() const noexcept { return mods; }
+
+private:
+    // in seconds
+    double multiple_click_timeout = 0.187;
+
+    Modifier mods;
+
+    int down_buton = -1;
+    int up_button  = -1;
     ButtonEvent down[LVTK_MAX_BUTTONS];
     ButtonEvent up[LVTK_MAX_BUTTONS];
-    int _num_clicks[LVTK_MAX_BUTTONS];
-    bool downs[LVTK_MAX_BUTTONS];
-    bool ups[LVTK_MAX_BUTTONS];
+    int click_count[LVTK_MAX_BUTTONS];
 };
 
 } // namespace input
@@ -316,12 +369,36 @@ private:
     }
 
     static PuglStatus pointer_in (View& view, const PuglCrossingEvent& ev) {
-        VIEW_DBG ("pointer in")
+        auto pos = detail::point<float> (ev) / view.scale_factor();
+
+        // if (view.widget.obstructed (pos.as<int>().x, pos.as<int>().y)) {
+        if (view.widget.contains (pos)) {
+            lvtk::Event ev (view.main,
+                            detail::point<float> (ev) / view.scale_factor(),
+                            Modifier(),
+                            &view.widget,
+                            &view.widget,
+                            0);
+            view.widget.exit (ev);
+        }
+
         return PUGL_SUCCESS;
     }
 
     static PuglStatus pointer_out (View& view, const PuglCrossingEvent& ev) {
-        VIEW_DBG ("pointer out")
+        auto pos = detail::point<float> (ev) / view.scale_factor();
+
+        // if (view.widget.obstructed (pos.as<int>().x, pos.as<int>().y)) {
+        if (view.widget.contains (pos)) {
+            lvtk::Event ev (view.main,
+                            detail::point<float> (ev) / view.scale_factor(),
+                            Modifier(),
+                            &view.widget,
+                            &view.widget,
+                            0);
+            view.widget.enter (ev);
+        }
+
         return PUGL_SUCCESS;
     }
 
@@ -329,27 +406,29 @@ private:
         auto pos      = detail::point<float> (ev) / view.scale_factor();
         WidgetRef ref = view.widget.widget_at (pos);
 
+        if (view.hovered && view.buttons.is_down (*view.hovered)) {
+            auto ev = input::event (view.main, view.widget, *view.hovered, pos);
+            view.hovered->drag (ev);
+        }
+
         if (ref.valid()) {
-            auto ev   = input::event (view.main, *ref, ref->convert (&view.widget, pos));
-            ev.source = ref;
+            auto ev = input::event (view.main, view.widget, *ref, pos);
             if (view.hovered != ref) {
                 VIEW_DBG ("hovered changed: " << ref->name());
-                ref->pointer_in (ev);
+                ref->enter (ev);
                 view.hovered = ref;
             }
 
             ref->motion (ev);
-            if (ref->contains (ev.pos.as<int>()))
-                if (view.buttons.is_down (*ref))
-                    ref->drag (ev);
+
         } else if (view.hovered) {
             VIEW_DBG ("hovered cleared");
             if (auto h = view.hovered.lock()) {
-                Event event (view.main);
-                event.pos   = h->convert (&view.widget, pos);
-                event.pos.x = std::min (std::max (0.f, event.pos.x), (float) h->width());
-                event.pos.y = std::min (std::max (0.f, event.pos.y), (float) h->height());
-                h->pointer_out (event);
+                auto cpos  = h->convert (&view.widget, pos);
+                cpos.x     = std::min (std::max (0.f, cpos.x), (float) h->width());
+                cpos.y     = std::min (std::max (0.f, cpos.y), (float) h->height());
+                auto event = Event (view.main, cpos, Modifier(), h, h, 0);
+                h->exit (event);
             }
             view.hovered = nullptr;
         }
@@ -361,14 +440,18 @@ private:
         view.buttons.pressed (ev, view.owner);
         auto pos = detail::point<float> (ev) / view.scale_factor();
 
-        VIEW_DBG ("button: " << (int) ev.button);
-
         if (auto w = view.hovered.lock()) {
-            auto event = input::event (view.main, *w, w->convert (&view.widget, pos));
+            auto event = input::event (
+                view.main,
+                view.widget,
+                *w,
+                view.buttons.modifiers(),
+                pos,
+                view.buttons.num_clicks (ev.button));
             // VIEW_DBG("widget:" << w->name() << " bounds: " << w->bounds().str());
             // VIEW_DBG("ev pos: " << event.pos.str());
             if (w->contains (event.pos)) {
-                view.buttons.set_source ((int) ev.button, w);
+                view.buttons.set_target ((int) ev.button, w);
                 w->pressed (event);
             }
         }
@@ -387,9 +470,14 @@ private:
         auto hovered = view.hovered;
 
         if (auto w = hovered.lock()) {
-            auto event = input::event (view.main, *w, w->convert (&view.widget, pos));
+            auto event = input::event (view.main,
+                                       view.widget,
+                                       *w,
+                                       view.buttons.modifiers(),
+                                       pos,
+                                       view.buttons.num_clicks (static_cast<int> (ev.button)));
             if (w->contains (event.pos)) {
-                view.buttons.set_source (ev.button, w);
+                view.buttons.set_target (ev.button, w);
                 w->released (event);
             }
         }

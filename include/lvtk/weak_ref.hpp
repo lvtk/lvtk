@@ -112,6 +112,13 @@ public:
         return _status != nullptr ? _status.get() : nullptr;
     }
 
+    /** Returns the ptr without checking if deleted or not.
+        Use with caution
+    */
+    Obj* get() const noexcept {
+        return _status.get();
+    }
+
     /** Cast the internal pointer to specified type. */
     template <class T>
     T* as() const noexcept {

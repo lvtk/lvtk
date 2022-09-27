@@ -54,13 +54,13 @@ protected:
     bool obstructed (int, int) override { return true; }
 
     /** @private */
-    void pointer_in (const Event&) override {
+    void enter (const Event&) override {
         _over = true;
         repaint();
     }
 
     /** @private */
-    void pointer_out (const Event& ev) override {
+    void exit (const Event& ev) override {
         _over = false;
         repaint();
     }
