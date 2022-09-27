@@ -358,7 +358,7 @@ struct Sequence final {
     inline void append (const AtomEvent& ev) {
         if (AtomEvent* pos = lv2_atom_sequence_end (&sequence->body, sequence->atom.size)) {
             auto total_size = (uint32_t) sizeof (ev) + ev.body.size;
-            memcpy (pos, &ev, total_size);
+            memcpy ((void*) pos, &ev, total_size);
             sequence->atom.size += lv2_atom_pad_size (total_size);
         }
     }
