@@ -13,6 +13,9 @@
 
 // flip these for verbose logging at different levels
 #include <iostream>
+
+#define LVTK_MAX_BUTTONS 4
+
 // #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
 #define VIEW_DBG(x)
 
@@ -82,7 +85,7 @@ static Event event (lvtk::Main& m,
     return event (m, src, tgt, Modifier(), pos, 0);
 }
 
-// auto event = input::event (view.main, *tgt, tgt->convert (&view.widget, pos));
+} // namespace input
 
 struct ButtonEvent {
     PuglButtonEvent event;
@@ -98,7 +101,6 @@ struct ButtonEvent {
     }
 };
 
-#define LVTK_MAX_BUTTONS 4
 class ButtonState {
 public:
     ButtonState() {
@@ -229,7 +231,6 @@ private:
     };
 };
 
-} // namespace input
 // The actual View impl.
 class View {
 public:
@@ -290,7 +291,7 @@ private:
     PuglView* view { nullptr };
     WeakRef<lvtk::Widget> hovered;
 
-    input::ButtonState buttons;
+    ButtonState buttons;
 
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
         if (ev.flags & PUGL_IS_HINT) {
