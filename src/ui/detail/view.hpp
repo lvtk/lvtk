@@ -61,15 +61,6 @@ inline static void erase (std::vector<Obj*>& views, Obj* view) {
 
 namespace input {
 
-template <typename Pev>
-static Event event (lvtk::Main& m, lvtk::View& view, const Pev& pev) {
-    Event ev (m);
-    ev.pos = detail::frame<float> (pev) / view.scale_factor();
-    ev.x   = static_cast<int> (ev.pos.x);
-    ev.y   = static_cast<int> (ev.pos.y);
-    return ev;
-}
-
 static Event event (lvtk::Main& m,
                     lvtk::Widget& src,
                     lvtk::Widget& tgt,
@@ -225,8 +216,6 @@ private:
     // in seconds
     double multiple_click_timeout = 0.187;
     Modifier mods;
-    int down_buton = -1;
-    int up_button  = -1;
     ButtonEvent down[LVTK_MAX_BUTTONS];
     ButtonEvent up[LVTK_MAX_BUTTONS];
     int click_count[LVTK_MAX_BUTTONS];
@@ -396,13 +385,13 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus pointer_in (View& view, const PuglCrossingEvent& ev) {
-        auto pos = detail::point<float> (ev) / view.scale_factor();
+    static PuglStatus pointer_in (View& view, const PuglCrossingEvent& pev) {
+        auto pos = detail::point<float> (pev) / view.scale_factor();
 
         // if (view.widget.obstructed (pos.as<int>().x, pos.as<int>().y)) {
         if (view.widget.contains (pos)) {
             lvtk::Event ev (view.main,
-                            detail::point<float> (ev) / view.scale_factor(),
+                            pos,
                             Modifier(),
                             &view.widget,
                             &view.widget,
@@ -413,13 +402,12 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus pointer_out (View& view, const PuglCrossingEvent& ev) {
-        auto pos = detail::point<float> (ev) / view.scale_factor();
+    static PuglStatus pointer_out (View& view, const PuglCrossingEvent& pev) {
+        auto pos = detail::point<float> (pev) / view.scale_factor();
 
-        // if (view.widget.obstructed (pos.as<int>().x, pos.as<int>().y)) {
         if (view.widget.contains (pos)) {
             lvtk::Event ev (view.main,
-                            detail::point<float> (ev) / view.scale_factor(),
+                            pos,
                             Modifier(),
                             &view.widget,
                             &view.widget,
