@@ -36,11 +36,16 @@ extern "C" {
 #    define LVTK_EXPORT
 #endif
 
-#define LVTK_ORG               "https://lvtk.org"
-#define LVTK_NS                LVTK_ORG "/ns"
-#define LVTK_PLUGINS_URI       "https://lvtk.org/plugins"
-#define LVTK_PLUGINS__Volume   LVTK_PLUGINS_URI "/volume"
+#define LVTK_ORG "https://lvtk.org"
+
+#define LVTK_PLUGINS_URI       LVTK_ORG "/plugins"
+#define LVTK_PLUGINS_PREFIX    LVTK_PLUGINS_URI "/"
+#define LVTK_PLUGINS__Volume   LVTK_PLUGINS_PREFIX "volume"
 #define LVTK_PLUGINS__VolumeUI LVTK_PLUGINS__Volume "#ui"
+
+#define LVTK_UI_URI     LVTK_ORG "/ns/ui"
+#define LVTK_UI_PREFIX  LVTK_UI_URI "#"
+#define LVTK_UI__Widget LVTK_UI_PREFIX "Widget"
 
 #ifdef __linux__
 #    define LVTK_UI__NativeUI LV2_UI__X11UI
@@ -49,6 +54,14 @@ extern "C" {
 #else
 #    define LVTK_UI__NativeUI LV2_UI__WindowsUI
 #endif
+
+#define LVTK_HOST_URI           LVTK_ORG "/ns/host"
+#define LVTK_HOST_PREFIX        LVTK_HOST_URI "#"
+#define LVTK_HOST__Main         LVTK_HOST_PREFIX "World"
+#define LVTK_HOST__View         LVTK_HOST_PREFIX "Instance"
+#define LVTK_HOST__Event        LVTK_HOST_PREFIX "InstanceUI"
+#define LVTK_HOST__SupportedUI  LVTK_HOST_PREFIX "SupportedUI"
+#define LVTK_HOST__SupportedUIs LVTK_HOST_PREFIX "SupportedUIs"
 
 #if __cplusplus
 } // extern "C"
