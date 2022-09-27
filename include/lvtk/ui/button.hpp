@@ -19,6 +19,8 @@ public:
     /** Executed when the button is clicked */
     std::function<void()> clicked;
 
+    std::function<void (const Event& ev)> __clicked;
+
     /** Returns true if this button is in a toggled state.
         @returns True when in a toggle state
     */
@@ -75,7 +77,7 @@ protected:
     void released (const Event& ev) override {
         _down = false;
         if (contains (ev.pos))
-            notify_clicked();
+            notify_clicked (ev);
         repaint();
     }
 
@@ -83,9 +85,11 @@ private:
     bool _toggled = false;
     bool _down = false, _over = false;
 
-    void notify_clicked() {
+    void notify_clicked (const Event& ev) {
         if (clicked)
             clicked();
+        if (__clicked)
+            __clicked (ev);
     }
 };
 

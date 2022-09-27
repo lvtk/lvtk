@@ -12,10 +12,10 @@ class Buttons : public Widget {
 public:
     Buttons() {
         add (button1);
-        button1.set_text ("Cancel");
+        button1.set_text ("Quit");
         button1.set_visible (true);
-        button1.clicked = [this]() {
-            message = "Cancel clicked!";
+        button1.__clicked = [this] (const Event& ev) {
+            ev.context.quit();
             repaint();
         };
 
