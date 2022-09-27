@@ -19,6 +19,9 @@
 // #define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
 #define VIEW_DBG2(x)
 
+// #define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG3(x)
+
 namespace lvtk {
 namespace detail {
 template <typename Tp, class Ev>
@@ -118,6 +121,11 @@ public:
         }
     }
 
+    void reset (uint32_t button) {
+        clear_event (up[button]);
+        clear_event (down[button]);
+    }
+
     /** Returns true if any button is down */
     bool is_down() const noexcept {
         for (int i = 0; i < LVTK_MAX_BUTTONS; ++i)
@@ -153,6 +161,7 @@ public:
         auto& ev         = down[pev.button];
         ev.view          = &view;
         ev.source        = &view.widget();
+        ev.target        = ev.source;
         ev.down          = true;
         mods             = mods.with_flags (button_to_flag (ev.event.button));
 
@@ -160,10 +169,7 @@ public:
         if ((pev.time - rev.event.time) > multiple_click_timeout)
             click_count[pev.button] = 0;
 
-        rev.event  = {};
-        rev.down   = false;
-        rev.source = nullptr;
-        rev.view   = nullptr;
+        clear_event (rev);
     }
 
     void released (const PuglButtonEvent& pev, lvtk::View& view) {
@@ -172,6 +178,7 @@ public:
         ev.down        = false;
         ev.view        = &view;
         ev.source      = &view.widget();
+        ev.target      = ev.source;
         mods           = mods.with_flags (button_to_flag (ev.event.button));
 
         auto& dev = down[ev.event.button];
@@ -180,11 +187,6 @@ public:
         } else {
             click_count[ev.event.button] = 0;
         }
-
-        dev.event  = {};
-        dev.down   = false;
-        dev.source = nullptr;
-        dev.view   = nullptr;
     }
 
     int num_clicks (int button) const noexcept {
@@ -207,17 +209,35 @@ public:
 
     Modifier modifiers() const noexcept { return mods; }
 
+    lvtk::View* view (int button) const noexcept {
+        return down[button].view.lock();
+    }
+
+    lvtk::Widget* source (int button) const noexcept {
+        return down[button].source;
+    }
+
+    lvtk::Widget* target (int button) const noexcept {
+        return down[button].target;
+    }
+
 private:
     // in seconds
     double multiple_click_timeout = 0.187;
-
     Modifier mods;
-
     int down_buton = -1;
     int up_button  = -1;
     ButtonEvent down[LVTK_MAX_BUTTONS];
     ButtonEvent up[LVTK_MAX_BUTTONS];
     int click_count[LVTK_MAX_BUTTONS];
+
+    void clear_event (ButtonEvent& ev) {
+        ev.event  = {};
+        ev.down   = false;
+        ev.source = nullptr;
+        ev.target = nullptr;
+        ev.view   = nullptr;
+    };
 };
 
 } // namespace input
@@ -261,6 +281,14 @@ public:
     void realize() {
         auto status = puglRealize (view);
         (void) status;
+    }
+
+    void drag_pressed_widgets (Point<float> pos) {
+        for (int i = 0; i < LVTK_MAX_BUTTONS; ++i) {
+            if (buttons.is_down (i))
+                if (auto w = buttons.target (i))
+                    w->drag (input::event (main, widget, *w, pos));
+        }
     }
 
 private:
@@ -403,13 +431,8 @@ private:
     }
 
     static PuglStatus motion (View& view, const PuglMotionEvent& ev) {
-        auto pos      = detail::point<float> (ev) / view.scale_factor();
-        WidgetRef ref = view.widget.widget_at (pos);
-
-        if (view.hovered && view.buttons.is_down (*view.hovered)) {
-            auto ev = input::event (view.main, view.widget, *view.hovered, pos);
-            view.hovered->drag (ev);
-        }
+        const auto pos = detail::point<float> (ev) / view.scale_factor();
+        WidgetRef ref  = view.widget.widget_at (pos);
 
         if (ref.valid()) {
             auto ev = input::event (view.main, view.widget, *ref, pos);
@@ -420,7 +443,6 @@ private:
             }
 
             ref->motion (ev);
-
         } else if (view.hovered) {
             VIEW_DBG ("hovered cleared");
             if (auto h = view.hovered.lock()) {
@@ -432,6 +454,8 @@ private:
             }
             view.hovered = nullptr;
         }
+
+        view.drag_pressed_widgets (pos);
 
         return PUGL_SUCCESS;
     }
@@ -462,9 +486,9 @@ private:
     static PuglStatus button_release (View& view, const PuglButtonEvent& ev) {
         view.buttons.released (ev, view.owner);
 
-        // VIEW_DBG("button_release: " << view.buttons.duration() << "s held.");
-        VIEW_DBG ("num clicks: " << view.buttons.num_clicks (static_cast<int> (ev.button))
-                                 << " dur: " << view.buttons.delta_time_up_down());
+        VIEW_DBG2 ("button_release: " << view.buttons.duration() << "s held.");
+        VIEW_DBG2 ("num clicks: " << view.buttons.num_clicks (static_cast<int> (ev.button))
+                                  << " dur: " << view.buttons.delta_time_up_down());
 
         auto pos     = detail::point<float> (ev) / view.scale_factor();
         auto hovered = view.hovered;
@@ -477,11 +501,12 @@ private:
                                        pos,
                                        view.buttons.num_clicks (static_cast<int> (ev.button)));
             if (w->contains (event.pos)) {
-                view.buttons.set_target (ev.button, w);
-                w->released (event);
+                if (w == view.buttons.target (ev.button))
+                    w->released (event);
             }
         }
 
+        view.buttons.reset (ev.button);
         return PUGL_SUCCESS;
     }
 

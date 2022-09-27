@@ -124,7 +124,7 @@ struct LVTK_API Event final {
     const int num_clicks;
 
     /** The main context driving the event loop */
-    Main* const main;
+    Main& context;
 
     /** Widget the event first occured on */
     Widget* const source; ///< The source Widget.
@@ -136,7 +136,7 @@ struct LVTK_API Event final {
 
     /** Construct a new event. You shouldn't need this directly.
      
-        @param context The context driving the event loop
+        @param ctx The context driving the event loop
         @param position Position of the event.
         @param modifiers Current Modifier keys
         @param source_widget The originating widget when the event was created.
@@ -145,7 +145,7 @@ struct LVTK_API Event final {
 
         @see Widget
     */
-    Event (Main& context, Point<float> position, Modifier modifiers,
+    Event (Main& ctx, Point<float> position, Modifier modifiers,
            Widget* source_widget, Widget* target_widget,
            int total_clicks)
         : pos (position),
@@ -154,7 +154,7 @@ struct LVTK_API Event final {
           mods (modifiers),
           down_pos (position),
           num_clicks (total_clicks),
-          main (&context),
+          context (ctx),
           source (source_widget),
           target (target_widget) {}
 
