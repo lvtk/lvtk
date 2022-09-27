@@ -37,18 +37,14 @@ public:
 
     void pressed (const Event& ev) override {
         update_divider_y (ev);
-        is_on = ! is_on;
+        is_on = true;
         repaint();
     }
 
     void released (const Event& ev) override {
-        std::clog << name() << " released" << std::endl;
-        if (ev.mods.left_button() && ev.num_clicks == 2) {
-            std::clog << name() << " double clicked\n";
-        }
-        if (ev.mods.popup()) {
-            std::clog << name() << " popup!" << std::endl;
-        }
+        update_divider_y (ev);
+        is_on = false;
+        repaint();
     }
 
     void update_divider_y (const Event& ev) {
