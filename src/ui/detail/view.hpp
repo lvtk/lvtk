@@ -108,9 +108,9 @@ public:
     }
 
     void reset() {
-        for (int i = 0; i < LVTK_MAX_BUTTONS; ++i) {
-            memset (down, 0, sizeof (PuglButtonEvent));
-            memset (up, 0, sizeof (PuglButtonEvent));
+        for (uint32_t i = 0; i < LVTK_MAX_BUTTONS; ++i) {
+            clear_event (down[i]);
+            clear_event (up[i]);
         }
     }
 
