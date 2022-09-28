@@ -60,7 +60,7 @@ public:
         g.set_color (c);
 
         auto r = w.bounds().at (0).as<float>();
-        g.draw_text (w.text(), r, Alignment::CENTERED);
+        g.draw_text (w.text(), r, Align::CENTERED);
     }
 
     void draw_slider (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
@@ -68,7 +68,13 @@ public:
         g.set_color (find_color (ColorID::SLIDER_BASE));
         g.fill_rect (r);
         g.set_color (find_color (ColorID::SLIDER_THUMB));
-        r.slice_top (pos);
+
+        if (slider.vertical()) {
+            r.slice_top (pos);
+        } else {
+            r = r.slice_left (pos);
+        }
+
         g.fill_rect (r);
     }
 

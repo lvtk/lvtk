@@ -36,17 +36,17 @@ namespace convert {
 static int alignment (Alignment align) {
     uint32_t flags = 0;
 
-    if ((align.flags() & Alignment::LEFT) != 0)
+    if ((align.flags() & Align::LEFT) != 0)
         flags |= NVG_ALIGN_LEFT;
-    if ((align.flags() & Alignment::RIGHT) != 0)
+    if ((align.flags() & Align::RIGHT) != 0)
         flags |= NVG_ALIGN_RIGHT;
-    if ((align.flags() & Alignment::CENTER) != 0)
+    if ((align.flags() & Align::CENTER) != 0)
         flags |= NVG_ALIGN_CENTER;
-    if ((align.flags() & Alignment::TOP) != 0)
+    if ((align.flags() & Align::TOP) != 0)
         flags |= NVG_ALIGN_TOP;
-    if ((align.flags() & Alignment::BOTTOM) != 0)
+    if ((align.flags() & Align::BOTTOM) != 0)
         flags |= NVG_ALIGN_BOTTOM;
-    if ((align.flags() & Alignment::MIDDLE) != 0)
+    if ((align.flags() & Align::MIDDLE) != 0)
         flags |= NVG_ALIGN_MIDDLE;
 
     return static_cast<int> (flags);

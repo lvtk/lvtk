@@ -12,14 +12,16 @@ namespace lvtk {
     @ingroup widgets
     @headerfile lvtk/ui/align.hpp
 */
-struct Align final {
+class Align final {
+public:
     enum Placement : uint8_t {
         LEFT   = (1u << 0u), ///< Align left.
-        RIGHT  = (1u << 1u), ///< Align right.
         CENTER = (1u << 2u), ///< Align horizontally centered.
+        RIGHT  = (1u << 1u), ///< Align right.
+
         TOP    = (1u << 3u), ///< Align to top.
-        BOTTOM = (1u << 4u), ///< Align to bottom.
         MIDDLE = (1u << 5u), ///< Align vertically centered.
+        BOTTOM = (1u << 4u), ///< Align to bottom.
 
         /// @brief Align to top-left corner
         TOP_LEFT = TOP | LEFT,

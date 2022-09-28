@@ -29,13 +29,13 @@ void Graphics::draw_text (const std::string& text, Rectangle<float> area, Alignm
     float y                 = area.y;
     const float line_height = 16.f;
 
-    if (align.flags() & Alignment::CENTER)
+    if (align.flags() & Align::CENTER)
         x = area.x + (area.width * 0.5f);
-    else if (align.flags() & Alignment::RIGHT)
+    else if (align.flags() & Align::RIGHT)
         x = area.x + area.width;
-    if (align.flags() & Alignment::MIDDLE)
+    if (align.flags() & Align::MIDDLE)
         y = area.y + (area.height * 0.5f);
-    else if (align.flags() & Alignment::BOTTOM)
+    else if (align.flags() & Align::BOTTOM)
         y = area.y + area.height - line_height;
 
     _context.text (text, x, y, align);

@@ -30,7 +30,7 @@ public:
         auto r = bounds().at (0).as<float>().slice_bottom (height() / 2);
 
         g.set_font (Font (12.f));
-        g.draw_text (name(), r, Alignment::CENTERED);
+        g.draw_text (name(), r, Align::CENTERED);
     }
 
     bool obstructed (int x, int y) override { return true; }
