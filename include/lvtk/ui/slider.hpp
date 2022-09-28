@@ -89,10 +89,10 @@ public:
     virtual ~Slider();
 
     enum Type : uint8_t {
-        VERTICAL = 0,   ///< Vertical orientation with thumb/track
-        HORIZONTAL,     ///< Horizontal orientation with thumb/track
-        VERTICAL_BAR,   ///< Vertical orientation as solid bar
-        HORIZONTAL_BAR  ///< Horizontal orientation as solid bar
+        VERTICAL = 0,  ///< Vertical orientation with thumb/track
+        HORIZONTAL,    ///< Horizontal orientation with thumb/track
+        VERTICAL_BAR,  ///< Vertical orientation as solid bar
+        HORIZONTAL_BAR ///< Horizontal orientation as solid bar
     };
 
     /** Change the type of slider */

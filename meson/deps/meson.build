@@ -62,12 +62,10 @@ suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : tru
 ### Boost
 boost_dep = (dependency ('boost', required : not get_option('test').disabled()))
 
-## Lua: Try to use 5.3 lua headers on the system. 
-#  Fallback to included 5.4 headers.
-
+## Lua: Use either lua 5.3 or 5.4 depending on what's on the
+# system.  If lua not found. Use 5.4
 lua_version = ''
 lua_program = find_program ('lua5.4', required : false)
-lua_dep = dependency('', required : false)
 if not lua_program.found()
     lua_program = find_program('lua5.3', required : false)
 endif
@@ -80,11 +78,7 @@ if lua_program.found()
     pymod = import('python')
     lua_version = run_command(pymod.find_installation('python2'), '../../scripts/luavers.py',
         lua_program, check : true).stdout().strip()
-    lua_dep = dependency ('lua@0@'.format(lua_version), required : false)
-    if not lua_dep.found()
-        lua_dep = dependency ('lua', pkg_config : '--cflags', required : false)
-    endif
 endif
 
 # true if using system
-lvtk_lua_system = lua_dep.found() and lua_program.found()
+lvtk_lua_system = lua_program.found()

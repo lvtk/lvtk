@@ -1,4 +1,4 @@
-if lua_dep.found() and lua_program.found()
+if lua_program.found()
 
 lvtk_lua_tests = '''
     loadall

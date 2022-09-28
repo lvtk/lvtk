@@ -10,14 +10,15 @@ lvtk_lua_includes = [ include_directories ('lua') ]
 lvtk_lua_deps = []
 
 if lvtk_lua_system
-    lvtk_lua_deps += lua_dep
+    lvtk_lua_deps += []
     lvtk_lua_version = lua_version
-    lvtk_lua_version_full = '@0@.0'.format(lua_version)
-else
-    lvtk_lua_version = '5.4'
-    lvtk_lua_version_full = '5.4.4'
     lvtk_lua_includes += include_directories (
-        'lua/@0@'.format(lvtk_lua_version_full))
+        'lua/@0@'.format(lvtk_lua_version))
+else
+    lvtk_lua_deps += []
+    lvtk_lua_version = '5.4'
+    lvtk_lua_includes += include_directories (
+        'lua/@0@'.format(lvtk_lua_version))
 endif
 
 # place where the LVTK bindings get installed.

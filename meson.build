@@ -81,6 +81,8 @@ if not get_option ('onlydocs')
 summary('Tests', not get_option('test').disabled(), bool_yn: true)
 
 summary('Modules', true, section : 'Lua', bool_yn: true)
+summary('Tests', lua_program.found() and not get_option('test').disabled(), 
+    section : 'Lua', bool_yn: true)
 summary('Version', lua_version, section : 'Lua')
 
 summary('Graphics', 'OpenGL', section : 'Gui')
