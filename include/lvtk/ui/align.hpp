@@ -10,9 +10,9 @@ namespace lvtk {
 
 /** A utility class to help aligning text etc etc. 
     @ingroup widgets
-    @headerfile lvtk/ui/alignment.hpp
+    @headerfile lvtk/ui/align.hpp
 */
-struct Alignment final {
+struct Align final {
     enum Placement : uint8_t {
         LEFT   = (1u << 0u), ///< Align left.
         RIGHT  = (1u << 1u), ///< Align right.
@@ -44,29 +44,31 @@ struct Alignment final {
     };
 
     /** Create an invalid alignment */
-    Alignment() {}
+    Align() {}
     /** Create an alignment from flags */
-    Alignment (uint8_t flags) : _flags (flags) {}
+    Align (uint8_t flags) : _flags (flags) {}
     /** Copy this alignment */
-    Alignment (const Alignment& o) : _flags (o._flags) {}
-    Alignment& operator= (const Alignment& o) {
+    Align (const Align& o) : _flags (o._flags) {}
+    Align& operator= (const Align& o) {
         _flags = o._flags;
         return *this;
     }
 
-    /** Returns the flags of this Alignment */
+    /** Returns the flags of this Align */
     uint8_t flags() const noexcept { return _flags; }
 
-    bool operator== (const Alignment& o) const noexcept { return _flags == o._flags; }
+    bool operator== (const Align& o) const noexcept { return _flags == o._flags; }
     bool operator== (uint8_t o) const noexcept { return _flags == o; }
     bool operator== (int o) const noexcept { return static_cast<int> (_flags) == o; }
 
-    bool operator!= (const Alignment& o) const noexcept { return _flags != o._flags; }
+    bool operator!= (const Align& o) const noexcept { return _flags != o._flags; }
     bool operator!= (uint8_t o) const noexcept { return _flags != o; }
     bool operator!= (int o) const noexcept { return static_cast<int> (_flags) != o; }
 
 private:
     uint8_t _flags = 0;
 };
+
+using Alignment = Align;
 
 } // namespace lvtk
