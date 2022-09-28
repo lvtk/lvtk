@@ -3,29 +3,39 @@
 LVTK3
 =====
 
-Minimal C++ library with Lua bindings and console.
-Write your LV2 plugins and gui's in C++ or Lua!
+Minimal C++ library with Lua bindings and console. Write your LV2 plugins and gui's in C++ or Lua!
 
 Heavy Development
 -----------------
-API's will break from time to time until the core system is ready.
+API's will break from time to time until the core system is ready.  Plugin/UI templates are largely unchanged.  
+It's the widgets and host libraries which will see the most refactoring
 
 Built-In Widgets
 ----------------
-- `lvtk.Widget`
-- `lvtk.Button`
-- `lvtk.TextButton`
-- to be determined
+| Widget            | Purpose              |
+|-------------------|----------------------|
+| `lvtk.Widget`     | Base for all widgets |
+| `lvtk.Button`     | Base for most button types |
+| `lvtk.TextButton` | A regular button that shows text |
+| `lvtk.Entry`      | A basic single-line text entry |
+| `lvtk.Slider`     | A basic single-value slider control |
+| `lvtk.Dial`       | A basic single-value Dial (or Knob) control |
 
 Building
 --------
 To build and install, run
 ```
 $ meson setup build
-$ cd build
-$ ninja
-$ ninja test
-$ ninja install
+$ ninja -C build
+$ ninja -C test
+$ ninja install # optional
+```
+
+For MSVC on Windows, use:
+```
+meson setup build
+meson compile -C build
+meson test -C build
 ```
 
 Gui Demo
@@ -58,15 +68,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 3rd Party Code
 --------------
-Graphics/UI classes utilize these libraries internally:
+Graphics/UI/Hosting classes utilize these libraries internally:
 
-| Library   | License  |
-|-----------|----------|
-| STB Image | MIT or public domain |
-| NanoVG    | Zlib     |
-| Lua       | MIT      |
-| Sol2      | MIT      |
-| boost     | Boost license |
+| Library      | For?            | License |
+|--------------|-----------------|---------|
+| STB Image    | Images          | MIT     |
+| STB Truetype | Font Loading    | MIT     |
+| NanoVG       | OpenGL Graphics | Zlib    |
+| Lua          | Lua Bindings    | MIT     |
+| Sol2         | Lua Bindings    | MIT     |
+| Boost        | Tests/Signals   | Boost   |
+| Lilv         | LV2 Hosting     | ISC     |
+| Suil         | LV2UI Hosting   | ISC     |
 
 Issue Tracking
 --------------
