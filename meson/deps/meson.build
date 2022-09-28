@@ -82,7 +82,7 @@ if lua_program.found()
         lua_program, check : true).stdout().strip()
     lua_dep = dependency ('lua@0@'.format(lua_version), required : false)
     if not lua_dep.found()
-        lua_dep = dependency ('lua', pkgconfig : '--cflags', required : false)
+        lua_dep = dependency ('lua', pkg_config : '--cflags', required : false)
     endif
 endif
 
