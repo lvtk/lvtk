@@ -4,9 +4,11 @@
 namespace lvtk {
 namespace demo {
 
+extern std::unique_ptr<Widget> create_sliders_demo();
+
 Content::Content()
     : sidebar (*this) {
-    set_name ("lvtk::demo::Content");
+    set_name ("Demo Content");
 
     add (sidebar);
     sidebar.set_visible (true);
@@ -21,8 +23,6 @@ Content::Content()
 
 Content::~Content() {
 }
-
-void Content::motion (const Event& ev) {}
 
 void Content::resized() {
     auto r = bounds().at (0, 0);
@@ -54,6 +54,9 @@ void Content::run_demo (int index) {
             break;
         case BUTTONS:
             demo.reset (new Buttons());
+            break;
+        case SLIDERS:
+            demo = create_sliders_demo();
             break;
         case EMBEDDING:
             demo.reset (new Embedding());

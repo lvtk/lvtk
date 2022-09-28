@@ -1,6 +1,7 @@
 
 lvtk_demo_sources = '''
     demo.cpp
+    sliders.cpp
 '''.split()
 
 lvtk_demo_deps = [ lvtk_opengl_dep, lvtk_host_dep ]

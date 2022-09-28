@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <sstream>
+#include <string>
+
 #include <lvtk/lvtk.h>
 
 #include <lvtk/ui/graphics.hpp> // point
@@ -27,31 +30,43 @@ public:
         SHIFT = (1u << 0u),
         CTRL  = (1u << 1u),
         ALT   = (1u << 2u),
+        SUPER = (1u << 3u),
 #if __APPLE__
-        COMMAND = (1u << 3u),
+        /** Alias of SUPER on mac, or alias of CTRL everywhere else. */
+        COMMAND = SUPER,
 #else
         COMMAND = CTRL,
 #endif
-        LEFT_BUTTON   = (1u << 4u),
-        RIGHT_BUTTON  = (1u << 5u),
-        MIDDLE_BUTTON = (1u << 6u),
 
-#if __APPLE__
-        POPUP = RIGHT_BUTTON | CTRL,
-#else
-        POPUP   = RIGHT_BUTTON,
-#endif
         /** Alias of CTRL */
         CONTROL = CTRL,
+
+        /** All Alt, Control and Command.  */
+        CTRL_ALT_COMMAND = CTRL | ALT | COMMAND,
 
         /** All keyboard Shift, Control, Alt, Command */
         ALL_KEYBOARD = SHIFT | CTRL | ALT | COMMAND,
 
+        /** Left button down */
+        LEFT_BUTTON = (1u << 4u),
+        /** Right button down */
+        RIGHT_BUTTON = (1u << 5u),
+        /** Middle button down */
+        MIDDLE_BUTTON = (1u << 6u),
+
+#if __APPLE__
+        /** Indicates a popup event.
+            i.e. right-click on win/linux/osx. Also includes
+            CTRL + left-click when using on OSX
+        */
+        POPUP = RIGHT_BUTTON | CTRL,
+#else
+        POPUP   = RIGHT_BUTTON,
+#endif
+
         /** All buttons left, right, and middle */
         ALL_BUTTON = LEFT_BUTTON | RIGHT_BUTTON | MIDDLE_BUTTON,
 
-        /** All Alt, Control and Command.  */
-        CTRL_ALT_COMMAND = CTRL | ALT | COMMAND
     };
 
     Modifier() {}
@@ -102,11 +117,61 @@ private:
     ModifierFlags _flags { NONE };
 };
 
+/** A KeyPress event */
+class LVTK_API KeyEvent {
+public:
+    KeyEvent() {}
+    KeyEvent (int key) : _key (key) {}
+    KeyEvent (int key, Modifier mods) : _key (key), _mods (mods) {}
+
+    int key() const noexcept { return _key; }
+    Modifier mods() const noexcept { return _mods; }
+
+    std::string str() const noexcept {
+        std::vector<std::string> toks;
+        toks.reserve (4);
+        std::stringstream out;
+
+        if (_mods.test_flags (Modifier::CTRL))
+            toks.push_back ("Ctrl");
+        if (_mods.test_flags (Modifier::ALT))
+            toks.push_back ("Alt");
+        if (_mods.test_flags (Modifier::SHIFT))
+            toks.push_back ("Shift");
+
+        for (const auto& tok : toks) {
+            out << tok << " + ";
+        }
+
+        out << std::to_string ((char) std::toupper ((int) _key));
+
+        return out.str();
+    }
+
+private:
+    int _key { 0 };
+    Modifier _mods;
+};
+
+/** A KeyPress event */
+class LVTK_API TextEvent {
+public:
+    TextEvent() : character (0) {}
+    TextEvent (const char* txt, Modifier m)
+        : mods (m),
+          character (static_cast<uint32_t> (txt[0])),
+          body (txt) {}
+
+    const Modifier mods;
+    const uint32_t character;
+    const std::string body;
+};
+
 /** An event type sent about user input.
     @ingroup widgets
 */
 struct LVTK_API Event final {
-    /** Position of the input when the event occured */
+    /** Position of the input when the event occured (high res) */
     const Point<float> pos;
 
     /** X position of the input when the event occured */
@@ -121,39 +186,40 @@ struct LVTK_API Event final {
     /** Position where a button was last pressed. */
     const Point<float> down_pos;
 
-    const int num_clicks;
+    /** Number of clicks associated with the event. */
+    const int clicks;
 
     /** The main context driving the event loop */
     Main& context;
 
     /** Widget the event first occured on */
-    Widget* const source; ///< The source Widget.
+    Widget* const source;
 
     /** Widget which this event now applies to */
-    Widget* const target; ///< The source Widget.
+    Widget* const target;
 
     Event() = delete;
 
-    /** Construct a new event. You shouldn't need this directly.
+    /** Construct a new event. You shouldn't need to use this directly.
      
         @param ctx The context driving the event loop
         @param position Position of the event.
         @param modifiers Current Modifier keys
         @param source_widget The originating widget when the event was created.
         @param target_widget The target widget event is applied to
-        @param total_clicks How many clicks have been tracked at the time of creation
+        @param num_clicks How many clicks have been tracked at the time of creation
 
         @see Widget
     */
     Event (Main& ctx, Point<float> position, Modifier modifiers,
            Widget* source_widget, Widget* target_widget,
-           int total_clicks)
+           int num_clicks)
         : pos (position),
           x (static_cast<int> (pos.x)),
           y (static_cast<int> (pos.y)),
           mods (modifiers),
           down_pos (position),
-          num_clicks (total_clicks),
+          clicks (num_clicks),
           context (ctx),
           source (source_widget),
           target (target_widget) {}

@@ -42,6 +42,11 @@ void Widget::set_visible (bool v) {
     }
 }
 
+void Widget::show_all() {
+    for (auto w : impl->widgets)
+        w->set_visible (true);
+}
+
 //=============================================================================
 void Widget::repaint() {
     impl->repaint_internal (impl->bounds.at (0));
@@ -201,6 +206,15 @@ Point<float> Widget::to_view_space (Point<float> pt) {
 void Widget::render (Graphics& g) {
     impl->render_internal (g);
 }
+
+bool Widget::focused() const noexcept {
+    if (auto v = find_view())
+        return v->impl->widget_is_focused (this);
+    return false;
+}
+
+void Widget::grab_focus() { impl->grab_focus(); }
+void Widget::release_focus() { impl->release_focus(); }
 
 bool Widget::elevated() const noexcept {
     return impl->view != nullptr;

@@ -131,10 +131,16 @@ public:
     Obj* operator->() const noexcept { return _status.get(); }
     Obj& operator*() noexcept { return *_status.get(); }
     const Obj& operator*() const noexcept { return *_status.get(); }
+
     bool operator== (Obj* o) const noexcept { return lock() == o; }
+    bool operator== (const Obj* o) const noexcept { return lock() == o; }
     bool operator== (const WeakRef& o) const noexcept { return lock() == o.lock(); }
+    bool operator== (std::nullptr_t n) const noexcept { return lock() == n; }
+
     bool operator!= (Obj* o) const noexcept { return lock() != o; }
+    bool operator!= (const Obj* o) const noexcept { return lock() != o; }
     bool operator!= (const WeakRef& o) const noexcept { return lock() != o.lock(); }
+    bool operator!= (std::nullptr_t n) const noexcept { return lock() != n; }
     operator bool() const noexcept { return lock() != nullptr; }
 
 private:

@@ -19,6 +19,7 @@ namespace demo {
 enum ID {
     FOUR_SQUARES = 0,
     BUTTONS,
+    SLIDERS,
     EMBEDDING,
     NUM_DEMOS
 };
@@ -31,13 +32,16 @@ static std::string name (int did) {
         case BUTTONS:
             return "Buttons";
             break;
+        case SLIDERS:
+            return "Sliders";
+            break;
         case EMBEDDING:
             return "Embedding";
         default:
             break;
     }
 
-    String demo ("Demo ");
+    String demo ("Unknown Demo");
     demo << (did + 1);
     return demo;
 }
@@ -48,8 +52,6 @@ public:
     ~Content();
 
 protected:
-    /** @private */
-    void motion (const Event& ev) override;
     /** @private */
     void resized() override;
     /** @private */

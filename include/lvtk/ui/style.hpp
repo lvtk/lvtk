@@ -6,13 +6,16 @@
 #include <set>
 
 #include <lvtk/lvtk.h>
+
 #include <lvtk/ui/color.hpp>
+#include <lvtk/ui/graphics.hpp>
 #include <lvtk/weak_ref.hpp>
 
 namespace lvtk {
 
 class Button;
 class Graphics;
+class Slider;
 class TextButton;
 class Widget;
 
@@ -25,7 +28,11 @@ struct ColorID {
         BUTTON_BASE = 1, ///< Base background color of standard buttons
         BUTTON_ON,       ///< Base on color when button is "toggled"
         BUTTON_TEXT_OFF, ///< Base off color when button is not "toggled"
-        BUTTON_TEXT_ON   ///< Button text color when ON
+        BUTTON_TEXT_ON,  ///< Button text color when ON
+
+        SLIDER_BASE,  ///< Base color for Slider background
+        SLIDER_THUMB, ///< Color to draw the slider handle with
+        SLIDER_TRACK  ///< Color to use for the groove the thumb slides in
     };
 };
 
@@ -68,6 +75,10 @@ public:
         @param down True if down
     */
     virtual void draw_button_text (Graphics& g, TextButton& b, bool highlight, bool down) =0;
+
+    virtual void draw_slider (Graphics& g, Slider& slider, Bounds bounds, float pos) =0;
+    virtual void draw_slider_background (Graphics& g, Slider& slider, Bounds bounds, float pos) =0;
+    virtual void draw_slider_thumb (Graphics& g, Slider& slider, Bounds bounds, float pos) =0;
     // clang-format on
 
 private:

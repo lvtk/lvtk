@@ -12,6 +12,11 @@ public:
     Box()          = default;
     virtual ~Box() = default;
 
+    bool __key_press (const KeyEvent& key) {
+        std::clog << key.str() << std::endl;
+        return true;
+    }
+
     void paint (Graphics& g) override {
         auto fr = bounds().at (0, 0).as<float>();
         g.set_color (color_off);
@@ -38,6 +43,7 @@ public:
     void pressed (const Event& ev) override {
         update_divider_y (ev);
         is_on = true;
+        grab_focus();
         repaint();
     }
 
@@ -45,6 +51,11 @@ public:
         update_divider_y (ev);
         is_on = false;
         repaint();
+    }
+
+    bool text_entry (const TextEvent& entry) override {
+        std::clog << name() << "entered text: " << entry.body << std::endl;
+        return true;
     }
 
     void update_divider_y (const Event& ev) {

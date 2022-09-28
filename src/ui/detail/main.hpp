@@ -6,6 +6,7 @@
 
 #include <lvtk/ui/button.hpp>
 #include <lvtk/ui/main.hpp>
+#include <lvtk/ui/slider.hpp>
 #include <lvtk/ui/view.hpp>
 
 #include "./view.hpp"
@@ -32,6 +33,9 @@ public:
         set_color (ColorID::BUTTON_ON, Color (0x252525ff));
         set_color (ColorID::BUTTON_TEXT_OFF, Color (0xeeeeeeff));
         set_color (ColorID::BUTTON_TEXT_ON, Color (0xddddddff));
+
+        set_color (ColorID::SLIDER_BASE, Color (0x141414ff));
+        set_color (ColorID::SLIDER_THUMB, Color (0x451414ff));
     }
 
     ~DefaultStyle() {}
@@ -57,6 +61,20 @@ public:
 
         auto r = w.bounds().at (0).as<float>();
         g.draw_text (w.text(), r, Alignment::CENTERED);
+    }
+
+    void draw_slider (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
+        auto r = bounds.as<float>();
+        g.set_color (find_color (ColorID::SLIDER_BASE));
+        g.fill_rect (r);
+        g.set_color (find_color (ColorID::SLIDER_THUMB));
+        r.slice_top (pos);
+        g.fill_rect (r);
+    }
+
+    void draw_slider_background (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
+    }
+    void draw_slider_thumb (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
     }
 };
 

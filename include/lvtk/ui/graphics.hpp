@@ -4,7 +4,7 @@
 #pragma once
 
 #include <lvtk/lvtk.h>
-#include <lvtk/ui/alignment.hpp>
+#include <lvtk/ui/align.hpp>
 #include <lvtk/ui/color.hpp>
 #include <lvtk/ui/fill.hpp>
 #include <lvtk/ui/font.hpp>

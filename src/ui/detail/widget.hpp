@@ -5,6 +5,8 @@
 
 #include <cassert>
 
+#include "ui/detail/view.hpp"
+
 #ifndef LVTK_WIDGET_USE_CLIPPING
 #    define LVTK_WIDGET_USE_CLIPPING 0
 #endif
@@ -101,6 +103,16 @@ public:
     using Owner = lvtk::Widget;
 
     Widget (lvtk::Widget& o) : owner (o) {
+    }
+
+    void grab_focus() {
+        if (auto v = owner.find_view())
+            v->impl->set_focused_widget (&owner);
+    }
+
+    void release_focus() {
+        if (auto v = owner.find_view())
+            v->impl->set_focused_widget (nullptr);
     }
 
     void render_internal (Graphics& g) {
