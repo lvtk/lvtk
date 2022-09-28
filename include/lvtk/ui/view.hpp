@@ -18,6 +18,8 @@ namespace detail {
 class Main;
 /** @private */
 class View;
+/** @private */
+class Widget;
 } // namespace detail
 
 class Main;
@@ -113,6 +115,8 @@ private:
     friend class detail::View;
     friend class Main;
     friend class detail::Main;
+    friend class Widget;
+    friend class detail::Widget;
     std::unique_ptr<detail::View> impl;
     LVTK_WEAK_REFABLE (View);
 };

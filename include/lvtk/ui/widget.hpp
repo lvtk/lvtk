@@ -72,6 +72,9 @@ public:
      */
     void set_visible (bool visible);
 
+    /** Show all child Widgets */
+    void show_all();
+
     /** Request this widget be repainted. */
     void repaint();
 
@@ -155,6 +158,15 @@ public:
      */
     void render (Graphics& g);
 
+    /** Is currently focused */
+    bool focused() const noexcept;
+
+    /** Grab focus */
+    void grab_focus();
+
+    /** release focus */
+    void release_focus();
+
     /** True if this Widget owns it's View. i.e. is the top level
         widget under the OS window 
      */
@@ -206,7 +218,11 @@ protected:
     virtual void pressed (const Event&) {}
     virtual void released (const Event&) {}
     virtual void enter (const Event&) {}
-    virtual void exit (const Event& ev) {}
+    virtual void exit (const Event&) {}
+
+    virtual bool key_down (const KeyEvent&) { return false; }
+    virtual bool key_up (const KeyEvent&) { return false; }
+    virtual bool text_entry (const TextEvent&) { return false; }
 
     virtual void children_changed() {}
     virtual void parent_structure_changed() {}

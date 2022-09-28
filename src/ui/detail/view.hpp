@@ -87,7 +87,73 @@ static Event event (lvtk::Main& m,
 
 } // namespace input
 
-struct ButtonEvent {
+/** A key event */
+struct KeyState {
+    PuglKeyEvent event;
+    bool down = false;
+    lvtk::Widget* source { nullptr };
+    lvtk::Widget* target { nullptr };
+    KeyState& set (const PuglKeyEvent& pev) {
+        event = pev;
+        return *this;
+    }
+};
+
+/** Keeps track of Pugl key press and release events. */
+class Keyboard {
+public:
+    Keyboard() {
+        reset();
+    }
+
+    void reset() {
+        for (uint32_t key = 0; key < 256; ++key)
+            clear_key (key);
+        clear_key (PUGL_KEY_BACKSPACE);
+        clear_key (PUGL_KEY_ESCAPE);
+        clear_key (PUGL_KEY_DELETE);
+        for (uint32_t key = PUGL_KEY_F1; key <= PUGL_KEY_PAUSE; ++key)
+            clear_key (key);
+    }
+
+    void press (lvtk::View& view, const PuglKeyEvent& pev) {
+        auto& ev  = down[pev.keycode].set (pev);
+        ev.down   = true;
+        ev.source = &view.widget();
+        ev.target = nullptr;
+    }
+
+    void release (lvtk::View& view, const PuglKeyEvent& pev) {
+        auto& ev  = up[pev.keycode].set (pev);
+        ev.down   = false;
+        auto& dev = down.at (pev.keycode);
+        dev.down  = false;
+    }
+
+    lvtk::Widget* target (uint32_t key) const noexcept {
+        return down.at (key).target;
+    }
+
+    void set_target (uint32_t key, lvtk::Widget* tgt) {
+        down.at (key).target = tgt;
+    }
+
+private:
+    std::unordered_map<uint32_t, KeyState> down;
+    std::unordered_map<uint32_t, KeyState> up;
+
+    void clear_key (uint32_t key, bool pressed) {
+        auto& mp = pressed ? down : up;
+        mp[key]  = {};
+    }
+
+    void clear_key (uint32_t key) {
+        clear_key (key, true);
+        clear_key (key, false);
+    }
+};
+
+struct ButtonState {
     PuglButtonEvent event;
     ViewRef view;
     lvtk::Widget* source;
@@ -95,28 +161,45 @@ struct ButtonEvent {
 
     bool down = false;
 
-    ButtonEvent& operator= (const PuglButtonEvent& pev) {
+    ButtonState() {}
+    ButtonState (const ButtonState& o) { operator= (o); }
+    ButtonState& operator= (const ButtonState& o) {
+        event  = o.event;
+        view   = o.view;
+        source = o.source;
+        target = o.target;
+        down   = o.down;
+        return *this;
+    }
+
+    ButtonState& set (const PuglButtonEvent& pev) {
         event = pev;
         return *this;
     }
 };
 
-class ButtonState {
+/** Keeps track of Pugl button press and release events.
+    Tallies a click count for each button as well as
+    what it currently pressed and associated Widgets
+ */
+class Buttons {
 public:
-    ButtonState() {
+    Buttons() {
         reset();
     }
 
+    /** Reset everything */
     void reset() {
-        for (uint32_t i = 0; i < LVTK_MAX_BUTTONS; ++i) {
-            clear_event (down[i]);
-            clear_event (up[i]);
-        }
+        for (uint32_t i = 0; i < LVTK_MAX_BUTTONS; ++i)
+            reset (i);
     }
 
+    /** Reset individual button */
     void reset (uint32_t button) {
-        clear_event (up[button]);
-        clear_event (down[button]);
+        clear_state (up[button]);
+        clear_state (down[button]);
+        click_count[button] = 0;
+        mods                = mods.without_flags (button_to_flag (button));
     }
 
     /** Returns true if any button is down */
@@ -150,29 +233,27 @@ public:
     }
 
     void pressed (const PuglButtonEvent& pev, lvtk::View& view) {
-        down[pev.button] = pev;
-        auto& ev         = down[pev.button];
-        ev.view          = &view;
-        ev.source        = &view.widget();
-        ev.target        = ev.source;
-        ev.down          = true;
-        mods             = mods.with_flags (button_to_flag (ev.event.button));
+        auto& ev  = down[pev.button].set (pev);
+        ev.view   = &view;
+        ev.source = &view.widget();
+        ev.target = ev.source;
+        ev.down   = true;
+        mods      = mods.with_flags (button_to_flag (ev.event.button));
 
         auto& rev = up[pev.button];
         if ((pev.time - rev.event.time) > multiple_click_timeout)
             click_count[pev.button] = 0;
 
-        clear_event (rev);
+        clear_state (rev);
     }
 
     void released (const PuglButtonEvent& pev, lvtk::View& view) {
-        up[pev.button] = pev;
-        auto& ev       = up[pev.button];
-        ev.down        = false;
-        ev.view        = &view;
-        ev.source      = &view.widget();
-        ev.target      = ev.source;
-        mods           = mods.with_flags (button_to_flag (ev.event.button));
+        auto& ev  = up[pev.button].set (pev);
+        ev.down   = false;
+        ev.view   = &view;
+        ev.source = &view.widget();
+        ev.target = ev.source;
+        mods      = mods.with_flags (button_to_flag (ev.event.button));
 
         auto& dev = down[ev.event.button];
         if ((ev.event.time - dev.event.time) <= multiple_click_timeout) {
@@ -188,11 +269,6 @@ public:
 
     void set_click_timeout (double to) {
         multiple_click_timeout = to;
-    }
-
-    void set_source (int button, lvtk::Widget* widget) {
-        down[button].source = widget;
-        up[button].source   = widget;
     }
 
     void set_target (int button, lvtk::Widget* widget) {
@@ -218,11 +294,11 @@ private:
     // in seconds
     double multiple_click_timeout = 0.187;
     Modifier mods;
-    ButtonEvent down[LVTK_MAX_BUTTONS];
-    ButtonEvent up[LVTK_MAX_BUTTONS];
+    ButtonState down[LVTK_MAX_BUTTONS];
+    ButtonState up[LVTK_MAX_BUTTONS];
     int click_count[LVTK_MAX_BUTTONS];
 
-    void clear_event (ButtonEvent& ev) {
+    inline static void clear_state (ButtonState& ev) {
         ev.event  = {};
         ev.down   = false;
         ev.source = nullptr;
@@ -234,9 +310,8 @@ private:
 // The actual View impl.
 class View {
 public:
-    static constexpr uint32_t default_timer = 1000;
     View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
-        : owner (o), main (m), widget (w) {
+        : owner (o), main (m), widget (w), buttons(), keyboard() {
         view = puglNewView ((PuglWorld*) m.world());
         puglSetSizeHint (view, PUGL_DEFAULT_SIZE, 1, 1);
         puglSetHandle (view, this);
@@ -281,6 +356,16 @@ public:
         }
     }
 
+    void set_focused_widget (lvtk::Widget* widget) {
+        if (focused == widget)
+            return;
+        focused = widget;
+    }
+
+    bool widget_is_focused (const lvtk::Widget* widget) const {
+        return widget != nullptr && focused == widget;
+    }
+
 private:
     friend class lvtk::View;
     friend class lvtk::Main;
@@ -290,8 +375,9 @@ private:
     lvtk::Widget& widget;
     PuglView* view { nullptr };
     WeakRef<lvtk::Widget> hovered;
-
-    ButtonState buttons;
+    WeakRef<lvtk::Widget> focused;
+    Buttons buttons;
+    Keyboard keyboard;
 
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
         if (ev.flags & PUGL_IS_HINT) {
@@ -370,19 +456,39 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus focus_in (View& view, const PuglFocusEvent& ev) { return PUGL_SUCCESS; }
-    static PuglStatus focus_out (View& view, const PuglFocusEvent& ev) { return PUGL_SUCCESS; }
+    static PuglStatus focus_in (View&, const PuglFocusEvent&) {
+        VIEW_DBG ("gained focus");
+        return PUGL_SUCCESS;
+    }
+
+    static PuglStatus focus_out (View&, const PuglFocusEvent&) {
+        VIEW_DBG ("lost focus");
+        return PUGL_SUCCESS;
+    }
 
     static PuglStatus key_press (View& view, const PuglKeyEvent& ev) {
+        view.keyboard.press (view.owner, ev);
+        if (auto f = view.hovered.lock()) {
+            lvtk::KeyEvent kev (ev.key, Modifier (ev.state));
+            f->key_down (kev);
+        }
         return PUGL_SUCCESS;
     }
 
     static PuglStatus key_release (View& view, const PuglKeyEvent& ev) {
+        view.keyboard.release (view.owner, ev);
+        if (auto f = view.hovered.lock()) {
+            lvtk::KeyEvent kev (static_cast<int> (ev.key), Modifier (ev.state));
+            f->key_up (kev);
+        }
         return PUGL_SUCCESS;
     }
 
     static PuglStatus text (View& view, const PuglTextEvent& ev) {
-        VIEW_DBG ("text: " << ev.string);
+        if (auto f = view.hovered.lock()) {
+            TextEvent text (ev.string, ev.state);
+            f->text_entry (text);
+        }
         return PUGL_SUCCESS;
     }
 
@@ -461,8 +567,7 @@ private:
                 view.buttons.modifiers(),
                 pos,
                 view.buttons.num_clicks (ev.button));
-            // VIEW_DBG("widget:" << w->name() << " bounds: " << w->bounds().str());
-            // VIEW_DBG("ev pos: " << event.pos.str());
+
             if (w->contains (event.pos)) {
                 view.buttons.set_target ((int) ev.button, w);
                 w->pressed (event);
