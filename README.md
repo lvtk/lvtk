@@ -20,6 +20,7 @@ Built-In Widgets
 | `lvtk.Entry`      | A basic single-line text entry |
 | `lvtk.Slider`     | A basic single-value slider control |
 | `lvtk.Dial`       | A basic single-value Dial (or Knob) control |
+| `lvtk.Embed`      | Embed OS Native Windows/Views |
 
 Building
 --------
