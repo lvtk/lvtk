@@ -12,7 +12,7 @@ private:
     lvtk::Entry& owner;
 };
 
-}
+} // namespace detail
 
 Entry::Entry() {
     impl = std::make_unique<detail::Entry> (*this);
@@ -22,4 +22,4 @@ Entry::~Entry() {
     impl.reset();
 }
 
-}
+} // namespace lvtk

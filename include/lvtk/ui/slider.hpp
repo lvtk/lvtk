@@ -14,10 +14,6 @@ public:
 };
 
 namespace detail {
-class Slider;
-}
-
-namespace detail {
 class Ranged;
 }
 class Ranged : public Widget {
@@ -44,10 +40,15 @@ private:
     double _value;
 };
 
+namespace detail {
+class Slider;
+}
 class LVTK_API Slider : public Ranged {
 public:
     Slider();
     virtual ~Slider();
+
+    std::function<void()> __value_changed;
 
 private:
     bool obstructed (int x, int y) override {
@@ -60,6 +61,8 @@ private:
     void resized() override;
     /** @private */
     void drag (const Event&) override;
+    /** @private */
+    void pressed (const Event&) override;
 
     friend class detail::Slider;
     std::unique_ptr<detail::Slider> impl;

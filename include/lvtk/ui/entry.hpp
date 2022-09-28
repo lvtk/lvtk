@@ -20,4 +20,4 @@ private:
     std::unique_ptr<detail::Entry> impl;
 };
 
-}
+} // namespace lvtk
