@@ -21,6 +21,7 @@ lvtk_headers = files ('''
 if not get_option('onlydocs')
 
 subdir ('meson/deps')
+subdir ('meson/supress')
 
 if get_option('default_library') == 'both'
   if host_machine.system() == 'windows'
