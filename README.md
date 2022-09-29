@@ -1,4 +1,5 @@
-![Piplene](https://gitlab.com/lvtk/lvtk/badges/main/pipeline.svg)
+[![Piplene](https://gitlab.com/lvtk/lvtk/badges/main/pipeline.svg)](https://gitlab.com/lvtk/lvtk/-/pipelines)
+[![CodeFactor](https://www.codefactor.io/repository/github/lvtk/lvtk/badge)](https://www.codefactor.io/repository/github/lvtk/lvtk)
 
 LVTK3
 =====
