@@ -1,3 +1,5 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #pragma once
 
@@ -456,19 +458,21 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus focus_in (View&, const PuglFocusEvent&) {
+    static PuglStatus focus_in (View& view, const PuglFocusEvent&) {
         VIEW_DBG ("gained focus");
+        view.widget.grab_focus();
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus focus_out (View&, const PuglFocusEvent&) {
+    static PuglStatus focus_out (View& view, const PuglFocusEvent&) {
         VIEW_DBG ("lost focus");
+        view.widget.release_focus();
         return PUGL_SUCCESS;
     }
 
     static PuglStatus key_press (View& view, const PuglKeyEvent& ev) {
         view.keyboard.press (view.owner, ev);
-        if (auto f = view.hovered.lock()) {
+        if (auto f = view.focused.lock()) {
             lvtk::KeyEvent kev (ev.key, Modifier (ev.state));
             f->key_down (kev);
         }
@@ -477,7 +481,7 @@ private:
 
     static PuglStatus key_release (View& view, const PuglKeyEvent& ev) {
         view.keyboard.release (view.owner, ev);
-        if (auto f = view.hovered.lock()) {
+        if (auto f = view.focused.lock()) {
             lvtk::KeyEvent kev (static_cast<int> (ev.key), Modifier (ev.state));
             f->key_up (kev);
         }
@@ -485,7 +489,7 @@ private:
     }
 
     static PuglStatus text (View& view, const PuglTextEvent& ev) {
-        if (auto f = view.hovered.lock()) {
+        if (auto f = view.focused.lock()) {
             TextEvent text (ev.string, ev.state);
             f->text_entry (text);
         }

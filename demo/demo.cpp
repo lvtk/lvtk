@@ -4,6 +4,7 @@
 namespace lvtk {
 namespace demo {
 
+extern std::unique_ptr<Widget> create_entry_demo();
 extern std::unique_ptr<Widget> create_sliders_demo();
 
 Content::Content()
@@ -55,10 +56,13 @@ void Content::run_demo (int index) {
         case BUTTONS:
             demo.reset (new Buttons());
             break;
+        case ENTRY:
+            demo = create_entry_demo();
+            break;
         case SLIDERS:
             demo = create_sliders_demo();
             break;
-        case EMBEDDING:
+        case EMBED:
             demo.reset (new Embedding());
             break;
         default:

@@ -1,6 +1,7 @@
 
 lvtk_demo_sources = '''
     demo.cpp
+    entry.cpp
     sliders.cpp
 '''.split()
 

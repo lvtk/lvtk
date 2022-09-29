@@ -19,8 +19,9 @@ namespace demo {
 enum ID {
     FOUR_SQUARES = 0,
     BUTTONS,
+    ENTRY,
     SLIDERS,
-    EMBEDDING,
+    EMBED,
     NUM_DEMOS
 };
 
@@ -32,11 +33,14 @@ static std::string name (int did) {
         case BUTTONS:
             return "Buttons";
             break;
+        case ENTRY:
+            return "Entry";
+            break;
         case SLIDERS:
             return "Sliders";
             break;
-        case EMBEDDING:
-            return "Embedding";
+        case EMBED:
+            return "Embed";
         default:
             break;
     }

@@ -1,4 +1,5 @@
 
+#include <lvtk/ui/entry.hpp>
 #include <lvtk/ui/slider.hpp>
 #include <lvtk/ui/widget.hpp>
 
