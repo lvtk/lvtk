@@ -10,8 +10,6 @@ This is the binary Widgets LVTK library Powered by `Pugl <https://gitlab.com/lv2
 It is a slim GUI toolkit for writing LV2 UI's and standalone applications. 
 It is tightly integrated with LV2 conventions.
 
-Docs coming soon.  API under heavy development. -MRF
-
 .. toctree::
 
    ui/main

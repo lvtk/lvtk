@@ -18,6 +18,7 @@ Built-In Widgets
 | `lvtk.Widget`     | Base for all widgets |
 | `lvtk.Button`     | Base for most button types |
 | `lvtk.TextButton` | A regular button that shows text |
+| `lvtk.Label`      | A text display Widget |
 | `lvtk.Entry`      | A basic single-line text entry |
 | `lvtk.Slider`     | A basic single-value slider control |
 | `lvtk.Dial`       | A basic single-value Dial (or Knob) control |
