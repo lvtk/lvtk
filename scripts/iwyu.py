@@ -29,7 +29,6 @@ for ext in 'cpp hpp'.split():
     files += glob.glob ('src/ui/details/*.%s')
 
 for f in files:
-    code = include_what_you_use (f)
-    if (code > 2): exit (code)
+    include_what_you_use (f)
 
 exit(0)
