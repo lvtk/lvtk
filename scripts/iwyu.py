@@ -5,7 +5,10 @@ from subprocess import PIPE
 import glob
 
 def include_what_you_use (file):
-    iwyu = ['include-what-you-use', '-Iinclude', '-Isrc' ]
+    iwyu = ['include-what-you-use', 
+            '-Xiwyu', '--mapping_file=scripts/iwyu.imp',
+            '-Xiwyu', '--transitive_includes_only',
+            '-Iinclude', '-Isrc' ]
     cmd = iwyu
     cmd.append (file)
     process = Popen(cmd, stdout=PIPE)

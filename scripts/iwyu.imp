@@ -1,0 +1,4 @@
+[
+    { "include": ["<bits/unique_ptr.h>", "private", "<memory>", "public"] },
+    { "include": ["<bits/enable_special_members.h>", "private", "<public>", "public"]}
+]
