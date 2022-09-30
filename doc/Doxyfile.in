@@ -9,9 +9,11 @@ WARN_NO_PARAMDOC       = NO
 JAVADOC_AUTOBRIEF      = YES
 
 CASE_SENSE_NAMES       = YES
-EXCLUDE_SYMBOLS        = lvtk::detail
+EXCLUDE_SYMBOLS        = lvtk::detail \
+                         lvtk::convert
 EXTRACT_LOCAL_CLASSES  = NO
-EXTRACT_PRIVATE        = NO
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
 HIDE_IN_BODY_DOCS      = YES
 HIDE_UNDOC_CLASSES     = YES
 HIDE_UNDOC_MEMBERS     = YES
@@ -32,6 +34,6 @@ PREDEFINED             = LVTK_API \
 RECURSIVE              = YES
 STRIP_FROM_PATH        = @LVTK_SRCDIR@
 INPUT                  = @LVTK_SRCDIR@/include
-EXAMPLE_PATH           = @LVTK_SRCDIR@/lvtk.lv2
+EXAMPLE_PATH           = @LVTK_SRCDIR@/lvtk.lv2 
 
 OUTPUT_DIRECTORY       = @DOX_OUTPUT@

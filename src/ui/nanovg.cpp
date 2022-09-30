@@ -90,6 +90,29 @@ public:
         nvgRestore (ctx);
     }
 
+    struct FontExtent {
+        float ascent { 0 };
+        float descent { 0 };
+        float height { 0 };
+    };
+
+    FontExtent font_extent() {
+        FontExtent fe;
+        nvgTextMetrics (ctx, &fe.ascent, &fe.descent, &fe.height);
+        return fe;
+    }
+
+    Rectangle<float> text_area (const char* str) {
+        Rectangle<float> r;
+        float bounds[4] = { 0 };
+        nvgTextBoxBounds (ctx, 0.f, 0.f, 1000.f, str, nullptr, bounds);
+        r.x      = bounds[0];
+        r.y      = bounds[1];
+        r.width  = bounds[2] - r.x;
+        r.height = bounds[3] = r.y;
+        return r;
+    }
+
 private:
     friend class nvg::Context;
     NVGcontext* ctx { nullptr };
@@ -133,6 +156,24 @@ void Context::translate (const Point<int>& pt) {
 void Context::transform (const Transform& mat) {
     nvgTransform (ctx->ctx, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
 }
+
+void Context::begin_path() { nvgBeginPath (ctx->ctx); }
+void Context::move_to (float x1, float y1) { nvgMoveTo (ctx->ctx, x1, y1); }
+void Context::line_to (float x1, float y1) { nvgLineTo (ctx->ctx, x1, y1); }
+void Context::quad_to (float x1, float y1, float x2, float y2) {
+    nvgQuadTo (ctx->ctx, x1, y1, x2, y2);
+}
+void Context::cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) {
+    nvgBezierTo (ctx->ctx, x1, y1, x2, y2, x3, y3);
+}
+void Context::close_path() { nvgClosePath (ctx->ctx); }
+
+void Context::fill() {
+    nvgFillColor (ctx->ctx, ctx->state.color);
+    nvgFill (ctx->ctx);
+}
+
+void Context::stroke() { nvgStroke (ctx->ctx); }
 
 void Context::clip (const Rectangle<int>& r) {
     ctx->state.clip = r.as<float>();
@@ -194,8 +235,7 @@ void Context::fill_rect (const Rectangle<float>& r) {
              r.width,
              r.height);
 
-    nvgFillColor (ctx->ctx, ctx->state.color);
-    nvgFill (ctx->ctx);
+    fill();
 }
 
 bool Context::text (const std::string& text, float x, float y, Alignment align) {

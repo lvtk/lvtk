@@ -3,6 +3,8 @@
 from subprocess import Popen
 from subprocess import PIPE
 import glob
+import sys
+
 
 def include_what_you_use (file):
     iwyu = ['include-what-you-use', 
@@ -19,17 +21,20 @@ def include_what_you_use (file):
     process.wait()
     return process.returncode
 
-files  = ['include/lvtk/lvtk.h']
-files += glob.glob ('include/lvtk/*.hpp')
-files += glob.glob ('include/lvtk/ext/*.hpp')
-files += glob.glob ('include/lvtk/host/*.hpp')
-files += glob.glob ('include/lvtk/ui/*.hpp')
+if len(sys.argv) > 1:
+    files = [sys.argv[1]]
+else:
+    files  = ['include/lvtk/lvtk.h']
+    files += glob.glob ('include/lvtk/*.hpp')
+    files += glob.glob ('include/lvtk/ext/*.hpp')
+    files += glob.glob ('include/lvtk/host/*.hpp')
+    files += glob.glob ('include/lvtk/ui/*.hpp')
 
-for ext in 'cpp hpp'.split():
-    files += glob.glob ('src/*.%s' % ext)
-    files += glob.glob ('src/host/*.%s')
-    files += glob.glob ('src/ui/*.%s')
-    files += glob.glob ('src/ui/details/*.%s')
+    for ext in 'cpp hpp'.split():
+        files += glob.glob ('src/*.%s' % ext)
+        files += glob.glob ('src/host/*.%s')
+        files += glob.glob ('src/ui/*.%s')
+        files += glob.glob ('src/ui/details/*.%s')
 
 for f in files:
     include_what_you_use (f)

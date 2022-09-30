@@ -51,8 +51,12 @@ public:
                 bc = bc.brighter (-0.035f);
         }
 
+        auto r = w.bounds().at (0);
+        g.set_color (bc.brighter (-0.02f));
+        auto cs = 2.2f;
+        g.draw_rounded_rect (r, cs);
         g.set_color (bc);
-        g.fill_rect (w.bounds().at (0));
+        g.fill_rounded_rect (w.bounds().at (0), cs);
     }
 
     void draw_button_text (Graphics& g, TextButton& w, bool highlight, bool down) override {

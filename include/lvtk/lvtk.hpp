@@ -51,11 +51,11 @@ namespace lvtk {
  */
 
 /** @defgroup wrapper Wrapper
-    Wrappers around LV2 types.
+    Slim wrappers around LV2 types.
  */
 
 /** @defgroup graphics Graphics
-    Graphics API
+    A graphics API
 */
 
 /** @defgroup lvtk Core

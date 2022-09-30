@@ -18,14 +18,26 @@ public:
     void end_frame();
 
     float scale_factor() const noexcept override;
+    void save() override;
+    void restore() override;
+
+    void begin_path() override;
+    void move_to (float x1, float y1) override;
+    void line_to (float x1, float y1) override;
+    void quad_to (float x1, float y1, float x2, float y2) override;
+    void cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) override;
+    void close_path() override;
+
+    void fill() override;
+    void stroke() override;
+
     void translate (const Point<int>& pt) override;
     void transform (const Transform& mat) override;
     void clip (const Rectangle<int>& r) override;
     void intersect_clip (const Rectangle<int>& r) override;
     Rectangle<int> last_clip() const override;
     void set_fill (const Fill& fill) override;
-    void save() override;
-    void restore() override;
+
     void fill_rect (const Rectangle<float>& r) override;
     bool text (const std::string&, float, float, Alignment) override;
 
