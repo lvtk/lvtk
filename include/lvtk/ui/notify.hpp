@@ -12,9 +12,9 @@ namespace lvtk {
     @headerfile lvtk/ui/slider.hpp
  */
 enum class Notify : uint32_t {
-    NONE = 0,   ///< Don't send any notification
-    SYNC,       ///< Send notification sync
-    ASYNC       ///< Send notification async
+    NONE = 0, ///< Don't send any notification
+    SYNC,     ///< Send notification sync
+    ASYNC     ///< Send notification async
 };
 
-}
+} // namespace lvtk
