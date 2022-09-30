@@ -19,7 +19,7 @@ enum class PathOp {
     CLOSE          ///< Close path
 };
 
-/** The element_type for BasicPath<T>::iterator
+/** The element_type for Path<T>::iterator
     @ingroup graphics
     @headerfile lvtk/ui/path.hpp
 */
