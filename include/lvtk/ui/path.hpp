@@ -11,7 +11,7 @@ namespace lvtk {
     @ingroup graphics
     @headerfile lvtk/ui/path.hpp
 */
-enum class PathOp {
+enum class PathOp : int {
     MOVE = 100000, ///< Move to
     LINE,          ///< Line to
     QUADRATIC,     ///< Quad to
