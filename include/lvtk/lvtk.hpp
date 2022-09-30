@@ -59,6 +59,10 @@ namespace lvtk {
     @{
  */
 
+/** @defgroup graphics Graphics
+    Graphics API
+*/
+
 /** Alias to LV2_Handle 
     @ingroup lvtk
 */

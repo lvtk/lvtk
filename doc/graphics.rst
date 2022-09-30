@@ -11,6 +11,7 @@ Point
 -----
 
 Represents an XY coordinate.
+`lvtk.Point <api/classlvtk_1_1Point.html>`__
 
 ---------
 Rectangle

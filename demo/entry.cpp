@@ -20,7 +20,6 @@ public:
 
 private:
     void update_text (Slider& slider) {
-       
     }
 
     void resized() override {

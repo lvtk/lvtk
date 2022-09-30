@@ -12,7 +12,7 @@
 namespace lvtk {
 
 /** A typeface 
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/font.hpp
 */
 class LVTK_API Typeface {
@@ -26,13 +26,13 @@ public:
 };
 
 /** Shared Typeface ptr.
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/font.hpp
  */
 using TypefacePtr = std::shared_ptr<Typeface>;
 
 /** A font.
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/font.hpp
 */
 class LVTK_API Font final {

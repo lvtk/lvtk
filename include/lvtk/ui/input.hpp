@@ -17,11 +17,15 @@ class Main;
 class View;
 class Widget;
 
-/** alias for Modifier flags */
+/** Alias for Modifier flags
+    @ingroup widgets
+    @headerfile lvtk/ui/input.hpp
+*/
 using ModifierFlags = uint32_t;
 
 /** Modifier keys
     @ingroup widgets
+    @headerfile lvtk/ui/input.hpp
 */
 class LVTK_API Modifier final {
 public:
@@ -37,7 +41,6 @@ public:
 #else
         COMMAND = CTRL,
 #endif
-
         /** Alias of CTRL */
         CONTROL = CTRL,
 
@@ -117,7 +120,10 @@ private:
     ModifierFlags _flags { NONE };
 };
 
-/** A KeyPress event */
+/** A KeyPress event
+    @ingroup widgets
+    @headerfile lvtk/ui/input.hpp
+ */
 class LVTK_API KeyEvent {
 public:
     KeyEvent() {}
@@ -153,7 +159,10 @@ private:
     Modifier _mods;
 };
 
-/** A KeyPress event */
+/** A KeyPress event
+    @headerfile lvtk/ui/input.hpp
+    @ingroup widgets
+*/
 class LVTK_API TextEvent {
 public:
     TextEvent() : character (0) {}

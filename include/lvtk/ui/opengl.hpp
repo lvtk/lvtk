@@ -11,7 +11,10 @@
 namespace lvtk {
 
 /** The OpenGL graphics backend.
+    Using this backend requires linking with lvtk-opengl-3.0
+
     @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/opengl.hpp 
 */
 struct LVTK_API OpenGL : public Backend {

@@ -6,17 +6,38 @@
 #include <functional>
 
 #include <lvtk/lvtk.h>
+#include <lvtk/ui/notify.hpp>
 #include <lvtk/ui/widget.hpp>
+
+// clang-format off
+namespace lvtk { namespace detail { class Ranged; } }
+namespace lvtk { namespace detail { class Slider; } }
+namespace lvtk { namespace detail { class Dial; } }
+// clang-format on
 
 namespace lvtk {
 
 /** A range of two values
     E.g. min and max with some conversion helpers
+    @ingroup widgets
+    @headerfile lvtk/ui/slider.hpp
+    @tparam Val the value type
  */
 template <typename Val>
 class Range {
 public:
+    /** Minimum value */
+    Val min { Val() };
+    /** Maximum value */
+    Val max { Val() };
+
+    /** Make an empty range */
     Range() = default;
+
+    /** Make a range with min and max 
+        @param minimum min Value
+        @param maximum max Value
+    */
     Range (Val minimum, Val maximum) : min (minimum), max (maximum) {}
 
     /** Returns true if min == max */
@@ -39,39 +60,44 @@ public:
 
     bool operator== (const Range& o) const noexcept { return min == o.min && max == o.max; }
     bool operator!= (const Range& o) const noexcept { return min != o.min || max != o.max; }
-
-    Val min { Val() };
-    Val max { Val() };
 };
-
-/** A type of notification */
-enum class Notify : uint32_t {
-    NONE = 0,
-    SYNC,
-    ASYNC
-};
-
-namespace detail {
-class Ranged;
-}
 
 /** A generic ranged Widget.
     Use  for base classes that need a min/max/value
     setup
 
+    @ingroup widgets
+    @headerfile lvtk/ui/slider.hpp
     @see Slider,Dial
 */
 class LVTK_API Ranged : public Widget {
 public:
+    /** Create a new ranged */
     Ranged();
 
     virtual ~Ranged();
 
+    /** Called when the value changes */
     std::function<void()> on_value_changed;
 
+    /** @returns the current value */
     double value() const noexcept;
+
+    /** Set the current value
+        @param value New value
+        @param notify How to notify 
+    */
     void set_value (double value, Notify notify);
+
+    /** Set the min/max range
+        @param min Min value
+        @param max Max value
+    */
     void set_range (double min, double max);
+
+    /** Get the Range object used
+        @returns the range
+    */
     const Range<double>& range() const noexcept;
 
 private:
@@ -79,18 +105,18 @@ private:
     std::unique_ptr<detail::Ranged> impl;
 };
 
-namespace detail {
-class Slider;
-}
-
 /** A typical Slider control.
     Can be styled as linear bar or thumb on a track
+
+    @ingroup widgets
+    @headerfile lvtk/ui/slider.hpp
 */
 class LVTK_API Slider : public Ranged {
 public:
     Slider();
     virtual ~Slider();
 
+    /** The type of slider */
     enum Type : uint8_t {
         VERTICAL = 0,  ///< Vertical orientation with thumb/track
         HORIZONTAL,    ///< Horizontal orientation with thumb/track
@@ -102,6 +128,7 @@ public:
     void set_type (Type type);
     /** Get the type of slider */
     Type type() const noexcept;
+    /** Returns true if this has vertical orientation */
     bool vertical() const noexcept;
 
 private:
@@ -121,11 +148,10 @@ private:
     std::unique_ptr<detail::Slider> impl;
 };
 
-namespace detail {
-class Dial;
-}
-
-/** A type of dial. Like a Knob on a synth. */
+/** A type of dial. Like a Knob on a synth.
+    @ingroup widgets
+    @headerfile lvtk/ui/slider.hpp
+*/
 class Dial : public Ranged {
 public:
     Dial();

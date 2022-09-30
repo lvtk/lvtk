@@ -10,7 +10,7 @@ namespace lvtk {
 
 /** A 32bit color value.
     The value represented by a uint32_t. e.g. 0xRRGGBBAA
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/color.hpp
  */
 class Color {

@@ -7,7 +7,10 @@
 
 namespace lvtk {
 
-/** A type of operation used when processing path data */
+/** A type of operation used when processing path data
+    @ingroup graphics
+    @headerfile lvtk/ui/path.hpp
+*/
 enum class PathOp {
     MOVE = 100000,
     LINE,
@@ -16,7 +19,10 @@ enum class PathOp {
     CLOSE
 };
 
-/** The element_type for BasicPath<T>::iterator */
+/** The element_type for BasicPath<T>::iterator
+    @ingroup graphics
+    @headerfile lvtk/ui/path.hpp
+*/
 struct PathItem {
     PathOp type { PathOp::MOVE };
     float x1 {}, y1 {},
@@ -25,7 +31,8 @@ struct PathItem {
 };
 
 /** Drawable path.
-    @ingroup widgets
+    @ingroup graphics
+    @headerfile lvtk/ui/path.hpp
 */
 class Path {
 public:

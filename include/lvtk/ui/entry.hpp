@@ -11,7 +11,10 @@ namespace detail {
 class Entry;
 }
 
-/** Single line text entry widget */
+/** Single line text entry widget 
+    @ingroup widgets
+    @headerfile lvtk/ui/entry.hpp
+*/
 class LVTK_API Entry : public Widget {
 public:
     Entry();

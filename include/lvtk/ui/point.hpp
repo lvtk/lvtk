@@ -10,13 +10,19 @@
 namespace lvtk {
 
 /** A point. x y coordinate.
-    @ingroup widgets
+    @ingroup graphics
+    @headerfile lvtk/ui/point.hpp
 */
 template <typename Val>
-class Point {
-public:
-    Val x {}, y {};
+struct Point {
+    /** X coordinate */
+    Val x {};
+    /** Y coordinate */
+    Val y {};
 
+    /** Convert this point to another value type.
+        i.e. int to float
+    */
     template <typename T>
     Point<T> as() const noexcept {
         return {
@@ -25,25 +31,25 @@ public:
         };
     }
 
-    Point<Val> operator- (Point o) const noexcept {
+    Point operator- (const Point& o) const noexcept {
         Point copy (*this);
         copy -= o;
         return copy;
     }
 
-    Point<Val>& operator-= (Point o) noexcept {
+    Point& operator-= (const Point& o) noexcept {
         x -= o.x;
         y -= o.y;
         return *this;
     }
 
-    Point<Val> operator+ (Point<Val> o) const noexcept {
+    Point operator+ (const Point& o) const noexcept {
         Point copy (*this);
         copy += o;
         return copy;
     }
 
-    Point<Val>& operator+= (Point<Val> o) noexcept {
+    Point& operator+= (const Point& o) noexcept {
         x += o.x;
         y += o.y;
         return *this;
@@ -63,6 +69,9 @@ public:
                  (T) ((T) y / (T) d) };
     }
 
+    /** Convert to a String.
+        Format of output = "${x} ${y}"
+    */
     std::string str() const noexcept {
         String st;
         st << x << " " << y;

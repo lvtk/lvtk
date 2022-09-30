@@ -9,7 +9,7 @@
 namespace lvtk {
 
 /** A utility class to help aligning text etc etc. 
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/align.hpp
 */
 class Align final {

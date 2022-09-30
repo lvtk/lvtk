@@ -7,15 +7,21 @@
 
 namespace lvtk {
 
-/** @ingroup widgets */
+/** Pixel data
+    @ingroup graphics
+    @headerfile lvtk/ui/path.hpp
+*/
 class Pixels {
 public:
 };
 
-/** @ingroup widgets */
+/** An image
+    @ingroup graphics
+    @headerfile lvtk/ui/path.hpp
+*/
 class Image {
 public:
-    Image()        = default;
+    Image() = default;
     Image& operator= (const Image& o) {
         _pixels = o._pixels;
         return *this;

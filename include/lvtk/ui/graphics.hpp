@@ -13,10 +13,15 @@
 
 namespace lvtk {
 
+/** Bounds alias Rectangle<int>
+    @see Rectangle
+    @ingroup graphics
+    @headerfile lvtk/ui/graphics.hpp
+*/
 using Bounds = Rectangle<int>;
 
 /** A 2d transformation matrix.
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/graphics.hpp
 */
 class LVTK_API Transform final {
@@ -41,7 +46,7 @@ public:
 };
 
 /** Lower level graphics context.
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/graphics.hpp
 */
 class LVTK_API DrawingContext {
@@ -87,7 +92,7 @@ public:
     API is subject to change dramatically at any given time
     until we approach an alpha status.
 
-    @ingroup widgets
+    @ingroup graphics
     @headerfile lvtk/ui/graphics.hpp
  */
 class LVTK_API Graphics final {
