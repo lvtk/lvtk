@@ -12,22 +12,32 @@ namespace lvtk {
     @headerfile lvtk/ui/path.hpp
 */
 enum class PathOp {
-    MOVE = 100000,
-    LINE,
-    QUADRATIC,
-    CUBIC,
-    CLOSE
+    MOVE = 100000, ///< Move to
+    LINE,          ///< Line to
+    QUADRATIC,     ///< Quad to
+    CUBIC,         ///< Cubic to
+    CLOSE          ///< Close path
 };
 
 /** The element_type for BasicPath<T>::iterator
     @ingroup graphics
     @headerfile lvtk/ui/path.hpp
 */
-struct PathItem {
+struct PathItem final {
+    /** Type of operation */
     PathOp type { PathOp::MOVE };
-    float x1 {}, y1 {},
-        x2 {}, y2 {},
-        x3 {}, y3 {};
+    /** X1 coord */
+    float x1 {};
+    /** Y1 coord */
+    float y1 {};
+    /** X2 coord */
+    float x2 {};
+    /** Y2 coord */
+    float y2 {};
+    /** X3 coord */
+    float x3 {};
+    /** Y3 coord */
+    float y3 {};
 };
 
 /** Drawable path.
@@ -38,32 +48,39 @@ class Path {
 public:
     using value_type = PathItem;
 
+    /** Make an empty path */
     Path()  = default;
     ~Path() = default;
 
+    /** Clear the path */
     void clear() { _data.clear(); }
 
+    /** Move to x y */
     void move (float x, float y) {
         add_op (PathOp::MOVE, x, y);
     }
 
+    /** Line to x y */
     void line (float x, float y) {
         if (_data.empty())
             move (0, 0);
         add_op (PathOp::LINE, x, y);
     }
 
+    /** Line to from a Point */
     template <class Pt>
     void line (Pt pt) {
         line (static_cast<float> (pt.x), static_cast<float> (pt.y));
     }
 
+    /** Quadratic to */
     void quad (float x1, float y1, float x2, float y2) {
         if (_data.empty())
             move (0, 0);
         add_op (PathOp::QUADRATIC, x1, y1, x2, y2);
     }
 
+    /** Cubic to */
     void cubic (float x1, float y1,
                 float x2, float y2,
                 float x3, float y3) {
@@ -72,11 +89,13 @@ public:
         add_op (PathOp::CUBIC, x1, y1, x2, y2, x3, y3);
     }
 
+    /** Close the path */
     void close() {
         if (! _data.empty() && static_cast<float> (PathOp::CLOSE) != _data.back())
             add_op (PathOp::CLOSE);
     }
 
+    /** Item iterator */
     struct iterator {
         iterator& operator++() {
             _item.type = static_cast<PathOp> (*_i++);
@@ -131,10 +150,13 @@ public:
         value_type _item;
     };
 
+    /** Begin iter */
     auto begin() const noexcept { return iterator (_data.cbegin()); }
+    /** End iter */
     auto end() const noexcept { return iterator (_data.cend()); }
-
+    /** Raw data vector */
     const auto& data() const noexcept { return _data; }
+    /** Reserve amount of bytes */
     void reserve (std::size_t n) { _data.reserve (_data.size() + n); }
 
 private:
