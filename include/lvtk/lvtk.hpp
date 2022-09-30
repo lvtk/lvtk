@@ -54,14 +54,14 @@ namespace lvtk {
     Wrappers around LV2 types.
  */
 
+/** @defgroup graphics Graphics
+    Graphics API
+*/
+
 /** @defgroup lvtk Core
     Core classes, types, and utilities.
     @{
  */
-
-/** @defgroup graphics Graphics
-    Graphics API
-*/
 
 /** Alias to LV2_Handle 
     @ingroup lvtk
