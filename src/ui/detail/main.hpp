@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <atomic>
+
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
 
@@ -11,7 +13,7 @@
 #include <lvtk/ui/slider.hpp>
 #include <lvtk/ui/view.hpp>
 
-#include "./view.hpp"
+#include "ui/detail/view.hpp"
 
 namespace lvtk {
 namespace detail {
@@ -92,28 +94,20 @@ public:
 
 class Main {
 public:
-    Main (lvtk::Main& o, const Mode m, std::unique_ptr<lvtk::Backend> b)
-        : owner (o), mode (m), world (puglNewWorld (detail::world_type (m), detail::world_flags())), backend (std::move (b)), style (std::make_unique<DefaultStyle>()) {}
+    Main (lvtk::Main& o, const Mode m, std::unique_ptr<lvtk::Backend> b);
+    std::unique_ptr<lvtk::View> create_view (lvtk::Widget& widget, ViewFlags flags, uintptr_t parent);
 
-    std::unique_ptr<lvtk::View> create_view (lvtk::Widget& widget, ViewFlags flags, uintptr_t parent) {
-        auto view = backend->create_view (owner, widget);
-        if (! view)
-            return nullptr;
-
-        const bool transient = false;
-
-        if (view && parent)
-            view->impl->set_parent (parent, transient);
-
-        view->set_view_hint (PUGL_RESIZABLE, (int) (flags & lvtk::View::RESIZABLE));
-        // if (flags & ViewFlag::POPUP)
-        //     view->set_view_hint (PUGL_VIEW_TYPE, PUGL_POPUP_MENU_VIEW);
-
-        return view;
+    bool running() const noexcept {
+        return first_loop_called
+               && last_update_status == PUGL_SUCCESS
+               && ! quit_flag;
     }
+
+    bool loop (double timeout);
 
 private:
     friend class lvtk::Main;
+    friend class lvtk::detail::Main;
     friend class lvtk::View;
     friend class detail::View;
 
@@ -123,6 +117,11 @@ private:
     std::unique_ptr<lvtk::Backend> backend;
     std::vector<lvtk::View*> views;
     std::unique_ptr<lvtk::Style> style;
+    bool quit_flag { false };
+    std::atomic<int> exit_code { 0 };
+
+    bool first_loop_called { false };
+    PuglStatus last_update_status = PUGL_UNKNOWN_ERROR;
 };
 
 } // namespace detail

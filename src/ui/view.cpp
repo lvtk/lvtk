@@ -8,6 +8,24 @@
 
 namespace lvtk {
 
+namespace detail {
+
+View::View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
+    : owner (o), main (m), widget (w), buttons(), keyboard() {
+    view = puglNewView (m.impl->world);
+    puglSetSizeHint (view, PUGL_DEFAULT_SIZE, 1, 1);
+    puglSetHandle (view, this);
+    puglSetEventFunc (view, dispatch);
+}
+
+View::~View() {
+    puglStopTimer (view, 0);
+    puglFreeView (view);
+    view = nullptr;
+}
+
+} // namespace detail
+
 View::View (Main& m, Widget& w) {
     impl = std::make_unique<detail::View> (*this, m, w);
     _weak_status.reset (this);

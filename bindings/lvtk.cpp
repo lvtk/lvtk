@@ -341,6 +341,7 @@ LVTK_LUALIB
 int luaopen_lvtk_Main (lua_State* L) {
     auto T = lua::bind<lvtk::Main> (L, "lvtk", "Main",
         "loop",     &Main::loop,
+        "running",  &Main::running,
         "elevate", [](lvtk::Main& self, object tbl) {
             // std::clog << "elevate: " << type_name (L, tbl.get_type()) << std::endl;
             // TODO: deeply inspect that this really is a widget
@@ -363,7 +364,7 @@ int luaopen_lvtk_Main (lua_State* L) {
 
         "quit", &Main::quit,
         
-        "__quit_flag", &Main::__quit_flag,
+        "exit_code", &Main::exit_code,
 
         "symbols",  &Main::symbols,
         "new", factories ([]() {
