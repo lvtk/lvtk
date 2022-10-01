@@ -5,7 +5,9 @@
 
 #include <cstdio>
 #include <sstream>
+#include <string>
 
+#include <lv2/core/lv2.h>
 #include <lvtk/detail/dynmanifest.h>
 
 namespace lvtk {

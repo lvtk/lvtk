@@ -10,7 +10,8 @@ def include_what_you_use (file):
     iwyu = ['include-what-you-use', 
             '-Xiwyu', '--mapping_file=scripts/iwyu.imp',
             '-Xiwyu', '--transitive_includes_only',
-            '-Iinclude', '-Isrc' ]
+            '-Iinclude', '-Isrc',
+            '-Isubprojects/lv2/include' ]
     cmd = iwyu
     cmd.append (file)
     process = Popen(cmd, stdout=PIPE)

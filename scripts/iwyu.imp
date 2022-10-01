@@ -1,4 +1,7 @@
 [
     { "include": ["<bits/unique_ptr.h>", "private", "<memory>", "public"] },
-    { "include": ["<bits/enable_special_members.h>", "private", "<public>", "public"]}
+    { "include": ["<bits/enable_special_members.h>", "private", "<public>", "public"]},
+    { "include": ["<iosfwd>", "public", "<string>", "public"]},
+    { symbol: ["std::stringstream", "private", "<sstream>", "public"] },
+    { symbol: ["std::basic_string", "private", "<string>", "public"] }
 ]
