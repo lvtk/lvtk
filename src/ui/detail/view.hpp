@@ -17,6 +17,8 @@
 #include "ui/detail/main.hpp"
 #include "ui/detail/widget.hpp"
 
+#include "ui/detail/main.hpp"
+
 #define LVTK_MAX_BUTTONS 4
 
 // #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
