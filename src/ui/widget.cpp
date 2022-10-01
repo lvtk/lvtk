@@ -164,7 +164,7 @@ Widget* Widget::find_root() const noexcept {
     return it != nullptr ? const_cast<Widget*> (it) : nullptr;
 }
 
-ViewRef Widget::find_view() const noexcept {
+View* Widget::find_view() const noexcept {
     auto it = this;
     while (it && it->impl->view == nullptr)
         it = it->impl->parent;

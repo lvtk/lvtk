@@ -16,6 +16,8 @@
 // flip these for verbose logging at different levels
 #include <iostream>
 
+#include "ui/detail/main.hpp"
+
 #define LVTK_MAX_BUTTONS 4
 
 // #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
@@ -312,19 +314,8 @@ private:
 // The actual View impl.
 class View {
 public:
-    View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
-        : owner (o), main (m), widget (w), buttons(), keyboard() {
-        view = puglNewView ((PuglWorld*) m.world());
-        puglSetSizeHint (view, PUGL_DEFAULT_SIZE, 1, 1);
-        puglSetHandle (view, this);
-        puglSetEventFunc (view, dispatch);
-    }
-
-    ~View() {
-        puglStopTimer (view, 0);
-        puglFreeView (view);
-        view = nullptr;
-    }
+    View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w);
+    ~View();
 
     void set_backend (uintptr_t b) {
         puglSetBackend (view, (PuglBackend*) b);

@@ -182,10 +182,13 @@ public:
 
     /** Find the view for this widget.
         locates the first elevated parent widget
+        @returns View
     */
-    ViewRef find_view() const noexcept;
+    View* find_view() const noexcept;
 
-    /** Find the native handle for this Widget */
+    /** Find the native handle for this Widget
+        @returns uintptr_t
+    */
     uintptr_t find_handle() const noexcept;
 
     /** Returns the current style used by this widget
@@ -201,6 +204,7 @@ public:
     // this kind of access into the widget will eventually be stable with
     // an obverver system + object query system.
     const std::vector<Widget*>& __widgets() const noexcept;
+
     virtual bool __wants_updates() { return false; }
     virtual void __update() {}
     // end debug things

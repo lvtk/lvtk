@@ -5,28 +5,30 @@
 
 #include "demo.hpp"
 
+namespace lvtk {
+namespace demo {
+
 template <class Wgt>
 static int run (lvtk::Main& context) {
     try {
         auto content = std::make_unique<Wgt>();
         context.elevate (*content, lvtk::View::RESIZABLE, 0);
-        bool quit = false;
-        while (! quit) {
+        while (true) {
             context.loop (-1.0);
-            quit = context.__quit_flag;
+            if (! context.running())
+                break;
         }
     } catch (...) {
-        std::clog << "fatal error in main loop\n";
-        // std::clog << e.what() << std::endl;
-        return 1;
+        std::clog << "[demo] fatal error in main loop\n";
+        context.set_exit_code (-1);
     }
 
-    return 0;
+    std::clog << "[demo] exiting with code: " << context.exit_code() << std::endl;
+    return context.exit_code();
 }
 
-static int run (lvtk::Main& context, int, char**) {
-    return run<lvtk::demo::Content> (context);
-}
+} // namespace demo
+} // namespace lvtk
 
 #ifdef _WIN32
 #    include <windows.h>
@@ -35,11 +37,11 @@ int WinMain (HINSTANCE hInstance,
              LPSTR lpCmdLine,
              int nShowCmd) {
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
-    return run<lvtk::demo::Content> (context);
+    return lvtk::demo::run<lvtk::demo::Content> (context);
 }
 #else
 int main (int argc, char** argv) {
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
-    return run (context, argc, argv);
+    return lvtk::demo::run<lvtk::demo::Content> (context);
 }
 #endif

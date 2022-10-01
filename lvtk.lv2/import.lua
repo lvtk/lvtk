@@ -86,11 +86,13 @@ local lvtk_demo_run = function()
     main:elevate (new (RedBox))
 
     -- drive the GUI
-    while (main.__quit_flag == false) do
+    local running = true
+    while (running) do
         main:loop (-1.0)
+        running = main:running()
     end
 
-    return 0 -- main.exit_code()
+    return main.exit_code()
 end
 
 -- register the demo for importing
