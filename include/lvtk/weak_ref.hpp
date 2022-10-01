@@ -65,7 +65,7 @@ public:
 
 private:
     struct Status {
-        owner_type* ptr = nullptr;
+        owner_type* ptr { nullptr };
     };
     std::shared_ptr<Status> status;
 };
