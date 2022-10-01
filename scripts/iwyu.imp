@@ -1,7 +1,14 @@
 [
     { "include": ["<bits/unique_ptr.h>", "private", "<memory>", "public"] },
-    { "include": ["<bits/enable_special_members.h>", "private", "<public>", "public"]},
+    { "include": ["<__memory/unique_ptr.h>", "private", "<memory>", "public"] },
+    { "include": ["<__memory/shared_ptr.h>", "private", "<memory>", "public"] },
+    { "include": ["<__nullptr>", "private", "<cstddef>", "public"] },
+    { "include": ["<__utility/move.h>", "private", "<utility>", "public"] },
+    { "include": ["<bits/enable_special_members.h>", "private", "<public>", "public"] },
+    { "include": ["<__utility/pair.h>", "private", "<utility>", "public"] },
     { "include": ["<iosfwd>", "public", "<string>", "public"]},
+    { "include": ["<stdlib.h>", "public", "<cstdlib>", "public"]},
+    { "symbol": ["uint32_t", "public", "<cstdint>", "public"]},
     { symbol: ["std::stringstream", "private", "<sstream>", "public"] },
     { symbol: ["std::basic_string", "private", "<string>", "public"] }
 ]

@@ -159,7 +159,7 @@ public:
         @param c Region to intersect
      */
     void intersect_clip (Bounds c);
-    
+
     /** Return the last clip bounds set with clip */
     Bounds last_clip() const noexcept;
 

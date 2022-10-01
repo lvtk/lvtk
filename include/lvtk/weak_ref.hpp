@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include <iosfwd>
+#include <cstddef>
 #include <memory>
+#include <utility>
 
 namespace lvtk {
 

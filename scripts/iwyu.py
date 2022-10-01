@@ -11,7 +11,8 @@ def include_what_you_use (file):
             '-Xiwyu', '--mapping_file=scripts/iwyu.imp',
             '-Xiwyu', '--transitive_includes_only',
             '-Iinclude', '-Isrc',
-            '-Isubprojects/lv2/include' ]
+            '-Isubprojects/lv2/include',
+            '-std=c++17' ]
     cmd = iwyu
     cmd.append (file)
     process = Popen(cmd, stdout=PIPE)

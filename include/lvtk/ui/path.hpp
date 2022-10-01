@@ -212,10 +212,10 @@ namespace graphics {
 */
 template <class Pth>
 inline static Pth&& rounded_rect (Pth&& path, const float x, const float y,
-                    const float w, const float h,
-                    float corner_size_x, float corner_size_y,
-                    const bool top_left, const bool top_right,
-                    const bool bottom_left, const bool bottom_right) {
+                                  const float w, const float h,
+                                  float corner_size_x, float corner_size_y,
+                                  const bool top_left, const bool top_right,
+                                  const bool bottom_left, const bool bottom_right) {
     corner_size_x = std::min (corner_size_x, w * 0.5f);
     corner_size_y = std::min (corner_size_y, h * 0.5f);
     auto cs45x    = corner_size_x * 0.45f;
@@ -271,7 +271,7 @@ inline static Pth&& rounded_rect (Pth&& path, const float x, const float y,
  */
 template <class Pth>
 inline static Pth&& rounded_rect (Pth&& po, const float x, const float y,
-                    const float width, const float height, float corner_size) {
+                                  const float width, const float height, float corner_size) {
     return rounded_rect (
         po, x, y, width, height, corner_size, corner_size, true, true, true, true);
 }

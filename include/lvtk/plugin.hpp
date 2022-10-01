@@ -15,9 +15,16 @@
 
 #pragma once
 
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <map>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include <lv2/core/lv2.h>
 #include <lvtk/lvtk.hpp>
 
 namespace lvtk {
