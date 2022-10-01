@@ -365,7 +365,6 @@ int luaopen_lvtk_Main (lua_State* L) {
         "quit", &Main::quit,
         
         "exit_code", &Main::exit_code,
-
         "symbols",  &Main::symbols,
         "new", factories ([]() {
             auto obj = std::make_unique<lvtk::Main>(
