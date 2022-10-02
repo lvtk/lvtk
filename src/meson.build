@@ -3,6 +3,7 @@ lvtk_libdir = get_option('libdir')
 
 ### LVTK Widgets
 lvtk_widgets_sources = '''
+    ui/button.cpp
     ui/embed.cpp
     ui/entry.cpp
     ui/font.cpp

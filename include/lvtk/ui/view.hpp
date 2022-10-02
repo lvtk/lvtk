@@ -14,11 +14,8 @@
 
 namespace lvtk {
 namespace detail {
-/** @private */
 class Main;
-/** @private */
 class View;
-/** @private */
 class Widget;
 } // namespace detail
 

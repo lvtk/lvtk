@@ -4,6 +4,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iostream>
 
 #include <lvtk/ui/input.hpp>
 #include <lvtk/ui/main.hpp>
@@ -13,10 +14,8 @@
 #define PUGL_DISABLE_DEPRECATED
 #include <pugl/pugl.h>
 
-// flip these for verbose logging at different levels
-#include <iostream>
-
 #include "ui/detail/main.hpp"
+#include "ui/detail/widget.hpp"
 
 #define LVTK_MAX_BUTTONS 4
 
@@ -423,22 +422,7 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static void update_recursive (lvtk::Widget& widget) {
-        if (widget.__wants_updates())
-            widget.__update();
-        for (auto& child : widget.__widgets())
-            update_recursive (*child);
-    }
-
-    static void idle_recursive (lvtk::Widget& widget) {
-        if (widget.__wants_updates())
-            widget.__update();
-        for (auto& child : widget.__widgets())
-            update_recursive (*child);
-    }
-
     static PuglStatus update (View& view, const PuglUpdateEvent& ev) {
-        update_recursive (view.widget);
         return PUGL_SUCCESS;
     }
 
@@ -603,7 +587,6 @@ private:
     static PuglStatus client (View& view, const PuglClientEvent& ev) { return PUGL_SUCCESS; }
 
     static PuglStatus timer (View& view, const PuglTimerEvent& ev) {
-        idle_recursive (view.widget);
         return PUGL_SUCCESS;
     }
 

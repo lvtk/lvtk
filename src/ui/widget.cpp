@@ -9,9 +9,94 @@
 #include <lvtk/ui/style.hpp>
 #include <lvtk/ui/widget.hpp>
 
-#include "detail/widget.hpp"
+#include "ui/detail/view.hpp"
+#include "ui/detail/widget.hpp"
 
 namespace lvtk {
+
+namespace detail {
+void Widget::grab_focus() {
+    if (auto v = owner.find_view())
+        v->impl->set_focused_widget (&owner);
+}
+
+void Widget::release_focus() {
+    if (auto v = owner.find_view())
+        v->impl->set_focused_widget (nullptr);
+}
+
+void Widget::render_internal (Graphics& g) {
+#if LVTK_WIDGET_USE_CLIPPING
+    render_all (owner, g);
+#else
+    render_all_unclipped (owner, g);
+#endif
+}
+
+void Widget::repaint_internal (Bounds b) {
+    if (! owner.visible())
+        return;
+    b = bounds.at (0).intersection (b);
+    if (b.empty())
+        return;
+
+    if (owner.elevated()) {
+        view->repaint (b);
+    } else {
+        if (parent != nullptr) {
+            auto p = convert::to_parent_space (owner, b.pos().as<float>());
+            b.x    = detail::round_int (p.x);
+            b.y    = detail::round_int (p.y);
+            parent->impl->repaint_internal (b);
+        }
+    }
+}
+
+void Widget::notify_structure_changed() {
+    WidgetRef ref = &owner;
+    owner.parent_structure_changed();
+
+    for (int i = (int) widgets.size(); --i >= 0;) {
+        widgets[i]->impl->notify_structure_changed();
+        if (! ref.valid())
+            return;
+        i = std::min (i, (int) widgets.size());
+    }
+}
+
+void Widget::notify_children_changed() {
+    owner.children_changed();
+}
+
+void Widget::notify_moved_resized (bool was_moved, bool was_resized) {
+    WidgetRef ref = &owner;
+    if (was_moved) {
+        owner.moved();
+        if (! ref.valid())
+            return;
+    }
+
+    if (was_resized) {
+        owner.resized();
+        if (! ref.valid())
+            return;
+
+        for (int i = (int) widgets.size(); --i >= 0;) {
+            widgets[i]->parent_size_changed();
+            if (! ref.valid())
+                return;
+            i = std::min (i, (int) widgets.size());
+        }
+    }
+
+    if (parent != nullptr)
+        parent->child_size_changed (&owner);
+
+    if (ref.valid()) { /* send a signal */
+    };
+}
+
+} // namespace detail
 
 Widget::Widget() {
     impl = std::make_unique<detail::Widget> (*this);
@@ -244,10 +329,6 @@ bool Widget::contains (Point<int> pt) const noexcept {
 
 bool Widget::contains (Point<float> pt) const noexcept {
     return impl->bounds.at (0, 0).as<float>().contains (pt);
-}
-
-const std::vector<Widget*>& Widget::__widgets() const noexcept {
-    return impl->widgets;
 }
 
 } // namespace lvtk

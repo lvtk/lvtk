@@ -14,20 +14,21 @@ public:
         add (button1);
         button1.set_text ("Quit");
         button1.set_visible (true);
-        button1.__clicked = [this] (const Event& ev) {
-            ev.context.quit();
+        button1.on_clicked = [this]() {
+            if (auto v = find_view())
+                v->main().quit();
             repaint();
         };
 
         add (button2);
         button2.set_text ("Apply");
         button2.set_visible (true);
-        button2.clicked = [this]() { message = "Apply clicked!"; repaint(); };
+        button2.on_clicked = [this]() { message = "Apply clicked!"; repaint(); };
 
         add (button3);
         button3.set_text ("Ok");
         button3.set_visible (true);
-        button3.clicked = [this]() { message = "OK clicked!"; repaint(); };
+        button3.on_clicked = [this]() { message = "OK clicked!"; repaint(); };
     }
 
     ~Buttons() {}

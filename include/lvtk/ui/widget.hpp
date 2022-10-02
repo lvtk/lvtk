@@ -199,17 +199,6 @@ public:
     /** Cast to a LV2UI_Widget */
     operator LV2UI_Widget() const noexcept { return (LV2UI_Widget) find_handle(); }
 
-    //=========================================================================
-    // things for debugging only
-    // this kind of access into the widget will eventually be stable with
-    // an obverver system + object query system.
-    const std::vector<Widget*>& __widgets() const noexcept;
-
-    virtual bool __wants_updates() { return false; }
-    virtual void __update() {}
-    // end debug things
-    //=========================================================================
-
 protected:
     void set_opaque (bool opaque);
 
