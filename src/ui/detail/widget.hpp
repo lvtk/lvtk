@@ -5,7 +5,8 @@
 
 #include <cassert>
 
-#include "ui/detail/view.hpp"
+#include <lvtk/ui/point.hpp>
+#include <lvtk/ui/rectangle.hpp>
 
 #ifndef LVTK_WIDGET_USE_CLIPPING
 #    define LVTK_WIDGET_USE_CLIPPING 0
@@ -98,93 +99,24 @@ static bool test_pos (lvtk::Widget& widget, Point<float> pos) {
            && widget.obstructed (ipos.x, ipos.y);
 }
 
+class View;
+
 class Widget {
 public:
     using Owner = lvtk::Widget;
 
-    Widget (lvtk::Widget& o) : owner (o) {
-    }
+    Widget (lvtk::Widget& o) : owner (o) {}
+    ~Widget() {}
 
-    void grab_focus() {
-        if (auto v = owner.find_view())
-            v->impl->set_focused_widget (&owner);
-    }
+    void grab_focus();
+    void release_focus();
 
-    void release_focus() {
-        if (auto v = owner.find_view())
-            v->impl->set_focused_widget (nullptr);
-    }
+    void render_internal (Graphics& g);
+    void repaint_internal (Bounds b);
 
-    void render_internal (Graphics& g) {
-#if LVTK_WIDGET_USE_CLIPPING
-        render_all (owner, g);
-#else
-        render_all_unclipped (owner, g);
-#endif
-    }
-
-    void repaint_internal (Bounds b) {
-        if (! owner.visible())
-            return;
-        b = bounds.at (0).intersection (b);
-        if (b.empty())
-            return;
-
-        if (owner.elevated()) {
-            view->repaint (b);
-        } else {
-            if (parent != nullptr) {
-                auto p = convert::to_parent_space (owner, b.pos().as<float>());
-                b.x    = detail::round_int (p.x);
-                b.y    = detail::round_int (p.y);
-                parent->impl->repaint_internal (b);
-            }
-        }
-    }
-
-    void notify_structure_changed() {
-        WidgetRef ref = &owner;
-        owner.parent_structure_changed();
-
-        for (int i = (int) widgets.size(); --i >= 0;) {
-            widgets[i]->impl->notify_structure_changed();
-            if (! ref.valid())
-                return;
-            i = std::min (i, (int) widgets.size());
-        }
-    }
-
-    void notify_children_changed() {
-        owner.children_changed();
-    }
-
-    void notify_moved_resized (bool was_moved, bool was_resized) {
-        WidgetRef ref = &owner;
-        if (was_moved) {
-            owner.moved();
-            if (! ref.valid())
-                return;
-        }
-
-        if (was_resized) {
-            owner.resized();
-            if (! ref.valid())
-                return;
-
-            for (int i = (int) widgets.size(); --i >= 0;) {
-                widgets[i]->parent_size_changed();
-                if (! ref.valid())
-                    return;
-                i = std::min (i, (int) widgets.size());
-            }
-        }
-
-        if (parent != nullptr)
-            parent->child_size_changed (&owner);
-
-        if (ref.valid()) { /* send a signal */
-        };
-    }
+    void notify_structure_changed();
+    void notify_children_changed();
+    void notify_moved_resized (bool was_moved, bool was_resized);
 
 private:
     friend class lvtk::Widget;

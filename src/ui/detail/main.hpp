@@ -32,6 +32,7 @@ static inline PuglWorldFlags world_flags() {
 
 class DefaultStyle : public Style {
 public:
+    // using Button = lvtk::Button;
     DefaultStyle() {
         set_color (ColorID::BUTTON_BASE, Color (0x464646ff));
         set_color (ColorID::BUTTON_ON, Color (0x252525ff));
@@ -44,7 +45,7 @@ public:
 
     ~DefaultStyle() {}
 
-    void draw_button_shape (Graphics& g, Button& w, bool highlight, bool down) override {
+    void draw_button_shape (Graphics& g, lvtk::Button& w, bool highlight, bool down) override {
         auto bc = w.toggled() ? find_color (ColorID::BUTTON_ON) : find_color (ColorID::BUTTON_BASE);
         if (highlight || down) {
             if (! down)
@@ -61,7 +62,7 @@ public:
         g.fill_rounded_rect (w.bounds().at (0), cs);
     }
 
-    void draw_button_text (Graphics& g, TextButton& w, bool highlight, bool down) override {
+    void draw_button_text (Graphics& g, lvtk::TextButton& w, bool highlight, bool down) override {
         auto c = find_color (w.toggled() ? ColorID::BUTTON_TEXT_ON : ColorID::BUTTON_TEXT_OFF);
         if (highlight || down)
             c = c.brighter (0.05);

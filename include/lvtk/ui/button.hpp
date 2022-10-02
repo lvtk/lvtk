@@ -7,39 +7,35 @@
 #include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
+namespace detail {
+class Button;
+class TextButton;
+} // namespace detail
 
 /** A generic button. 
     @ingroup widgets
     @headerfile lvtk/ui/button.hpp
 */
-class Button : public lvtk::Widget {
+class LVTK_API Button : public lvtk::Widget {
 public:
-    virtual ~Button() = default;
+    virtual ~Button();
 
     /** Executed when the button is clicked */
-    std::function<void()> clicked;
-
-    std::function<void (const Event& ev)> __clicked;
+    std::function<void()> on_clicked;
 
     /** Returns true if this button is in a toggled state.
-        @returns True when in a toggle state
+        @returns bool True when in a toggle state
     */
-    bool toggled() const noexcept { return _toggled; }
+    bool toggled() const noexcept;
 
     /** Toggle or de-toggle this button
-     
         @param toggled True if it should be on
     */
-    void toggle (bool toggled) {
-        if (toggled == _toggled)
-            return;
-        _toggled = toggled;
-        repaint();
-    }
+    void toggle (bool toggled);
 
 protected:
     /** Inherrit Button to write a custom button type */
-    Button() = default;
+    Button();
 
     /** Override to paint your button.
         @param g The graphics to use
@@ -48,66 +44,34 @@ protected:
     */
     virtual void paint_button (Graphics& g, bool highlight, bool down) {}
 
-    void paint (Graphics& g) override {
-        paint_button (g, _over, _down);
-    }
-
+    /** @private */
+    void paint (Graphics& g) override;
     /** @private */
     bool obstructed (int, int) override { return true; }
-
     /** @private */
-    void enter (const Event&) override {
-        _over = true;
-        repaint();
-    }
-
+    void enter (const Event&) override;
     /** @private */
-    void exit (const Event& ev) override {
-        _over = false;
-        repaint();
-    }
-
+    void exit (const Event& ev) override;
     /** @private */
-    void pressed (const Event& ev) override {
-        _down = true;
-        repaint();
-    }
-
+    void pressed (const Event& ev) override;
     /** @private */
-    void released (const Event& ev) override {
-        _down = false;
-        if (contains (ev.pos))
-            notify_clicked (ev);
-        repaint();
-    }
+    void released (const Event& ev) override;
 
 private:
-    bool _toggled = false;
-    bool _down = false, _over = false;
-
-    void notify_clicked (const Event& ev) {
-        if (clicked)
-            clicked();
-        if (__clicked)
-            __clicked (ev);
-    }
+    friend class detail::Button;
+    std::unique_ptr<detail::Button> impl;
 };
 
 /** A button which displays some text */
-class TextButton : public Button {
+class LVTK_API TextButton : public Button {
 public:
-    TextButton() = default;
-    TextButton (const String& text) : _text (text) {}
-    virtual ~TextButton() = default;
+    TextButton();
+    TextButton (const String& text);
+    virtual ~TextButton();
 
-    String text() const noexcept { return _text; }
+    String text() const noexcept;
 
-    void set_text (const String& text) {
-        if (text == _text)
-            return;
-        _text = text;
-        repaint();
-    }
+    void set_text (const String& text);
 
 protected:
     void paint_button (Graphics& g, bool highlight, bool down) override {
@@ -117,7 +81,9 @@ protected:
     }
 
 private:
-    String _text;
+    friend class detail::TextButton;
+    std::unique_ptr<detail::TextButton> impl;
+    LVTK_DISABLE_COPY (TextButton)
 };
 
 } // namespace lvtk

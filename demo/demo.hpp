@@ -74,7 +74,7 @@ private:
                 auto box = add (new TextButton());
                 box->set_visible (true);
                 box->set_text (demo::name (i));
-                box->clicked = [this, i]() { run_demo (i); };
+                box->on_clicked = [this, i]() { run_demo (i); };
                 demos.push_back (box);
             }
 

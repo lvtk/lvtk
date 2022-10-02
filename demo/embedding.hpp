@@ -36,7 +36,7 @@ public:
     }
 
     void unload_volume() {
-        idle = []() {};
+        f_idle = []() {};
         if (embed)
             remove (*embed);
         embed.reset();
@@ -71,7 +71,7 @@ public:
             ui = plugin->instantiate_ui (hv->handle());
             if (ui) {
                 embed->set_visible (true);
-                idle = [this]() { ui->idle(); };
+                f_idle = [this]() { ui->idle(); };
             }
         }
 
@@ -79,18 +79,14 @@ public:
         repaint();
     }
 
-    bool __wants_updates() override {
-        return true;
-    }
-
-    void __update() override {
+    void idle() {
         if (! loaded())
             load_volume();
-        idle();
+        f_idle();
     };
 
 private:
-    std::function<void()> idle { []() {} };
+    std::function<void()> f_idle { []() {} };
     lvtk::World world;
     std::unique_ptr<Embed> embed;
     std::unique_ptr<lvtk::Instance> plugin;
