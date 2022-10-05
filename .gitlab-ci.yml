@@ -1,4 +1,3 @@
-
 image: kushview/debian:bullseye
 
 x64_rel:
@@ -8,3 +7,10 @@ x64_rel:
     - meson setup build --native-file=meson/gitlab-ci.ini -Dbuildtype=release -Ddoc=disabled -Dtest=disabled
     - meson compile -C build
     - meson test -C build
+
+osx:
+  stage: build
+  script:
+    - meson setup build
+  tags: 
+    - osx 
