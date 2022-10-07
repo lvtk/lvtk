@@ -1,8 +1,9 @@
-image: kushview/debian:bullseye
+
+image: registry.gitlab.com/lvtk/docker
 
 x64_rel:
   stage: build
-  image: kushview/debian:bullseye
+  image: registry.gitlab.com/lvtk/docker
   script:
     - meson setup build --native-file=meson/gitlab-ci.ini -Dbuildtype=release -Ddoc=disabled -Dtest=disabled
     - meson compile -C build
