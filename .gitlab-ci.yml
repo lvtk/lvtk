@@ -12,5 +12,6 @@ osx:
   stage: build
   script:
     - meson setup build
+    - meson compile -C build -j1
   tags: 
     - osx 
