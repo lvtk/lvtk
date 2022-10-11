@@ -86,7 +86,7 @@ private:
         int ID;
         Color color;
         bool operator== (const ColorItem& o) const noexcept { return ID == o.ID; }
-        bool operator<(const ColorItem& o) const noexcept { return ID < o.ID; }
+        bool operator< (const ColorItem& o) const noexcept { return ID < o.ID; }
         bool operator> (const ColorItem& o) const noexcept { return ID > o.ID; }
     };
 

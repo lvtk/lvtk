@@ -1,4 +1,3 @@
-
 lvtk_demo_sources = '''
     demo.cpp
     entry.cpp

@@ -1,3 +1,5 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #include <boost/signals2.hpp>
 #include <boost/test/unit_test.hpp>

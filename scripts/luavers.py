@@ -1,3 +1,6 @@
+# Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+# SPDX-License-Identifier: ISC
+
 from subprocess import Popen, PIPE
 import sys
 
