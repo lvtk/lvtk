@@ -1,3 +1,6 @@
+-- Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+-- SPDX-License-Identifier: ISC
+
 local world = require ('lvtk.World')
 
 local w = world.new()

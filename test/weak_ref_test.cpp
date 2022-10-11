@@ -1,3 +1,5 @@
+// Copyright 2019 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #include "lvtk/weak_ref.hpp"
 #include "tests.hpp"

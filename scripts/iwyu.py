@@ -1,10 +1,11 @@
 #!/bin/bash
+# Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+# SPDX-License-Identifier: ISC
 
 from subprocess import Popen
 from subprocess import PIPE
 import glob
 import sys
-
 
 def include_what_you_use (file):
     iwyu = ['include-what-you-use', 

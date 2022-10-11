@@ -1,3 +1,5 @@
+// Copyright 2019 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #include "tests.hpp"
 #include <boost/test/unit_test.hpp>
