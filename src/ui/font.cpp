@@ -4,63 +4,89 @@
 #include <lvtk/ui/font.hpp>
 
 namespace lvtk {
+namespace detail {
 
-Font::Font() : _state (std::make_shared<State>()) {}
+static constexpr float default_height = 15.f;
 
-Font::Font (float height) : _state (std::make_shared<State>()) {
-    _state->height = height;
-    _state->flags  = Font::NORMAL;
+class Font {
+public:
+    Font() {}
+    float height { default_height };
+    uint8_t flags { lvtk::Font::NORMAL };
+    std::shared_ptr<Typeface> face;
+    Font (const Font& o) { operator= (o); }
+    Font& operator= (const Font& o) {
+        height = o.height;
+        flags  = o.flags;
+        face   = o.face;
+        return *this;
+    }
+    bool operator== (const Font& o) const noexcept {
+        return height == o.height && flags == o.flags && face == o.face;
+    }
+    bool operator!= (const Font& o) const noexcept {
+        return ! operator== (o);
+    }
+};
+
+} // namespace detail
+
+Font::Font() : impl (std::make_shared<detail::Font>()) {}
+
+Font::Font (float height) : impl (std::make_shared<detail::Font>()) {
+    impl->height = height;
+    impl->flags  = Font::NORMAL;
 }
 
-Font::Font (uint8_t style) : _state (std::make_shared<State>()) {
-    _state->flags = style;
+Font::Font (uint8_t style) : impl (std::make_shared<detail::Font>()) {
+    impl->flags = style;
 }
 
-Font::Font (float height, uint8_t style) : _state (std::make_shared<State>()) {
-    _state->height = height;
-    _state->flags  = style;
+Font::Font (float height, uint8_t style) : impl (std::make_shared<detail::Font>()) {
+    impl->height = height;
+    impl->flags  = style;
 }
 
-Font::Font (const Font& o) : _state (o._state) {}
+Font::Font (const Font& o) : impl (o.impl) {}
 Font& Font::operator= (const Font& o) {
-    _state = o._state;
+    impl = o.impl;
     return *this;
 }
 
-Font::Font (Font&& o) : _state (std::move (o._state)) {}
+Font::Font (Font&& o) : impl (std::move (o.impl)) {}
 Font& Font::operator= (Font&& o) {
-    _state = std::move (o._state);
+    impl = std::move (o.impl);
     return *this;
 }
 
-std::shared_ptr<Typeface> Font::face() const noexcept { return _state->face; }
-float Font::height() const noexcept { return _state->height; }
-bool Font::normal() const noexcept { return _state->flags == NORMAL; }
-bool Font::bold() const noexcept { return (_state->flags & BOLD) != 0; }
-bool Font::italic() const noexcept { return (_state->flags & ITALIC) != 0; }
-bool Font::underline() const noexcept { return (_state->flags & UNDERLINE) != 0; }
-uint8_t Font::flags() const noexcept { return _state->flags; }
+std::shared_ptr<Typeface> Font::face() const noexcept { return impl->face; }
+float Font::height() const noexcept { return impl->height; }
+bool Font::normal() const noexcept { return impl->flags == NORMAL; }
+bool Font::bold() const noexcept { return (impl->flags & BOLD) != 0; }
+bool Font::italic() const noexcept { return (impl->flags & ITALIC) != 0; }
+bool Font::underline() const noexcept { return (impl->flags & UNDERLINE) != 0; }
+uint8_t Font::flags() const noexcept { return impl->flags; }
 
 Font Font::with_style (uint8_t flags) const noexcept {
     Font f;
-    *f._state       = *_state;
-    f._state->flags = flags;
+    *f.impl       = *impl;
+    f.impl->flags = flags;
     return f;
 }
 
 Font Font::with_height (float height) const noexcept {
     Font f;
-    *f._state        = *_state;
-    f._state->height = height;
+    *f.impl        = *impl;
+    f.impl->height = height;
     return f;
 }
 
 bool Font::operator== (const Font& o) const noexcept {
-    return _state == o._state || *_state == *o._state;
+    return impl == o.impl || *impl == *o.impl;
 }
 
 bool Font::operator!= (const Font& o) const noexcept {
-    return _state != o._state || *_state != *o._state;
+    return impl != o.impl || *impl != *o.impl;
 }
 
 } // namespace lvtk

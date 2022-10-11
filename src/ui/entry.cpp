@@ -60,7 +60,7 @@ private:
     lvtk::Entry& owner;
     std::string current_text;
     uint32_t cursor = 0;
-    Font font;
+    lvtk::Font font;
 };
 
 } // namespace detail
