@@ -10,6 +10,9 @@
 #include <lvtk/lvtk.h>
 
 namespace lvtk {
+namespace detail {
+class Font;
+}
 
 /** A typeface 
     @ingroup graphics
@@ -99,27 +102,7 @@ public:
     bool operator!= (const Font& o) const noexcept;
 
 private:
-    static constexpr float default_height = 15.f;
-    struct State {
-        State() {}
-        float height { default_height };
-        uint8_t flags { Font::NORMAL };
-        std::shared_ptr<Typeface> face;
-        State (const State& o) { operator= (o); }
-        State& operator= (const State& o) {
-            height = o.height;
-            flags  = o.flags;
-            face   = o.face;
-            return *this;
-        }
-        bool operator== (const State& o) const noexcept {
-            return height == o.height && flags == o.flags && face == o.face;
-        }
-        bool operator!= (const State& o) const noexcept {
-            return ! operator== (o);
-        }
-    };
-    std::shared_ptr<State> _state;
+    std::shared_ptr<detail::Font> impl;
 };
 
 } // namespace lvtk
