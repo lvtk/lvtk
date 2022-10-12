@@ -13,7 +13,7 @@
 #include <lvtk/ui/view.hpp>
 
 namespace lvtk {
-struct Backend;
+class Backend;
 class Style;
 class Widget;
 namespace detail {
@@ -145,7 +145,8 @@ private:
     @headerfile lvtk/ui/main.hpp
     @ingroup widgets
  */
-struct Backend {
+class LVTK_API Backend {
+public:
     Backend()          = delete;
     virtual ~Backend() = default;
     const std::string& name() const noexcept { return _name; }

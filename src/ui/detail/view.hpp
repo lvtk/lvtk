@@ -379,8 +379,8 @@ private:
 
         view.widget.set_bounds (view.widget.x(),
                                 view.widget.y(),
-                                ev.width / view.scale_factor(),
-                                ev.height / view.scale_factor());
+                                int (static_cast<float> (ev.width) / view.scale_factor()),
+                                int (static_cast<float> (ev.height) / view.scale_factor()));
         VIEW_DBG2 ("pugl: configure: " << view.widget.bounds().str());
         return PUGL_SUCCESS;
     }

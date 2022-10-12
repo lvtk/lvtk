@@ -28,7 +28,7 @@ class InstanceUI;
     @ingroup host
     @headerfile lvtk/host/instance.hpp
 */
-struct LVTK_API SupportedUI {
+struct SupportedUI {
     std::string URI;        ///< UI's URI
     std::string container;  ///< Container type URI
     std::string widget;     ///< Widget Type URI
@@ -41,13 +41,13 @@ struct LVTK_API SupportedUI {
     @ingroup host
     @headerfile lvtk/host/instance.hpp
  */
-class LVTK_API SupportedUIs : public std::vector<SupportedUI> {};
+class SupportedUIs : public std::vector<SupportedUI> {};
 
 /** Details about an LV2 plugin
     @ingroup host
     @headerfile lvtk/host/instance.hpp
  */
-struct LVTK_API PluginInfo {
+struct PluginInfo {
     std::string URI;             ///< Plugin's URI
     std::string name;            ///< Plugin Name
     std::string author_name;     ///< Plugin author

@@ -65,7 +65,7 @@ public:
     void draw_button_text (Graphics& g, lvtk::TextButton& w, bool highlight, bool down) override {
         auto c = find_color (w.toggled() ? ColorID::BUTTON_TEXT_ON : ColorID::BUTTON_TEXT_OFF);
         if (highlight || down)
-            c = c.brighter (0.05);
+            c = c.brighter (0.05f);
         g.set_color (c);
 
         auto r = w.bounds().at (0).as<float>();
