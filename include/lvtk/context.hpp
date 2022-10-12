@@ -7,7 +7,7 @@
 
 namespace lvtk {
 
-class Context {
+class LVTK_API Context {
 protected:
     Context() = default;
 
