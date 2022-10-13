@@ -1,6 +1,7 @@
 cc = meson.get_compiler ('c')
 cpp = meson.get_compiler ('cpp')
 dl_dep = cc.find_library ('dl', required: false)
+reuse_program = find_program ('reuse', required : false)
 
 threads_dep = dependency ('threads')
 
