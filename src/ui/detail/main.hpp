@@ -108,7 +108,6 @@ public:
 
 private:
     friend class lvtk::Main;
-    friend class lvtk::detail::Main;
     friend class lvtk::View;
     friend class detail::View;
 

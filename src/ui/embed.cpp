@@ -179,7 +179,7 @@ void Embed::children_changed() {
 }
 
 void Embed::parent_structure_changed() {
-    if (auto v = find_view()) {
+    if (nullptr != find_view()) {
         impl->create_window();
     }
 }
