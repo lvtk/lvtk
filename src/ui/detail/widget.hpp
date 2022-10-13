@@ -62,7 +62,7 @@ static Point<float> to_parent_space (const Widget& widget,
     return result;
 }
 
-static Point<float> coordinate (const Widget* tgt, const Widget* src, Point<float> pt) {
+static inline Point<float> coordinate (const Widget* tgt, const Widget* src, Point<float> pt) {
     while (src != nullptr) {
         if (src == tgt)
             return pt;
@@ -93,7 +93,7 @@ namespace detail {
 template <typename T>
 static int round_int (T v) { return static_cast<int> (v); }
 
-static bool test_pos (lvtk::Widget& widget, Point<float> pos) {
+static inline bool test_pos (lvtk::Widget& widget, Point<float> pos) {
     auto ipos = pos.as<int>();
     return widget.bounds().at (0, 0).contains (ipos)
            && widget.obstructed (ipos.x, ipos.y);
