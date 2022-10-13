@@ -1,3 +1,11 @@
+
+## REUSE test
+if reuse_program.found()
+  test('REUSE', reuse_program, 
+    args: [ '--root', meson.project_source_root(), 'lint' ], 
+    suite: 'metadata')
+endif
+
 ## Unit Tests
 lvtk_unit_test_sources = '''
     atom_test.cpp
