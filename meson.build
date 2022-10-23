@@ -1,7 +1,8 @@
 project ('lvtk', ['cpp', 'c'], 
     version : '3.0.0',
     meson_version : '>= 0.56.0',
-    license: 'ISC',
+    license : 'ISC',
+    subproject_dir : 'libs',
     default_options: [
         'b_ndebug=if-release',
         'buildtype=release',
@@ -18,7 +19,7 @@ lvtk_headers = files ('''
     include/lvtk/ui/widget.hpp
 '''.split())
 
-if not get_option('onlydocs')
+if not get_option ('onlydocs')
 
 subdir ('meson/deps')
 subdir ('meson/supress')
