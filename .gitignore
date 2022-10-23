@@ -10,6 +10,8 @@ lock-waf*
 waf-*/
 *~
 .DS_Store
+*.zip
+*.tar.*
 
 # qt creator
 lvtk.config
