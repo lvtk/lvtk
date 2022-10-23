@@ -1,17 +1,18 @@
 if lua_program.found()
 
 lvtk_lua_tests = '''
-    loadall
     bytes
     include
     midi
     object
     promise
     round
-
-    PluginInfo
-    World
 '''.split()
+
+if host_machine.system() != 'windows'
+    lvtk_lua_tests += [ 'luadall', 'PluginInfo', 'World' ]
+endif
+
 foreach key : lvtk_lua_tests
     luafile = '@0@'.format(meson.project_source_root()) / 'test' / 'lua' / '@0@.lua'.format(key)
     test (key, lua_program, args : [ luafile ], suite: 'lua',

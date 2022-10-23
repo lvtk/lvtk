@@ -17,6 +17,7 @@ foreach n : 'bytes midi round'.split()
         include_directories     : [ lvtk_lua_includes ],
         gnu_symbol_visibility   : 'hidden',
         dependencies            : [ lvtk_internal_dep, lvtk_lua_deps ],
+        c_args                  : [ lvtk_lua_c_args ],
         install                 : true,
         install_dir             : lvtk_lua_cmod_subdir / 'lvtk')
 endforeach
