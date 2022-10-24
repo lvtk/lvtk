@@ -9,8 +9,8 @@
 #include <stdint.h>        // for uint32_t
 #include <string.h>        // for memset
 
-#include <lv2/options/options.h> // for (anonymous)
-#include <lvtk/ext/options.hpp>  // for Option, OptionsContext
+#include <lv2/options/options.h>
+#include <lvtk/ext/options.hpp>
 
 namespace lvtk {
 

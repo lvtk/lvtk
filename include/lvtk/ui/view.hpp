@@ -35,7 +35,7 @@ using ViewFlags = uint32_t;
 class LVTK_API View {
 public:
     /** Flags */
-    enum Flag : uint32_t {
+    enum Flag : ViewFlags {
         TRIVIAL   = (1u << 0u), ///< View is trivial, like a popup menu.
         RESIZABLE = (1u << 1u)  ///< View is resizable.
     };
