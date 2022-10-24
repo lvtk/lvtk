@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "lvtk/ext/extension.hpp"
+#include <lvtk/ext/extension.hpp>
 
 #include <lv2/options/options.h>
 
@@ -28,7 +28,6 @@ using OptionsContext = LV2_Options_Context;
 using OptionsStatus = LV2_Options_Status;
 
 /** The LV2 Options Feature
-
     @headerfile lvtk/ext/options.hpp
     @ingroup utility
  */

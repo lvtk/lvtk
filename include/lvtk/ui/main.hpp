@@ -39,11 +39,6 @@ enum class Mode {
  */
 class LVTK_API Main : public Context {
 public:
-    enum Status : int {
-        RUNNING = 0,
-        QUIT_REQUESTED
-    };
-
     /** Create a main object.
      
         This is the central event controller for GUIs.  It's job is to

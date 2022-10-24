@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "lvtk/ext/extension.hpp"
+#include <lvtk/ext/extension.hpp>
 
 #include <lv2/ui/ui.h>
 
@@ -27,8 +27,8 @@ struct Idle : Extension<I> {
 
 protected:
     inline static void map_extension_data (ExtensionMap& dmap) {
-        static const LV2UI_Idle_Interface _idle_iface = { _idle };
-        dmap[LV2_UI__idleInterface]                   = &_idle_iface;
+        static const LV2UI_Idle_Interface _idle_interface = { _idle };
+        dmap[LV2_UI__idleInterface]                       = &_idle_interface;
     }
 
 private:

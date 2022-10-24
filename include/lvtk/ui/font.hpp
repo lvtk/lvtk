@@ -34,13 +34,16 @@ public:
  */
 using TypefacePtr = std::shared_ptr<Typeface>;
 
+/** Flag type for Font */
+using FontFlags = uint8_t;
+
 /** A font.
     @ingroup graphics
     @headerfile lvtk/ui/font.hpp
 */
 class LVTK_API Font final {
 public:
-    enum StyleFlag : uint8_t {
+    enum StyleFlag : FontFlags {
         NORMAL    = 0u,         ///< Normal font
         BOLD      = (1u << 0u), ///< Bold font
         ITALIC    = (1u << 1u), ///< Italic font
@@ -88,7 +91,7 @@ public:
 
     /** Duplicate this font with new style flags.
      
-        @param flags Or of @ref StyleFlag.
+        @param flags OR of @ref StyleFlag.
     */
     Font with_style (uint8_t flags) const noexcept;
 

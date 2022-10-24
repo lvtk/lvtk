@@ -17,13 +17,14 @@ overview = configure_file (configuration: {
     output : 'overview.rst')
 
 lvtk_rst_sources = files ('''
-    deployment.rst
+    development.rst
     dynmanifest.rst
     extensions.rst
     highlevel.rst
     hosting.rst
     graphics.rst
     index.rst
+    styleguide.rst
     summary.rst
     widgets.rst
     plugins.rst

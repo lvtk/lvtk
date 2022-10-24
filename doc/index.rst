@@ -17,4 +17,5 @@ LVTK
     DynManifest <dynmanifest>
     High Level <highlevel>
     Projects Using <projects>
-    Developers <deployment>
+    Developers <development>
+    Style Guide <styleguide>

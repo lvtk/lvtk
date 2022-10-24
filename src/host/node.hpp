@@ -64,7 +64,9 @@ public:
     }
 
     std::string as_string() const noexcept {
-        return is_uri() ? lilv_node_as_uri (get()) : lilv_node_is_string (get()) ? lilv_node_as_string (get()) : lilv_node_is_literal (get()) ? lilv_node_as_string (get()) : "";
+        return is_uri() ? lilv_node_as_uri (get()) : lilv_node_is_string (get()) ? lilv_node_as_string (get())
+                                                 : lilv_node_is_literal (get())  ? lilv_node_as_string (get())
+                                                                                 : "";
     }
 
     std::string as_uri() const noexcept {

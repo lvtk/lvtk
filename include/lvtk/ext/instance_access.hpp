@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "lvtk/ext/extension.hpp"
+#include <lvtk/ext/extension.hpp>
 
 #include <lv2/instance-access/instance-access.h>
 

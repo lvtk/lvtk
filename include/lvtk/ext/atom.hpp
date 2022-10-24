@@ -275,7 +275,7 @@ private:
     friend struct Object;
     const LV2_Atom* atom = nullptr;
 
-    /** @private Used by has_type_and_equals */
+    /** @private */
     inline bool operator== (const LV2_URID& u) const { return (((LV2_Atom_URID*) atom)->body == u); }
     inline bool operator== (const int32_t& i) const { return (((LV2_Atom_Int*) atom)->body == i); }
     inline bool operator== (const int64_t& l) const { return (((LV2_Atom_Long*) atom)->body == l); }
