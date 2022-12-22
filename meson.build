@@ -2,7 +2,6 @@ project ('lvtk', ['cpp', 'c'],
     version : '3.0.0',
     meson_version : '>= 0.56.0',
     license : 'ISC',
-    subproject_dir : 'libs',
     default_options: [
         'b_ndebug=if-release',
         'buildtype=release',
