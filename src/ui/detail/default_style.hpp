@@ -17,6 +17,7 @@ public:
         set_color (ColorID::BUTTON_TEXT_ON, Color (0xddddddff));
 
         set_color (ColorID::SLIDER_BASE, Color (0x141414ff));
+        set_color (ColorID::SLIDER_TRACK, Color (0x000000ff));
         set_color (ColorID::SLIDER_THUMB, Color (0x451414ff));
     }
 
@@ -70,7 +71,9 @@ public:
 
             case lvtk::Slider::HORIZONTAL:
             case lvtk::Slider::VERTICAL: {
+                g.save();
                 draw_slider_background (g, slider, bounds, pos);
+                g.restore();
                 draw_slider_thumb (g, slider, bounds, pos);
                 break;
             }
@@ -78,9 +81,40 @@ public:
     }
 
     void draw_slider_background (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
+        (void) pos;
+
+        int track_size = 4;
+
+        if (slider.vertical()) {
+            bounds.reduce ((slider.width() - track_size) / 2, 0);
+        } else {
+            bounds.reduce (0, (slider.height() - track_size) / 2);
+        }
+
+        g.set_color (find_color (ColorID::SLIDER_TRACK));
+        g.fill_rect (bounds);
     }
 
     void draw_slider_thumb (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
+        float thumb_size  = 16.f;
+        float corner_size = 6.f;
+        float x = 0.f, y = 0.f;
+
+        Range<float> pixel_range (0.f, (float) (slider.vertical() ? bounds.height : bounds.width));
+        float max_pixel = (float) (slider.vertical() ? bounds.height : bounds.width) - thumb_size;
+        Range<float> thumb_range (4.f, max_pixel);
+        pos = thumb_range.convert (pixel_range, pos);
+
+        if (slider.vertical()) {
+            x = ((float) slider.width() / 2.f) - (thumb_size / 2.f);
+            y = pos;
+        } else {
+            x = pos;
+            y = ((float) slider.height() / 2.f) - (thumb_size / 2.f);
+        }
+
+        g.set_color (find_color (ColorID::SLIDER_THUMB));
+        g.fill_rounded_rect (x, y, thumb_size, thumb_size, corner_size);
     }
 };
 
