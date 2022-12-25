@@ -20,11 +20,11 @@ public:
         slider1.set_value (90.0, Notify::SYNC);
 
         add (slider2);
-        slider2.set_name ("Vertical 2");
+        slider2.set_name ("Horizontal 1");
         slider2.set_range (-90.0, 24.0);
         slider2.on_value_changed = [this]() { update_text (slider2); };
         slider2.set_value (0.0, Notify::SYNC);
-        slider2.set_type (Slider::HORIZONTAL_BAR);
+        slider2.set_type (Slider::HORIZONTAL);
 
         show_all();
         set_size (640, 360);

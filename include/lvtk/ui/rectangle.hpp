@@ -175,10 +175,10 @@ struct Rectangle {
         @param dy Detla y
     */
     Rectangle& reduce (Val dx, Val dy) {
-        x -= dx;
-        y -= dy;
-        width += (dx * 2);
-        height += (dy * 2);
+        x += dx;
+        y += dy;
+        width -= (dx * 2);
+        height -= (dy * 2);
         return *this;
     }
 
@@ -194,7 +194,7 @@ struct Rectangle {
     */
     Rectangle bigger (Val amount) const noexcept {
         auto r = *this;
-        return r.reduce (amount, amount);
+        return r.reduce (-amount, -amount);
     }
 
     /** Returns a reduced shape at same center.
@@ -202,7 +202,7 @@ struct Rectangle {
     */
     Rectangle smaller (Val amount) const noexcept {
         auto s = *this;
-        return s.reduce (-amount, -amount);
+        return s.reduce (amount, amount);
     }
 
     /** Returns a reduced shape at same center.
@@ -211,7 +211,7 @@ struct Rectangle {
     */
     Rectangle smaller (Val ax, Val ay) const noexcept {
         auto s = *this;
-        return s.reduce (-ax, -ay);
+        return s.reduce (ax, ay);
     }
 
     /** Slice a region from the top leaving bottom
