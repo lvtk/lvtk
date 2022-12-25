@@ -76,11 +76,13 @@ public:
             }
         }
     }
-    
+
     void draw_slider_background (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
     }
 
     void draw_slider_thumb (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
     }
 };
-}}
+
+} // namespace detail
+} // namespace lvtk
