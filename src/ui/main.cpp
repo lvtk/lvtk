@@ -67,9 +67,6 @@ bool Main::running() const noexcept { return impl->running(); }
 int Main::exit_code() const noexcept { return impl->exit_code.load(); }
 void Main::set_exit_code (int code) { impl->exit_code.store (code); }
 
-int Main::exit_code() const noexcept { return impl->exit_code.load(); }
-void Main::set_exit_code (int code) { impl->exit_code.store (code); }
-
 void Main::quit() {
     if (impl->quit_flag == true)
         return;
