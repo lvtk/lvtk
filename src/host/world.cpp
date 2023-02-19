@@ -196,23 +196,22 @@ public:
     bool loaded() const noexcept { return instance != nullptr; }
 
     void fill_info (bool load_uis = false) {
-        if (! info.URI.empty())
-            return;
+        if (info.URI.empty()) {
+            lilv::Node uri (lilv_plugin_get_uri (plugin));
+            lilv::Node name (lilv_plugin_get_name (plugin));
+            lilv::Node author_email (lilv_plugin_get_author_email (plugin));
+            lilv::Node author_name (lilv_plugin_get_author_name (plugin));
+            lilv::Node author_homepage (lilv_plugin_get_author_homepage (plugin));
+            lilv::Node bundle_uri (lilv_plugin_get_bundle_uri (plugin));
 
-        lilv::Node uri (lilv_plugin_get_uri (plugin));
-        lilv::Node name (lilv_plugin_get_name (plugin));
-        lilv::Node author_email (lilv_plugin_get_author_email (plugin));
-        lilv::Node author_name (lilv_plugin_get_author_name (plugin));
-        lilv::Node author_homepage (lilv_plugin_get_author_homepage (plugin));
-        lilv::Node bundle_uri (lilv_plugin_get_bundle_uri (plugin));
+            info.URI             = uri.as_string();
+            info.name            = name.as_string();
+            info.author_email    = author_email.as_string();
+            info.author_homepage = author_homepage.as_string();
+            info.author_name     = author_name.as_string();
+        }
 
-        info.URI             = uri.as_string();
-        info.name            = name.as_string();
-        info.author_email    = author_email.as_string();
-        info.author_homepage = author_homepage.as_string();
-        info.author_name     = author_name.as_string();
-
-        if (load_uis)
+        if (load_uis && info.uis.empty())
             info.uis = detail::supported_uis (world.impl->world, plugin);
     }
 
