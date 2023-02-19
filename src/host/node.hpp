@@ -35,7 +35,6 @@ class Node : private std::unique_ptr<LilvNode, detail::NodeDeleter> {
 public:
     using unique  = std::unique_ptr<LilvNode, detail::NodeDeleter>;
     using pointer = unique::pointer;
-    using unique::get;
     using unique::operator bool;
 
     Node (LilvNode* node) {
@@ -48,11 +47,34 @@ public:
         _owned = false;
     }
 
+    Node (const Node& node) { operator= (node); }
+    Node (Node&& node) {
+        static_cast<unique&> (*this) = std::move (node);
+        _owned                       = node._owned;
+    }
+
+    Node& operator= (const Node& node) {
+        if (! _owned && get() != nullptr)
+            release();
+        if (auto optr = node.get())
+            reset (lilv_node_duplicate (node.get()));
+        _owned = true;
+        return *this;
+    }
+
+    Node& operator= (Node&& node) {
+        static_cast<unique&> (*this) = std::move (node);
+        _owned                       = node._owned;
+        return *this;
+    }
+
     ~Node() {
         if (! _owned)
             release();
         reset();
     }
+
+    const pointer get() const noexcept { return unique::get(); }
 
     bool is_float() const noexcept { return lilv_node_is_float (get()); }
     bool is_int() const noexcept { return lilv_node_is_int (get()); }
@@ -64,16 +86,19 @@ public:
     }
 
     std::string as_string() const noexcept {
-        return is_uri() ? lilv_node_as_uri (get()) : lilv_node_is_string (get()) ? lilv_node_as_string (get())
-                                                 : lilv_node_is_literal (get())  ? lilv_node_as_string (get())
-                                                                                 : "";
+        // clang-format off
+        return is_uri() ? lilv_node_as_uri (get()) 
+            : lilv_node_is_string (get()) ? lilv_node_as_string (get())
+            : lilv_node_is_literal (get()) ? lilv_node_as_string (get()) 
+            : "";
+        // clang-format on
     }
 
     std::string as_uri() const noexcept {
         return is_uri() ? lilv_node_as_uri (get()) : "";
     }
 
-    inline operator const LilvNode*() const noexcept { return get(); }
+    inline operator const pointer() const noexcept { return get(); }
 
 private:
     bool _owned { true };
