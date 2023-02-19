@@ -5,17 +5,12 @@
 
 #include <lilv/lilv.h>
 #include <lv2/ui/ui.h>
+
 #include <memory>
 
 namespace lvtk {
 namespace lilv {
 namespace detail {
-
-struct WorldDeleter {
-    void operator() (LilvWorld* w) const {
-        lilv_world_free (w);
-    }
-};
 
 struct NodeDeleter {
     void operator() (LilvNode* n) const {
@@ -53,7 +48,41 @@ public:
         _owned                       = node._owned;
     }
 
-    Node& operator= (const Node& node) {
+    ~Node() {
+        if (! _owned)
+            release();
+        reset();
+    }
+
+    inline const pointer get() const noexcept { return unique::get(); }
+
+    inline bool is_float() const noexcept { return lilv_node_is_float (get()); }
+    inline bool is_int() const noexcept { return lilv_node_is_int (get()); }
+    inline bool is_string() const noexcept { return lilv_node_is_float (get()); }
+    inline bool is_uri() const noexcept { return lilv_node_is_uri (get()); }
+
+    inline float as_float (float fallback = 0.f) const noexcept {
+        return is_float() ? lilv_node_as_float (get()) : fallback;
+    }
+
+    inline std::string as_string() const noexcept {
+        // clang-format off
+        return is_uri() ? lilv_node_as_uri (get()) 
+            : lilv_node_is_string (get()) ? lilv_node_as_string (get())
+            : lilv_node_is_literal (get()) ? lilv_node_as_string (get()) 
+            : "";
+        // clang-format on
+    }
+
+    inline std::string as_uri() const noexcept {
+        return is_uri() ? lilv_node_as_uri (get()) : "";
+    }
+
+    inline bool operator== (const Node& o) const noexcept { return lilv_node_equals (get(), o.get()); }
+    inline bool operator!= (const Node& o) const noexcept { return ! lilv_node_equals (get(), o.get()); }
+    inline operator const pointer() const noexcept { return get(); }
+
+    inline Node& operator= (const Node& node) {
         if (get() != nullptr) {
             if (_owned)
                 release();
@@ -68,43 +97,11 @@ public:
         return *this;
     }
 
-    Node& operator= (Node&& node) {
+    inline Node& operator= (Node&& node) {
         static_cast<unique&> (*this) = std::move (node);
         _owned                       = node._owned;
         return *this;
     }
-
-    ~Node() {
-        if (! _owned)
-            release();
-        reset();
-    }
-
-    const pointer get() const noexcept { return unique::get(); }
-
-    bool is_float() const noexcept { return lilv_node_is_float (get()); }
-    bool is_int() const noexcept { return lilv_node_is_int (get()); }
-    bool is_string() const noexcept { return lilv_node_is_float (get()); }
-    bool is_uri() const noexcept { return lilv_node_is_uri (get()); }
-
-    float as_float (float fallback = 0.f) const noexcept {
-        return is_float() ? lilv_node_as_float (get()) : fallback;
-    }
-
-    std::string as_string() const noexcept {
-        // clang-format off
-        return is_uri() ? lilv_node_as_uri (get()) 
-            : lilv_node_is_string (get()) ? lilv_node_as_string (get())
-            : lilv_node_is_literal (get()) ? lilv_node_as_string (get()) 
-            : "";
-        // clang-format on
-    }
-
-    std::string as_uri() const noexcept {
-        return is_uri() ? lilv_node_as_uri (get()) : "";
-    }
-
-    inline operator const pointer() const noexcept { return get(); }
 
 private:
     bool _owned { true };
@@ -143,6 +140,30 @@ public:
 private:
     bool _owned = true;
 };
+
+static inline Node make_uri (LilvWorld* world, const std::string& uri) {
+    return { lilv_new_uri (world, uri.c_str()) };
+}
+
+static inline Node make_string (LilvWorld* world, const std::string& uri) {
+    return { lilv_new_string (world, uri.c_str()) };
+}
+
+static inline Node make_bool (LilvWorld* world, bool value) {
+    return { lilv_new_bool (world, value) };
+}
+
+static inline Node make_float (LilvWorld* world, int value) {
+    return { lilv_new_int (world, value) };
+}
+
+static inline Node make_float (LilvWorld* world, float value) {
+    return { lilv_new_float (world, value) };
+}
+
+static inline Node make_file_uri (LilvWorld* world, const std::string& path) {
+    return { lilv_new_file_uri (world, nullptr, path.c_str()) };
+}
 
 } // namespace lilv
 } // namespace lvtk
