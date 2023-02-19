@@ -65,17 +65,18 @@ class LVTK_API Instance final {
 public:
     ~Instance();
 
-    /** Returns this Plugin's name */
-    std::string name() const noexcept;
+    /** Returns the PluginInfo for this instance. */
+    const PluginInfo& info() const noexcept;
 
-    Handle handle() const noexcept;
+    /** Returns this Plugin's name. */
+    const std::string& name() const noexcept;
 
     void activate();
     void connect_port (uint32_t port, void* data);
     void run (uint32_t nframes);
     void deactivate();
 
-    const PluginInfo& info() const noexcept;
+    Handle handle() const noexcept;
 
     std::unique_ptr<InstanceUI> instantiate_ui (uintptr_t parent) const noexcept;
 

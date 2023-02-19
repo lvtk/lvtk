@@ -8,14 +8,12 @@
 BOOST_AUTO_TEST_SUITE (World)
 
 BOOST_AUTO_TEST_CASE (load_all) {
-    using World = lvtk::World;
-    World world;
+    lvtk::World world;
     world.load_all();
 }
 
 BOOST_AUTO_TEST_CASE (plugins) {
-    using World = lvtk::World;
-    World world;
+    lvtk::World world;
     world.load_all();
     auto plugins = world.plugins();
     auto uris    = world.plugin_uris();
@@ -29,8 +27,28 @@ BOOST_AUTO_TEST_CASE (plugins) {
 }
 
 BOOST_AUTO_TEST_CASE (instantiate) {
-    using World = lvtk::World;
-    World world;
+    lvtk::World world;
+    world.load_all();
+    auto plugin = world.instantiate (LVTK_PLUGINS__Volume);
+    BOOST_REQUIRE_NE (plugin.get(), nullptr);
+
+    if (plugin) {
+        BOOST_REQUIRE_NE (plugin->handle(), (lvtk::Handle) nullptr);
+        BOOST_REQUIRE_NE (plugin->name(), std::string {});
+        BOOST_REQUIRE_NE (plugin->info().name, std::string {});
+        BOOST_REQUIRE_NE (plugin->info().URI, std::string {});
+
+        float ports[5][65];
+        plugin->activate();
+        for (uint32_t i = 0; i < 5; ++i)
+            plugin->connect_port (i, ports[i]);
+        plugin->run (64);
+        plugin->deactivate();
+    }
+}
+
+BOOST_AUTO_TEST_CASE (instantiate_ui) {
+    lvtk::World world;
     world.load_all();
     auto plugin = world.instantiate (LVTK_PLUGINS__Volume);
     BOOST_REQUIRE_NE (plugin.get(), nullptr);

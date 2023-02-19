@@ -240,7 +240,9 @@ Instance::~Instance() {
     impl.reset();
 }
 
+const std::string& Instance::name() const noexcept { return info().name; }
 const PluginInfo& Instance::info() const noexcept {
+    impl->fill_info (false);
     return impl->info;
 }
 
@@ -269,12 +271,14 @@ std::unique_ptr<InstanceUI> Instance::instantiate_ui (uintptr_t parent) const no
     return ui;
 }
 
-void Instance::write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) {
-}
+void Instance::write (uint32_t port, uint32_t size, uint32_t protocol, const void* data) {}
 
-Handle Instance::handle() const noexcept {
-    return lilv_instance_get_handle (impl->instance);
-}
+Handle Instance::handle() const noexcept { return lilv_instance_get_handle (impl->instance); }
+
+void Instance::activate() { lilv_instance_activate (impl->instance); }
+void Instance::connect_port (uint32_t port, void* data) { lilv_instance_connect_port (impl->instance, port, data); }
+void Instance::run (uint32_t nframes) { lilv_instance_run (impl->instance, nframes); }
+void Instance::deactivate() { lilv_instance_deactivate (impl->instance); }
 
 World::World() {
     impl = std::make_unique<detail::World> (*this);
