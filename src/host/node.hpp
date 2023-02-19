@@ -54,10 +54,16 @@ public:
     }
 
     Node& operator= (const Node& node) {
-        if (! _owned && get() != nullptr)
-            release();
-        if (auto optr = node.get())
-            reset (lilv_node_duplicate (node.get()));
+        if (get() != nullptr) {
+            if (_owned)
+                release();
+            else
+                reset();
+        }
+
+        if (auto cptr = node.get())
+            reset (lilv_node_duplicate (cptr));
+
         _owned = true;
         return *this;
     }
