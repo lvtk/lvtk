@@ -7,13 +7,16 @@
                 "${workspaceFolder}/demo/*",
                 "${workspaceFolder}/src/*",
                 
-                "${workspaceFolder}/libs/lv2/include/*",
-                "${workspaceFolder}/libs/lilv/include/*",
-                "${workspaceFolder}/libs/suil/include/*",
-                "${workspaceFolder}/libs/serd/include/*",
-                "${workspaceFolder}/libs/sord/include/*",
-                "${workspaceFolder}/libs/sratom/include/*",
-                "${workspaceFolder}/libs/pugl/include/*"
+                "${workspaceFolder}/subprojects/lv2/include/*",
+                "${workspaceFolder}/subprojects/lilv/include/*",
+                "${workspaceFolder}/subprojects/suil/include/*",
+                "${workspaceFolder}/subprojects/serd/include/*",
+                "${workspaceFolder}/subprojects/sord/include/*",
+                "${workspaceFolder}/subprojects/sratom/include/*",
+                "${workspaceFolder}/subprojects/pugl/include/*",
+
+                "/opt/homebrew/include/*",
+                "/usr/local/include/*"
             ],
             "defines": [],
             "macFrameworkPath": [
@@ -22,7 +25,7 @@
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c99",
-            "cppStandard": "c++14",
+            "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         },
