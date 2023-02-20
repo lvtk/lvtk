@@ -98,7 +98,7 @@ public:
     /** Returns the height of this widget. */
     int height() const noexcept;
 
-    /** Change this widget's bounds
+    /** Change this widget's bounds.
         
         @param x 
         @param y 
@@ -107,13 +107,13 @@ public:
      */
     void set_bounds (int x, int y, int width, int height);
 
-    /** Change this widget's bounds
+    /** Change this widget's bounds.
         
         @param b 
      */
     void set_bounds (Bounds b);
 
-    /** Resize this widget
+    /** Resize this widget.
      
         @param width
         @param height
@@ -161,10 +161,10 @@ public:
     /** Is currently focused */
     bool focused() const noexcept;
 
-    /** Grab focus */
+    /** Grab focus. */
     void grab_focus();
 
-    /** release focus */
+    /** Release focus. */
     void release_focus();
 
     /** True if this Widget owns it's View. i.e. is the top level
@@ -183,17 +183,17 @@ public:
     /** Find the view for this widget.
         locates the first elevated parent widget
         @returns View
-    */
+     */
     View* find_view() const noexcept;
 
     /** Find the native handle for this Widget
         @returns uintptr_t
-    */
+     */
     uintptr_t find_handle() const noexcept;
 
     /** Returns the current style used by this widget
         @returns Style The style used
-    */
+     */
     Style& style();
 
     /** Cast to a LV2UI_Widget */
@@ -235,7 +235,7 @@ private:
     LVTK_WEAK_REFABLE (Widget)
 };
 
-/** A Weak Reference to a Widget */
+/** A Weak Reference to a Widget. */
 using WidgetRef = WeakRef<Widget>;
 } // namespace lvtk
 

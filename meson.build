@@ -11,6 +11,10 @@ project ('lvtk', ['cpp', 'c'],
 
 lvtk_abi_version = '3.0'
 
+if host_machine.system() == 'darwin'
+    add_languages (['objcpp', 'objc' ], native: false)
+endif
+
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
     include/lvtk/string.hpp

@@ -16,7 +16,11 @@ lvtk_widgets_sources = '''
     ui/widget.cpp
 '''.split()
 
-lvtk_widgets_deps = [ lvtk_dep, pugl_dep ]
+if host_machine.system() == 'darwin'
+    lvtk_widgets_sources += 'ui/embed.mm'
+endif
+
+lvtk_widgets_deps = [ lvtk_dep, pugl_dep, boost_dep ]
 add_project_arguments ('-DPUGL_STATIC', language : ['c', 'cpp'])
 
 liblvtk_widgets = library ('lvtk-widgets-@0@'.format (lvtk_abi_version),

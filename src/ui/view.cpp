@@ -109,10 +109,13 @@ void View::repaint (Bounds area) {
     }
 }
 
-//==
 void View::render (DrawingContext& ctx) {
     Graphics g (ctx);
     impl->widget.render (g);
+}
+
+boost::signals2::connection View::connect_idle (const IdleSlot& slot) {
+    return impl->sig_idle.connect (slot);
 }
 
 } // namespace lvtk

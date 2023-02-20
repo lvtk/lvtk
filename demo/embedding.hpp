@@ -3,10 +3,13 @@
 
 #pragma once
 
-#include "utils.hpp"
+#include <iostream>
+
 #include <lvtk/host/world.hpp>
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/widget.hpp>
+
+#include "utils.hpp"
 
 namespace lvtk {
 namespace demo {
@@ -20,6 +23,7 @@ public:
     }
 
     ~Embedding() {
+        conn_idle.disconnect();
         unload_volume();
     }
 
@@ -29,7 +33,7 @@ public:
 
     void resized() override {
         if (embed && embed->visible())
-            embed->set_bounds (bounds());
+            embed->set_bounds (bounds().at (0, 0));
     }
 
     void paint (Graphics& g) override {
@@ -38,6 +42,7 @@ public:
     }
 
     void unload_volume() {
+        conn_idle.disconnect();
         f_idle = []() {};
         if (embed)
             remove (*embed);
@@ -65,6 +70,8 @@ public:
 
         plugin = world.instantiate (LVTK_PLUGINS__Volume);
         if (! plugin) {
+            std::clog << "[demo] plugin faile to instantiate: \n"
+                      << LVTK_PLUGINS__Volume << std::endl;
             return;
         }
 
@@ -76,8 +83,11 @@ public:
         if (auto hv = embed->proxy_view()) {
             ui = plugin->instantiate_ui (hv->handle());
             if (ui) {
+                std::clog << "[demo] ui created" << std::endl;
                 embed->set_visible (true);
-                f_idle = [this]() { ui->idle(); };
+                f_idle = [this]() {
+                    ui->idle();
+                };
             }
         }
 
@@ -91,7 +101,18 @@ public:
         f_idle();
     };
 
+protected:
+    void parent_structure_changed() override {
+        if (loaded())
+            return;
+        if (lvtk::ViewRef view = find_view()) {
+            conn_idle.disconnect();
+            conn_idle = view->connect_idle (std::bind (&Embedding::idle, this));
+        }
+    }
+
 private:
+    boost::signals2::connection conn_idle;
     std::function<void()> f_idle { []() {} };
     lvtk::World world;
     std::unique_ptr<Embed> embed;

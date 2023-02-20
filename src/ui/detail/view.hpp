@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <lvtk/ext/atom.hpp>
+#include <variant>
+
 #include <algorithm>
 #include <iostream>
 
@@ -360,6 +363,18 @@ public:
         return widget != nullptr && focused == widget;
     }
 
+    template <class Fn>
+    static void foreach_widget_recursive (lvtk::Widget& widget, Fn&& f) {
+        f (widget);
+        for (auto w : widget.impl->widgets)
+            foreach_widget_recursive (*w, f);
+    }
+
+    template <class Fn>
+    void foreach_widget (Fn&& f) {
+        foreach_widget_recursive (widget, f);
+    }
+
 private:
     friend class lvtk::View;
     friend class lvtk::Main;
@@ -372,6 +387,8 @@ private:
     WeakRef<lvtk::Widget> focused;
     Buttons buttons;
     Keyboard keyboard;
+
+    boost::signals2::signal<void()> sig_idle;
 
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
         if (ev.flags & PUGL_IS_HINT) {
@@ -589,6 +606,7 @@ private:
     static PuglStatus client (View& view, const PuglClientEvent& ev) { return PUGL_SUCCESS; }
 
     static PuglStatus timer (View& view, const PuglTimerEvent& ev) {
+        view.sig_idle();
         return PUGL_SUCCESS;
     }
 

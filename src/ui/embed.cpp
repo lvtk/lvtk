@@ -6,6 +6,8 @@
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/main.hpp>
 
+#include "ui/detail/embed.hpp"
+
 #if __linux__
 #    include <X11/Xlib.h>
 #else
@@ -15,7 +17,7 @@ namespace lvtk {
 namespace detail {
 
 #ifdef __linux__
-bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _root) {
+static bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _root) {
     Window root, parent, *children = nullptr;
     unsigned int num_children;
 
@@ -30,7 +32,7 @@ bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _root) {
     return true;
 }
 
-uintptr_t get_window_first_child (Display* disp, uintptr_t window) {
+static uintptr_t get_window_first_child (Display* disp, uintptr_t window) {
     Window root, parent, *children = nullptr;
     unsigned int num_children;
 
@@ -65,6 +67,7 @@ static Rectangle<float> native_geometry (ViewRef pv) {
         XGetGeometry (disp, window, &root, &x, &y, &w, &h, &bw, &d);
     return { (float) x, (float) y, float (w), float (h) };
 }
+#elif __APPLE__
 #else
 static Rectangle<float> native_geometry (ViewRef pv) {
     return pv->bounds().as<float>();
@@ -130,8 +133,8 @@ public:
 
             r.x      = owner.x();
             r.y      = owner.y();
-            r.width  = int (og.width / pv->scale_factor());
-            r.height = int (og.height / pv->scale_factor());
+            r.width  = int ((float) owner.width() / pv->scale_factor());
+            r.height = int ((float) owner.height() / pv->scale_factor());
 
             if (! r.empty()) {
                 pv->set_bounds (r);

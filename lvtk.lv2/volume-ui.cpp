@@ -97,7 +97,7 @@ private:
 
         void resized() override {
             auto r1 = bounds().at (0, 0);
-            // std::clog << "container resized: " << r1.str() << std::endl;
+            std::clog << "container resized: " << r1.str() << std::endl;
             r1.width /= 2;
             auto r2           = r1;
             r2.x              = r1.width;
@@ -131,13 +131,15 @@ private:
             buttons.set_visible (true);
             set_size (360, 240);
             set_visible (true);
+
+            std::clog << "created VolumeUI content\n";
         }
 
         ~Content() {
         }
 
         void motion (const Event& ev) override {
-            // std::clog << "content motion\n";
+            std::clog << "volume content motion\n";
         }
 
         void resized() override {

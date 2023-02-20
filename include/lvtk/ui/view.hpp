@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <boost/signals2/signal.hpp>
+
 #include <lvtk/lvtk.h>
 #include <lvtk/ui/graphics.hpp>
 #include <lvtk/ui/style.hpp>
@@ -83,11 +85,14 @@ public:
 
         @param widget The Widget to eleveate.
         @param flags  Flags to use on the new child view.
-    */
+     */
     void elevate (Widget& widget, ViewFlags flags);
 
     /** Repaint a region of the view */
     void repaint (Bounds bounds);
+
+    using IdleSlot = boost::signals2::signal<void()>::slot_type;
+    boost::signals2::connection connect_idle (const IdleSlot& slot);
 
 protected:
     View (Main& context, Widget& widget);
