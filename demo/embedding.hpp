@@ -49,6 +49,8 @@ public:
         }
 
         if (plugin) {
+            std::clog << "[demo] unload: " << plugin->name() << std::endl;
+            plugin->deactivate();
             plugin.reset();
         }
     }
@@ -66,6 +68,8 @@ public:
             return;
         }
 
+        std::clog << "[demo] load: " << plugin->name() << std::endl;
+        plugin->activate();
         embed = std::make_unique<Embed>();
         add (*embed);
 
