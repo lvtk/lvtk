@@ -9,8 +9,9 @@
 namespace lvtk {
 
 namespace detail {
+/** @private */
 class Embed;
-}
+} // namespace detail
 
 class Main;
 
@@ -29,16 +30,24 @@ public:
      */
     ViewRef proxy_view() const noexcept;
 
+    /** Attach a native window handle. 
+        To detach pass nullptr.
+    */
+    void attach (uintptr_t native);
+
 protected:
     /** @internal */
     void paint (Graphics& g) override;
+    /** @internal */
     void resized() override;
+    /** @internal */
     void children_changed() override;
+    /** @internal */
     void parent_structure_changed() override;
 
 private:
     std::unique_ptr<detail::Embed> impl;
-    LVTK_DISABLE_COPY (Embed);
+    LVTK_DISABLE_COPY (Embed)
 };
 
 } // namespace lvtk

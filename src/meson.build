@@ -2,7 +2,7 @@
 lvtk_libdir = get_option('libdir')
 
 ### LVTK Widgets
-lvtk_widgets_sources = '''
+lvtk_widgets_sources = files('''
     ui/button.cpp
     ui/embed.cpp
     ui/entry.cpp
@@ -14,10 +14,14 @@ lvtk_widgets_sources = '''
     ui/style.cpp
     ui/view.cpp
     ui/widget.cpp
-'''.split()
+'''.split())
 
 if host_machine.system() == 'darwin'
-    lvtk_widgets_sources += 'ui/embed.mm'
+    lvtk_widgets_sources += 'ui/embed_mac.mm'
+elif host_machine.system() == 'linux'
+    lvtk_widgets_sources += 'ui/embed_x11.cpp'
+elif host_machine.system() == 'win32'
+    lvtk_widgets_sources += 'ui/embed_win32.cpp'
 endif
 
 lvtk_widgets_deps = [ lvtk_dep, pugl_dep, boost_dep ]

@@ -68,27 +68,34 @@ public:
         if (loaded())
             return;
 
-        plugin = world.instantiate (LVTK_PLUGINS__Volume);
-        if (! plugin) {
-            std::clog << "[demo] plugin faile to instantiate: \n"
-                      << LVTK_PLUGINS__Volume << std::endl;
-            return;
+        if (plugin == nullptr) {
+            plugin = world.instantiate (LVTK_PLUGINS__Volume);
+            if (! plugin) {
+                std::clog << "[demo] plugin faile to instantiate: \n"
+                          << LVTK_PLUGINS__Volume << std::endl;
+                return;
+            }
+
+            std::clog << "[demo] load: " << plugin->name() << std::endl;
+            plugin->activate();
         }
 
-        std::clog << "[demo] load: " << plugin->name() << std::endl;
-        plugin->activate();
-        embed = std::make_unique<Embed>();
-        add (*embed);
+        if (embed == nullptr) {
+            embed = std::make_unique<Embed>();
+            add (*embed);
+        }
 
-        if (auto hv = embed->proxy_view()) {
-            ui = plugin->instantiate_ui (hv->handle());
-            if (ui) {
-                std::clog << "[demo] ui created" << std::endl;
-                embed->set_visible (true);
-                f_idle = [this]() {
-                    ui->idle();
-                };
-            }
+        if (auto pv = embed->proxy_view())
+            if (auto handle = pv->handle())
+                ui = plugin->instantiate_ui (handle);
+
+        if (ui) {
+            std::clog << "[demo] ui created" << std::endl;
+            embed->set_visible (true);
+            // embed->attach ((uintptr_t) ui->widget());
+            f_idle = [this]() {
+                ui->idle();
+            };
         }
 
         resized();
