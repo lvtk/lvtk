@@ -20,7 +20,7 @@ if host_machine.system() == 'darwin'
     lvtk_widgets_sources += 'ui/embed_mac.mm'
 elif host_machine.system() == 'linux'
     lvtk_widgets_sources += 'ui/embed_x11.cpp'
-elif host_machine.system() == 'win32'
+elif host_machine.system() == 'windows'
     lvtk_widgets_sources += 'ui/embed_win32.cpp'
 endif
 
