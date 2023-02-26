@@ -104,7 +104,7 @@ public:
     inline bool operator!= (const String& o) const noexcept { return _str != o._str; }
     inline bool operator!= (const std::string& o) const noexcept { return _str != o; }
 
-    inline bool operator<(const String& a) const noexcept {
+    inline bool operator< (const String& a) const noexcept {
         return _str < a._str;
     }
     inline bool operator> (const String& a) const noexcept {
@@ -115,7 +115,7 @@ public:
     const char* c_str() const noexcept { return _str.c_str(); }
     operator const char*() const noexcept { return _str.c_str(); }
     const std::string& str() const noexcept { return _str; }
-    operator const std::string&() const { return str(); }
+    operator const std::string &() const { return str(); }
 
 private:
     std::string _str;

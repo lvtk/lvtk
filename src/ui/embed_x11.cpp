@@ -11,9 +11,10 @@
 #include <X11/Xlib.h>
 
 namespace lvtk {
-namespace detail {
 
-static bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _root) {
+namespace x11 {
+
+static inline bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _root) {
     Window root, parent, *children = nullptr;
     unsigned int num_children;
 
@@ -28,7 +29,7 @@ static bool get_window_parent (Display* disp, uintptr_t& window, uintptr_t& _roo
     return true;
 }
 
-static uintptr_t get_window_first_child (Display* disp, uintptr_t window) {
+static inline uintptr_t get_window_first_child (Display* disp, uintptr_t window) {
     Window root, parent, *children = nullptr;
     unsigned int num_children;
 
@@ -44,7 +45,7 @@ static uintptr_t get_window_first_child (Display* disp, uintptr_t window) {
     return child;
 }
 
-static Rectangle<float> native_geometry (ViewRef pv) {
+static inline Rectangle<float> native_geometry (ViewRef pv) {
     auto& main = pv->main();
     auto disp  = (Display*) main.handle();
 
@@ -61,6 +62,10 @@ static Rectangle<float> native_geometry (ViewRef pv) {
         XGetGeometry (disp, window, &root, &x, &y, &w, &h, &bw, &d);
     return { (float) x, (float) y, float (w), float (h) };
 }
+
+} // namespace x11
+
+namespace detail {
 
 class X11Embed final : public detail::Embed {
 public:

@@ -1,3 +1,5 @@
+// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// SPDX-License-Identifier: ISC
 
 #pragma once
 
@@ -8,8 +10,6 @@
 
 namespace lvtk {
 namespace detail {
-
-Rectangle<float> native_geometry (ViewRef);
 
 class Embed {
 public:
@@ -49,6 +49,7 @@ public:
                 if (auto pv = proxy->find_view()) {
                     proxy->set_size (240, 360);
                     proxy->set_visible (true);
+                    pv->set_visible (true);
                 }
             }
         } else {
