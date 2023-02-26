@@ -1,6 +1,6 @@
-# *
-# !*.wrap
-# !.gitignore
+*
+!*.wrap
+!.gitignore
 
-sphinxygen.wrap
-sphinxygen-1.0.0/
+/sphinxygen.wrap
+/sphinxygen-1.0.0/
