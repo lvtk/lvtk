@@ -11,12 +11,7 @@ Embed::Embed() {
 }
 
 Embed::~Embed() {
-    impl->attach (0);
     impl.reset();
-}
-
-void Embed::attach (uintptr_t native) {
-    impl->attach (native);
 }
 
 ViewRef Embed::proxy_view() const noexcept {

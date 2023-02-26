@@ -7,13 +7,10 @@
 #include <lvtk/ui/widget.hpp>
 
 namespace lvtk {
-
 namespace detail {
 /** @private */
 class Embed;
 } // namespace detail
-
-class Main;
 
 /** Embed native views in another Widget. 
     @ingroup widgets
@@ -29,11 +26,6 @@ public:
         @returns the host view of the proxy.
      */
     ViewRef proxy_view() const noexcept;
-
-    /** Attach a native window handle. 
-        To detach pass nullptr.
-    */
-    void attach (uintptr_t native);
 
 protected:
     /** @internal */

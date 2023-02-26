@@ -21,8 +21,22 @@ public:
 
     virtual ~Embed() = default;
 
-    virtual void attach (uintptr_t) {}
-    virtual void resized() {}
+    void resized() {
+        if (! proxy)
+            return;
+
+        if (auto pv = proxy->find_view()) {
+            Bounds r = owner.bounds();
+            auto pos = owner.to_view_space (r.pos());
+            r.x      = pos.x;
+            r.y      = pos.y;
+
+            if (! r.empty()) {
+                pv->set_bounds (r);
+                proxy->set_size (r.width, r.height);
+            }
+        }
+    }
 
     virtual void create_proxy_view() {
         if (proxy != nullptr)
@@ -40,11 +54,6 @@ public:
         } else {
             // std::clog << "[embed] window: owner didn't get parent view\n";
         }
-    }
-
-    /** Returns the view of the main lvtk::Widget that owns the impl. */
-    inline lvtk::View* owner_view() const noexcept {
-        return owner.find_view();
     }
 
     inline lvtk::View* proxy_view() const noexcept {

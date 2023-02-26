@@ -85,14 +85,14 @@ public:
             add (*embed);
         }
 
-        if (auto pv = embed->proxy_view())
+        auto pv = embed->proxy_view();
+        if (pv != nullptr)
             if (auto handle = pv->handle())
                 ui = plugin->instantiate_ui (handle);
 
-        if (ui) {
+        if (ui != nullptr && embed != nullptr) {
             std::clog << "[demo] ui created" << std::endl;
             embed->set_visible (true);
-            // embed->attach ((uintptr_t) ui->widget());
             f_idle = [this]() {
                 ui->idle();
             };
