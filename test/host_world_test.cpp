@@ -3,7 +3,10 @@
 
 #include "tests.hpp"
 #include <boost/test/unit_test.hpp>
+
 #include <lvtk/host/world.hpp>
+#include <lvtk/ui/main.hpp>
+#include <lvtk/ui/opengl.hpp>
 
 #include "host/node.hpp"
 
@@ -50,15 +53,22 @@ BOOST_AUTO_TEST_CASE (instantiate) {
 }
 
 BOOST_AUTO_TEST_CASE (instantiate_ui) {
-    lvtk::World world;
-    world.load_all();
-    auto plugin = world.instantiate (LVTK_PLUGINS__Volume);
-    BOOST_REQUIRE_NE (plugin.get(), nullptr);
-    if (plugin) {
-        auto ui = plugin->instantiate_ui (0);
-        BOOST_REQUIRE_NE (ui.get(), nullptr);
-        if (ui) {
-            BOOST_REQUIRE_NE (ui->widget(), nullptr);
+    lvtk::Main ctx (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
+    {
+        lvtk::Widget widget;
+        widget.set_size (1, 1);
+        ctx.elevate (widget, 0, 0);
+        lvtk::ViewRef view = widget.find_view();
+        lvtk::World world;
+        world.load_all();
+        auto plugin = world.instantiate (LVTK_PLUGINS__Volume);
+        BOOST_REQUIRE_NE (plugin.get(), nullptr);
+        if (plugin && view) {
+            auto ui = plugin->instantiate_ui (view->handle());
+            BOOST_REQUIRE_NE (ui.get(), nullptr);
+            if (ui) {
+                BOOST_REQUIRE_NE (ui->widget(), nullptr);
+            }
         }
     }
 }

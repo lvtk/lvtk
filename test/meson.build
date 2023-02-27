@@ -33,7 +33,7 @@ lvtk_unit_test_sources = '''
 
 unit = executable ('unit',
     lvtk_unit_test_sources,
-    dependencies : [ lvtk_host_dep, boost_dep, lvtk_internal_dep, lvtk_widgets_dep ],
+    dependencies : [ lvtk_host_dep, boost_dep, lvtk_internal_dep, lvtk_widgets_dep, lvtk_opengl_dep ],
     cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 
 lvtk_unit_tests = '''
