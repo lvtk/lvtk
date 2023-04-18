@@ -341,6 +341,8 @@ public:
     }
 
     void realize() {
+        if (view == nullptr)
+            return;
         auto status = puglRealize (view);
         (void) status;
     }
