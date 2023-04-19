@@ -67,7 +67,7 @@ static inline Point<float> coordinate (const Widget* tgt, const Widget* src, Poi
         if (src == tgt)
             return pt;
 
-        if (src->contains (*tgt, true))
+        if (tgt != nullptr && src->contains (*tgt, true))
             return from_ancestor_space (src, *tgt, pt);
 
         pt  = to_parent_space (*src, pt);
