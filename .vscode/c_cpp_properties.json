@@ -52,10 +52,10 @@
                 "${workspaceFolder}/subprojects/pugl/include/*"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang++",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode": "${default}",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         },
         {
