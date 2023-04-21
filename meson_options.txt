@@ -1,5 +1,5 @@
 
-option('lv2dir', type: 'string', value: '',
+option ('lv2dir', type: 'string', value: '',
        description: 'LV2 bundle installation directory')
 option ('doc', type : 'feature', value : 'auto',
     description : 'Build documentation')

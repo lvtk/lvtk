@@ -52,15 +52,6 @@ inline static std::string tostring (Self& self, const char* NS, const char* name
     return stream.str();
 }
 
-//=======
-/* Class loading.  This is kind of a crude, hard-coded, class loader 
-   This is not fool proof whatsoever */
-static inline void require_core_types (lua_State* L) {
-}
-
-static inline void require_geometry_types (lua_State* L) {
-}
-
 // deps required by Widget, excluding itself
 //
 static inline void require_widget_deps (lua_State* L) {
@@ -221,7 +212,7 @@ int luaopen_lvtk_Symbols (lua_State* L) {
             return self.unmap (static_cast<LV2_URID> (urid));
         }
     );
-    lua::require_core_types (L);
+
     stack::push (L, M);
     return 1;
 }
@@ -302,7 +293,6 @@ int luaopen_lvtk_Graphics (lua_State* L) {
             }
     );
 
-    lua::require_geometry_types (L);
     stack::push (L, M);
     return 1;
 }
@@ -315,7 +305,6 @@ int luaopen_lvtk_Surface (lua_State* L) {
         "dummy", []() {}
     );
 
-    lua::require_geometry_types (L);
     stack::push (L, M);
     return 1;
 }
