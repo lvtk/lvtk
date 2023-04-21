@@ -220,7 +220,7 @@ protected:
     virtual void children_changed() {}
     virtual void parent_structure_changed() {}
     virtual void parent_size_changed() {}
-    virtual void child_size_changed (Widget* child) {}
+    virtual void child_size_changed (Widget* child) { ignore_unused (child); }
 
 private:
     friend class detail::Widget;

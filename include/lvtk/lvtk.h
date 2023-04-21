@@ -76,4 +76,7 @@ extern "C" {
 // clang-format on
 #endif
 
+template<typename ...T> 
+inline static void ignore_unused (T&& ...) {}
+
 #endif

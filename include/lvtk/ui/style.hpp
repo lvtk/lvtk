@@ -91,8 +91,8 @@ private:
     };
 
     std::set<ColorItem> _colors;
-    LVTK_WEAK_REFABLE (Style);
-    LVTK_DISABLE_COPY (Style);
+    LVTK_WEAK_REFABLE (Style)
+    LVTK_DISABLE_COPY (Style)
 };
 
 } // namespace lvtk

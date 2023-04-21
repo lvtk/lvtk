@@ -124,7 +124,10 @@ public:
         @param y The y coordinate
         @param align How align around the x/y point.
      */
-    virtual bool text (const std::string& text, float x, float y, Alignment align) { return false; }
+    virtual bool text (const std::string& text, float x, float y, Alignment align) {
+        ignore_unused (text, x, y, align);
+        return false;
+    }
 };
 
 /** Higher level graphics context.

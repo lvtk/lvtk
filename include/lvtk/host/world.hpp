@@ -54,7 +54,7 @@ private:
     friend class Instance;
     friend class detail::Instance;
     std::unique_ptr<detail::World> impl;
-    LVTK_DISABLE_COPY (World);
+    LVTK_DISABLE_COPY (World)
 };
 
 } // namespace lvtk
