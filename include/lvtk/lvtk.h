@@ -76,7 +76,9 @@ extern "C" {
 // clang-format on
 #endif
 
+namespace lvtk {
 template<typename ...T> 
 inline static void ignore_unused (T&& ...) {}
+}
 
 #endif
