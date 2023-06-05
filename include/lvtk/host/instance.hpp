@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <lvtk/lvtk.hpp>
+#include <lv2/ui/ui.h>
 
 namespace lvtk {
 namespace detail {
