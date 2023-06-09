@@ -45,12 +45,15 @@ lvtk_internal_dep = declare_dependency (
 
 ### shared libs
 subdir ('src')
+if not get_option('bindings').disabled()
 subdir ('bindings')
+endif
 
 ### Finals
 subdir ('lvtk.lv2')
 
 ### Demo
+if get_option('demo').enabled()
 subdir ('demo')
 executable (
     'lvtk-demo', 
@@ -61,6 +64,7 @@ executable (
     dependencies : [ lvtk_opengl_dep, threads_dep ],
     win_subsystem : 'windows',
     install : true)
+endif
 
 ### Install Headers and PC
 

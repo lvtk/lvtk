@@ -7,3 +7,7 @@ option ('onlydocs', type : 'boolean', value : false,
     description : 'Build documentation only')
 option ('test', type: 'feature', value: 'auto',
     description: 'Build tests')
+option ('demo', type: 'feature', value: 'auto',
+    description: 'Build UI widgets demo')
+option ('bindings', type: 'feature', value: 'auto',
+    description: 'Build Lua bindings')
