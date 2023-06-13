@@ -65,4 +65,6 @@ foreach t : lvtk_unit_tests
     )
 endforeach
 
-subdir ('lua')
+if not get_option('bindings').disabled()
+    subdir ('lua')
+endif
