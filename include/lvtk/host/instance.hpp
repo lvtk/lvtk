@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 
-#include <lvtk/lvtk.hpp>
 #include <lv2/ui/ui.h>
+#include <lvtk/lvtk.hpp>
 
 namespace lvtk {
 namespace detail {

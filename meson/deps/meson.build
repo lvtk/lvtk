@@ -5,6 +5,21 @@ reuse_program = find_program ('reuse', required : false)
 
 threads_dep = dependency ('threads')
 
+cocoa_dep = dependency('', required : false)
+corevideo_dep = dependency('', required : false)
+apple_deps = []
+ui_apple_deps = []
+
+if host_machine.system() == 'darwin'
+    cocoa_dep = dependency('appleframeworks', required: true, 
+        modules: ['Foundation'])
+    corevideo_dep = dependency('appleframeworks', required: false, 
+        modules: ['CoreVideo', 'CoreGraphics', 'Cocoa'])
+    apple_deps = [cocoa_dep]
+    ui_apple_deps = [apple_deps, corevideo_dep]
+endif
+
+
 ### Lv2 Core
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],

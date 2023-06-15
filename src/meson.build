@@ -24,7 +24,7 @@ elif host_machine.system() == 'windows'
     lvtk_widgets_sources += 'ui/embed_win32.cpp'
 endif
 
-lvtk_widgets_deps = [ lvtk_dep, pugl_dep, boost_dep ]
+lvtk_widgets_deps = [ lvtk_dep, pugl_dep, boost_dep, ui_apple_deps ]
 add_project_arguments ('-DPUGL_STATIC', language : ['c', 'cpp'])
 
 liblvtk_widgets = library ('lvtk-widgets-@0@'.format (lvtk_abi_version),
