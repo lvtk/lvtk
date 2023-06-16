@@ -11,12 +11,12 @@
     <RemoteRepositories>
         <Repository>
             <DisplayName>Stable</DisplayName>
-            <Url>https://lvtk.s3.amazonaws.com/ci/stable/windows</Url>
-            <Enabled>1</Enabled>        
+            <Url>https://lvtk.s3.amazonaws.com/ci/stable/osx</Url>
+            <Enabled>1</Enabled>
         </Repository>
         <Repository>
             <DisplayName>Nightly</DisplayName>
-            <Url>https://lvtk.s3.amazonaws.com/ci/nightly/windows</Url>
+            <Url>https://lvtk.s3.amazonaws.com/ci/nightly/osx</Url>
             <Enabled>0</Enabled>        
         </Repository>
     </RemoteRepositories>
