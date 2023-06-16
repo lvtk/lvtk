@@ -9,6 +9,10 @@ project ('lvtk', ['cpp', 'c'],
         'cpp_std=c++17',
     ])
 
+if host_machine.system() == 'darwin'
+    add_languages (['objcpp', 'objc' ])
+endif
+
 date_py = files ('scripts/date.py')
 lvtk_release_date = run_command ('python', date_py).stdout().strip()
 version_py = files ('scripts/version.py')
@@ -16,10 +20,6 @@ lvtk_version_with_build = run_command ('python',
     [version_py, '--build --ignore-dirty --cwd=.'.split()]).stdout().strip()
 
 lvtk_abi_version = '3.0'
-
-if host_machine.system() == 'darwin'
-    add_languages (['objcpp', 'objc' ], native: false)
-endif
 
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
