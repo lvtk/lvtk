@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Title>LVTK</Title>
+    <Name>LVTK Installer</Name>
+    <Version>@VERSION@</Version>
+    <Publisher>Kushview, LLC</Publisher>
+    <StartMenuDir>LVTK</StartMenuDir>
+    <TargetDir>@TARGETDIR@</TargetDir>
+    <!-- <ControlScript>controlscript.qs</ControlScript> -->
+    <MaintenanceToolName>updater</MaintenanceToolName>
+    <RemoteRepositories>
+        <Repository>
+            <Url>https://kushview.s3.amazonaws.com/stable/repository</Url>
+            <Enabled>1</Enabled>
+            <!-- <Username>user</Username>
+            <Password>password</Password> -->
+            <DisplayName>Stable</DisplayName>
+        </Repository>
+        <Repository>
+            <Url>https://kushview.s3.amazonaws.com/ci/repository</Url>
+            <Enabled>0</Enabled>
+            <!-- <Username>user</Username>
+            <Password>password</Password> -->
+            <DisplayName>Nightly Builds</DisplayName>
+        </Repository>
+    </RemoteRepositories>
+</Installer>

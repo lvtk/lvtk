@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <Name>org.lvtk.lv2.osx</Name>
+    <DisplayName>LV2 Ecosystem</DisplayName>
+    <Description>Core LV2 bundles</Description>
+    <Version>@VERSION@</Version>
+    <ReleaseDate>@RELEASEDATE@</ReleaseDate>
+
+    <Default>false</Default>
+    <Essential>false</Essential>
+    <ForcedInstallation>false</ForcedInstallation>
+    <RequiresAdminRights>false</RequiresAdminRights>
+    
+    <Licenses>
+        <License name="License Agreement" file="ISC.txt" />
+    </Licenses>
+    <!-- <Operations>
+        <Operation name="Extract">
+            <Argument>/Applications</Argument>
+        </Operation>
+    </Operations> -->
+</Package>

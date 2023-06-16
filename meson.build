@@ -9,6 +9,12 @@ project ('lvtk', ['cpp', 'c'],
         'cpp_std=c++17',
     ])
 
+date_py = files ('scripts/date.py')
+lvtk_release_date = run_command ('python', date_py).stdout().strip()
+version_py = files ('scripts/version.py')
+lvtk_version_with_build = run_command ('python', 
+    [version_py, '--build --ignore-dirty --cwd=.'.split()]).stdout().strip()
+
 lvtk_abi_version = '3.0'
 
 if host_machine.system() == 'darwin'
@@ -68,7 +74,7 @@ endif
 
 ### Install Headers and PC
 
-install_subdir ('include' / 'lvtk', install_dir : 'include' / 'lvtk-@0@'.format(lvtk_abi_version))
+install_subdir ('include' / 'lvtk', install_dir : get_option('includedir') / 'lvtk-@0@'.format(lvtk_abi_version))
 subdir ('meson/pkgconfig')
 
 ### Tests
@@ -81,6 +87,11 @@ endif # only docs
 ### Docs
 if not get_option('doc').disabled()
     subdir ('doc')
+endif
+
+### Deploy
+if get_option('deploy')
+    subdir ('deploy')
 endif
 
 ### Summary
@@ -100,4 +111,7 @@ summary('Demo', true, bool_yn: true, section : 'Gui')
 summary('Prefix', get_option('prefix'), section: 'Paths')
 summary('Headers', get_option('prefix') / get_option('includedir'), section: 'Paths')
 summary('Libraries', get_option('prefix') / get_option('libdir'), section: 'Paths')
+summary('Programs', get_option('prefix') / get_option('bindir'), section: 'Paths')
+summary('LV2', get_option('prefix') / lvtk_lv2dir, section: 'Paths')
+
 endif

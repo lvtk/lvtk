@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <Name>org.lvtk.sdk.osx</Name>
+    <DisplayName>LVTK SDK</DisplayName>
+    <Description>LVTK and LV2 libraries and headers.</Description>
+    <Version>@VERSION@</Version>
+    <ReleaseDate>@RELEASEDATE@</ReleaseDate>
+
+    <Default>false</Default>
+    <Essential>false</Essential>
+    <ForcedInstallation>false</ForcedInstallation>
+    <RequiresAdminRights>false</RequiresAdminRights>
+    
+    <!-- <Operations>
+        <Operation name="Extract">
+            <Argument>/Applications</Argument>
+        </Operation>
+    </Operations> -->
+</Package>
+

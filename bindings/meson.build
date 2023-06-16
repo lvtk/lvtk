@@ -1,3 +1,14 @@
+
+lvtk_luadir_c = get_option('luadir_c')
+if lvtk_luadir_c == 'auto'
+    lvtk_luadir_c = get_option('libdir') / 'lua'
+endif
+
+lvtk_luadir = get_option('luadir')
+if lvtk_luadir == 'auto'
+    lvtk_luadir = get_option('datadir') / 'lua'
+endif
+
 # TODO: msvc lua module building
 
 lvtk_lua_modules_suffix = []
@@ -26,10 +37,8 @@ else
 endif
 
 # place where the LVTK bindings get installed.
-lvtk_lua_cmod_subdir = '@0@/@1@/@2@'.format (
-    get_option('libdir'),'lua', lvtk_lua_version)
-lvtk_lua_mod_subdir = '@0@/@1@/@2@'.format (
-    get_option('datadir'), 'lua', lvtk_lua_version)
+lvtk_lua_cmod_subdir = '@0@/@1@'.format (lvtk_luadir_c, lvtk_lua_version)
+lvtk_lua_mod_subdir  = '@0@/@1@'.format (lvtk_luadir,   lvtk_lua_version)
 
 lvtk_lua_c_args = []
 lvtk_lua_cpp_args = []
