@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <Name>org.lvtk.plugins</Name>
+    <DisplayName>Plugins</DisplayName>
+    <Description>LVTK Plugin bundles</Description>
+    <Version>@VERSION@</Version>
+    <ReleaseDate>@RELEASEDATE@</ReleaseDate>
+
+    <Default>true</Default>
+    <Essential>false</Essential>
+    <ForcedInstallation>false</ForcedInstallation>
+    <RequiresAdminRights>true</RequiresAdminRights>
+    <SortingPriority>30</SortingPriority>
+
+    @OPERATIONS@
+</Package>

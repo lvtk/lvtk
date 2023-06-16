@@ -16,6 +16,7 @@ def options():
     parser.add_option ("--last-version", type="string", dest="last_version", default=LAST_VERSION)
     parser.add_option ("--revision", action="store_true", dest="revision", default=False)
     parser.add_option ("--build", action="store_true", dest="build", default=False)
+    parser.add_option ("--no-version", action="store_true", dest="no_version", default=False)
     parser.add_option ("--cwd", type="string", dest="cwd", default='')
     parser.add_option ("--ignore-dirty", action="store_true", dest="ignore_dirty", default=False)
     (opts, _) = parser.parse_args()
@@ -74,12 +75,21 @@ def version():
     if len(opts.cwd) > 0:
         os.chdir (opts.cwd)
 
-    vers = VERSION
+    vers = ''
+    if not opts.no_version:
+        vers = VERSION
+
     if exists():
         if opts.build:
-            vers += '.%s' % ncommits (opts.last_version)
+            if opts.no_version:
+                vers = '%s' % ncommits (opts.last_version)
+            else:
+                vers += '.%s' % ncommits (opts.last_version)
         elif opts.revision:
-            vers += '_r%s' % ncommits (opts.last_version)
+            if opts.no_version:
+                vers = 'r%s' % ncommits (opts.last_version)
+            else:
+                vers += '_r%s' % ncommits (opts.last_version)
 
         if is_dirty() and not opts.ignore_dirty:
             vers += "-dirty"

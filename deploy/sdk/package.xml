@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package>
-    <Name>org.lvtk.sdk.osx</Name>
-    <DisplayName>LVTK SDK</DisplayName>
+    <Name>org.lvtk.sdk</Name>
+    <DisplayName>SDK (3.0.0)</DisplayName>
     <Description>LVTK and LV2 libraries and headers.</Description>
     <Version>@VERSION@</Version>
     <ReleaseDate>@RELEASEDATE@</ReleaseDate>
@@ -10,6 +10,8 @@
     <Essential>false</Essential>
     <ForcedInstallation>false</ForcedInstallation>
     <RequiresAdminRights>false</RequiresAdminRights>
+    
+    <SortingPriority>0</SortingPriority>
     
     <!-- <Operations>
         <Operation name="Extract">

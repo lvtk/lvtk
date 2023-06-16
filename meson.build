@@ -18,6 +18,8 @@ lvtk_release_date = run_command ('python', date_py).stdout().strip()
 version_py = files ('scripts/version.py')
 lvtk_version_with_build = run_command ('python', 
     [version_py, '--build --ignore-dirty --cwd=.'.split()]).stdout().strip()
+lvtk_build_number = run_command ('python', 
+    [version_py, '--no-version --build --ignore-dirty --cwd=.'.split()]).stdout().strip()
 
 lvtk_abi_version = '3.0'
 

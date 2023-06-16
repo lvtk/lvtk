@@ -3,11 +3,13 @@
 
 rm -rf *.gz *.app *.dmg
 
-@BINARYCREATOR@ -v -c 'config/config.xml' --ac 9 -i 'org.lvtk.sdk.osx,org.lvtk.lv2.osx' \
+@BINARYCREATOR@ -v -c 'config/config.xml' --ac 9 \
+    -i 'org.lvtk.sdk,org.lvtk.lv2,org.lvtk.plugins' \
     -p 'packages' @INSTALLERBASE@
 
 
-sed -i '' 's/com.yourcompany.installerbase/org.lvtk.installer/' "@INSTALLERBASE@.app/Contents/Info.plist"
+sed -i '' 's/com.yourcompany.installerbase/org.lvtk.installer/' \
+    "@INSTALLERBASE@.app/Contents/Info.plist"
 
 @MACDEPLOYQT@ @INSTALLERBASE@.app \
     -no-plugins -dmg -always-overwrite -verbose=3 \
@@ -18,8 +20,8 @@ sed -i '' 's/com.yourcompany.installerbase/org.lvtk.installer/' "@INSTALLERBASE@
 rm -rf archives && mkdir archives
 cd packages
 
-@ARCHIVEGEN@ -f tar.gz -c 9  ../archives/org.lvtk.lv2.osx.tar.gz org.lvtk.lv2.osx
-@ARCHIVEGEN@ -f tar.gz -c 9  ../archives/org.lvtk.sdk.osx.tar.gz org.lvtk.sdk.osx
+@ARCHIVEGEN@ -f tar.gz -c 9  ../archives/org.lvtk.archives.tar.gz \
+    org.lvtk.lv2 org.lvtk.sdk org.lvtk.plugins
 
 cd ..
 cd archives

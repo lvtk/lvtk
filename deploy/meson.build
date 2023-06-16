@@ -1,20 +1,17 @@
 lvtk_deploy_sdkdir = get_option('prefix') / 'packages' / 'org.lvtk.sdk'
-lvtk_deploy_sdkdir_osx = get_option('prefix') / 'packages' / 'org.lvtk.sdk.osx'
-
 lvtk_deploy_lv2dir = get_option('prefix') / 'packages' / 'org.lvtk.lv2'
-lvtk_deploy_lv2dir_osx = get_option('prefix') / 'packages' / 'org.lvtk.lv2.osx'
+lvtk_deploy_pluginsdir = get_option('prefix') / 'packages' / 'org.lvtk.plugins'
+lvtk_deploy_targetdir = '/Library/Application Support/LVTK'
 
 configure_file (input: 'config.xml', output: 'config.xml',
-    install: true, install_dir: 'config',
-    configuration: {
+    install: true, install_dir: 'config', configuration: {
         'VERSION': lvtk_version_with_build,
-        'TARGETDIR': '@HomeDir@/LVTK'
-    })
+        'TARGETDIR': lvtk_deploy_targetdir })
 configure_file (input: 'control.js', output: 'control.js',
     install: true, install_dir: 'config',
     configuration: {})
 
-foreach pkg : 'lv2 sdk'.split()
+foreach pkg : 'lv2 sdk plugins'.split()
     subdir (pkg)
 endforeach
 
