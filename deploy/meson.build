@@ -27,7 +27,7 @@ if host_machine.system() == 'darwin'
 
     notary_script = ''
     if get_option('notarize') and get_option('sign')
-        notary_script = '''xcrun altool --notarize-app --primary-bundle-id="com.iconproaudio.pd5.osx"  \
+        notary_script = '''xcrun altool --notarize-app --primary-bundle-id="org.lvtk.installer"  \
             -u @0@ -p @1@ --file @2@'''.format(
                 get_option('apple-id'), 
                 get_option ('app-password'),
