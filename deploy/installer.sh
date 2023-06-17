@@ -7,7 +7,6 @@ rm -rf *.gz *.app *.dmg
     -i 'org.lvtk.sdk,org.lvtk.lv2,org.lvtk.plugins' \
     -p 'packages' @INSTALLERBASE@
 
-
 sed -i '' 's/com.yourcompany.installerbase/org.lvtk.installer/' \
     "@INSTALLERBASE@.app/Contents/Info.plist"
 

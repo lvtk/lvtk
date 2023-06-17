@@ -10,14 +10,14 @@
     <MaintenanceToolName>updater</MaintenanceToolName>
     <RemoteRepositories>
         <Repository>
-            <DisplayName>Stable</DisplayName>
-            <Url>https://lvtk.s3.amazonaws.com/ci/stable/osx</Url>
+            <DisplayName>Release</DisplayName>
+            <Url>https://ci.lvtk.org/release/@PLATFORM@</Url>
             <Enabled>1</Enabled>
         </Repository>
         <Repository>
             <DisplayName>Nightly</DisplayName>
-            <Url>https://lvtk.s3.amazonaws.com/ci/nightly/osx</Url>
-            <Enabled>0</Enabled>        
+            <Url>https://ci.lvtk.org/nightly/@PLATFORM@</Url>
+            <Enabled>0</Enabled>
         </Repository>
     </RemoteRepositories>
 </Installer>
