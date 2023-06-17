@@ -1,10 +1,14 @@
 
 option ('lv2dir', type: 'string', value: '',
        description: 'LV2 bundle installation directory')
+option ('plugins', type: 'feature', value: 'auto', yield: false,
+       description: 'Build plugins')
+
 option ('doc', type : 'feature', value : 'auto',
     description : 'Build documentation')
 option ('onlydocs', type : 'boolean', value : false,
     description : 'Build documentation only')
+
 option ('test', type: 'feature', value: 'auto',
     description: 'Build tests')
 option ('demo', type: 'feature', value: 'auto',

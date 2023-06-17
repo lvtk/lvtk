@@ -1,4 +1,6 @@
 
+if get_option ('plugins').enabled()
+
 fs = import ('fs')
 lvtk_ui_type = 'X11UI'
 if host_machine.system() == 'windows'
@@ -47,3 +49,5 @@ configure_file (
     install : true,
     install_dir : plugin_install_dir
 )
+
+endif # plugins.enabled()
