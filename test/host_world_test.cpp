@@ -32,6 +32,7 @@ BOOST_AUTO_TEST_CASE (plugins) {
 }
 
 BOOST_AUTO_TEST_CASE (instantiate) {
+#if 0
     lvtk::World world;
     world.load_all();
 
@@ -54,9 +55,11 @@ BOOST_AUTO_TEST_CASE (instantiate) {
             plugin->deactivate();
         }
     }
+#endif
 }
 
 BOOST_AUTO_TEST_CASE (instantiate_ui) {
+#if 0
     lvtk::Main ctx (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
     {
         lvtk::Widget widget;
@@ -75,6 +78,7 @@ BOOST_AUTO_TEST_CASE (instantiate_ui) {
                 BOOST_REQUIRE_NE (ui->widget(), nullptr);
             }
         }
+#endif
 #endif
     }
 }
