@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE (instantiate_ui) {
             }
         }
 #endif
-#endif
     }
+#endif
 }
 
 BOOST_AUTO_TEST_CASE (nodes) {
