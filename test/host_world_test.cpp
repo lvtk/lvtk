@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE (instantiate_ui) {
         lvtk::Widget widget;
         widget.set_size (1, 1);
         ctx.elevate (widget, 0, 0);
-#if LVTK_ELEVATION
+#    if LVTK_ELEVATION
         lvtk::ViewRef view = widget.find_view();
         lvtk::World world;
         world.load_all();
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE (instantiate_ui) {
                 BOOST_REQUIRE_NE (ui->widget(), nullptr);
             }
         }
-#endif
+#    endif
     }
 #endif
 }
