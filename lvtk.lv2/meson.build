@@ -10,9 +10,6 @@ elif host_machine.system() == 'darwin'
 endif
 
 plugin_install_dir = lvtk_lv2dir / 'lvtk.lv2'
-if get_option ('deploy')
-    plugin_install_dir = get_option('prefix') / 'packages' / 'org.lvtk.plugins' / 'data' / 'LV2' / 'lvtk.lv2'
-endif
 
 plugin = shared_module ('volume', 'volume.cpp',
     name_prefix : '',

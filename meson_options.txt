@@ -21,9 +21,6 @@ option ('luadir', type: 'string', value: 'auto',
 option ('luadir_c', type: 'string', value: 'auto',
        description: 'Lua base path for binary modules')
 
-option ('deploy', type: 'boolean', value: false,
-    description: 'Create the installer package(s)')
-
 option ('sign', type : 'boolean', value : false, 
     description : 'Code Sign Binaries')
 option ('codesign-identity', type : 'string', value : '', 

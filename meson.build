@@ -91,11 +91,6 @@ if not get_option('doc').disabled()
     subdir ('doc')
 endif
 
-### Deploy
-if get_option('deploy')
-    subdir ('deploy')
-endif
-
 ### Summary
 summary('Docs', not get_option('doc').disabled(), bool_yn: true)
 
