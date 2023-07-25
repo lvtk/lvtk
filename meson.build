@@ -13,12 +13,15 @@ if host_machine.system() == 'darwin'
     add_languages (['objcpp', 'objc' ])
 endif
 
+pymod = import('python')
+python3_exe = pymod.find_installation ('python3')
+
 date_py = files ('scripts/date.py')
-lvtk_release_date = run_command ('python', date_py).stdout().strip()
+lvtk_release_date = run_command (python3_exe, date_py).stdout().strip()
 version_py = files ('scripts/version.py')
-lvtk_version_with_build = run_command ('python', 
+lvtk_version_with_build = run_command (python3_exe, 
     [version_py, '--build --ignore-dirty --cwd=.'.split()]).stdout().strip()
-lvtk_build_number = run_command ('python', 
+lvtk_build_number = run_command (python3_exe, 
     [version_py, '--no-version --build --ignore-dirty --cwd=.'.split()]).stdout().strip()
 
 lvtk_abi_version = '3.0'
@@ -54,24 +57,24 @@ lvtk_internal_dep = declare_dependency (
 ### shared libs
 subdir ('src')
 if not get_option('bindings').disabled()
-subdir ('bindings')
+    subdir ('bindings')
 endif
 
 ### Finals
 subdir ('lvtk.lv2')
 
 ### Demo
-if get_option('demo').enabled()
-subdir ('demo')
-executable (
-    'lvtk-demo', 
-    'demo/main.cpp',
-    cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
-    include_directories : [],
-    link_with : [ liblvtk_demo ],
-    dependencies : [ lvtk_opengl_dep, threads_dep ],
-    win_subsystem : 'windows',
-    install : true)
+if not get_option('demo').disabled()
+    subdir ('demo')
+    executable (
+        'lvtk-demo', 
+        'demo/main.cpp',
+        cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
+        include_directories : [],
+        link_with : [ liblvtk_demo ],
+        dependencies : [ lvtk_demo_deps, threads_dep ],
+        win_subsystem : 'windows',
+        install : true)
 endif
 
 ### Install Headers and PC

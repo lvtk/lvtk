@@ -24,11 +24,11 @@ pkg.generate (liblvtk_opengl,
     subdirs     : 'lvtk-@0@'.format (lvtk_abi_version),
     install_dir : get_option ('libdir') / 'pkgconfig',
     requires    : [])
-pkg.generate (liblvtk_host,
+pkg.generate (
     name        : 'LVTK Hosting Library',
     filebase    : 'lvtk-host-@0@'.format (lvtk_abi_version),
     version     : meson.project_version(),
     description : 'LV2 hosting library',
     subdirs     : 'lvtk-@0@'.format (lvtk_abi_version),
     install_dir : get_option ('libdir') / 'pkgconfig',
-    requires    : [])
+    requires    : [ 'lv2', 'lilv-0', 'suil-0' ])

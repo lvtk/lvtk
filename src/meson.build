@@ -66,17 +66,8 @@ lvtk_opengl_dep = declare_dependency (
 
 ### LVTK Hosting
 if lilv_dep.found() and suil_dep.found()
-    lvtk_host_sources = files ('''
-        host/world.cpp
-    '''.split())
-    liblvtk_host = library ('lvtk-host-@0@'.format (lvtk_abi_version), 
-        lvtk_host_sources,
-        gnu_symbol_visibility : 'hidden',
-        dependencies : [ lvtk_dep, lilv_dep, suil_dep ],
-        install : true,
-        install_dir : lvtk_libdir)
     lvtk_host_dep = declare_dependency (
-        link_with : [ liblvtk_host ],
+        link_with : [],
         include_directories : [],
         dependencies : [ lvtk_dep, lilv_dep, suil_dep ])
 endif

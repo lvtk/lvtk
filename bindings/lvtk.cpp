@@ -409,12 +409,7 @@ LVTK_LUALIB
 int luaopen_lvtk_World (lua_State* L) {
     auto T = lua::bind<lvtk::World> (L, "lvtk", "World",
         "load_all",         &lvtk::World::load_all,
-       
-        "plugins",          &lvtk::World::plugins,
-        "plugin_uris",      &lvtk::World::plugin_uris,
-        "features",         &lvtk::World::features,
-        "instantiate",      &lvtk::World::instantiate,
-        "set_sample_rate",  &lvtk::World::set_sample_rate,
+        "find",             &lvtk::World::find,
         "new", factories ([]() {
             return std::make_unique<lvtk::World>();
         })
@@ -422,7 +417,6 @@ int luaopen_lvtk_World (lua_State* L) {
 
     lua::script (L, R"(
         require ('lvtk.Instance')
-        require ('lvtk.InstanceUI')
     )");
 
     stack::push (L, T);
@@ -430,30 +424,6 @@ int luaopen_lvtk_World (lua_State* L) {
 }
 
 #include <lvtk/host/instance.hpp>
-LVTK_LUALIB
-int luaopen_lvtk_PluginInfo (lua_State* L) {
-    auto T = lua::bind<lvtk::PluginInfo> (L, "lvtk", "PluginInfo",
-        "URI",             readonly_property (&lvtk::PluginInfo::URI),
-        "name",            readonly_property (&lvtk::PluginInfo::name),
-        "author_name",     readonly_property (&lvtk::PluginInfo::author_name),
-        "author_homepage", readonly_property (&lvtk::PluginInfo::author_homepage),
-        "author_email",    readonly_property (&lvtk::PluginInfo::author_email),
-        "uis",             readonly_property (&lvtk::PluginInfo::uis),
-        "new",  factories ([](table tbl) -> lvtk::PluginInfo { 
-            PluginInfo info;
-            info.URI = tbl.get_or ("URI", info.URI);
-            info.name = tbl.get_or ("name", info.name);
-            info.author_name = tbl.get_or ("author_name", info.author_name);
-            info.author_homepage = tbl.get_or ("author_homepage", info.author_homepage);
-            info.author_email = tbl.get_or ("author_email", info.author_email);
-            info.uis = tbl.get_or ("uis", info.uis);
-            return info;
-        })
-    );
-
-    stack::push (L, T);
-    return 1;
-}
 
 // using sol probably isn't good enough for realtime. This might
 // need re-written in vanilla lua.
@@ -464,15 +434,14 @@ int luaopen_lvtk_Instance (lua_State* L) {
         "activate",         [](Instance&) {},
         "connect_port",     [](Instance&) {},
         "run",              [](Instance&) {},
-        "deactivate",       [](Instance&) {},
-        "info",             &Instance::info,
-        "instantiate_ui",   [](Instance&){}
+        "deactivate",       [](Instance&) {}
     );
 
     stack::push (L, T);
     return 1;
 }
 
+#if 0
 LVTK_LUALIB
 int luaopen_lvtk_InstanceUI (lua_State* L) {
     auto T = lua::bind<lvtk::InstanceUI> (L, "lvtk", "InstanceUI",
@@ -493,6 +462,7 @@ int luaopen_lvtk_InstanceUI (lua_State* L) {
     stack::push (L, T);
     return 1;
 }
+#endif
 
 // main module
 LVTK_LUALIB

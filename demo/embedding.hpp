@@ -5,7 +5,9 @@
 
 #include <iostream>
 
+#include <lvtk/host/instance.hpp>
 #include <lvtk/host/world.hpp>
+
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/widget.hpp>
 
@@ -47,29 +49,30 @@ public:
         if (embed)
             remove (*embed);
         embed.reset();
-
-        if (ui) {
-            ui->unload();
-            ui.reset();
-        }
+#if 0
+        // if (ui) {
+        //     ui->unload();
+        //     ui.reset();
+        // }
 
         if (plugin) {
-            std::clog << "[demo] unload: " << plugin->name() << std::endl;
             plugin->deactivate();
             plugin.reset();
         }
+#endif
     }
 
     bool loaded() const {
-        return ui != nullptr && embed != nullptr;
+        return embed != nullptr;
     }
 
     void load_volume() {
         if (loaded())
             return;
 
+#if 0
         if (plugin == nullptr) {
-            plugin = world.instantiate (LVTK_PLUGINS__Volume);
+            // plugin = world.instantiate (LVTK_PLUGINS__Volume);
             if (! plugin) {
                 std::clog << "[demo] plugin faile to instantiate: \n"
                           << LVTK_PLUGINS__Volume << std::endl;
@@ -97,7 +100,7 @@ public:
                 ui->idle();
             };
         }
-
+#endif
         resized();
         repaint();
     }
@@ -124,7 +127,6 @@ private:
     lvtk::World world;
     std::unique_ptr<Embed> embed;
     std::unique_ptr<lvtk::Instance> plugin;
-    std::unique_ptr<lvtk::InstanceUI> ui;
 };
 
 } // namespace demo
