@@ -64,7 +64,8 @@
                 "${workspaceFolder}/include/*",
                 "${workspaceFolder}/demo/*",
                 "${workspaceFolder}/subprojects/lv2/include/*",
-                "${workspaceFolder}/subprojects/pugl/include/*"
+                "${workspaceFolder}/subprojects/pugl/include/*",
+                "${default}"
             ],
             "defines": [
                 "_DEBUG",

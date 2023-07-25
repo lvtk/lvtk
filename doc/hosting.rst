@@ -47,9 +47,6 @@ method.  It is up to client code what to do with the plugin.
     * - :class:`lvtk.Instance`
       - `Wrapper <api/classlvtk_1_1Instance.html>`__
       - N/A
-    * - :class:`lvtk.PluginInfo`
-      - `Struct <api/structlvtk_1_1PluginInfo.html>`__
-      - N/A
     * - :class:`lvtk.SupportedUI`
       - `Struct <api/structlvtk_1_1SupportedUI.html>`__
       - N/A

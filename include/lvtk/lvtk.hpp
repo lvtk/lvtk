@@ -32,6 +32,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <map>
@@ -127,7 +128,8 @@ struct Feature : LV2_Feature {
     @headerfile lvtk/lvtk.hpp
     @ingroup lvtk
  */
-struct FeatureList final : public std::vector<Feature> {
+class FeatureList final : public std::vector<Feature> {
+public:
     /** Construct an empty feature list */
     FeatureList() = default;
 
@@ -143,26 +145,71 @@ struct FeatureList final : public std::vector<Feature> {
         @param features  LV2_Feature array to reference
     */
     FeatureList (const LV2_Feature* const* features) {
-        for (int i = 0; features[i]; ++i) {
-            push_back (*features[i]);
-        }
+        add (features);
     }
 
-    /** @returns The data associated with a contained feature
+    /** Contstruct from a LV2_Feature vector.
+        @param features  LV2_Feature array to reference
+    */
+    FeatureList (const std::vector<const LV2_Feature*>& features) {
+        add (features);
+    }
+
+    inline void add (const LV2_Feature* const* features) noexcept {
+        for (int i = 0; features[i] != nullptr; ++i)
+            push_back (*features[i]);
+    }
+
+    /** Add some features to the list. 
+     
+        @param features A vector of features to add.
+    */
+    inline void add (const std::vector<const LV2_Feature*>& features) noexcept {
+        for (const auto* f : features)
+            if (nullptr != f)
+                push_back (*f);
+    }
+
+    /** Returns The data associated with a contained feature.
+
         @param uri The URI of the feature to look for
         @returns The data ptr or nullptr if not found
      */
-    inline void* data (const std::string& uri) const {
-        for (const auto& f : *this)
-            if (f == uri)
-                return f.data;
-        return nullptr;
+    inline void* data (const std::string& uri) const noexcept {
+        auto iter = std::find_if (begin(), end(), [&uri] (const Feature& f) -> bool {
+            return strcmp (uri.c_str(), f.URI) == 0;
+        });
+        return iter != end() ? iter->data : nullptr;
     }
 
     /** @returns true if the uri is found */
-    inline bool contains (const std::string& uri) const {
+    inline bool contains (const std::string& uri) const noexcept {
         return data (uri) != nullptr;
     }
+
+    /** Returns a null-terminated version of these Features. 
+     
+        The return value is ONLY valid as long as this list hasn't been deleted,
+        or the contents modified by adding and removing features.
+    */
+    auto null_terminated() const noexcept {
+        if (_raw.size() != size() + 1 || (! _raw.empty() && _raw.back() != nullptr)) {
+            _raw.clear();
+            _raw.reserve (size() + 1);
+            for (const auto& f : *this)
+                _raw.push_back (&f);
+            _raw.push_back (nullptr);
+        }
+        return (const LV2_Feature* const*) _raw.data();
+    }
+
+    /** Pass to functions accepting `const LV2_Feature* const*` as a parameter. */
+    inline operator const LV2_Feature* const*() const noexcept {
+        return null_terminated();
+    }
+
+private:
+    mutable std::vector<const LV2_Feature*> _raw;
 };
 
 /** Template class which can be used to assign feature data in a common way.
