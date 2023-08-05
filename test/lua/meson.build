@@ -10,7 +10,11 @@ lvtk_lua_tests = '''
 '''.split()
 
 if host_machine.system() != 'windows'
-    lvtk_lua_tests += [ 'loadall', 'World' ]
+    lvtk_lua_tests += [ 'loadall' ]
+endif
+
+if lilv_dep.found()
+    lvtk_lua_tests += 'World'
 endif
 
 foreach key : lvtk_lua_tests

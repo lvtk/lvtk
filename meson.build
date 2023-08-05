@@ -60,8 +60,10 @@ if not get_option('bindings').disabled()
     subdir ('bindings')
 endif
 
-### Finals
-subdir ('lvtk.lv2')
+### Plugins
+if get_option('plugins').disabled()
+    subdir ('lvtk.lv2')
+endif
 
 ### Demo
 if not get_option('demo').disabled()
@@ -100,18 +102,20 @@ summary('Docs', not get_option('doc').disabled(), bool_yn: true)
 if not get_option ('onlydocs')
 summary('Tests', not get_option('test').disabled(), bool_yn: true)
 
-summary('Modules', host_machine.system() != 'windows', section : 'Lua', bool_yn: true)
-summary('Tests', lua_program.found() and not get_option('test').disabled(), 
-    section : 'Lua', bool_yn: true)
-summary('Version', lua_version, section : 'Lua')
+summary ('Modules', lua_dep.found(), section : 'Lua', bool_yn: true)
+if lua_dep.found()
+    summary('Tests', lua_program.found() and not get_option('test').disabled(), 
+        section : 'Lua', bool_yn: true)
+    summary('Version', lua_version, section : 'Lua')
+endif
 
-summary('Graphics', 'OpenGL', section : 'Gui')
-summary('Demo', true, bool_yn: true, section : 'Gui')
+summary ('Graphics', 'OpenGL', section : 'Widgets')
+summary ('Demo', not get_option('demo').disabled(), bool_yn: true, section: 'Widgets')
 
-summary('Prefix', get_option('prefix'), section: 'Paths')
-summary('Headers', get_option('prefix') / get_option('includedir'), section: 'Paths')
-summary('Libraries', get_option('prefix') / get_option('libdir'), section: 'Paths')
-summary('Programs', get_option('prefix') / get_option('bindir'), section: 'Paths')
-summary('LV2', get_option('prefix') / lvtk_lv2dir, section: 'Paths')
+summary ('Prefix', get_option('prefix'), section: 'Paths')
+summary ('Headers', get_option('prefix') / get_option('includedir'), section: 'Paths')
+summary ('Libraries', get_option('prefix') / get_option('libdir'), section: 'Paths')
+summary ('Programs', get_option('prefix') / get_option('bindir'), section: 'Paths')
+summary ('LV2', get_option('prefix') / lvtk_lv2dir, section: 'Paths')
 
 endif

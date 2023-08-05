@@ -107,6 +107,8 @@ void Ranged::set_value (double value, Notify notify) {
         return;
 
     impl->value = value;
+    repaint();
+    resized();
 
     if (notify == Notify::NONE)
         return;

@@ -1,33 +1,22 @@
 
-option ('lv2dir', type: 'string', value: '',
-       description: 'LV2 bundle installation directory')
-option ('plugins', type: 'feature', value: 'auto', yield: false,
-       description: 'Build plugins')
+option ('lv2dir', type: 'string', value: '', yield : true,
+    description: 'LV2 bundle installation directory')
+option ('plugins', type: 'feature', value: 'disabled', yield: false,
+    description: 'Build plugins')
 
-option ('doc', type : 'feature', value : 'auto',
-    description : 'Build documentation')
+option ('doc', type : 'feature', value : 'disabled',
+    description : 'Build documentation [default: auto]')
 option ('onlydocs', type : 'boolean', value : false,
     description : 'Build documentation only')
 
 option ('test', type: 'feature', value: 'auto',
-    description: 'Build tests')
-option ('demo', type: 'feature', value: 'auto',
+    description: 'Build tests [default: auto]')
+option ('demo', type: 'feature', value: 'disabled',
     description: 'Build UI widgets demo')
 
-option ('bindings', type: 'feature', value: 'auto',
-    description: 'Build Lua bindings')
+option ('bindings', type: 'feature', value: 'disabled',
+    description: 'Build Lua bindings [default: disabled]')
 option ('luadir', type: 'string', value: 'auto',
-       description: 'Lua base path for text modules')
+    description: 'Lua base path for text modules')
 option ('luadir_c', type: 'string', value: 'auto',
-       description: 'Lua base path for binary modules')
-
-option ('sign', type : 'boolean', value : false, 
-    description : 'Code Sign Binaries')
-option ('codesign-identity', type : 'string', value : '', 
-    description : 'Identity to use for code signing on Mac')
-option ('notarize', type : 'boolean', value : false, 
-    description : 'Whether to notarize or not.')
-option ('app-password', type : 'string', value : '',  
-    description : 'App Password for notoary')
-option ('apple-id', type : 'string', value : '',  
-    description : 'Apple ID owning the app password')
+    description: 'Lua base path for binary modules')

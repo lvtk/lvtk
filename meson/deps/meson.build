@@ -19,7 +19,6 @@ if host_machine.system() == 'darwin'
     ui_apple_deps = [apple_deps, corevideo_dep]
 endif
 
-
 ### Lv2 Core
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
@@ -69,55 +68,60 @@ pugl_gl_dep = dependency ('pugl-gl-0',
 )
 
 ### Lilv & Suil
-lilv_dep = dependency ('lilv-0', 
-    fallback : ['lilv', 'lilv_dep' ], 
-    required : true,
-    default_options : [])
-suil_dep = dependency ('suil-0', fallback : ['suil', 'suil_dep'], required : true)
+lilv_dep = dependency ('lilv-0', required : false)
+suil_dep = dependency ('suil-0', required : false)
 
 ### Boost
-boost_dep = (dependency ('boost', required : not get_option('test').disabled()))
+lvtk_build_widgets = true
+boost_dep = dependency ('boost', required : lvtk_build_widgets or get_option('test').enabled())
 
-## Lua: Use either lua 5.3 or 5.4 depending on what's on the
-# system.  If lua not found. Use 5.4.
+### Lua if wanted
+lua_dep = dependency ('', required : false)
+lua_program = find_program ('', required : false)
+lua_version = '0.0.0'
 
-lvtk_lua_system = false
+if not get_option ('bindings').disabled()
+  ## Lua: Use either lua 5.3 or 5.4 depending on what's on the
+  # system.  If lua not found. Use 5.4.
 
-if host_machine.system() != 'windows'
-  lua_dep = dependency('', required : false)
-  lua_version = ''
-  lua_program = find_program ('lua5.4', required : false)
-
-  if not lua_program.found()
-      lua_program = find_program('lua5.3', required : false)
-  endif
-
-  if not lua_program.found()
-      lua_program = find_program('lua', required : false)
-  endif
-
-  if lua_program.found()
-      pymod = import('python')
-      lua_version = run_command(pymod.find_installation('python3'), '../../scripts/luavers.py',
-          lua_program, check : true).stdout().strip()
-      if not lua_version.version_compare ('>= 5.3')
-        lvtk_lua_system = false
-      else
-        lvtk_lua_system = true
-      endif
-  endif
-endif
-
-if not lvtk_lua_system
-  lua_proj = subproject ('lua', 
-    default_options : [
-      'loadlib=disabled',
-      'interpreter=true',
-      'line_editing=disabled'
-    ])
-
-  lua_dep =lua_proj.get_variable ('lua_dep')
-  lua_version = '5.4'
-  lua_program = lua_proj.get_variable ('lua_exe')
   lvtk_lua_system = false
+
+  if host_machine.system() != 'windows'
+    lua_dep = dependency('', required : false)
+    lua_version = ''
+    lua_program = find_program ('lua5.4', required : false)
+
+    if not lua_program.found()
+        lua_program = find_program('lua5.3', required : false)
+    endif
+
+    if not lua_program.found()
+        lua_program = find_program('lua', required : false)
+    endif
+
+    if lua_program.found()
+        pymod = import('python')
+        lua_version = run_command(pymod.find_installation('python3'), '../../scripts/luavers.py',
+            lua_program, check : true).stdout().strip()
+        if not lua_version.version_compare ('>= 5.3')
+          lvtk_lua_system = false
+        else
+          lvtk_lua_system = true
+        endif
+    endif
+  endif
+
+  if not lvtk_lua_system
+    lua_proj = subproject ('lua', 
+      default_options : [
+        'loadlib=disabled',
+        'interpreter=true',
+        'line_editing=disabled'
+      ])
+
+    lua_dep = lua_proj.get_variable ('lua_dep')
+    lua_version = '5.4'
+    lua_program = lua_proj.get_variable ('lua_exe')
+    lvtk_lua_system = false
+  endif
 endif

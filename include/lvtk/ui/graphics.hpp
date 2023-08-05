@@ -125,7 +125,7 @@ public:
         @param align How align around the x/y point.
      */
     virtual bool text (const std::string& text, float x, float y, Alignment align) {
-        ignore_unused (text, x, y, align);
+        ignore (text, x, y, align);
         return false;
     }
 };

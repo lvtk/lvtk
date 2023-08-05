@@ -78,7 +78,7 @@ extern "C" {
 
 namespace lvtk {
 template <typename... T>
-inline static void ignore_unused (T&&...) {}
+inline static void ignore (T&&...) noexcept {}
 } // namespace lvtk
 
 #endif

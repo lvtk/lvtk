@@ -5,12 +5,21 @@
 LVTK3
 =====
 
-Minimal C++ library with Lua bindings and console. Write your LV2 plugins and gui's in C++ or Lua!
+Minimal C++ library with Lua bindings and console. Write your LV2 plugins and 
+gui's in C++ or Lua!
 
 Heavy Development
 -----------------
-API's will break from time to time until the core system is ready.  Plugin/UI templates are largely unchanged.  
-It's the widgets and host libraries which will see the most refactoring
+API's will break from time to time until the core system is ready. Plugin/UI 
+templates are largely unchanged, but could radically change in terms of API.  
+
+Minimal by Design
+-----------------
+LVTK is intended to be used as a subproject by LV2 plugin and UI developers. 
+Docs, Lua Bindings, the Widgets Demo, Lilv wrapper tests, and the `lvtk.lv2`
+plugins are disabled by default so plugin developers don't have to worry about
+it.  If packaging, these items will need enabled manually via a meson
+native/cross file or the command line. see [meson_options.txt](meson_options.txt)
 
 Built-In Widgets
 ----------------
@@ -42,8 +51,8 @@ meson compile -C build
 meson test -C build
 ```
 
-Gui Demo
---------
+Widgets Demo
+------------
 ```
 cd build
 ./lvtk-demo

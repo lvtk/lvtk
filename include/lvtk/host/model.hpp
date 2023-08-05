@@ -45,7 +45,7 @@ public:
             return nullptr;
 
         if (auto cinst = lilv_plugin_instantiate (_plugin, samplerate, features)) {
-            lvtk::ignore_unused (cinst);
+            lvtk::ignore (cinst);
             // FIXME:
             // return std::unique_ptr<Instance> (new Instance (_data->world, *this, (intptr_t) cinst));
         }

@@ -6,6 +6,8 @@ if reuse_program.found()
     suite: 'metadata')
 endif
 
+if boost_dep.found()
+
 ## Unit Tests
 lvtk_unit_test_sources = '''
     atom_test.cpp
@@ -25,15 +27,16 @@ lvtk_unit_test_sources = '''
     ui_font_test.cpp
     ui_path_test.cpp
     weak_ref_test.cpp
-
-    host_world_test.cpp
-
     main_unit.cpp
 '''.split()
 
+if lilv_dep.found()
+    lvtk_unit_test_sources += 'host_world_test.cpp'
+endif
+
 unit = executable ('unit',
     lvtk_unit_test_sources,
-    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_opengl_dep, lvtk_host_dep ],
+    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_opengl_dep, lilv_dep ],
     gnu_symbol_visibility : 'hidden',
     cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 
@@ -55,9 +58,12 @@ lvtk_unit_tests = '''
     String
     Path
     WeakRef
-
-    World
 '''.split()
+
+if lilv_dep.found()
+    lvtk_unit_tests += 'World'
+endif
+
 foreach t : lvtk_unit_tests
     test (t, unit, args : [ '-t', t ],
         env : [
@@ -68,4 +74,6 @@ endforeach
 
 if not get_option('bindings').disabled()
     subdir ('lua')
+endif
+
 endif
