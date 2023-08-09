@@ -123,7 +123,7 @@ public:
         @param amount How much brighter?
         @returns The brightened color
     */
-    Color brighter (float amount) const noexcept {
+    Color brighter (float amount = 0.4f) const noexcept {
         amount = 1.0f / (1.0f + amount);
         return Color ((uint8_t) (255 - (amount * (255.f - (float) red()))),
                       (uint8_t) (255 - (amount * (255.f - (float) green()))),
@@ -131,13 +131,42 @@ public:
                       alpha());
     }
 
+    /** Get a copy of this Color, but brighter
+        @param amount How much brighter?
+        @returns The brightened color
+    */
+    Color darker (float amount = 0.4f) const noexcept {
+        amount = 1.0f / (1.0f + amount);
+        return Color ((uint8_t)(amount * red()),
+                      (uint8_t)(amount * green()),
+                      (uint8_t)(amount * blue()),
+                      alpha());
+    }
+
+    Color with_alpha (float a) const noexcept {
+        return Color (fred(), fblue(), fgreen(), a);
+    }
+
+    Color with_alpha (uint8_t a) const noexcept {
+        return Color (red(), blue(), green(), a);
+    }
+    
 private:
+#if 1 //LVTK_AGBA_COLORS
+    union {
+        struct {
+            uint8_t b, g, r, a;
+        } component;
+        uint32_t value { 0xff000000 };
+    } pixel;
+#else
     union {
         struct {
             uint8_t a, b, g, r;
         } component;
         uint32_t value { 0x000000ff };
     } pixel;
+#endif
 
     template <typename FT>
     static inline uint8_t convert (FT v) {

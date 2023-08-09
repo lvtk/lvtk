@@ -13,14 +13,14 @@ namespace detail {
 class DefaultStyle : public Style {
 public:
     DefaultStyle() {
-        set_color (ColorID::BUTTON_BASE, Color (0x464646ff));
-        set_color (ColorID::BUTTON_ON, Color (0x252525ff));
-        set_color (ColorID::BUTTON_TEXT_OFF, Color (0xeeeeeeff));
-        set_color (ColorID::BUTTON_TEXT_ON, Color (0xddddddff));
+        set_color (ColorID::BUTTON_BASE, Color (0xff464646));
+        set_color (ColorID::BUTTON_ON, Color (0xff252525));
+        set_color (ColorID::BUTTON_TEXT_OFF, Color (0xffeeeeee));
+        set_color (ColorID::BUTTON_TEXT_ON, Color (0xffdddddd));
 
-        set_color (ColorID::SLIDER_BASE, Color (0x141414ff));
-        set_color (ColorID::SLIDER_TRACK, Color (0x000000ff));
-        set_color (ColorID::SLIDER_THUMB, Color (0x451414ff));
+        set_color (ColorID::SLIDER_BASE, Color (0xff141414));
+        set_color (ColorID::SLIDER_TRACK, Color (0xff000000));
+        set_color (ColorID::SLIDER_THUMB, Color (0xff451414));
     }
 
     ~DefaultStyle() {}
