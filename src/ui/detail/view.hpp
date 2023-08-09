@@ -418,7 +418,7 @@ private:
         auto h = (float) ev.height / view.scale_factor();
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
-        VIEW_DBG2 ("expose: " << r.str());
+        VIEW_DBG3 ("expose: " << r.str());
         view.owner.expose (r.intersection (view.owner.bounds().at (0)));
         return PUGL_SUCCESS;
     }
@@ -580,9 +580,9 @@ private:
     static PuglStatus button_release (View& view, const PuglButtonEvent& ev) {
         view.buttons.released (ev, view.owner);
 
-        VIEW_DBG2 ("button_release: " << view.buttons.duration() << "s held.");
-        VIEW_DBG2 ("num clicks: " << view.buttons.num_clicks (static_cast<int> (ev.button))
-                                  << " dur: " << view.buttons.delta_time_up_down());
+        // VIEW_DBG2 ("button_release: " << view.buttons.duration() << "s held.");
+        // VIEW_DBG2 ("num clicks: " << view.buttons.num_clicks (static_cast<int> (ev.button))
+        //                           << " dur: " << view.buttons.delta_time_up_down());
 
         auto pos     = detail::point<float> (ev) / view.scale_factor();
         auto hovered = view.hovered;

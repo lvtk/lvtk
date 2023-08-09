@@ -61,8 +61,8 @@ bool View::visible() const { return puglGetVisible (impl->view); }
 void View::set_size (int width, int height) {
     VIEW_DBG ("View::set_size(" << width << ", " << height);
     auto status = puglSetSize (impl->view,
-                               static_cast<unsigned int> (width),
-                               static_cast<unsigned int> (height));
+                               static_cast<unsigned int> (width * scale_factor()),
+                               static_cast<unsigned int> (height * scale_factor()));
     switch (status) {
         case PUGL_SUCCESS:
             break;
