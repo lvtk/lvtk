@@ -22,7 +22,7 @@ endif
 ### Lv2 Core
 lv2_dep = dependency ('lv2',
     fallback : [ 'lv2', 'lv2_dep' ],
-    version : '>= 1.18.0', 
+    version : '>= 1.16.0', 
     required : true,
     default_options : [
         'tests=disabled',
