@@ -58,8 +58,8 @@ public:
         BOOST_ASSERT (seq.size() == sizeof (LV2_Atom_Sequence_Body));
         BOOST_ASSERT (seq.unit() == urids.map (LV2_ATOM__frameTime));
 
-        uint8_t evbuf[sizeof (lvtk::AtomEvent) + 3];
-        lvtk::AtomEvent* const event = (lvtk::AtomEvent*) evbuf;
+        auto evbuf = std::malloc (sizeof (lvtk::AtomEvent) + 3);
+        lvtk::AtomEvent* const event = reinterpret_cast<lvtk::AtomEvent*> (evbuf);
         event->time.frames           = 0;
         event->body.type             = urids.map (LV2_MIDI__MidiEvent);
         event->body.size             = 3;
@@ -124,6 +124,8 @@ public:
         }
 
         BOOST_REQUIRE_EQUAL (nev + 1, cnt);
+
+        std::free (evbuf);
     }
 
 private:
