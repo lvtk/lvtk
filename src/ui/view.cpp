@@ -13,7 +13,10 @@ namespace detail {
 View::View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
     : owner (o), main (m), widget (w), buttons(), keyboard() {
     view = puglNewView (m.impl->world);
-    puglSetSizeHint (view, PUGL_DEFAULT_SIZE, 1, 1);
+    puglSetSizeHint (view,
+                     PUGL_DEFAULT_SIZE,
+                     static_cast<PuglSpan> (w.width()),
+                     static_cast<PuglSpan> (w.height()));
     puglSetHandle (view, this);
     puglSetEventFunc (view, dispatch);
 }
