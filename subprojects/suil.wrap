@@ -1,5 +1,5 @@
 [wrap-git]
-url = https://gitlab.com/lv2/suil.git/
+url = https://gitlab.com/lv2/suil.git
 revision = master
 
 [provide]

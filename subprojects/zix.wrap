@@ -1,5 +1,5 @@
 [wrap-git]
-url = https://gitlab.com/drobilla/zix.git/
+url = https://gitlab.com/drobilla/zix.git
 revision = main
 
 [provide]
