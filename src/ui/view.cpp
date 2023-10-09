@@ -54,7 +54,7 @@ float View::scale_factor() const noexcept { return static_cast<float> (puglGetSc
 
 void View::set_visible (bool visible) {
     if (visible)
-        puglShow (impl->view);
+        puglShow (impl->view, PUGL_SHOW_RAISE);
     else
         puglHide (impl->view);
 }

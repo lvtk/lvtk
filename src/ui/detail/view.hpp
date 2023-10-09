@@ -423,25 +423,25 @@ private:
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus create (View& view, const PuglCreateEvent& ev) {
+    static PuglStatus create (View& view, const PuglRealizeEvent& ev) {
         view.owner.created();
         puglStartTimer (view.view, 0, 14.0 / 1000.0);
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus destroy (View& view, const PuglDestroyEvent& ev) {
+    static PuglStatus destroy (View& view, const PuglUnrealizeEvent& ev) {
         puglStopTimer (view.view, 0);
         view.owner.destroyed();
         return PUGL_SUCCESS;
     }
 
-    static PuglStatus map (View& view, const PuglMapEvent& ev) {
-        return PUGL_SUCCESS;
-    }
+    // static PuglStatus map (View& view, const PuglMapEvent& ev) {
+    //     return PUGL_SUCCESS;
+    // }
 
-    static PuglStatus unmap (View& view, const PuglUnmapEvent& ev) {
-        return PUGL_SUCCESS;
-    }
+    // static PuglStatus unmap (View& view, const PuglUnmapEvent& ev) {
+    //     return PUGL_SUCCESS;
+    // }
 
     static PuglStatus update (View& view, const PuglUpdateEvent& ev) {
         return PUGL_SUCCESS;
@@ -632,10 +632,10 @@ private:
             CASE2 (PUGL_CONFIGURE, configure)                       //< View moved/resized, a #PuglConfigureEvent
             CASEA (PUGL_UPDATE, update)                             //< View ready to draw, a #PuglUpdateEvent
             CASE2 (PUGL_EXPOSE, expose)                             //< View must be drawn, a #PuglExposeEvent
-            CASEA (PUGL_CREATE, create)                             //< View created, a #PuglCreateEvent
-            CASEA (PUGL_DESTROY, destroy)                           ///< View destroyed, a #PuglDestroyEvent
-            CASEA (PUGL_MAP, map)                                   ///< View made visible, a #PuglMapEvent
-            CASEA (PUGL_UNMAP, unmap)                               ///< View made invisible, a #PuglUnmapEvent
+            CASEA (PUGL_REALIZE, create)                             //< View created, a #PuglCreateEvent
+            CASEA (PUGL_UNREALIZE, destroy)                           ///< View destroyed, a #PuglDestroyEvent
+            // CASEA (PUGL_MAP, map)                                   ///< View made visible, a #PuglMapEvent
+            // CASEA (PUGL_UNMAP, unmap)                               ///< View made invisible, a #PuglUnmapEvent
             CASEA (PUGL_CLOSE, close)                               ///< View will be closed, a #PuglCloseEvent
             CASE3 (PUGL_FOCUS_IN, focus_in, ev->focus)              ///< Keyboard focus entered view, a #PuglFocusEvent
             CASE3 (PUGL_FOCUS_OUT, focus_out, ev->focus)            ///< Keyboard focus left view, a #PuglFocusEvent
