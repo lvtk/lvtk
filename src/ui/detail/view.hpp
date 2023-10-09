@@ -27,11 +27,11 @@
 #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
 // #define VIEW_DBG(x)
 
-// #define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
-#define VIEW_DBG2(x)
+#define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
+// #define VIEW_DBG2(x)
 
-// #define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
-#define VIEW_DBG3(x)
+#define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
+// #define VIEW_DBG3(x)
 
 namespace lvtk {
 namespace detail {
@@ -405,16 +405,19 @@ private:
             view.pugl_scale = ev.scale;
             // The pugl frame needs adjusted to fit widget size in user coords. So
             // request one and wait for the next configure.
-            VIEW_DBG ("pugl: resize frame for widget: " << widget.bounds().str() << 
-                " to PuglCoord " << (widget.bounds() * view.scale_factor()).str());
-            return puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
+            VIEW_DBG ("pugl: resize frame for widget: " << widget.bounds().str() << " to PuglCoord " << (widget.bounds() * view.scale_factor()).str());
+            // return puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
+            auto r = widget.bounds() * view.scale_factor();
+            puglSetSize (view.view, r.width, r.height);
+            return PUGL_BAD_CONFIGURATION;
         }
 
+        VIEW_DBG2 ("pugl: configured: " << detail::rect<int> (ev).str());
         view.widget.set_bounds (view.widget.x(),
                                 view.widget.y(),
                                 int (static_cast<float> (ev.width) / view.scale_factor()),
                                 int (static_cast<float> (ev.height) / view.scale_factor()));
-        VIEW_DBG2 ("pugl: configured: " << widget.bounds().str());
+
         return PUGL_SUCCESS;
     }
 

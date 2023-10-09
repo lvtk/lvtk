@@ -27,7 +27,7 @@ protected:
     bool obstructed (int, int) override { return true; }
 
     void paint (Graphics& g) override {
-        g.set_color (Color (0xeeeeeeff));
+        g.set_color (Color (0xffeeeeee));
         g.fill_rect (bounds().at (0));
     }
 
@@ -44,7 +44,7 @@ private:
         std::function<void()> clicked;
 
         void paint (Graphics& g) override {
-            g.set_color (Color (0x111111ff));
+            g.set_color (Color (0xff111111));
             g.draw_text (text, bounds().at (0).as<float>(), Align::CENTERED);
         }
 
@@ -63,7 +63,7 @@ private:
         ~Menu() {}
         bool obstructed (int, int) override { return true; }
         void paint (Graphics& g) override {
-            g.set_color (Color (0xefefefff));
+            g.set_color (Color (0xffefefef));
             g.fill_rect (bounds().at (0));
         }
 

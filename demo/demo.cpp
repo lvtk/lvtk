@@ -12,6 +12,7 @@ extern std::unique_ptr<Widget> create_sliders_demo();
 Content::Content()
     : sidebar (*this) {
     set_name ("Demo Content");
+    set_opaque (true);
 
     add (sidebar);
     sidebar.set_visible (true);
@@ -38,7 +39,7 @@ void Content::resized() {
 }
 
 void Content::paint (Graphics& g) {
-    g.set_color (Color (0x545454ff));
+    g.set_color (Color (0xff454545));
     g.fill_rect (bounds().at (0, 0).as<float>());
 }
 

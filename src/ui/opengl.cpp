@@ -25,13 +25,13 @@ public:
     OpenGLView (Main& context, Widget& widget)
         : lvtk::View (context, widget) {
         set_backend ((uintptr_t) puglGlBackend());
-    #if defined ( NANOVG_GL3)
+#if defined(NANOVG_GL3)
         set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 3);
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 3);
-    #else
+#else
         set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 2);
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 6);
-    #endif
+#endif
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
     }
 

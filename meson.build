@@ -56,8 +56,9 @@ lvtk_internal_dep = declare_dependency (
 
 ### shared libs
 subdir ('src')
+
 if not get_option('bindings').disabled()
-    subdir ('bindings')
+    # subdir ('bindings')
 endif
 
 ### Plugins

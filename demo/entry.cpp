@@ -29,7 +29,7 @@ private:
     }
 
     void paint (Graphics& g) override {
-        g.set_color (0x777777ff);
+        g.set_color (0xff777777);
         g.fill_rect (bounds().at (0, 0));
     }
 

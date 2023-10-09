@@ -137,9 +137,9 @@ public:
     */
     Color darker (float amount = 0.4f) const noexcept {
         amount = 1.0f / (1.0f + amount);
-        return Color ((uint8_t)(amount * red()),
-                      (uint8_t)(amount * green()),
-                      (uint8_t)(amount * blue()),
+        return Color ((uint8_t) (amount * red()),
+                      (uint8_t) (amount * green()),
+                      (uint8_t) (amount * blue()),
                       alpha());
     }
 
@@ -150,7 +150,7 @@ public:
     Color with_alpha (uint8_t a) const noexcept {
         return Color (red(), blue(), green(), a);
     }
-    
+
 private:
 #if 1 //LVTK_AGBA_COLORS
     union {

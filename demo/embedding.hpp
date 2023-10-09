@@ -5,9 +5,6 @@
 
 #include <iostream>
 
-#include <lvtk/host/instance.hpp>
-#include <lvtk/host/world.hpp>
-
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/widget.hpp>
 
@@ -20,7 +17,6 @@ class Embedding : public Widget {
 public:
     Embedding() {
         set_size (640, 360);
-        world.load_all();
         set_opaque (true);
     }
 
@@ -39,7 +35,7 @@ public:
     }
 
     void paint (Graphics& g) override {
-        g.set_color (0x222222ff);
+        g.set_color (0xff222222);
         g.fill_rect (bounds().at (0, 0));
     }
 
@@ -49,17 +45,6 @@ public:
         if (embed)
             remove (*embed);
         embed.reset();
-#if 0
-        // if (ui) {
-        //     ui->unload();
-        //     ui.reset();
-        // }
-
-        if (plugin) {
-            plugin->deactivate();
-            plugin.reset();
-        }
-#endif
     }
 
     bool loaded() const {
@@ -124,9 +109,7 @@ protected:
 private:
     boost::signals2::connection conn_idle;
     std::function<void()> f_idle { []() {} };
-    lvtk::World world;
     std::unique_ptr<Embed> embed;
-    std::unique_ptr<lvtk::Instance> plugin;
 };
 
 } // namespace demo

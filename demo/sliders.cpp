@@ -56,10 +56,10 @@ private:
     }
 
     void paint (Graphics& g) override {
-        g.set_color (0x777777ff);
+        g.set_color (0xff777777);
         g.fill_rect (bounds().at (0, 0));
 
-        g.set_color (Color (0xeeeeeeff));
+        g.set_color (Color (0xffeeeeee));
         auto r = bounds().at (0).slice_bottom (30);
         r.slice_left (8);
         g.draw_text (min_str, r.as<float>(), Align::LEFT_MIDDLE);

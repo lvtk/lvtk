@@ -38,7 +38,10 @@ public:
 
 protected:
     void paint (Graphics& g) override {
-        g.set_color (0xeeeeeeff);
+        g.set_color (0xff333333);
+        g.fill_rect (bounds().at (0));
+
+        g.set_color (0xffeeeeee);
         g.set_font (Font (24.f));
 
         auto r = bounds().at (0);

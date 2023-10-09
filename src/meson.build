@@ -70,4 +70,6 @@ if lilv_dep.found() and suil_dep.found()
         link_with : [],
         include_directories : [],
         dependencies : [ lvtk_dep, lilv_dep, suil_dep ])
+else
+    lvtk_host_dep = dependency('', required : false)
 endif

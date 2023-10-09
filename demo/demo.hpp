@@ -97,7 +97,7 @@ private:
         }
 
         void paint (Graphics& g) override {
-            g.set_color (0x777777FF);
+            g.set_color (Color (0xff454545).darker (0.04f));
             g.fill_rect (bounds().at (0, 0));
         }
 

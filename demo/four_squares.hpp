@@ -66,8 +66,8 @@ public:
 
     bool is_on = false;
     Color color_text { 0xffffffff };
-    Color color_on { 0x550000ff };
-    Color color_off { 0x141414ff };
+    Color color_on { 0xff550000 };
+    Color color_off { 0xff141414 };
     float divider_y = 0.f;
 };
 
@@ -120,7 +120,7 @@ public:
     }
 
     void paint (Graphics& g) override {
-        g.set_color (0x777777FF);
+        g.set_color (0xFF777777);
         g.fill_rect (bounds().at (0, 0));
     }
 
