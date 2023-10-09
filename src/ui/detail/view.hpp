@@ -24,8 +24,8 @@
 
 #define LVTK_MAX_BUTTONS 4
 
-// #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
-#define VIEW_DBG(x)
+#define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
+// #define VIEW_DBG(x)
 
 // #define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
 #define VIEW_DBG2(x)
@@ -336,15 +336,13 @@ public:
             puglSetParentWindow (view, (PuglNativeView) parent);
     }
 
-    float scale_factor() const noexcept {
-        return puglGetScaleFactor (view);
-    }
+    float scale_factor() const noexcept { return static_cast<float> (pugl_scale); }
 
     void realize() {
         if (view == nullptr)
             return;
         auto status = puglRealize (view);
-        (void) status;
+        lvtk::ignore (status);
     }
 
     void drag_pressed_widgets (Point<float> pos) {
@@ -390,6 +388,8 @@ private:
     Buttons buttons;
     Keyboard keyboard;
 
+    double pugl_scale = 1.0;
+
     boost::signals2::signal<void()> sig_idle;
 
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
@@ -398,11 +398,23 @@ private:
             return PUGL_SUCCESS;
         }
 
+        auto& widget = view.widget;
+
+        if (view.pugl_scale != ev.scale) {
+            VIEW_DBG ("pugl: scale changed: " << ev.scale);
+            view.pugl_scale = ev.scale;
+            // The pugl frame needs adjusted to fit widget size in user coords. So
+            // request one and wait for the next configure.
+            VIEW_DBG ("pugl: resize frame for widget: " << widget.bounds().str() << 
+                " to PuglCoord " << (widget.bounds() * view.scale_factor()).str());
+            return puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
+        }
+
         view.widget.set_bounds (view.widget.x(),
                                 view.widget.y(),
                                 int (static_cast<float> (ev.width) / view.scale_factor()),
                                 int (static_cast<float> (ev.height) / view.scale_factor()));
-        VIEW_DBG2 ("pugl: configure: " << view.widget.bounds().str());
+        VIEW_DBG2 ("pugl: configured: " << widget.bounds().str());
         return PUGL_SUCCESS;
     }
 
@@ -629,11 +641,11 @@ private:
 #define CASE2(t, fn) CASE3 (t, fn, ev->fn)
 #define CASEA(t, fn) CASE3 (t, fn, ev->any)
         switch (ev->type) {
-            CASE2 (PUGL_CONFIGURE, configure)                       //< View moved/resized, a #PuglConfigureEvent
-            CASEA (PUGL_UPDATE, update)                             //< View ready to draw, a #PuglUpdateEvent
-            CASE2 (PUGL_EXPOSE, expose)                             //< View must be drawn, a #PuglExposeEvent
-            CASEA (PUGL_REALIZE, create)                             //< View created, a #PuglCreateEvent
-            CASEA (PUGL_UNREALIZE, destroy)                           ///< View destroyed, a #PuglDestroyEvent
+            CASE2 (PUGL_CONFIGURE, configure) //< View moved/resized, a #PuglConfigureEvent
+            CASEA (PUGL_UPDATE, update)       //< View ready to draw, a #PuglUpdateEvent
+            CASE2 (PUGL_EXPOSE, expose)       //< View must be drawn, a #PuglExposeEvent
+            CASEA (PUGL_REALIZE, create)      //< View created, a #PuglCreateEvent
+            CASEA (PUGL_UNREALIZE, destroy)   ///< View destroyed, a #PuglDestroyEvent
             // CASEA (PUGL_MAP, map)                                   ///< View made visible, a #PuglMapEvent
             // CASEA (PUGL_UNMAP, unmap)                               ///< View made invisible, a #PuglUnmapEvent
             CASEA (PUGL_CLOSE, close)                               ///< View will be closed, a #PuglCloseEvent

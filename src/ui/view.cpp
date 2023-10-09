@@ -15,8 +15,8 @@ View::View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
     view = puglNewView (m.impl->world);
     puglSetSizeHint (view,
                      PUGL_DEFAULT_SIZE,
-                     static_cast<PuglSpan> (w.width()),
-                     static_cast<PuglSpan> (w.height()));
+                     static_cast<PuglSpan> (std::max (1, w.width())),
+                     static_cast<PuglSpan> (std::max (1, w.height())));
     puglSetHandle (view, this);
     puglSetEventFunc (view, dispatch);
 }
@@ -50,7 +50,7 @@ void View::set_view_hint (int hint, int value) {
 }
 
 uintptr_t View::handle() { return puglGetNativeView (impl->view); }
-float View::scale_factor() const noexcept { return static_cast<float> (puglGetScaleFactor (impl->view)); }
+float View::scale_factor() const noexcept { return impl->scale_factor(); }
 
 void View::set_visible (bool visible) {
     if (visible)
@@ -62,7 +62,7 @@ void View::set_visible (bool visible) {
 bool View::visible() const { return puglGetVisible (impl->view); }
 
 void View::set_size (int width, int height) {
-    VIEW_DBG ("View::set_size(" << width << ", " << height);
+    VIEW_DBG ("set_size: " << width << "x" << height);
     auto status = puglSetSize (impl->view,
                                static_cast<unsigned int> (width * scale_factor()),
                                static_cast<unsigned int> (height * scale_factor()));
@@ -85,8 +85,8 @@ Rectangle<int> View::bounds() const {
 }
 
 void View::set_bounds (Bounds b) {
-    b *= scale_factor();
     VIEW_DBG2 ("[view] set_bounds: " << b.str());
+    b *= scale_factor();
     puglSetFrame (impl->view, detail::frame (b));
 }
 
