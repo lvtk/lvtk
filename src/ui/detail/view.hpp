@@ -30,8 +30,8 @@
 #define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
 // #define VIEW_DBG2(x)
 
-#define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
-// #define VIEW_DBG3(x)
+// #define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG3(x)
 
 namespace lvtk {
 namespace detail {
