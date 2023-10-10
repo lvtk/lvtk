@@ -398,21 +398,29 @@ private:
             return PUGL_SUCCESS;
         }
 
+        VIEW_DBG2 ("pugl: configured: " << detail::rect<int> (ev).str());
+
         auto& widget = view.widget;
 
         if (view.pugl_scale != ev.scale) {
             VIEW_DBG ("pugl: scale changed: " << ev.scale);
-            view.pugl_scale = ev.scale;
+            view.pugl_scale = std::max (1.0, ev.scale);
             // The pugl frame needs adjusted to fit widget size in user coords. So
             // request one and wait for the next configure.
             VIEW_DBG ("pugl: resize frame for widget: " << widget.bounds().str() << " to PuglCoord " << (widget.bounds() * view.scale_factor()).str());
             // return puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
             auto r = widget.bounds() * view.scale_factor();
             puglSetSize (view.view, r.width, r.height);
-            return PUGL_BAD_CONFIGURATION;
+            return PUGL_SUCCESS;
+            
+            PuglEvent cev;
+            cev.configure = ev;
+            cev.configure.width = widget.width() * view.pugl_scale;
+            cev.configure.height = widget.height() * view.pugl_scale;
+            puglSendEvent (view.view, &cev);
+            return PUGL_SUCCESS;
         }
 
-        VIEW_DBG2 ("pugl: configured: " << detail::rect<int> (ev).str());
         view.widget.set_bounds (view.widget.x(),
                                 view.widget.y(),
                                 int (static_cast<float> (ev.width) / view.scale_factor()),
