@@ -27,11 +27,14 @@
 #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
 // #define VIEW_DBG(x)
 
-#define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
-// #define VIEW_DBG2(x)
+// #define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG2(x)
 
 // #define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
 #define VIEW_DBG3(x)
+
+// #define VIEW_DBG4(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG4(x)
 
 namespace lvtk {
 namespace detail {
@@ -412,7 +415,7 @@ private:
             auto r = widget.bounds() * view.scale_factor();
             puglSetSize (view.view, r.width, r.height);
             return PUGL_SUCCESS;
-            
+
             PuglEvent cev;
             cev.configure = ev;
             cev.configure.width = widget.width() * view.pugl_scale;
@@ -441,7 +444,7 @@ private:
         auto h = (float) ev.height / view.scale_factor();
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
-        VIEW_DBG3 ("expose: " << r.str());
+        VIEW_DBG4 ("expose: " << r.str());
         view.owner.expose (r.intersection (view.owner.bounds().at (0)));
         return PUGL_SUCCESS;
     }
