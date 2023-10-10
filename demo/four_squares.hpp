@@ -29,10 +29,10 @@ public:
         g.fill_rect (fr);
         g.set_color (color_text);
 
-        auto r = bounds().at (0).as<float>().slice_bottom (height() / 2);
+        auto r = bounds().at (0).slice_bottom (height() / 2);
 
         g.set_font (Font (12.f));
-        g.draw_text (name(), r, Align::CENTERED);
+        g.draw_text (name(), r.as<float>(), Align::CENTERED);
     }
 
     bool obstructed (int x, int y) override { return true; }

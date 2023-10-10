@@ -23,7 +23,7 @@ namespace lvtk {
     @headerfile lvtk/symbols.hpp
     @ingroup lvtk
  */
-class Symbols final {
+class LVTK_API Symbols final {
 public:
     /** Create an empty symbol map and initialized LV2 URID features */
     Symbols() {

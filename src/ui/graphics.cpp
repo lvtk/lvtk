@@ -48,7 +48,7 @@ void Graphics::fill_rect (float x, float y, float width, float height) {
     fill_rect (Rectangle<float> (x, y, width, height));
 }
 void Graphics::fill_rect (int x, int y, int width, int height) {
-    fill_rect (Rectangle<float> (x, y, width, height).as<int>());
+    fill_rect (Rectangle<int> (x, y, width, height).as<float>());
 }
 void Graphics::fill_rect (const Rectangle<float>& r) {
     _context.fill_rect (r);

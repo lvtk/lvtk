@@ -140,10 +140,10 @@ struct Rectangle {
 
     template <typename F>
     Rectangle& operator*= (F scale) noexcept {
-        x *= scale;
-        y *= scale;
-        width *= scale;
-        height *= scale;
+        x *= (Val) scale;
+        y *= (Val) scale;
+        width *= (Val) scale;
+        height *= (Val) scale;
         return *this;
     }
 
