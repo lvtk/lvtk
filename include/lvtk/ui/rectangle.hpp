@@ -121,6 +121,10 @@ struct Rectangle {
         return x == o.x && y == o.y && width == o.width && height == o.height;
     }
 
+    bool operator!= (const Rectangle& o) const noexcept {
+        return x != o.x || y != o.y || width != o.width || height != o.height;
+    }
+
     Rectangle operator+ (Point<Val> delta) const noexcept {
         return { x + delta.x, y + delta.y };
     }
