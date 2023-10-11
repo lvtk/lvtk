@@ -59,7 +59,7 @@ protected:
         const auto vb    = bounds().at (0);
         glViewport (0, 0, (GLsizei) ((float) vb.width * scale), (GLsizei) ((float) vb.height * scale));
 
-        if (needs_cleared) {
+        if (needs_cleared || last_frame != frame) {
             glClearColor (bg_color.fred(), bg_color.fgreen(), bg_color.fblue(), bg_color.falpha());
             glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             needs_cleared = false;
@@ -72,13 +72,18 @@ protected:
             render (*_context);
             _context->restore();
             _context->end_frame();
+        } else {
+            needs_cleared = true;
         }
+
+        last_frame = frame;
     }
 
 private:
     std::unique_ptr<Ctx> _context;
+    Bounds last_frame;
     bool needs_cleared = true;
-    Color bg_color { 0x000000ff };
+    Color bg_color { 0xff000000 };
 };
 
 std::unique_ptr<View> OpenGL::create_view (Main& c, Widget& w) {
