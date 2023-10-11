@@ -12,11 +12,13 @@ namespace detail {
 
 View::View (lvtk::View& o, lvtk::Main& m, lvtk::Widget& w)
     : owner (o), main (m), widget (w), buttons(), keyboard() {
-    view = puglNewView (m.impl->world);
+    view       = puglNewView (m.impl->world);
+    pugl_scale = puglGetScaleFactor (view);
+    puglSetSizeHint (view, PUGL_MIN_SIZE, (int) pugl_scale, (int) pugl_scale);
     puglSetSizeHint (view,
                      PUGL_DEFAULT_SIZE,
-                     static_cast<PuglSpan> (std::max (1, w.width())),
-                     static_cast<PuglSpan> (std::max (1, w.height())));
+                     static_cast<PuglSpan> (scale_factor() * std::max (1, w.width())),
+                     static_cast<PuglSpan> (scale_factor() * std::max (1, w.height())));
     puglSetHandle (view, this);
     puglSetEventFunc (view, dispatch);
 }
@@ -85,7 +87,7 @@ Rectangle<int> View::bounds() const {
 }
 
 void View::set_bounds (Bounds b) {
-    VIEW_DBG2 ("[view] set_bounds: " << b.str());
+    VIEW_DBG2 ("set_bounds: " << b.str());
     b *= scale_factor();
     puglSetFrame (impl->view, detail::frame (b));
 }
