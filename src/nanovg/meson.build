@@ -7,7 +7,7 @@ if host_machine.system() == 'windows'
     lvtk_nanovg_sources += 'nanovg/glad.c'
 endif
 
-lvtk_nanovg_c_args = [ '-D@0@=1'.format(host_machine.system() == 'linux' ? 'NANOVG_GL3' : 'NANOVG_GL2') ]
+lvtk_nanovg_c_args = [ '-D@0@=1'.format('NANOVG_GL3') ]
 
 lvtk_nanovg_cpp_args = lvtk_nanovg_c_args
 if host_machine.system() == 'linux'

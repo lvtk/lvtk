@@ -15,6 +15,7 @@ static int run (lvtk::Main& context) {
     try {
         auto content = std::make_unique<Wgt>();
         context.elevate (*content, lvtk::View::RESIZABLE, 0);
+        
         while (true) {
             context.loop (-1.0);
             if (! context.running())
@@ -38,8 +39,28 @@ int WinMain (HINSTANCE hInstance,
              HINSTANCE hPrevInstance,
              LPSTR lpCmdLine,
              int nShowCmd) {
+
+    class ClogBuf
+        : public std::stringbuf
+    {
+    public:
+        ~ClogBuf() { sync(); }
+        int sync()
+        {
+            ::OutputDebugStringA(str().c_str());
+            str(std::string()); // Clear the string buffer
+            return 0;
+        }
+    };
+
+    ClogBuf dbgbuf;;
+    auto clogbuf = std::clog.rdbuf (&dbgbuf);
+
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
-    return lvtk::demo::run<lvtk::demo::Content> (context);
+    auto ret = lvtk::demo::run<lvtk::demo::Content> (context);
+
+    std::clog.rdbuf (clogbuf);
+    return ret;
 }
 #else
 int main (int argc, char** argv) {
