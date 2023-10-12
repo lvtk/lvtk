@@ -33,8 +33,8 @@
 // #define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
 #define VIEW_DBG3(x)
 
-#define VIEW_DBG4(x) std::clog << "[view] " << x << std::endl;
-// #define VIEW_DBG4(x)
+// #define VIEW_DBG4(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG4(x)
 
 namespace lvtk {
 namespace detail {
@@ -391,42 +391,50 @@ private:
     Buttons buttons;
     Keyboard keyboard;
 
-    double pugl_scale      = 1.0;
-    bool configure_pending = false;
+    template <typename T>
+    struct ScopedInc {
+        explicit ScopedInc (T& val) : value (val), original (val) {}
+        ~ScopedInc() { value += inc; }
+        T& value;
+        const T original;
+        const T inc { (T) 1 };
+        constexpr operator T() const noexcept { return value; }
+    };
+
+    double pugl_scale = 1.0;
+    int nconfigures   = 0;
 
     boost::signals2::signal<void()> sig_idle;
 
     static PuglStatus configure (View& view, const PuglConfigureEvent& ev) {
+        ScopedInc nconfigs (view.nconfigures);
+
         if (ev.flags & PUGL_IS_HINT) {
             VIEW_DBG ("configure: hint");
             return PUGL_SUCCESS;
         }
 
-        VIEW_DBG2 ("pugl: configured: " << detail::rect<int> (ev).str());
+        VIEW_DBG4 ("pugl: " << (int) nconfigs << ": configure: " << detail::rect<int> (ev).str());
 
-        auto& widget       = view.widget;
-        const auto evscale = std::max (1.0, ev.scale);
-        int repaints       = 0;
+        auto& widget             = view.widget;
+        const bool scale_changed = view.pugl_scale != ev.scale;
 
-        if (view.pugl_scale != evscale) {
-            view.pugl_scale = evscale;
-            VIEW_DBG ("pugl: scale changed: " << ev.scale);
-            // The pugl frame needs adjusted to fit widget size in user coords. So
-            // request one and wait for the next configure.
-            VIEW_DBG ("pugl: resize frame for widget: " << widget.bounds().str()
-                                                        << " to PuglCoord " << (widget.bounds() * evscale).str());
+        if (scale_changed || nconfigs <= 0) {
+            if (scale_changed) {
+                view.pugl_scale = ev.scale;
+                VIEW_DBG ("pugl: scale changed: " << ev.scale);
+            }
+
+            VIEW_DBG ("pugl: resize for widget: " << widget.bounds().str()
+                                                  << " to PuglCoord " << (widget.bounds() * ev.scale).str());
 
 #if 0
             auto st = puglSetSize (view.view,
                                    static_cast<PuglSpan> (widget.width() * evscale),
                                    static_cast<PuglSpan> (widget.height() * evscale));
 #else
-            auto st = puglSetFrame (view.view, detail::frame (widget.bounds() * evscale));
+            auto st = puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
 #endif
-            if (st == PUGL_SUCCESS) {
-                view.configure_pending = true;
-            }
-
             VIEW_DBG2 ("pugl: puglSetSize: " << puglStrerror (st));
             return PUGL_SUCCESS;
         }
@@ -435,16 +443,6 @@ private:
                                 view.widget.y(),
                                 int (static_cast<float> (ev.width) / view.scale_factor()),
                                 int (static_cast<float> (ev.height) / view.scale_factor()));
-
-        if (view.configure_pending) {
-            view.configure_pending = false;
-            ++repaints;
-        }
-
-        if (repaints > 0) {
-            // VIEW_DBG2 ("pugl: puglPostRedisplay inside configure")
-            // puglPostRedisplay (view.view);
-        }
 
         return PUGL_SUCCESS;
     }
@@ -576,14 +574,14 @@ private:
         if (ref.valid()) {
             auto ev = input::event (view.main, view.widget, *ref, pos);
             if (view.hovered != ref) {
-                VIEW_DBG ("hovered changed: " << ref->name());
+                VIEW_DBG3 ("hovered changed: " << ref->name());
                 ref->enter (ev);
                 view.hovered = ref;
             }
 
             ref->motion (ev);
         } else if (view.hovered) {
-            VIEW_DBG ("hovered cleared");
+            VIEW_DBG3 ("hovered cleared");
             if (auto h = view.hovered.lock()) {
                 auto cpos  = h->convert (&view.widget, pos);
                 cpos.x     = std::min (std::max (0.f, cpos.x), (float) h->width());
