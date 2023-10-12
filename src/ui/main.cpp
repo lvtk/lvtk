@@ -88,13 +88,19 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
 
     // widget.impl->notify_structure_changed();
 #else
-    auto view = impl->create_view (widget, flags, parent);
-    // bail out conditions?
+    {
+        auto vptr = impl->create_view (widget, flags, parent);
+        // bail out conditions?
+        widget.impl->view = std::move (vptr);
+    }
 
-    view->impl->realize();
-    view->set_bounds (widget.bounds());
-    view->set_visible (widget.visible());
-    widget.impl->view = std::move (view);
+    if (widget.impl->view == nullptr)
+        return;
+
+    auto& view = *widget.impl->view;
+    view.set_bounds (widget.bounds());
+    view.set_visible (widget.visible());
+    view.impl->realize();
     widget.impl->notify_structure_changed();
 #endif
 }
