@@ -15,7 +15,7 @@ endif
 
 pymod = import('python')
 python3_exe = pymod.find_installation ('python3')
-
+bundle_py   = files ('scripts/bundle.py').get(0)
 date_py = files ('scripts/date.py')
 lvtk_release_date = run_command (python3_exe, date_py).stdout().strip()
 version_py = files ('scripts/version.py')
@@ -69,7 +69,8 @@ endif
 ### Demo
 if not get_option('demo').disabled()
     subdir ('demo')
-    executable (
+
+    lvtk_demo_exe = executable (
         'lvtk-demo', 
         'demo/main.cpp',
         cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
@@ -77,7 +78,27 @@ if not get_option('demo').disabled()
         link_with : [ liblvtk_demo ],
         dependencies : [ lvtk_demo_deps, threads_dep ],
         win_subsystem : 'windows',
-        install : true)
+        install : true
+    )
+    
+    if host_machine.system() == 'darwin'
+        bundle_cmd = [ python3_exe, bundle_py, '--binary', '@INPUT@',
+                        '--output', '@OUTPUT@',
+                        '--plist', files ('demo/Info.plist') ]
+
+        if get_option ('buildtype') != 'debug'
+            bundle_cmd = [ bundle_cmd, '--no-strip' ]
+        endif
+
+        custom_target (
+                'LVTK.app',
+                build_by_default: true,
+                command: bundle_cmd ,
+                input: lvtk_demo_exe,
+                output: 'LVTK.app',
+                install: false
+            )
+    endif
 endif
 
 ### Install Headers and PC
