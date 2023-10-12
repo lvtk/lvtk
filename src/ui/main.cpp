@@ -77,23 +77,8 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     if (widget.impl->view != nullptr)
         return;
 
-#if LVTK_ELEVATION
-    widget.impl->view = std::move (impl->create_view (widget, flags, parent));
-    const auto view   = widget.impl->view.get();
-    // // // bail out conditions?
-
-    view->impl->realize();
-    // view->set_bounds (widget.bounds());
-    // view->set_visible (widget.visible());
-
-    // widget.impl->notify_structure_changed();
-#else
-    {
-        auto vptr = impl->create_view (widget, flags, parent);
-        // bail out conditions?
+    if (auto vptr = impl->create_view (widget, flags, parent))
         widget.impl->view = std::move (vptr);
-    }
-
     if (widget.impl->view == nullptr)
         return;
 
@@ -102,7 +87,6 @@ void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     view.set_visible (widget.visible());
     view.impl->realize();
     widget.impl->notify_structure_changed();
-#endif
 }
 
 void Main::elevate (Widget& widget, ViewFlags flags, View& parent) {
