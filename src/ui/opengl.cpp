@@ -49,20 +49,25 @@ protected:
                 assert (glad_loaded);
             }
 #endif
-            _context = std::make_unique<Ctx>();
+            _context = std::make_unique<context_type>();
         }
+
         View::created();
     }
 
     inline void expose (Bounds frame) override {
         const auto scale = scale_factor();
         const auto vb    = bounds().at (0);
-        glViewport (0, 0, (GLsizei) ((float) vb.width * scale), (GLsizei) ((float) vb.height * scale));
+        glViewport (0, 0, static_cast<GLsizei> (vb.width * scale), static_cast<GLsizei> (vb.height * scale));
 
         if (needs_cleared || last_frame != frame) {
-            glClearColor (bg_color.fred(), bg_color.fgreen(), bg_color.fblue(), bg_color.falpha());
-            glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             needs_cleared = false;
+            bg_color      = style().find_color (ColorID::VIEW_BACKGROUND);
+            glClearColor (bg_color.fred(),
+                          bg_color.fgreen(),
+                          bg_color.fblue(),
+                          bg_color.falpha());
+            glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
         if (_context) {

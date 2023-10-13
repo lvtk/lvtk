@@ -21,6 +21,8 @@ public:
         set_color (ColorID::SLIDER_BASE, Color (0xff141414));
         set_color (ColorID::SLIDER_TRACK, Color (0xff000000));
         set_color (ColorID::SLIDER_THUMB, Color (0xff451414));
+
+        set_color (ColorID::VIEW_BACKGROUND, Color (0xff000000));
     }
 
     ~DefaultStyle() {}
