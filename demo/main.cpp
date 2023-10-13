@@ -18,7 +18,7 @@ static int run (lvtk::Main& context) {
             view->set_position ((1920 / 2) - (view->bounds().width / 2),
                                 (1080 / 2) - (view->bounds().height / 2));
         }
-        
+
         while (true) {
             context.loop (-1.0);
             if (! context.running())
@@ -43,20 +43,21 @@ int WinMain (HINSTANCE hInstance,
              LPSTR lpCmdLine,
              int nShowCmd) {
 
+    lvtk::ignore (hInstance, hPrevInstance, lpCmdLine, nShowCmd);
+    
     class ClogBuf
-        : public std::stringbuf
-    {
+        : public std::stringbuf {
     public:
         ~ClogBuf() { sync(); }
-        int sync()
-        {
-            ::OutputDebugStringA(str().c_str());
-            str(std::string()); // Clear the string buffer
+        int sync() {
+            ::OutputDebugStringA (str().c_str());
+            str (std::string()); // Clear the string buffer
             return 0;
         }
     };
 
-    ClogBuf dbgbuf;;
+    ClogBuf dbgbuf;
+    ;
     auto clogbuf = std::clog.rdbuf (&dbgbuf);
 
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
