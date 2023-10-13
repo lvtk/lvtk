@@ -63,17 +63,16 @@ void View::set_visible (bool visible) {
 
 bool View::visible() const { return puglGetVisible (impl->view); }
 
+void View::set_position (int x, int y) {
+    auto st = puglSetPosition (impl->view, x * scale_factor(), y * scale_factor());
+    lvtk::ignore (st);
+}
+
 void View::set_size (int width, int height) {
-    VIEW_DBG ("set_size: " << width << "x" << height);
-    auto status = puglSetSize (impl->view,
-                               static_cast<unsigned int> (width * scale_factor()),
-                               static_cast<unsigned int> (height * scale_factor()));
-    switch (status) {
-        case PUGL_SUCCESS:
-            break;
-        default:
-            break;
-    }
+    auto st = puglSetSize (impl->view,
+                           static_cast<unsigned int> (width * scale_factor()),
+                           static_cast<unsigned int> (height * scale_factor()));
+    lvtk::ignore (st);
 }
 
 Rectangle<int> View::bounds() const {
@@ -87,7 +86,6 @@ Rectangle<int> View::bounds() const {
 }
 
 void View::set_bounds (Bounds b) {
-    VIEW_DBG2 ("set_bounds: " << b.str());
     b *= scale_factor();
     puglSetFrame (impl->view, detail::frame (b));
 }

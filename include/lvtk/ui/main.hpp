@@ -106,10 +106,10 @@ public:
     void quit();
 
     /** Elevate a Widget to view with optional opaque parent */
-    void elevate (Widget& widget, ViewFlags flags, uintptr_t parent);
+    View* elevate (Widget& widget, ViewFlags flags, uintptr_t parent);
 
     /** Elevate a Widget to view status with optional known parent */
-    void elevate (Widget& widget, ViewFlags flags, View& parent);
+    View* elevate (Widget& widget, ViewFlags flags, View& parent);
 
     /** Find the view for this wiget */
     View* find_view (Widget& widget) const noexcept;

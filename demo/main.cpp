@@ -14,7 +14,10 @@ template <class Wgt>
 static int run (lvtk::Main& context) {
     try {
         auto content = std::make_unique<Wgt>();
-        context.elevate (*content, lvtk::View::RESIZABLE, 0);
+        if (auto view = context.elevate (*content, lvtk::View::RESIZABLE, 0)) {
+            view->set_position ((1920 / 2) - (view->bounds().width / 2),
+                                (1080 / 2) - (view->bounds().height / 2));
+        }
         
         while (true) {
             context.loop (-1.0);

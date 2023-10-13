@@ -73,24 +73,25 @@ void Main::quit() {
     impl->quit_flag = true;
 }
 
-void Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
+View* Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
     if (widget.impl->view != nullptr)
-        return;
+        return widget.impl->view.get();
 
     if (auto vptr = impl->create_view (widget, flags, parent))
         widget.impl->view = std::move (vptr);
     if (widget.impl->view == nullptr)
-        return;
+        return nullptr;
 
     auto& view = *widget.impl->view;
     view.set_bounds (widget.bounds());
     view.set_visible (widget.visible());
     view.impl->realize();
     widget.impl->notify_structure_changed();
+    return widget.impl->view != nullptr ? widget.impl->view.get() : nullptr;
 }
 
-void Main::elevate (Widget& widget, ViewFlags flags, View& parent) {
-    elevate (widget, flags, parent.handle());
+View* Main::elevate (Widget& widget, ViewFlags flags, View& parent) {
+    return elevate (widget, flags, parent.handle());
 }
 
 View* Main::find_view (Widget& widget) const noexcept {
