@@ -42,9 +42,8 @@ int WinMain (HINSTANCE hInstance,
              HINSTANCE hPrevInstance,
              LPSTR lpCmdLine,
              int nShowCmd) {
-
     lvtk::ignore (hInstance, hPrevInstance, lpCmdLine, nShowCmd);
-    
+
     class ClogBuf
         : public std::stringbuf {
     public:

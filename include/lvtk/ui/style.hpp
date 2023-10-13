@@ -32,7 +32,9 @@ struct ColorID {
 
         SLIDER_BASE,  ///< Base color for Slider background
         SLIDER_THUMB, ///< Color to draw the slider handle with
-        SLIDER_TRACK  ///< Color to use for the groove the thumb slides in
+        SLIDER_TRACK, ///< Color to use for the groove the thumb slides in
+
+        VIEW_BACKGROUND
     };
 };
 
