@@ -58,7 +58,7 @@ public:
 
     /** Set the position of this view. */
     void set_position (int x, int y);
-    
+
     /** Resize this View */
     void set_size (int width, int height);
 

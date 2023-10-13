@@ -403,6 +403,7 @@ private:
 
     double pugl_scale = 1.0;
     int nconfigures   = 0;
+    bool configure_pending { false };
 
     boost::signals2::signal<void()> sig_idle;
 
@@ -436,9 +437,15 @@ private:
             auto st = puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
 #endif
             VIEW_DBG2 ("pugl: puglSetSize: " << puglStrerror (st));
+            view.configure_pending = true;
             return PUGL_SUCCESS;
         }
 
+        if (view.configure_pending) {
+            view.configure_pending = false;
+            VIEW_DBG ("handled pending configure");
+        }
+        
         view.widget.set_bounds (view.widget.x(),
                                 view.widget.y(),
                                 int (static_cast<float> (ev.width) / view.scale_factor()),
