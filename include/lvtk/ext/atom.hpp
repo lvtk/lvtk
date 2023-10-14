@@ -7,10 +7,22 @@
 #include <lv2/atom/forge.h>
 #include <lv2/atom/util.h>
 
+#include <lvtk/lvtk.hpp>
+
 #include <iostream>
 #include <string>
 
 namespace lvtk {
+namespace detail {
+struct SequenceTraits {
+    static constexpr auto forge_header = lv2_atom_forge_sequence_head;
+};
+
+struct ObjectTraits {
+    static constexpr auto forge_header = lv2_atom_forge_object;
+};
+} // namespace detail
+
 /** @ingroup alias
     @{ 
 */
@@ -33,6 +45,28 @@ using ObjectQuery = LV2_Atom_Object_Query;
 /** 
     @} 
  */
+
+template <typename Hdr>
+struct ScopedFrame {
+    ScopedFrame() = delete;
+
+    template <typename... Args>
+    inline explicit ScopedFrame (LV2_Atom_Forge* f, Args&&... args)
+        : forge (f) {
+        Hdr::forge_header (forge, &frame, std::forward<Args> (args)...);
+    }
+
+    inline ~ScopedFrame() noexcept { lv2_atom_forge_pop (forge, &frame); }
+
+private:
+    LV2_Atom_Forge_Frame frame;
+    LV2_Atom_Forge* forge = nullptr;
+    LVTK_DISABLE_COPY (ScopedFrame)
+    LVTK_DISABLE_MOVE (ScopedFrame)
+};
+
+using SequenceFrame = ScopedFrame<detail::SequenceTraits>;
+using ObjectFrame   = ScopedFrame<detail::ObjectTraits>;
 
 /** An LV2_Atom_Object wrapper
     @headerfile lvtk/ext/atom.hpp

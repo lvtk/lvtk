@@ -66,9 +66,13 @@ public:
     /** Returns true if this is a float. */
     inline bool is_int() const noexcept { return lilv_node_is_int (get()); }
     /** Returns true if this is an integer. */
-    inline bool is_string() const noexcept { return lilv_node_is_float (get()); }
+    inline bool is_string() const noexcept { return lilv_node_is_string (get()); }
     /** Returns true if this is a URI string. */
     inline bool is_uri() const noexcept { return lilv_node_is_uri (get()); }
+    /** Returns true if blank. */
+    inline bool is_blank() const noexcept { return lilv_node_is_blank (get()); }
+    /** Returns true if a literal. */
+    inline bool is_literal() const noexcept { return lilv_node_is_literal (get()); }
 
     inline float as_float (float fallback = 0.f) const noexcept {
         return is_float() ? lilv_node_as_float (get()) : fallback;
@@ -107,8 +111,8 @@ public:
     }
 
     inline Node& operator= (Node&& node) {
-        static_cast<unique&> (*this) = std::move (node);
         _owned                       = node._owned;
+        static_cast<unique&> (*this) = std::move (node);
         return *this;
     }
 
