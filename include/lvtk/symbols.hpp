@@ -25,13 +25,19 @@ namespace lvtk {
  */
 class LVTK_API Symbols final {
 public:
+    using map_type = std::unordered_map<std::string, uint32_t>;
+    using unmap_type = std::unordered_map<uint32_t, std::string>;
+
     /** Create an empty symbol map and initialized LV2 URID features */
     Symbols() {
-        _mapd.handle   = (void*) this;
-        _mapd.map      = _map;
-        _unmapd.handle = (void*) this;
-        _unmapd.unmap  = _unmap;
-        refer_to (nullptr, nullptr);
+        init_features();
+    }
+
+    Symbols (const map_type& maps) {
+        init_features();
+        _mapped = maps;
+        for (const auto& m : _mapped)
+            _unmapped[m.second] = m.first;
     }
 
     ~Symbols() {
@@ -139,6 +145,14 @@ private:
     LV2_Feature _unmapf;
     LV2_URID_Unmap _unmapd;
     LV2_URID_Unmap* _unmapref { nullptr };
+
+    inline void init_features() {
+        _mapd.handle   = (void*) this;
+        _mapd.map      = _map;
+        _unmapd.handle = (void*) this;
+        _unmapd.unmap  = _unmap;
+        refer_to (nullptr, nullptr);
+    }
 
     static uint32_t _map (LV2_URID_Map_Handle self, const char* uri) {
         return (static_cast<Symbols*> (self))->map (uri);
