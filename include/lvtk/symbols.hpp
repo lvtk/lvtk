@@ -33,9 +33,9 @@ public:
         init_features();
     }
 
-    Symbols (const map_type& maps) {
+    Symbols (map_type& maps) {
         init_features();
-        _mapped = maps;
+        _mapped.swap (maps);
         for (const auto& m : _mapped)
             _unmapped[m.second] = m.first;
     }
