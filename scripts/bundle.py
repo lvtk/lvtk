@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
-# Michael Fisher, 2023
+# Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+# SPDX-License-Identifier: ISC
 
 from optparse import OptionParser
 import subprocess
