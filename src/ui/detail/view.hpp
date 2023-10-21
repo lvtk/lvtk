@@ -23,6 +23,7 @@
 #include "ui/detail/main.hpp"
 
 #define LVTK_MAX_BUTTONS 4
+#define LVTK_SCALE_IN_CONFIGURE 0
 
 #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
 // #define VIEW_DBG(x)
@@ -417,7 +418,8 @@ private:
 
         VIEW_DBG3 ("pugl: " << (int) nconfigs << ": configure: " << detail::rect<int> (ev).str());
 
-        auto& widget             = view.widget;
+        auto& widget = view.widget;
+#if LVTK_SCALE_IN_CONFIGURE
         const bool scale_changed = view.pugl_scale != ev.scale;
 
         if (scale_changed || nconfigs <= 0) {
@@ -429,27 +431,28 @@ private:
             VIEW_DBG ("pugl: resize for widget: " << widget.bounds().str()
                                                   << " to PuglCoord " << (widget.bounds() * ev.scale).str());
 
-#if 0
+#    if 0
             auto st = puglSetSize (view.view,
                                    static_cast<PuglSpan> (widget.width() * evscale),
                                    static_cast<PuglSpan> (widget.height() * evscale));
-#else
+#    else
             auto st = puglSetFrame (view.view, detail::frame (widget.bounds() * view.scale_factor()));
-#endif
+#    endif
             VIEW_DBG2 ("pugl: puglSetSize: " << puglStrerror (st));
             view.configure_pending = true;
             return PUGL_SUCCESS;
         }
+#endif
 
         if (view.configure_pending) {
             view.configure_pending = false;
             VIEW_DBG ("handled pending configure");
         }
 
-        view.widget.set_bounds (view.widget.x(),
-                                view.widget.y(),
-                                int (static_cast<float> (ev.width) / view.scale_factor()),
-                                int (static_cast<float> (ev.height) / view.scale_factor()));
+        widget.set_bounds (widget.x(),
+                           widget.y(),
+                           int (static_cast<float> (ev.width) / view.scale_factor()),
+                           int (static_cast<float> (ev.height) / view.scale_factor()));
 
         return PUGL_SUCCESS;
     }

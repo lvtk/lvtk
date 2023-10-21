@@ -1,7 +1,7 @@
 [wrap-git]
 url = https://gitlab.com/lvtk/pugl.git
 push-url = git@gitlab.com:lvtk/pugl.git
-revision = scale-as-event
+revision = lvtk
 
 [provide]
 dependency_names = pugl-0,pugl-gl-0,puglpp-0
