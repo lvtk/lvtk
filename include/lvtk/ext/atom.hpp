@@ -194,7 +194,7 @@ private:
     @headerfile lvtk/ext/atom.hpp
     @ingroup wrapper
  */
-struct Atom final {
+struct Atom {
     /** Create a null Atom */
     Atom()
         : atom (nullptr) {}
