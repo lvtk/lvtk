@@ -47,7 +47,7 @@ lvtk_gl_c_args = ['-DLVTK_BUILD']
 lvtk_gl_cpp_args = lvtk_gl_c_args
 subdir ('nanovg')
 
-lvtk_opengl_deps = [ lvtk_widgets_dep, pugl_gl_dep, dl_dep ]
+lvtk_opengl_deps = [ lvtk_widgets_dep, pugl_gl_dep, dl_dep, opengl_dep ]
 
 liblvtk_opengl = library ('lvtk-opengl-@0@'.format (lvtk_abi_version),
     lvtk_gl_sources,

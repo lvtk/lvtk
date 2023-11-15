@@ -67,6 +67,10 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     required : true
 )
 
+### OpenGL
+
+opengl_dep = dependency ('GL', include_type : 'system')
+
 ### Lilv & Suil
 lilv_dep = dependency ('lilv-0', required : false)
 suil_dep = dependency ('suil-0', required : false)
