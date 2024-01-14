@@ -61,7 +61,7 @@ pugl_dep = dependency ('pugl-0',
 )
 
 pugl_gl_dep = dependency ('pugl-gl-0', 
-    fallback : [ 'pugl', 'gl_backend_dep' ],
+    fallback : [ 'pugl' ],
     version : '>= 0.4.0',
     default_options : pugl_opts,
     required : true

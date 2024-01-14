@@ -17,12 +17,12 @@ pymod = import('python')
 python3_exe = pymod.find_installation ('python3')
 bundle_py   = files ('scripts/bundle.py').get(0)
 date_py = files ('scripts/date.py')
-lvtk_release_date = run_command (python3_exe, date_py).stdout().strip()
+lvtk_release_date = run_command (python3_exe, date_py, check: false).stdout().strip()
 version_py = files ('scripts/version.py')
 lvtk_version_with_build = run_command (python3_exe, 
-    [version_py, '--build --ignore-dirty --cwd=.'.split()]).stdout().strip()
+    [version_py, '--build --ignore-dirty --cwd=.'.split()], check: false).stdout().strip()
 lvtk_build_number = run_command (python3_exe, 
-    [version_py, '--no-version --build --ignore-dirty --cwd=.'.split()]).stdout().strip()
+    [version_py, '--no-version --build --ignore-dirty --cwd=.'.split()], check: false).stdout().strip()
 
 lvtk_abi_version = '3.0'
 
