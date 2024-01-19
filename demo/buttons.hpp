@@ -16,6 +16,7 @@ public:
     Buttons() {
         add (button1);
         button1.set_text ("Quit");
+        button1.set_name ("Quit Button");
         button1.set_visible (true);
         button1.on_clicked = [this]() {
             if (auto v = find_view())
@@ -24,6 +25,7 @@ public:
         };
 
         add (button2);
+        button2.set_name ("Apply Button");
         button2.set_text ("Apply");
         button2.set_visible (true);
         button2.on_clicked = [this]() { message = "Apply clicked!"; repaint(); };

@@ -72,10 +72,7 @@ protected:
 
         if (_context) {
             _context->begin_frame (vb.width, vb.height, scale);
-            _context->clip (frame != last_frame ? vb : frame);
-            _context->save();
             render (*_context);
-            _context->restore();
             _context->end_frame();
         } else {
             needs_cleared = true;

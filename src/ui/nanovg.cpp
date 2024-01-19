@@ -83,11 +83,11 @@ public:
     }
 
     void restore() {
-        if (stack.empty())
-            return;
-        state = stack.back();
-        stack.pop_back();
         nvgRestore (ctx);
+        if (! stack.empty()) {
+            state = stack.back();
+            stack.pop_back();
+        }
     }
 
     struct FontExtent {
@@ -176,12 +176,19 @@ void Context::fill() {
 void Context::stroke() { nvgStroke (ctx->ctx); }
 
 void Context::clip (const Rectangle<int>& r) {
+#if 1
     ctx->state.clip = r.as<float>();
-    nvgIntersectScissor (ctx->ctx,
-                         ctx->state.clip.x,
-                         ctx->state.clip.y,
-                         ctx->state.clip.width,
-                         ctx->state.clip.height);
+    nvgScissor (ctx->ctx,
+                ctx->state.clip.x,
+                ctx->state.clip.y,
+                ctx->state.clip.width,
+                ctx->state.clip.height);
+#else
+    auto c = ctx->state.clip.empty() ? r.as<float>()
+                                     : ctx->state.clip.intersection (r.as<float>());
+    nvgScissor (ctx->ctx, c.x, c.y, c.width, c.height);
+    ctx->state.clip = c;
+#endif
 }
 
 void Context::exclude_clip (const Rectangle<int>& r) {
@@ -213,10 +220,13 @@ void Context::restore() { ctx->restore(); }
 
 void Context::begin_frame (int width, int height, float scale) {
     ctx->internal_scale = scale;
+    ctx->stack.clear();
+    ctx->state = {};
     nvgBeginFrame (ctx->ctx,
                    (float) width,
                    (float) height,
                    ctx->internal_scale);
+    clip ({ 0, 0, width, height });
 }
 
 void Context::end_frame() {

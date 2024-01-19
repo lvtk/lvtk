@@ -13,12 +13,23 @@ class CairoDrawingContext : public DrawingContext {
     lvtk::Color _color;
 
 public:
-    explicit CairoDrawingContext (cairo_t* obj)
-        : cr (obj) {
+    explicit CairoDrawingContext (cairo_t* context = nullptr)
+        : cr (context) {
         stack.reserve (64);
     }
 
     ~CairoDrawingContext() {
+        cr = nullptr;
+    }
+
+    void begin_frame (cairo_t* _cr, lvtk::Bounds bounds) {
+        cr    = _cr;
+        state = {};
+        stack.clear();
+        this->clip (bounds);
+    }
+
+    void end_frame() {
         cr = nullptr;
     }
 
@@ -29,18 +40,16 @@ public:
         return static_cast<float> (y_scale);
     }
 
-    /** Save the current state */
     void save() override {
         cairo_save (cr);
         stack.push_back (state);
     }
 
-    /** Restore last state */
     void restore() override {
         cairo_restore (cr);
         if (stack.empty())
             return;
-        state = stack.back();
+        std::swap (state, stack.back());
         stack.pop_back();
     }
 
@@ -80,97 +89,87 @@ public:
 
     /** Fill the current path with the currrent settings */
     void fill() override {
-        apply_fill();
+        apply_pending_state();
         cairo_fill (cr);
     }
 
     /** Stroke the current path with current settings */
     void stroke() override {
         // cairo_set_line_width (cr, 2.0);
-        apply_fill();
+        apply_pending_state();
         cairo_stroke (cr);
     }
 
     /** Translate the origin */
     void translate (const Point<int>& pt) override {
-        // std::clog << "translate: " << pt.str() << std::endl;
         cairo_translate (cr, pt.x, pt.y);
     }
 
     /** Apply transformation matrix */
-    void transform (const Transform& mat) override {}
+    void transform (const Transform& mat) override {
+        // TODO
+    }
 
     void clip (const Rectangle<int>& r) override {
+#if 1
         state.clip = r.as<double>();
         cairo_rectangle (cr, r.x, r.y, r.width, r.height);
         cairo_clip (cr);
+        double x1, y1, x2, y2;
+        cairo_clip_extents (cr, &x1, &y1, &x2, &y2);
+        state.clip.x      = x1;
+        state.clip.y      = y1;
+        state.clip.width  = x2 - x1;
+        state.clip.height = y2 - y1;
+#else
+        auto c = state.clip.empty() ? r.as<double>()
+                                    : state.clip.intersection (r.as<double>());
+        cairo_rectangle (cr, c.x, c.y, c.width, c.height);
+        cairo_clip (cr);
+        state.clip = c;
+#endif
     }
 
     void exclude_clip (const Rectangle<int>& r) override {
-        // auto r2 = r.as<double>().intersection (state.clip);
-        // clip (r2.as<int>());
-        // cairo_rectangle (cr, r2.x, r2.y, r2.width, r2.height);
-        // cairo_clip (cr);
+        // TODO
     }
+
+    // Rectangle<double> clip_extents() const noexcept {
+    //     // Rectangle<double> c;
+    //     // double x2, y2;
+    //     // cairo_clip_extents (cr, &c.x, &c.y, &x2, &y2);
+    //     // c.width = x2 - c.x;
+    //     // c.height = y2 - c.y;
+    //     // state.clip = c;
+    //     return state.clip.as<int>();
+    // }
 
     Rectangle<int> last_clip() const override {
         return state.clip.as<int>();
     }
 
-    /** Get the current font.
-        Return the last font set with set_font
-        @returns Font
-    */
     Font font() const noexcept override { return state.font; }
-
-    /** Set the current font.
-        @param font Font to use for text ops.
-    */
     void set_font (const Font& f) override { state.font = f; }
 
-    /** Set the current fill type.
-        Subclass should save the fill and use it for stroke/fill operations
-        @param fill The new fill type to use
-    */
     void set_fill (const Fill& fill) override {
         state.color = fill.color();
-        // cairo_set_source_rgba (cr,
-        //                        c.fred(),
-        //                        c.fgreen(),
-        //                        c.fblue(),
-        //                        c.falpha());
-        // color.r     = c.fred();
-        // color.g     = c.fgreen();
-        // color.b     = c.fblue();
-        // color.a     = c.falpha();
-    }
-
-    void apply_fill() {
-        auto c = state.color;
-        cairo_set_source_rgba (cr,
-                               c.fred(),
-                               c.fgreen(),
-                               c.fblue(),
-                               c.falpha());
+        _fill_dirty = true;
     }
 
     void fill_rect (const Rectangle<float>& r) override {
-        // std::clog << "fill: " << r.str() << std::endl;
-        apply_fill();
+        apply_pending_state();
         cairo_rectangle (cr, r.x, r.y, r.width, r.height);
         cairo_fill (cr);
     }
 
     bool text (const std::string& text, float x, float y, Alignment align) override {
-        ignore (text, x, y, align);
-        return false;
-    }
-
-    void prepare (cairo_t* _cr, lvtk::Bounds bounds) {
-        cr    = _cr;
-        state = {};
-        stack.clear();
-        this->clip (bounds);
+        apply_pending_state();
+        cairo_text_extents_t extents;
+        cairo_set_font_size (cr, state.font.height());
+        cairo_text_extents (cr, text.c_str(), &extents);
+        cairo_move_to (cr, x, y);
+        cairo_show_text (cr, text.c_str());
+        return true;
     }
 
 private:
@@ -190,6 +189,20 @@ private:
 
     State state;
     std::vector<State> stack;
+
+    bool _fill_dirty = false;
+
+    void apply_pending_state() {
+        if (_fill_dirty) {
+            auto c = state.color;
+            cairo_set_source_rgba (cr,
+                                   c.fred(),
+                                   c.fgreen(),
+                                   c.fblue(),
+                                   c.falpha());
+            _fill_dirty = false;
+        }
+    }
 };
 
 class CairoView : public View {
@@ -206,23 +219,26 @@ public:
     ~CairoView() {}
 
     void expose (Bounds frame) override {
-        auto cr = (cairo_t*) puglGetContext ((PuglView*) c_obj());
-
-        if (_context == nullptr)
-            _context = std::make_unique<CairoDrawingContext> (cr);
-
-        assert (_context != nullptr);
-        _context->prepare (cr, frame); //{ 0, 0, bounds().width, bounds().height });
+        auto cr = (cairo_t*) puglGetContext (_view);
+        assert (cr != nullptr);
+        _context->begin_frame (cr, frame);
         render (*_context);
+        _context->end_frame();
     }
 
-    void created() override {}
+    void created() override {
+        _context = std::make_unique<CairoDrawingContext>();
+        _view    = (PuglView*) c_obj();
+        assert (_view != nullptr && _context != nullptr);
+    }
 
     void destroyed() override {
+        _view = nullptr;
         _context.reset();
     }
 
 private:
+    PuglView* _view;
     std::unique_ptr<CairoDrawingContext> _context;
 };
 

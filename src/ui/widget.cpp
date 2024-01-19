@@ -92,6 +92,101 @@ void Widget::notify_moved_resized (bool was_moved, bool was_resized) {
     };
 }
 
+bool Widget::clip_widgets_blocking (const lvtk::Widget& w,
+                                    Graphics& g,
+                                    const Rectangle<int> cr,
+                                    Point<int> delta) {
+    int nclips = 0;
+
+#if 1
+    for (int i = w.impl->widgets.size(); --i >= 0;) {
+        auto& cw = *w.impl->widgets[i];
+
+        if (! cw.visible())
+            continue;
+
+        auto ncr = cr.intersection (cw.bounds());
+        if (ncr.empty())
+            continue;
+
+        if (cw.opaque()) {
+            g.exclude_clip (ncr + delta);
+            ++nclips;
+        } else {
+            auto cpos = cw.pos();
+            if (clip_widgets_blocking (cw, g, ncr - cpos, cpos + delta))
+                ++nclips;
+        }
+    }
+#endif
+
+    return nclips > 0;
+}
+
+void Widget::render_child (lvtk::Widget& cw, Graphics& g) {
+    g.translate (cw.pos());
+    cw.render (g);
+}
+
+void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
+    auto& impl = *widget.impl;
+    auto cb    = g.last_clip();
+
+    if (impl.dont_clip && impl.widgets.empty()) {
+        widget.paint (g);
+    } else {
+        g.save();
+        if (! (clip_widgets_blocking (widget, g, cb, {}) && g.clip_empty())) {
+            widget.paint (g);
+        }
+        g.restore();
+    }
+
+    for (size_t i = 0; i < impl.widgets.size(); ++i) {
+        auto cw = impl.widgets[i];
+        if (! cw->visible())
+            continue;
+
+        if (cb.intersects (cw->bounds())) {
+            g.save();
+
+            // if (! cw->name().empty())
+            //     std::clog << "insersected: " << cw->name() << " : " << cw->bounds().str() << std::endl;
+
+            if (cw->impl->dont_clip) {
+                render_child (*cw, g);
+            } else {
+                g.clip (cw->bounds());
+
+                if (! g.clip_empty()) {
+                    bool sibling_clipped = false;
+                    for (size_t j = i + 1; j < impl.widgets.size(); ++j) {
+                        auto sw = impl.widgets[j];
+                        if (sw->opaque() && sw->visible()) {
+                            sibling_clipped = true;
+                            g.exclude_clip (sw->bounds());
+                        }
+                    }
+
+                    if (sibling_clipped || ! g.clip_empty()) {
+                        render_child (*cw, g);
+                    }
+                }
+            }
+
+            g.restore();
+        } else {
+            std::clog << "no intersect: " << cw->name() << ": "
+                      << cb.str() << " <-> " << cw->bounds().str() << std::endl;
+            std::clog << "  parent name = " << widget.name() << std::endl;
+        }
+
+        if (cb != g.last_clip()) {
+            std::clog << "error \n";
+        }
+    }
+}
+
 } // namespace detail
 
 Widget::Widget() {

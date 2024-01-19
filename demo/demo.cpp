@@ -39,7 +39,7 @@ void Content::resized() {
 }
 
 void Content::paint (Graphics& g) {
-    g.set_color (Color (0xff454545));
+    g.set_color (Color (0xff252525));
     // g.set_color (Color (0xff550000));
     g.fill_rect (bounds().at (0, 0).as<float>());
 }
@@ -75,6 +75,8 @@ void Content::run_demo (int index) {
 
     if (demo) {
         add (*demo);
+        if (demo->name().empty())
+            demo->set_name (lvtk::demo::name (index));
         demo->set_visible (true);
     }
 

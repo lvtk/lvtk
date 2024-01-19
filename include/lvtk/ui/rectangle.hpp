@@ -266,8 +266,10 @@ struct Rectangle {
         @param o The other rect
     */
     bool intersects (Rectangle o) const noexcept {
-        return (x + width) > o.x && (y + height) > o.y
-               && x < (o.x + o.width) && y < (o.y + o.height)
+        return x + width > o.x
+               && y + height > o.y
+               && x < o.x + o.width
+               && y < o.y + o.height
                && width > Val() && height > Val()
                && o.width > Val() && o.height > Val();
     }

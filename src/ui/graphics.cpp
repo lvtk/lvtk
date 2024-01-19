@@ -58,7 +58,6 @@ void Graphics::fill_rect (const Rectangle<int>& r) {
 }
 
 void Graphics::draw_rounded_rect (float x, float y, float width, float height, float corner_size) {
-    // _context.begin_path();
     graphics::rounded_rect (_context, x, y, width, height, corner_size)
         .stroke();
 }

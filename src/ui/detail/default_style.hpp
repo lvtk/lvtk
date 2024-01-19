@@ -56,12 +56,14 @@ public:
 
     void draw_slider (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
         auto r = bounds.as<float>();
+
+        std::clog << "paint slider: " << slider.name() << "\n";
+
         switch (slider.type()) {
             case lvtk::Slider::HORIZONTAL_BAR:
             case lvtk::Slider::VERTICAL_BAR: {
                 g.set_color (find_color (ColorID::SLIDER_BASE));
                 g.fill_rect (r);
-                g.set_color (find_color (ColorID::SLIDER_THUMB));
 
                 if (slider.vertical()) {
                     r.slice_top (pos);
@@ -69,6 +71,7 @@ public:
                     r = r.slice_left (pos);
                 }
 
+                g.set_color (find_color (ColorID::SLIDER_THUMB));
                 g.fill_rect (r);
                 break;
             }

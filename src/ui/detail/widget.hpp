@@ -128,75 +128,12 @@ private:
     std::vector<lvtk::Widget*> widgets;
     Rectangle<int> bounds;
     bool visible { false };
-    bool opaque { false };
+    bool opaque { true };
     bool dont_clip { false };
 
-    static bool clip_widgets_blocking (const lvtk::Widget& w, Graphics& g, const Rectangle<int> cr, Point<int> delta) {
-        int nclips = 0;
-
-        for (int i = w.impl->widgets.size(); --i >= 0;) {
-            auto& cw = *w.impl->widgets[i];
-
-            if (! cw.visible())
-                continue;
-
-            auto ncr = cr.intersection (cw.bounds());
-            if (ncr.empty())
-                continue;
-
-            if (cw.opaque()) {
-                g.exclude_clip (ncr + delta);
-                ++nclips;
-            } else {
-                auto cpos = cw.pos();
-                if (clip_widgets_blocking (cw, g, ncr - cpos, cpos + delta))
-                    ++nclips;
-            }
-        }
-
-        return nclips > 0;
-    }
-
-    static void render_child (lvtk::Widget& cw, Graphics& g) {
-        g.translate (cw.pos());
-        cw.render (g);
-    }
-
-    static void render_all (lvtk::Widget& widget, Graphics& g) {
-        auto& impl = *widget.impl;
-        auto cb    = g.last_clip();
-
-        if (impl.dont_clip && impl.widgets.empty()) {
-            widget.paint (g);
-        } else {
-            g.save();
-            if (! (clip_widgets_blocking (widget, g, cb, {}) && g.clip_empty())) {
-                widget.paint (g);
-            }
-            g.restore();
-        }
-
-        for (auto cw : impl.widgets) {
-            if (! cw->visible())
-                continue;
-
-            if (cb.intersects (cw->bounds())) {
-                g.save();
-
-                // std::clog << "insersected: " << cw->bounds().str() << std::endl;
-
-                if (cw->impl->dont_clip) {
-                    render_child (*cw, g);
-                } else {
-                    g.clip (cw->bounds());
-                    if (! g.clip_empty())
-                        render_child (*cw, g);
-                }
-
-                g.restore();
-            }
-        }
-    }
+    static bool clip_widgets_blocking (const lvtk::Widget& w, Graphics& g, const Rectangle<int> cr, Point<int> delta);
+    static void render_child (lvtk::Widget& cw, Graphics& g);
+    static void render_all (lvtk::Widget& widget, Graphics& g);
 };
 
 } // namespace detail

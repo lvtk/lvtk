@@ -7,6 +7,8 @@
 
 #include "utils.hpp"
 
+#include <iostream>
+
 namespace lvtk {
 namespace demo {
 
@@ -18,6 +20,7 @@ public:
         slider1.set_range (0.0, 100.0);
         slider1.on_value_changed = [this]() { update_text (slider1); };
         slider1.set_value (90.0, Notify::SYNC);
+        slider1.set_type (Slider::VERTICAL);
 
         add (slider2);
         slider2.set_name ("Horizontal 1");
@@ -43,7 +46,9 @@ private:
 
     void resized() override {
         auto r1 = bounds().at (0).smaller (20).slice_top (height() - 64);
-        slider1.set_bounds (r1.slice_left (32));
+        auto r2 = r1.slice_right (32);
+        std::clog << "r2 = " << r2.str() << std::endl;
+        slider1.set_bounds (r2);
         r1.slice_left (10);
         r1 = r1.slice_bottom (32);
         r1.slice_right (10);

@@ -80,7 +80,7 @@ private:
                 box->on_clicked = [this, i]() { run_demo (i); };
                 demos.push_back (box);
             }
-
+            set_opaque (false);
             set_size (640, 360);
         }
 
@@ -97,8 +97,8 @@ private:
         }
 
         void paint (Graphics& g) override {
-            g.set_color (Color (0xff454545).darker (0.04f));
-            g.fill_rect (bounds().at (0, 0));
+            // g.set_color (Color (0xff454545).darker (0.04f));
+            // g.fill_rect (bounds().at (0, 0));
         }
 
     private:
