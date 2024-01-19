@@ -6,7 +6,7 @@ LVTK3
 =====
 
 Minimal C++ library with Lua bindings and console. Write your LV2 plugins and 
-gui's in C++ or Lua!
+gui's in C++.
 
 Heavy Development
 -----------------
@@ -53,15 +53,21 @@ meson test -C build
 
 Widgets Demo
 ------------
+### Linux & Windows
+Depending on build options there are Demos for each backend. From the build directory run:
 ```
-cd build
-./lvtk-demo
+./lvtk-opengl-demo  # run the open gl demo
 ```
-... launches the C++ demo, and ...  
+... or ...
 ```
-bash scripts/demo.sh
+./lvtk-cairo-demo
 ```
-... should run the Lua gui demo loaded by `lvtk.import`
+### macOS
+Double-clickable Mac apps can be found somewhere in the build directory. The following command will list them all out.
+```bash
+# From the source top dir.
+find build -name "LVTK*.app"
+```
 
 ISC License
 -----------
@@ -93,6 +99,7 @@ Graphics/UI/Hosting classes utilize these libraries internally:
 | Boost        | Tests/Signals   | Boost   |
 | Lilv         | LV2 Hosting     | ISC     |
 | Suil         | LV2UI Hosting   | ISC     |
+| Cairo        | Graphics backend| MPL     |
 
 Issue Tracking
 --------------
