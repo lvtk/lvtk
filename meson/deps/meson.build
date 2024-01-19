@@ -43,13 +43,16 @@ if lvtk_lv2dir == ''
   endif
 endif
 
+### Cairo
+cairo_dep = dependency ('cairo', required : false)
+
 ### Pugl
 pugl_opts = [
     'tests=disabled',
-    'examples=disabled',
-    'cairo=disabled',
+    'examples=enabled',
+    'cairo=@0@'.format (cairo_dep.found() ? 'enabled' : 'disabled'),
     'vulkan=disabled',
-    'stub=false',
+    'stub=true',
     'docs=disabled'
 ]
 
@@ -64,11 +67,20 @@ pugl_gl_dep = dependency ('pugl-gl-0',
     fallback : [ 'pugl' ],
     version : '>= 0.4.0',
     default_options : pugl_opts,
-    required : true
+    required : cairo_dep.found()
 )
 
-### OpenGL
+pugl_cairo_dep = dependency ('', required : false)
+if cairo_dep.found()
+    pugl_cairo_dep = dependency ('pugl-cairo-0', 
+        fallback : [ 'pugl' ],
+        version : '>= 0.4.0',
+        default_options : pugl_opts,
+        required : true
+    )
+endif
 
+### OpenGL
 opengl_dep = dependency ('GL', include_type : 'system')
 
 ### Lilv & Suil

@@ -25,7 +25,7 @@ namespace lvtk {
  */
 class LVTK_API Symbols final {
 public:
-    using map_type = std::unordered_map<std::string, uint32_t>;
+    using map_type   = std::unordered_map<std::string, uint32_t>;
     using unmap_type = std::unordered_map<uint32_t, std::string>;
 
     /** Create an empty symbol map and initialized LV2 URID features */

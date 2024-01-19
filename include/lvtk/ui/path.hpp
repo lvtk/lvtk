@@ -271,7 +271,8 @@ inline static Pth&& rounded_rect (Pth&& path, const float x, const float y,
  */
 template <class Pth>
 inline static Pth&& rounded_rect (Pth&& po, const float x, const float y,
-                                  const float width, const float height, float corner_size) {
+                                  const float width, const float height,
+                                  float corner_size) {
     return rounded_rect (
         po, x, y, width, height, corner_size, corner_size, true, true, true, true);
 }

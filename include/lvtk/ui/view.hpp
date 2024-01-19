@@ -100,6 +100,9 @@ public:
 protected:
     View (Main& context, Widget& widget);
 
+    /** Returns a pointer to the underlying PuglView. */
+    uintptr_t c_obj() noexcept;
+
     /** Subclasses should use this to render it's context */
     void render (DrawingContext& surface);
 
@@ -123,7 +126,7 @@ private:
     friend class Widget;
     friend class detail::Widget;
     std::unique_ptr<detail::View> impl;
-    LVTK_WEAK_REFABLE (View);
+    LVTK_WEAK_REFABLE (View)
 };
 
 using ViewRef = WeakRef<View>;

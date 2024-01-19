@@ -11,7 +11,7 @@ Graphics::Graphics (DrawingContext& d)
 
 void Graphics::translate (const Point<int>& delta) { _context.translate (delta); }
 void Graphics::clip (Bounds c) { _context.clip (c); }
-void Graphics::intersect_clip (Bounds c) { _context.intersect_clip (c); }
+void Graphics::exclude_clip (Bounds c) { _context.exclude_clip (c); }
 Bounds Graphics::last_clip() const noexcept { return _context.last_clip(); }
 bool Graphics::clip_empty() const noexcept { return _context.last_clip().empty(); }
 
@@ -58,7 +58,7 @@ void Graphics::fill_rect (const Rectangle<int>& r) {
 }
 
 void Graphics::draw_rounded_rect (float x, float y, float width, float height, float corner_size) {
-    _context.begin_path();
+    // _context.begin_path();
     graphics::rounded_rect (_context, x, y, width, height, corner_size)
         .stroke();
 }

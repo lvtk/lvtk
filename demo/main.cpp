@@ -1,9 +1,14 @@
-// Copyright 2019 Michael Fisher <mfisher@lvtk.org>
+// Copyright 2019-2024 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 #include <lvtk/ui/main.hpp>
-#include <lvtk/ui/opengl.hpp>
 #include <lvtk/ui/view.hpp>
+
+#if LVTK_DEMO_CAIRO
+#    include <lvtk/ui/cairo.hpp>
+#else
+#    include <lvtk/ui/opengl.hpp>
+#endif
 
 #include "demo.hpp"
 
@@ -44,22 +49,23 @@ int WinMain (HINSTANCE hInstance,
              int nShowCmd) {
     lvtk::ignore (hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 
-    class ClogBuf
-        : public std::stringbuf {
-    public:
+    struct ClogBuf : public std::stringbuf {
         ~ClogBuf() { sync(); }
         int sync() {
             ::OutputDebugStringA (str().c_str());
             str (std::string()); // Clear the string buffer
             return 0;
         }
-    };
+    } dbgbuf;
 
-    ClogBuf dbgbuf;
-    ;
     auto clogbuf = std::clog.rdbuf (&dbgbuf);
 
+#    if LVTK_DEMO_CAIRO
+    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::Cairo>());
+#    else
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
+#    endif
+
     auto ret = lvtk::demo::run<lvtk::demo::Content> (context);
 
     std::clog.rdbuf (clogbuf);
@@ -67,7 +73,11 @@ int WinMain (HINSTANCE hInstance,
 }
 #else
 int main (int argc, char** argv) {
+#    if LVTK_DEMO_CAIRO
+    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::Cairo>());
+#    else
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
+#    endif
     return lvtk::demo::run<lvtk::demo::Content> (context);
 }
 #endif

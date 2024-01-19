@@ -102,9 +102,6 @@ void View::elevate (Widget& widget, ViewFlags flags) {
 }
 
 void View::repaint (Bounds area) {
-#if ! LVTK_WIDGET_USE_CLIPPING
-    area = {};
-#endif
     if (area.empty()) {
         puglPostRedisplay (impl->view);
     } else {
@@ -112,6 +109,8 @@ void View::repaint (Bounds area) {
         puglPostRedisplayRect (impl->view, { (PuglCoord) area.x, (PuglCoord) area.y, (PuglSpan) area.width, (PuglSpan) area.height });
     }
 }
+
+uintptr_t View::c_obj() noexcept { return (uintptr_t) impl->view; }
 
 void View::render (DrawingContext& ctx) {
     Graphics g (ctx);

@@ -177,19 +177,16 @@ void Context::stroke() { nvgStroke (ctx->ctx); }
 
 void Context::clip (const Rectangle<int>& r) {
     ctx->state.clip = r.as<float>();
-    nvgScissor (ctx->ctx,
-                ctx->state.clip.x,
-                ctx->state.clip.y,
-                ctx->state.clip.width,
-                ctx->state.clip.height);
+    nvgIntersectScissor (ctx->ctx,
+                         ctx->state.clip.x,
+                         ctx->state.clip.y,
+                         ctx->state.clip.width,
+                         ctx->state.clip.height);
 }
 
-void Context::intersect_clip (const Rectangle<int>& r) {
-    nvgIntersectScissor (ctx->ctx,
-                         static_cast<float> (r.x),
-                         static_cast<float> (r.y),
-                         static_cast<float> (r.width),
-                         static_cast<float> (r.height));
+void Context::exclude_clip (const Rectangle<int>& r) {
+    // noop
+    return;
 }
 
 Rectangle<int> Context::last_clip() const {

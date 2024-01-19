@@ -8,10 +8,6 @@
 #include <lvtk/ui/point.hpp>
 #include <lvtk/ui/rectangle.hpp>
 
-#ifndef LVTK_WIDGET_USE_CLIPPING
-#    define LVTK_WIDGET_USE_CLIPPING 0
-#endif
-
 // =================== widget debugging =======================//
 #define DBG_WIDGET 0
 #if DBG_WIDGET
@@ -133,6 +129,7 @@ private:
     Rectangle<int> bounds;
     bool visible { false };
     bool opaque { false };
+    bool dont_clip { false };
 
     static bool clip_widgets_blocking (const lvtk::Widget& w, Graphics& g, const Rectangle<int> cr, Point<int> delta) {
         int nclips = 0;
@@ -148,7 +145,7 @@ private:
                 continue;
 
             if (cw.opaque()) {
-                g.intersect_clip (ncr + delta);
+                g.exclude_clip (ncr + delta);
                 ++nclips;
             } else {
                 auto cpos = cw.pos();
@@ -165,49 +162,39 @@ private:
         cw.render (g);
     }
 
-    static void render_all_unclipped (lvtk::Widget& widget, Graphics& g) {
-        auto cb = g.last_clip();
-
-        g.save();
-        widget.paint (g);
-        g.restore();
-
-        for (auto cw : widget.impl->widgets) {
-            if (! cw->visible())
-                continue;
-
-            g.save();
-
-            if (cb.intersects (cw->bounds())) {
-                render_child (*cw, g);
-            }
-
-            g.restore();
-        }
-    }
-
     static void render_all (lvtk::Widget& widget, Graphics& g) {
-        auto cb = g.last_clip();
+        auto& impl = *widget.impl;
+        auto cb    = g.last_clip();
 
-        g.save();
-        if (! (clip_widgets_blocking (widget, g, cb, {}) && g.clip_empty())) {
+        if (impl.dont_clip && impl.widgets.empty()) {
             widget.paint (g);
+        } else {
+            g.save();
+            if (! (clip_widgets_blocking (widget, g, cb, {}) && g.clip_empty())) {
+                widget.paint (g);
+            }
+            g.restore();
         }
-        g.restore();
 
-        for (auto cw : widget.impl->widgets) {
+        for (auto cw : impl.widgets) {
             if (! cw->visible())
                 continue;
 
-            g.save();
-
             if (cb.intersects (cw->bounds())) {
-                g.clip (cw->bounds().at (0));
-                if (! g.clip_empty())
-                    render_child (*cw, g);
-            }
+                g.save();
 
-            g.restore();
+                // std::clog << "insersected: " << cw->bounds().str() << std::endl;
+
+                if (cw->impl->dont_clip) {
+                    render_child (*cw, g);
+                } else {
+                    g.clip (cw->bounds());
+                    if (! g.clip_empty())
+                        render_child (*cw, g);
+                }
+
+                g.restore();
+            }
         }
     }
 };

@@ -18,7 +18,7 @@ namespace lvtk {
 class LVTK_API SpinLock {
 public:
     /** Initialize unlocked. */
-    inline SpinLock() = default;
+    inline SpinLock()  = default;
     inline ~SpinLock() = default;
 
     /** Lock or yield until locked. (non realtime) */
@@ -31,13 +31,13 @@ public:
     inline bool locked() const noexcept { return _lock.load() == 1; }
 
 private:
-    mutable std::atomic<int> _lock {0};
+    mutable std::atomic<int> _lock { 0 };
     /** @internal */
     inline bool try_lock (int c, int v) const noexcept {
         return _lock.compare_exchange_strong (c, v);
     }
 
-    LVTK_DISABLE_COPY(SpinLock)
+    LVTK_DISABLE_COPY (SpinLock)
 };
 
 } // namespace lvtk

@@ -90,7 +90,7 @@ public:
     
 
     virtual void clip (const Rectangle<int>& r) =0;
-    virtual void intersect_clip (const Rectangle<int>& r) =0;
+    virtual void exclude_clip (const Rectangle<int>& r) =0;
     virtual Rectangle<int> last_clip() const =0;
 
     /** Get the current font.
@@ -158,10 +158,10 @@ public:
      */
     void clip (Bounds c);
 
-    /** Intersect the clipping region
-        @param c Region to intersect
+    /** Exclude a rectangle from the clip region.
+        @param c Region to exclude
      */
-    void intersect_clip (Bounds c);
+    void exclude_clip (Bounds c);
 
     /** Return the last clip bounds set with clip */
     Bounds last_clip() const noexcept;

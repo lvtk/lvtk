@@ -22,17 +22,17 @@
 
 #include "ui/detail/main.hpp"
 
-#define LVTK_MAX_BUTTONS 4
+#define LVTK_MAX_BUTTONS        4
 #define LVTK_SCALE_IN_CONFIGURE 0
 
-#define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
-// #define VIEW_DBG(x)
+// #define VIEW_DBG(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG(x)
 
-#define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
-// #define VIEW_DBG2(x)
+// #define VIEW_DBG2(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG2(x)
 
-#define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
-// #define VIEW_DBG3(x)
+// #define VIEW_DBG3(x) std::clog << "[view] " << x << std::endl;
+#define VIEW_DBG3(x)
 
 // #define VIEW_DBG4(x) std::clog << "[view] " << x << std::endl;
 #define VIEW_DBG4(x)
@@ -471,7 +471,8 @@ private:
         auto h = (float) ev.height / view.scale_factor();
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
-        view.owner.expose (r.intersection (view.owner.bounds().at (0)));
+        view.owner.expose (r);
+        // view.owner.expose (r.intersection (view.owner.bounds().at (0)));
         return PUGL_SUCCESS;
     }
 

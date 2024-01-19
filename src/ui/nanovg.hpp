@@ -34,7 +34,7 @@ public:
     void translate (const Point<int>& pt) override;
     void transform (const Transform& mat) override;
     void clip (const Rectangle<int>& r) override;
-    void intersect_clip (const Rectangle<int>& r) override;
+    void exclude_clip (const Rectangle<int>& r) override;
     Rectangle<int> last_clip() const override;
     void set_fill (const Fill& fill) override;
 

@@ -71,16 +71,29 @@ if not get_option('demo').disabled()
     subdir ('demo')
 
     lvtk_demo_exe = executable (
-        'lvtk-demo', 
+        'lvtk-opengl-demo', 
         'demo/main.cpp',
         cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT' ],
         include_directories : [],
         link_with : [ liblvtk_demo ],
-        dependencies : [ lvtk_demo_deps, threads_dep ],
+        dependencies : [ lvtk_demo_deps, lvtk_opengl_dep, threads_dep ],
         win_subsystem : 'windows',
         install : true
     )
     
+    if pugl_cairo_dep.found()
+        lvtk_cairo_demo_exe = executable (
+            'lvtk-cairo-demo', 
+            'demo/main.cpp',
+            cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT', '-DLVTK_DEMO_CAIRO=1' ],
+            include_directories : [],
+            link_with : [ liblvtk_demo ],
+            dependencies : [ lvtk_demo_deps, lvtk_cairo_dep, threads_dep ],
+            win_subsystem : 'windows',
+            install : true
+        )
+    endif
+
     if host_machine.system() == 'darwin'
         bundle_cmd = [ python3_exe, bundle_py, '--binary', '@INPUT@',
                         '--output', '@OUTPUT@',
@@ -91,13 +104,24 @@ if not get_option('demo').disabled()
         endif
 
         custom_target (
-                'LVTK.app',
+            'LVTK.app',
+            build_by_default: true,
+            command: bundle_cmd ,
+            input: lvtk_demo_exe,
+            output: 'LVTK.app',
+            install: false
+        )
+
+        if pugl_cairo_dep.found()
+            custom_target (
+                'LVTK-Cairo.app',
                 build_by_default: true,
                 command: bundle_cmd ,
-                input: lvtk_demo_exe,
-                output: 'LVTK.app',
+                input: lvtk_cairo_demo_exe,
+                output: 'LVTK-Cairo.app',
                 install: false
             )
+        endif
     endif
 endif
 

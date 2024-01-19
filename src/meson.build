@@ -40,8 +40,30 @@ lvtk_widgets_dep = declare_dependency (
     include_directories : [],
     dependencies : lvtk_widgets_deps)
 
-### LVTK OpenGL
 subdir ('ui/res')
+
+### LVTK Cairo
+if pugl_cairo_dep.found()
+    lvtk_cairo_deps = [ lvtk_widgets_dep, cairo_dep, pugl_cairo_dep ]
+    liblvtk_cairo = library ('lvtk-cairo-@0@'.format (lvtk_abi_version),
+        [ 'ui/cairo.cpp' ],
+        gnu_symbol_visibility : 'hidden',
+        link_with : [],
+        include_directories : [],
+        c_args : [ '-DLVTK_BUILD' ],
+        cpp_args : [ '-DLVTK_BUILD' ],
+        dependencies : lvtk_cairo_deps,
+        install : true,
+        install_dir : lvtk_libdir)
+    lvtk_cairo_dep = declare_dependency (
+        link_with : [ liblvtk_cairo ],
+        include_directories : [],
+        dependencies : lvtk_cairo_deps)
+else
+    lvtk_cairo_dep = dependency('', required : false)
+endif
+
+### LVTK OpenGL
 lvtk_gl_sources = ['ui/nanovg.cpp', 'ui/opengl.cpp', lvtk_res_sources ]
 lvtk_gl_c_args = ['-DLVTK_BUILD']
 lvtk_gl_cpp_args = lvtk_gl_c_args

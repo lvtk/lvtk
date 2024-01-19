@@ -40,6 +40,7 @@ void Content::resized() {
 
 void Content::paint (Graphics& g) {
     g.set_color (Color (0xff454545));
+    // g.set_color (Color (0xff550000));
     g.fill_rect (bounds().at (0, 0).as<float>());
 }
 

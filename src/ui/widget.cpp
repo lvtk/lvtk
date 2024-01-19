@@ -26,11 +26,7 @@ void Widget::release_focus() {
 }
 
 void Widget::render_internal (Graphics& g) {
-#if LVTK_WIDGET_USE_CLIPPING
     render_all (owner, g);
-#else
-    render_all_unclipped (owner, g);
-#endif
 }
 
 void Widget::repaint_internal (Bounds b) {

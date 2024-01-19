@@ -14,4 +14,4 @@ struct LVTK_API Display {
     double dpi { 96.0 };
 };
 
-}
+} // namespace lvtk

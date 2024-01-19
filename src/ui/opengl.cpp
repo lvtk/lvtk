@@ -32,7 +32,7 @@ public:
         set_view_hint (PUGL_CONTEXT_VERSION_MAJOR, 2);
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 6);
 #endif
-        set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_TRUE);
+        set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_FALSE);
     }
 
     ~OpenGLView() {
@@ -60,7 +60,7 @@ protected:
         const auto vb    = bounds().at (0);
         glViewport (0, 0, static_cast<GLsizei> (vb.width * scale), static_cast<GLsizei> (vb.height * scale));
 
-        if (needs_cleared || last_frame != frame) {
+        if (needs_cleared) { // || last_frame != frame) {
             needs_cleared = false;
             bg_color      = style().find_color (ColorID::VIEW_BACKGROUND);
             glClearColor (bg_color.fred(),
@@ -72,8 +72,8 @@ protected:
 
         if (_context) {
             _context->begin_frame (vb.width, vb.height, scale);
+            _context->clip (frame != last_frame ? vb : frame);
             _context->save();
-            _context->clip (frame);
             render (*_context);
             _context->restore();
             _context->end_frame();
