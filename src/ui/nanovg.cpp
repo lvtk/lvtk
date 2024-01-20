@@ -1,6 +1,7 @@
 // Copyright 2022 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <iostream>
 #include <vector>
 
 #include <lvtk/ui/font.hpp>
@@ -79,6 +80,7 @@ public:
 
     void save() {
         stack.push_back (state);
+        // std::clog << "save: clip:    " << state.clip.str() << std::endl;
         nvgSave (ctx);
     }
 
@@ -86,6 +88,7 @@ public:
         nvgRestore (ctx);
         if (! stack.empty()) {
             state = stack.back();
+            // std::clog << "restore: clip: " << state.clip.str() << std::endl;
             stack.pop_back();
         }
     }
@@ -178,11 +181,11 @@ void Context::stroke() { nvgStroke (ctx->ctx); }
 void Context::clip (const Rectangle<int>& r) {
 #if 1
     ctx->state.clip = r.as<float>();
-    nvgScissor (ctx->ctx,
-                ctx->state.clip.x,
-                ctx->state.clip.y,
-                ctx->state.clip.width,
-                ctx->state.clip.height);
+    nvgIntersectScissor (ctx->ctx,
+                         ctx->state.clip.x,
+                         ctx->state.clip.y,
+                         ctx->state.clip.width,
+                         ctx->state.clip.height);
 #else
     auto c = ctx->state.clip.empty() ? r.as<float>()
                                      : ctx->state.clip.intersection (r.as<float>());

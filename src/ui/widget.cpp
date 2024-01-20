@@ -147,7 +147,8 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
         if (! cw->visible())
             continue;
 
-        if (cb.intersects (cw->bounds())) {
+        const auto tb = cw->bounds();
+        if (cb.at (0).intersects (tb)) {
             g.save();
 
             // if (! cw->name().empty())
@@ -156,7 +157,7 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
             if (cw->impl->dont_clip) {
                 render_child (*cw, g);
             } else {
-                g.clip (cw->bounds());
+                g.clip (tb);
 
                 if (! g.clip_empty()) {
                     bool sibling_clipped = false;

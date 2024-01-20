@@ -105,7 +105,8 @@ struct Rectangle {
         @param pt Coordinate to check
     */
     bool contains (Point<Val> pt) const noexcept {
-        return pt.x >= x && pt.y >= y && pt.x < x + width && pt.y < y + height;
+        return pt.x >= x && pt.y >= y
+               && pt.x < x + width && pt.y < y + height;
     }
 
     /** Returns true if the other rectangle is contained
