@@ -57,8 +57,6 @@ public:
     void draw_slider (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {
         auto r = bounds.as<float>();
 
-        std::clog << "paint slider: " << slider.name() << "\n";
-
         switch (slider.type()) {
             case lvtk::Slider::HORIZONTAL_BAR:
             case lvtk::Slider::VERTICAL_BAR: {

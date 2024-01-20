@@ -148,11 +148,10 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
             continue;
 
         const auto tb = cw->bounds();
-        if (cb.at (0).intersects (tb)) {
+        // FIXME: this itersection check is a workaround.
+        if (widget.bounds().at (0).intersects (tb)) {
+            // if (cb.intersects (tb)) {
             g.save();
-
-            // if (! cw->name().empty())
-            //     std::clog << "insersected: " << cw->name() << " : " << cw->bounds().str() << std::endl;
 
             if (cw->impl->dont_clip) {
                 render_child (*cw, g);
@@ -176,14 +175,6 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
             }
 
             g.restore();
-        } else {
-            std::clog << "no intersect: " << cw->name() << ": "
-                      << cb.str() << " <-> " << cw->bounds().str() << std::endl;
-            std::clog << "  parent name = " << widget.name() << std::endl;
-        }
-
-        if (cb != g.last_clip()) {
-            std::clog << "error \n";
         }
     }
 }

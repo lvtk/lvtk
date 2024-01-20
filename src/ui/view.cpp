@@ -110,11 +110,12 @@ void View::repaint (Bounds area) {
     }
 }
 
-uintptr_t View::c_obj() noexcept { return (uintptr_t) impl->view; }
+uintptr_t View::c_obj() noexcept {
+    return (uintptr_t) impl->view;
+}
 
 void View::render (DrawingContext& ctx) {
     Graphics g (ctx);
-    std::clog << "render view: " << ctx.last_clip().str() << std::endl;
     impl->widget.render (g);
 }
 
