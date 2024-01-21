@@ -6,12 +6,13 @@
 #include <functional>
 #include <iostream>
 
+#include "demo.hpp"
 #include <lvtk/ui/button.hpp>
 
 namespace lvtk {
 namespace demo {
 
-class Buttons : public Widget {
+class Buttons : public DemoWidget {
 public:
     Buttons() {
         add (button1);
@@ -40,8 +41,7 @@ public:
 
 protected:
     void paint (Graphics& g) override {
-        g.set_color (0xff333333);
-        g.fill_rect (bounds().at (0));
+        DemoWidget::paint (g);
 
         g.set_color (0xffeeeeee);
         g.set_font (Font (24.f));

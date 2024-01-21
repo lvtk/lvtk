@@ -13,6 +13,7 @@ static inline void delete_widgets (std::vector<Wgt*>& vec) {
     for (auto w : vec)
         delete w;
     vec.clear();
+    vec.shrink_to_fit();
 }
 
 } // namespace demo

@@ -5,12 +5,13 @@
 #include <lvtk/ui/slider.hpp>
 #include <lvtk/ui/widget.hpp>
 
+#include "demo.hpp"
 #include "utils.hpp"
 
 namespace lvtk {
 namespace demo {
 
-class EntryDemo : public Widget {
+class EntryDemo : public DemoWidget {
 public:
     EntryDemo() {
         add (entry);
@@ -26,11 +27,6 @@ private:
 
     void resized() override {
         entry.set_bounds (10, 10, 120, 30);
-    }
-
-    void paint (Graphics& g) override {
-        g.set_color (0xff777777);
-        g.fill_rect (bounds().at (0, 0));
     }
 
 private:

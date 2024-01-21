@@ -1,7 +1,12 @@
 // Copyright 2019 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <iostream>
+
+#include "buttons.hpp"
 #include "demo.hpp"
+#include "embedding.hpp"
+#include "four_squares.hpp"
 
 namespace lvtk {
 namespace demo {

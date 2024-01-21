@@ -5,12 +5,10 @@
 
 #include <memory>
 
+#include <lvtk/ui/button.hpp>
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/widget.hpp>
 
-#include "buttons.hpp"
-#include "embedding.hpp"
-#include "four_squares.hpp"
 #include "menu_bar.hpp"
 #include "utils.hpp"
 
@@ -20,12 +18,12 @@ namespace demo {
 #define SIDEBAR_WIDTH 200
 
 enum ID {
-    FOUR_SQUARES = 0,
-    BUTTONS,
-    ENTRY,
+    BUTTONS = 0,
     SLIDERS,
+    FOUR_SQUARES,
+    ENTRY,
     EMBED,
-    NUM_DEMOS
+    NUM_DEMOS = 2
 };
 
 static std::string name (int did) {
@@ -52,6 +50,20 @@ static std::string name (int did) {
     demo << (did + 1);
     return demo;
 }
+
+class DemoWidget : public Widget {
+public:
+    explicit DemoWidget() : Widget() {
+        set_opaque (true);
+    }
+    virtual ~DemoWidget() = default;
+
+protected:
+    void paint (Graphics& g) override {
+        g.set_color (0xff333333);
+        g.fill_rect (bounds().at (0));
+    }
+};
 
 class Content : public Widget {
 public:
@@ -94,11 +106,6 @@ private:
                 auto r2 = r1.slice_top (40).smaller (2, 1);
                 box->set_bounds (r2);
             }
-        }
-
-        void paint (Graphics& g) override {
-            // g.set_color (Color (0xff454545).darker (0.04f));
-            // g.fill_rect (bounds().at (0, 0));
         }
 
     private:

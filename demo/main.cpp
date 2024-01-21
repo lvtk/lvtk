@@ -1,6 +1,8 @@
 // Copyright 2019-2024 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
+#include <iostream>
+
 #include <lvtk/ui/main.hpp>
 #include <lvtk/ui/view.hpp>
 
