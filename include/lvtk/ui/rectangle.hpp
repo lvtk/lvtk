@@ -194,6 +194,20 @@ struct Rectangle {
         return reduce (delta, delta);
     }
 
+    /** Copy, reduce and return. */
+    Rectangle reduced (Val dx, Val dy) const noexcept {
+        auto r = *this;
+        r.reduce (dx, dy);
+        return r;
+    }
+
+    /** Copy, reduce and return. */
+    Rectangle reduced (Val delta) const noexcept {
+        auto r = *this;
+        r.reduce (delta);
+        return r;
+    }
+
     /** Returns an expanded shape at same center.
         @param amount How much to grow by.
     */
