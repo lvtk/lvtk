@@ -34,7 +34,7 @@ static constexpr auto destroy = nvgDeleteGL3;
 } // namespace detail
 
 namespace convert {
-
+#if 0 // save, ignore unused warning
 static int alignment (Alignment align) {
     uint32_t flags = 0;
 
@@ -53,7 +53,7 @@ static int alignment (Alignment align) {
 
     return static_cast<int> (flags);
 };
-
+#endif
 } // namespace convert
 
 class Context::Ctx {

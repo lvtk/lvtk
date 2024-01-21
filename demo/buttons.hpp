@@ -15,6 +15,8 @@ namespace demo {
 class Buttons : public DemoWidget {
 public:
     Buttons() {
+        message = "Click a button...";
+
         add (button1);
         button1.set_text ("Quit");
         button1.set_name ("Quit Button");

@@ -13,14 +13,15 @@ namespace demo {
 
 class Sliders : public DemoWidget {
 public:
+    enum { total_sliders = 11 };
     Sliders() {
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < total_sliders; ++i) {
             sliders.push_back (new Slider());
             auto& slider = *add (sliders.back());
             slider.set_name (std::string ("Slider ") + std::to_string (i + 1));
             slider.set_type (slider_type);
             slider.set_range (0.0, 100.0);
-            slider.set_value (slider.range().max * i / 7.0, Notify::NONE);
+            slider.set_value (slider.range().max * i / (total_sliders - 1.0), Notify::NONE);
             slider.on_value_changed = [this, &s = slider]() { update_text (s); };
         }
 
@@ -62,34 +63,37 @@ private:
 
     void update_text (Slider& slider) {
         last_value = slider.value();
-        value_str  = std::string ("value: ") + std::to_string (slider.value());
-        min_str    = std::string ("min: ") + std::to_string (slider.range().min);
-        max_str    = std::string ("max: ") + std::to_string (slider.range().max);
+        value_str  = std::string ("VALUE: ") + std::to_string (slider.value());
+        min_str    = std::string ("MIN: ") + std::to_string (slider.range().min);
+        max_str    = std::string ("MAX: ") + std::to_string (slider.range().max);
         repaint();
     }
 
+    bool vertical() const noexcept {
+        return slider_type == Slider::VERTICAL || slider_type == Slider::VERTICAL_BAR;
+    }
+
     void resized() override {
-        auto r1 = bounds().at (0);
-        r1.reduce (4, 0);
+        auto r1       = bounds().at (0).reduced (5, 5);
         const auto tr = r1.slice_top (40);
-        const auto br = r1.slice_bottom (26);
-        r1.slice_left (10);
-        int gap = 4;
+        r1.slice_bottom (16);
 
-        if (slider_type == Slider::VERTICAL || slider_type == Slider::VERTICAL_BAR) {
-            int step       = std::max (28, r1.width / (int) sliders.size());
-            auto hide_area = bounds().at (0).slice_right (2);
+        int gap               = 10;
+        auto hide_area        = vertical() ? bounds().at (0).slice_right (2)
+                                           : bounds().at (0).slice_bottom (10);
+        const int step_factor = vertical() ? r1.width : r1.height;
+        int step              = std::min (37, std::max (28, step_factor / (int) sliders.size()));
 
+        if (vertical()) {
             for (auto s : sliders) {
                 s->set_bounds (r1.slice_left (step));
                 s->set_visible (! hide_area.intersects (s->bounds()));
                 r1.slice_left (gap);
             }
         } else {
-            int step = std::max (28, r1.height / (int) sliders.size());
             for (auto s : sliders) {
                 s->set_bounds (r1.slice_top (step));
-                s->set_visible (! br.intersects (s->bounds()));
+                s->set_visible (! hide_area.intersects (s->bounds()));
                 r1.slice_top (gap);
             }
         }
@@ -112,10 +116,15 @@ private:
         r = r.slice_bottom (30);
 
         r.slice_left (8);
+        auto label_width = [&] (std::string_view text) -> int {
+            auto tm = g.context().text_metrics (text);
+            return 10 + static_cast<int> (tm.width);
+        };
+
         g.draw_text (min_str, r.as<float>(), Align::BOTTOM_LEFT);
-        r.slice_left (120);
+        r.slice_left (label_width (min_str));
         g.draw_text (max_str, r.as<float>(), Align::BOTTOM_LEFT);
-        r.slice_left (120);
+        r.slice_left (label_width (min_str));
         r.slice_right (8);
         g.draw_text (value_str, r.as<float>(), Align::BOTTOM_RIGHT);
     }
@@ -145,9 +154,9 @@ private:
     TextButton next_button {};
     Slider::Type slider_type { Slider::VERTICAL_BAR };
     double last_value = 0.0;
-    std::string value_str { "value: N/A" };
-    std::string min_str { "min: N/A" };
-    std::string max_str { "max: N/A" };
+    std::string value_str { "VALUE: N/A" };
+    std::string min_str { "MIN: N/A" };
+    std::string max_str { "MAX: N/A" };
 };
 
 std::unique_ptr<Widget> create_sliders_demo() {
