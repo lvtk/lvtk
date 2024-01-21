@@ -49,7 +49,7 @@ public:
         if (highlight || down)
             c = c.brighter (0.05f);
         g.set_color (c);
-
+        g.set_font (std::min (13.f, w.height() * 0.55f));
         auto r = w.bounds().at (0).as<float>();
         g.draw_text (w.text(), r, Align::CENTERED);
     }
