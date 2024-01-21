@@ -4,6 +4,8 @@
 #include <lvtk/ui/graphics.hpp>
 #include <lvtk/ui/path.hpp>
 
+#include <iostream>
+
 namespace lvtk {
 
 Graphics::Graphics (DrawingContext& d)
@@ -19,6 +21,7 @@ void Graphics::save() { _context.save(); }
 void Graphics::restore() { _context.restore(); }
 
 void Graphics::set_font (const Font& font) { _context.set_font (font); }
+void Graphics::set_font (double height) { set_font (Font (static_cast<float> (height))); }
 
 void Graphics::set_color (Color color) { _context.set_fill (color); }
 
@@ -102,20 +105,27 @@ void Graphics::fill_rounded_rect (const Rectangle<float>& r, float corner_size) 
 }
 
 void Graphics::draw_text (const std::string& text, Rectangle<float> area, Alignment align) {
-    float x                 = area.x;
-    float y                 = area.y;
-    const float line_height = 16.f;
+    if (text.empty() || area.empty())
+        return;
+
+    const auto fe = _context.font_metrics();
+    const auto te = _context.text_metrics (text);
+    float x       = area.x;
+    float y       = area.y;
 
     if (align.flags() & Align::CENTER)
-        x = area.x + (area.width * 0.5f);
+        x = (area.x + te.x_offset) + (area.width * 0.5f) - (te.width * 0.5f);
     else if (align.flags() & Align::RIGHT)
-        x = area.x + area.width;
-    if (align.flags() & Align::MIDDLE)
-        y = area.y + (area.height * 0.5f);
+        x = area.x + area.width - te.width;
+    if (align.flags() & Align::TOP)
+        y += fe.ascent;
+    else if (align.flags() & Align::MIDDLE)
+        y = (area.height * 0.5f) - (fe.height * 0.5) + fe.ascent;
     else if (align.flags() & Align::BOTTOM)
-        y = area.y + area.height - line_height;
+        y = area.y + area.height - fe.descent;
 
-    _context.text (text, x, y, align);
+    _context.move_to (x, y);
+    _context.show_text (text);
 };
 
 /** Returns the context used by this Graphics instance. */

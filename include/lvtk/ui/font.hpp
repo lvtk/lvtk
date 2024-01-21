@@ -101,7 +101,9 @@ public:
     */
     Font with_height (float height) const noexcept;
 
+    /** not reliable yet. */
     bool operator== (const Font& o) const noexcept;
+    /** not reliable yet. */
     bool operator!= (const Font& o) const noexcept;
 
 private:

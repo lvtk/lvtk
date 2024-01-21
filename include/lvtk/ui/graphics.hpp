@@ -47,6 +47,23 @@ public:
         m10 { 0.f }, m11 { 1.f }, m12 { 0.f };
 };
 
+struct FontMetrics {
+    double ascent { 0.0 };
+    double descent { 0.0 };
+    double height { 0.0 };
+    double x_stride_max { 0.0 };
+    double y_stride_max { 0.0 };
+};
+
+struct TextMetrics {
+    double width { 0.0 };
+    double height { 0.0 };
+    double x_offset { 0.0 };
+    double y_offset { 0.0 };
+    double x_stride { 0.0 };
+    double y_stride { 0.0 };
+};
+
 /** Lower level graphics context.
     @ingroup graphics
     @headerfile lvtk/ui/graphics.hpp
@@ -59,10 +76,10 @@ public:
     // clang-format off
     virtual float scale_factor() const noexcept =0;
     
-    /** Save the current state */    
+    /** Save the current state. */
     virtual void save() =0;
 
-    /** Restore last state */
+    /** Restore last state. */
     virtual void restore() =0;
 
     /** Begin a new path */
@@ -88,7 +105,6 @@ public:
     /** Apply transformation matrix */
     virtual void transform (const Transform& mat) =0;
     
-
     virtual void clip (const Rectangle<int>& r) =0;
     virtual void exclude_clip (const Rectangle<int>& r) =0;
     virtual Rectangle<int> last_clip() const =0;
@@ -104,7 +120,6 @@ public:
     */
     virtual void set_font (const Font& font) =0;
 
-
     /** Set the current fill type.
         Subclass should save the fill and use it for stroke/fill operations
         @param fill The new fill type to use
@@ -114,18 +129,23 @@ public:
     virtual void fill_rect (const Rectangle<float>& r) =0;
     // clang-format on
 
+    /** Returns the font metrics for the currently selected font. */
+    virtual FontMetrics font_metrics() const noexcept = 0;
+
+    /** Returns the text metrics for the currently selected font. */
+    virtual TextMetrics text_metrics (std::string_view text) const noexcept = 0;
+
     /** Draw some text.
         
         Implementations should draw the text with the current font at x/y.
         Alignment applies the the point, not the space being drawn in to.
 
         @param text The text to draw.
-        @param x The x coordinate
-        @param y The y coordinate
-        @param align How align around the x/y point.
+        @param x The x coordinate.
+        @param y The y coordinate.
      */
-    virtual bool text (const std::string& text, float x, float y, Alignment align) {
-        ignore (text, x, y, align);
+    virtual bool show_text (const std::string_view text) {
+        ignore (text);
         return false;
     }
 };
@@ -153,7 +173,7 @@ public:
      */
     void translate (const Point<int>& delta);
 
-    /** Set the clib bounds
+    /** Set the clip bounds
         @param c Bounds to set
      */
     void clip (Bounds c);
@@ -173,6 +193,7 @@ public:
 
     /** Set the current font */
     void set_font (const Font& font);
+    void set_font (double height);
 
     /** Set the current fill to solid color */
     void set_color (Color color);

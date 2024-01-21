@@ -107,20 +107,32 @@ public:
 
     /** Apply transformation matrix */
     void transform (const Transform& mat) override {
+        cairo_matrix_t m;
+        cairo_matrix_init (&m, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
+        cairo_transform (cr, &m);
         // TODO
     }
 
     void clip (const Rectangle<int>& r) override {
 #if 1
         state.clip = r.as<double>();
+        cairo_new_path (cr);
         cairo_rectangle (cr, r.x, r.y, r.width, r.height);
         cairo_clip (cr);
-        double x1, y1, x2, y2;
-        cairo_clip_extents (cr, &x1, &y1, &x2, &y2);
-        state.clip.x      = x1;
-        state.clip.y      = y1;
-        state.clip.width  = x2 - x1;
-        state.clip.height = y2 - y1;
+
+#    if 0
+        double x2, y2;
+        Rectangle<double> nr;
+        cairo_clip_extents (cr, &nr.x, &nr.y, &x2, &y2);
+        nr.width  = x2 - nr.x;
+        nr.height = y2 - nr.y;
+
+        if (nr != state.clip) {
+            std::clog << "RA: " << state.clip.str() << std::endl
+                << "RB: " << nr.str() << std::endl;
+            state.clip = nr;
+        }
+#    endif
 #else
         auto c = state.clip.empty() ? r.as<double>()
                                     : state.clip.intersection (r.as<double>());
@@ -149,7 +161,12 @@ public:
     }
 
     Font font() const noexcept override { return state.font; }
-    void set_font (const Font& f) override { state.font = f; }
+    void set_font (const Font& f) override {
+        // if (state.font == f)
+        //     return;
+        state.font = f;
+        cairo_set_font_size (cr, f.height());
+    }
 
     void set_fill (const Fill& fill) override {
         state.color = fill.color();
@@ -162,13 +179,38 @@ public:
         cairo_fill (cr);
     }
 
-    bool text (const std::string& text, float x, float y, Alignment align) override {
+    FontMetrics font_metrics() const noexcept override {
+        cairo_font_extents_t cfe;
+        cairo_font_extents (cr, &cfe);
+        return {
+            cfe.ascent,
+            cfe.descent,
+            cfe.height,
+            cfe.max_x_advance,
+            cfe.max_y_advance
+        };
+    }
+
+    TextMetrics text_metrics (std::string_view text) const noexcept override {
+        cairo_text_extents_t cte;
+        cairo_text_extents (cr, text.data(), &cte);
+        return {
+            cte.width,
+            cte.height,
+            cte.x_bearing,
+            cte.y_bearing,
+            cte.x_advance,
+            cte.y_advance
+        };
+    }
+
+    bool show_text (std::string_view text) override {
         apply_pending_state();
-        cairo_text_extents_t extents;
-        cairo_set_font_size (cr, state.font.height());
-        cairo_text_extents (cr, text.c_str(), &extents);
-        cairo_move_to (cr, x, y);
-        cairo_show_text (cr, text.c_str());
+        // cairo_text_extents_t extents;
+        // cairo_set_font_size (cr, state.font.height());
+        // cairo_text_extents (cr, text.c_str(), &extents);
+        // cairo_move_to (cr, x, y);
+        cairo_show_text (cr, text.data());
         return true;
     }
 

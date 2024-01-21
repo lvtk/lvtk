@@ -34,6 +34,7 @@ static constexpr auto destroy = nvgDeleteGL3;
 } // namespace detail
 
 namespace convert {
+
 static int alignment (Alignment align) {
     uint32_t flags = 0;
 
@@ -116,9 +117,17 @@ public:
         return r;
     }
 
+    void reset() {
+        nvgReset (ctx);
+        last_pos.x = last_pos.y = 0;
+    }
+
 private:
     friend class nvg::Context;
     NVGcontext* ctx { nullptr };
+
+    Point<float> last_pos;
+
     struct State {
         NVGcolor color;
         Rectangle<float> clip;
@@ -161,12 +170,27 @@ void Context::transform (const Transform& mat) {
 }
 
 void Context::begin_path() { nvgBeginPath (ctx->ctx); }
-void Context::move_to (float x1, float y1) { nvgMoveTo (ctx->ctx, x1, y1); }
-void Context::line_to (float x1, float y1) { nvgLineTo (ctx->ctx, x1, y1); }
+void Context::move_to (float x1, float y1) {
+    ctx->last_pos.x = x1;
+    ctx->last_pos.y = y1;
+    nvgMoveTo (ctx->ctx, x1, y1);
+}
+
+void Context::line_to (float x1, float y1) {
+    ctx->last_pos.x = x1;
+    ctx->last_pos.y = y1;
+    nvgLineTo (ctx->ctx, x1, y1);
+}
+
 void Context::quad_to (float x1, float y1, float x2, float y2) {
+    ctx->last_pos.x = x2;
+    ctx->last_pos.y = y2;
     nvgQuadTo (ctx->ctx, x1, y1, x2, y2);
 }
+
 void Context::cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) {
+    ctx->last_pos.x = x3;
+    ctx->last_pos.y = y3;
     nvgBezierTo (ctx->ctx, x1, y1, x2, y2, x3, y3);
 }
 void Context::close_path() { nvgClosePath (ctx->ctx); }
@@ -207,6 +231,8 @@ Font Context::font() const noexcept { return ctx->state.font; }
 void Context::set_font (const Font& font) {
     ctx->state.font    = font;
     ctx->state.font_id = font.bold() ? ctx->_font_bold : ctx->_font_normal;
+    nvgFontSize (ctx->ctx, ctx->state.font.height());
+    nvgFontFaceId (ctx->ctx, ctx->state.font_id);
 }
 
 void Context::set_fill (const Fill& fill) {
@@ -248,12 +274,35 @@ void Context::fill_rect (const Rectangle<float>& r) {
     fill();
 }
 
-bool Context::text (const std::string& text, float x, float y, Alignment align) {
-    nvgFontSize (ctx->ctx, ctx->state.font.height());
-    nvgFontFaceId (ctx->ctx, ctx->state.font_id);
-    nvgTextAlign (ctx->ctx, convert::alignment (align));
+FontMetrics Context::font_metrics() const noexcept {
+    float a, d, lh;
+    nvgTextMetrics (ctx->ctx, &a, &d, &lh);
+    return { a, d, lh, 0.0, 0.0 };
+}
+
+TextMetrics Context::text_metrics (std::string_view text) const noexcept {
+    lvtk::Point<float> pt { 0.f, 0.f };
+    TextMetrics te;
+    float b[4] = { 0.f };
+    float ascent, descent, lineheight;
+
+    nvgTextMetrics (ctx->ctx, &ascent, &descent, &lineheight);
+    te.x_stride = nvgTextBounds (ctx->ctx, pt.x, pt.y, text.data(), nullptr, b);
+    te.width    = b[2] - b[0];
+    te.height   = b[3] - b[1];
+    te.x_offset = 0;
+    te.y_offset = ascent + descent - lineheight;
+    te.y_stride = 0;
+
+    return te;
+}
+
+bool Context::show_text (std::string_view text) {
+    nvgSave (ctx->ctx);
+    nvgTextAlign (ctx->ctx, NVG_ALIGN_BASELINE | NVG_ALIGN_LEFT);
     nvgFillColor (ctx->ctx, ctx->state.color);
-    nvgText (ctx->ctx, x, y, text.c_str(), nullptr);
+    nvgText (ctx->ctx, ctx->last_pos.x, ctx->last_pos.y, text.data(), nullptr);
+    nvgRestore (ctx->ctx);
     return true;
 }
 
