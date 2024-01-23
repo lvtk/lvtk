@@ -50,7 +50,7 @@ protected:
 
         auto r = bounds().at (0);
         r.slice_bottom (40);
-        g.draw_text (message, r.as<float>(), Align::CENTERED);
+        g.draw_text (message, r.as<float>(), Justify::CENTERED);
     }
 
     void resized() override {

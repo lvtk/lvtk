@@ -22,7 +22,7 @@ public:
         g.set_font (font);
         g.draw_text (current_text,
                      owner.bounds().at (0).smaller (2).as<float>(),
-                     Align::LEFT_MIDDLE);
+                     Justify::LEFT_MIDDLE);
     }
 
     bool text_entry (const TextEvent& ev) {

@@ -8,13 +8,15 @@
 
 namespace lvtk {
 
-/** A utility class to help aligning text etc etc. 
+/** A utility class to help aligning text within its container. This is similar
+    to Fitment, but does not imply any kind of scale-to-fit logic.
+
     @ingroup graphics
-    @headerfile lvtk/ui/align.hpp
+    @headerfile lvtk/ui/justify.hpp
 */
-class Align final {
+class Justify final {
 public:
-    enum Placement : uint8_t {
+    enum Flags : uint8_t {
         LEFT   = (1u << 0u), ///< Align left.
         CENTER = (1u << 2u), ///< Align horizontally centered.
         RIGHT  = (1u << 1u), ///< Align right.
@@ -46,12 +48,12 @@ public:
     };
 
     /** Create an invalid alignment */
-    Align() {}
+    Justify() {}
     /** Create an alignment from flags */
-    Align (uint8_t flags) : _flags (flags) {}
+    Justify (uint8_t flags) : _flags (flags) {}
     /** Copy this alignment */
-    Align (const Align& o) : _flags (o._flags) {}
-    Align& operator= (const Align& o) {
+    Justify (const Justify& o) : _flags (o._flags) {}
+    Justify& operator= (const Justify& o) {
         _flags = o._flags;
         return *this;
     }
@@ -59,18 +61,16 @@ public:
     /** Returns the flags of this Align */
     uint8_t flags() const noexcept { return _flags; }
 
-    bool operator== (const Align& o) const noexcept { return _flags == o._flags; }
+    bool operator== (const Justify& o) const noexcept { return _flags == o._flags; }
     bool operator== (uint8_t o) const noexcept { return _flags == o; }
     bool operator== (int o) const noexcept { return static_cast<int> (_flags) == o; }
 
-    bool operator!= (const Align& o) const noexcept { return _flags != o._flags; }
+    bool operator!= (const Justify& o) const noexcept { return _flags != o._flags; }
     bool operator!= (uint8_t o) const noexcept { return _flags != o; }
     bool operator!= (int o) const noexcept { return static_cast<int> (_flags) != o; }
 
 private:
     uint8_t _flags = 0;
 };
-
-using Alignment = Align;
 
 } // namespace lvtk

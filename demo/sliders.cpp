@@ -121,12 +121,12 @@ private:
             return 10 + static_cast<int> (tm.width);
         };
 
-        g.draw_text (min_str, r.as<float>(), Align::BOTTOM_LEFT);
+        g.draw_text (min_str, r.as<float>(), Justify::BOTTOM_LEFT);
         r.slice_left (label_width (min_str));
-        g.draw_text (max_str, r.as<float>(), Align::BOTTOM_LEFT);
+        g.draw_text (max_str, r.as<float>(), Justify::BOTTOM_LEFT);
         r.slice_left (label_width (min_str));
         r.slice_right (8);
-        g.draw_text (value_str, r.as<float>(), Align::BOTTOM_RIGHT);
+        g.draw_text (value_str, r.as<float>(), Justify::BOTTOM_RIGHT);
     }
 
     void set_type (Slider::Type new_type) {

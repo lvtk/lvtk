@@ -106,7 +106,7 @@ void Graphics::fill_rounded_rect (const Rectangle<float>& r, float corner_size) 
     fill_rounded_rect (r.x, r.y, r.width, r.height, corner_size);
 }
 
-void Graphics::draw_text (const std::string& text, Rectangle<float> area, Alignment align) {
+void Graphics::draw_text (const std::string& text, Rectangle<float> area, Justify align) {
     if (text.empty() || area.empty())
         return;
 
@@ -115,15 +115,15 @@ void Graphics::draw_text (const std::string& text, Rectangle<float> area, Alignm
     float x       = area.x;
     float y       = area.y;
 
-    if (align.flags() & Align::CENTER)
+    if (align.flags() & Justify::CENTER)
         x = (area.x + te.x_offset) + (area.width * 0.5f) - (te.width * 0.5f);
-    else if (align.flags() & Align::RIGHT)
+    else if (align.flags() & Justify::RIGHT)
         x = area.x + area.width - te.width;
-    if (align.flags() & Align::TOP)
+    if (align.flags() & Justify::TOP)
         y += fe.ascent;
-    else if (align.flags() & Align::MIDDLE)
+    else if (align.flags() & Justify::MIDDLE)
         y = (area.height * 0.5f) - (fe.height * 0.5) + fe.ascent;
-    else if (align.flags() & Align::BOTTOM)
+    else if (align.flags() & Justify::BOTTOM)
         y = area.y + area.height - fe.descent;
 
     _context.move_to (x, y);

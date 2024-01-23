@@ -35,20 +35,20 @@ static constexpr auto destroy = nvgDeleteGL3;
 
 namespace convert {
 #if 0 // save, ignore unused warning
-static int alignment (Alignment align) {
+static int alignment (Justify align) {
     uint32_t flags = 0;
 
-    if ((align.flags() & Align::LEFT) != 0)
+    if ((align.flags() & Justify::LEFT) != 0)
         flags |= NVG_ALIGN_LEFT;
-    if ((align.flags() & Align::RIGHT) != 0)
+    if ((align.flags() & Justify::RIGHT) != 0)
         flags |= NVG_ALIGN_RIGHT;
-    if ((align.flags() & Align::CENTER) != 0)
+    if ((align.flags() & Justify::CENTER) != 0)
         flags |= NVG_ALIGN_CENTER;
-    if ((align.flags() & Align::TOP) != 0)
+    if ((align.flags() & Justify::TOP) != 0)
         flags |= NVG_ALIGN_TOP;
-    if ((align.flags() & Align::BOTTOM) != 0)
+    if ((align.flags() & Justify::BOTTOM) != 0)
         flags |= NVG_ALIGN_BOTTOM;
-    if ((align.flags() & Align::MIDDLE) != 0)
+    if ((align.flags() & Justify::MIDDLE) != 0)
         flags |= NVG_ALIGN_MIDDLE;
 
     return static_cast<int> (flags);
@@ -304,6 +304,27 @@ bool Context::show_text (std::string_view text) {
     nvgText (ctx->ctx, ctx->last_pos.x, ctx->last_pos.y, text.data(), nullptr);
     nvgRestore (ctx->ctx);
     return true;
+}
+
+void Context::draw_image (Image i, Transform matrix) {
+    if (i.format() != PixelFormat::ARGB32)
+        return;
+
+    auto handle = nvgCreateImageRGBA (ctx->ctx,
+                                      i.width(),
+                                      i.height(),
+                                      NVG_IMAGE_PREMULTIPLIED,
+                                      i.data());
+
+    // nvgBeginPath(ctx->ctx);
+    // nvgRect(ctx->ctx, 0, 0, i.width(), i.height());
+    transform (matrix);
+
+    auto paint = nvgImagePattern (ctx->ctx, 0, 0, 0, 0, 0.f, handle, 1.f);
+    nvgFillPaint (ctx->ctx, paint);
+
+    nvgFill (ctx->ctx);
+    nvgDeleteImage (ctx->ctx, handle);
 }
 
 } // namespace nvg

@@ -43,6 +43,7 @@ public:
     FontMetrics font_metrics() const noexcept override;
     TextMetrics text_metrics (std::string_view text) const noexcept override;
     bool show_text (std::string_view) override;
+    void draw_image (Image i, Transform matrix) override;
 
     Font font() const noexcept override;
     void set_font (const Font& font) override;

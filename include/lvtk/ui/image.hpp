@@ -11,10 +11,20 @@
 
 namespace lvtk {
 
+/** Format for a single pixel. */
 enum class PixelFormat {
-    INVALID = 0, ///> Invalid pixel format
-    ARGB32,      ///> 32bit pre-multiplied ARGB. 0xAARRGGBB.
-    RGB24        ///> 24bit RGB with the lower bits unused.
+    INVALID = 0, ///> Invalid format or is not supported.
+
+    /** @brief 32-bit pixels, with alpha in the upper 8 bits, then red, then 
+        green, then blue. The 32-bit quantities are stored native-endian. 
+        Pre-multiplied alpha is used.
+    */
+    ARGB32,
+
+    /** @brief 32-bit pixels, with the upper 8 bits unused. Red, Green, and Blue 
+        are stored in the remaining 24 bits in that order. Stored native-endian.
+    */
+    RGB24
 };
 
 /** Pixel data

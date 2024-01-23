@@ -11,7 +11,7 @@
 
 namespace lvtk {
 
-/** How to fit a rectangle within another. This is similar to Alignment, but has
+/** How to fit a rectangle within another. This is similar to Justify, but has
     extra options specific to rectangle scale-to-fit logic.
 */
 class LVTK_API Fitment {

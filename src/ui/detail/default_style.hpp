@@ -38,7 +38,7 @@ public:
 
         auto r = w.bounds().at (0);
         g.set_color (bc.brighter (-0.02f));
-        auto cs = 2.2f;
+        auto cs = 5.f;
         g.draw_rounded_rect (r, cs);
         g.set_color (bc);
         g.fill_rounded_rect (w.bounds().at (0), cs);
@@ -51,7 +51,7 @@ public:
         g.set_color (c);
         g.set_font (std::min (13.f, w.height() * 0.55f));
         auto r = w.bounds().at (0).as<float>();
-        g.draw_text (w.text(), r, Align::CENTERED);
+        g.draw_text (w.text(), r, Justify::CENTERED);
     }
 
     void draw_slider (Graphics& g, lvtk::Slider& slider, Bounds bounds, float pos) override {

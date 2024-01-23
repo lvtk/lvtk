@@ -4,12 +4,12 @@
 #pragma once
 
 #include <lvtk/lvtk.h>
-#include <lvtk/ui/align.hpp>
 #include <lvtk/ui/color.hpp>
 #include <lvtk/ui/fill.hpp>
 #include <lvtk/ui/fitment.hpp>
 #include <lvtk/ui/font.hpp>
 #include <lvtk/ui/image.hpp>
+#include <lvtk/ui/justify.hpp>
 #include <lvtk/ui/rectangle.hpp>
 #include <lvtk/ui/transform.hpp>
 
@@ -115,7 +115,7 @@ public:
     /** Draw some text.
         
         Implementations should draw the text with the current font at x/y.
-        Alignment applies the the point, not the space being drawn in to.
+        Justify applies the the point, not the space being drawn in to.
 
         @param text The text to draw.
         @param x The x coordinate.
@@ -215,7 +215,7 @@ public:
     void fill_rounded_rect (const Rectangle<int>& r, float corner_size);
 
     /** Draw some text */
-    void draw_text (const std::string& text, Rectangle<float> area, Alignment align);
+    void draw_text (const std::string& text, Rectangle<float> area, Justify align);
 
     /** Draw an image. */
     void draw_image (Image image, Rectangle<float> target, Fitment align);

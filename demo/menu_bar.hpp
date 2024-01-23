@@ -45,7 +45,7 @@ private:
 
         void paint (Graphics& g) override {
             g.set_color (Color (0xff111111));
-            g.draw_text (text, bounds().at (0).as<float>(), Align::CENTERED);
+            g.draw_text (text, bounds().at (0).as<float>(), Justify::CENTERED);
         }
 
         void pressed (const Event& ev) override {
