@@ -95,7 +95,6 @@ public:
 
     /** Stroke the current path with current settings */
     void stroke() override {
-        // cairo_set_line_width (cr, 2.0);
         apply_pending_state();
         cairo_stroke (cr);
     }
@@ -108,9 +107,8 @@ public:
     /** Apply transformation matrix */
     void transform (const Transform& mat) override {
         cairo_matrix_t m;
-        cairo_matrix_init (&m, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
+        cairo_matrix_init (&m, mat.m00, mat.m10, mat.m01, mat.m11, mat.m02, mat.m12);
         cairo_transform (cr, &m);
-        // TODO
     }
 
     void clip (const Rectangle<int>& r) override {
@@ -145,16 +143,6 @@ public:
     void exclude_clip (const Rectangle<int>& r) override {
         // TODO
     }
-
-    // Rectangle<double> clip_extents() const noexcept {
-    //     // Rectangle<double> c;
-    //     // double x2, y2;
-    //     // cairo_clip_extents (cr, &c.x, &c.y, &x2, &y2);
-    //     // c.width = x2 - c.x;
-    //     // c.height = y2 - c.y;
-    //     // state.clip = c;
-    //     return state.clip.as<int>();
-    // }
 
     Rectangle<int> last_clip() const override {
         return state.clip.as<int>();
@@ -206,12 +194,38 @@ public:
 
     bool show_text (std::string_view text) override {
         apply_pending_state();
-        // cairo_text_extents_t extents;
-        // cairo_set_font_size (cr, state.font.height());
-        // cairo_text_extents (cr, text.c_str(), &extents);
-        // cairo_move_to (cr, x, y);
         cairo_show_text (cr, text.data());
         return true;
+    }
+
+    void draw_image (Image i, Transform matrix) override {
+        cairo_surface_t* image = nullptr;
+        cairo_format_t format  = CAIRO_FORMAT_INVALID;
+
+        switch (i.format()) {
+            case PixelFormat::ARGB32:
+                format = CAIRO_FORMAT_ARGB32;
+                break;
+            case PixelFormat::RGB24:
+                format = CAIRO_FORMAT_RGB24;
+                break;
+            case PixelFormat::INVALID:
+            default:
+                format = CAIRO_FORMAT_INVALID;
+                break;
+        }
+
+        image = cairo_image_surface_create_for_data (
+            i.data(), format, i.width(), i.height(), i.stride());
+
+        if (image == nullptr)
+            return;
+
+        transform (matrix);
+        cairo_set_source_surface (cr, image, 0, 0);
+        cairo_paint (cr);
+
+        cairo_surface_destroy (image);
     }
 
 private:

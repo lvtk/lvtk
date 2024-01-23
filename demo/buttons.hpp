@@ -4,10 +4,10 @@
 #pragma once
 
 #include <functional>
-#include <iostream>
 
 #include "demo.hpp"
 #include <lvtk/ui/button.hpp>
+#include <lvtk/ui/image.hpp>
 
 namespace lvtk {
 namespace demo {

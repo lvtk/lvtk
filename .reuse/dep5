@@ -44,3 +44,7 @@ License: Zlib
 Files: scripts/bin2c.py
 Copyright: 2016 by Dmitry Alimov
 License: MIT
+
+Files: demo/res/lv2_logo.png
+Copyright: Copyright 2010-2024 David Robillard <d@drobilla.net>
+License: ISC

@@ -20,19 +20,20 @@ namespace demo {
 enum ID {
     BUTTONS = 0,
     SLIDERS,
-    FOUR_SQUARES,
+    IMAGES,
+
     ENTRY,
     EMBED,
-    NUM_DEMOS = 2
+    NUM_DEMOS = 3
 };
 
 static std::string name (int did) {
     switch (did) {
-        case FOUR_SQUARES:
-            return "Four Squares";
-            break;
         case BUTTONS:
             return "Buttons";
+            break;
+        case IMAGES:
+            return "Images";
             break;
         case ENTRY:
             return "Entry";

@@ -1,8 +1,12 @@
 lvtk_demo_sources = '''
     demo.cpp
     entry.cpp
+    images.cpp
     sliders.cpp
 '''.split()
+
+subdir('res')
+lvtk_demo_sources += lvtk_demo_res_sources
 
 lvtk_demo_deps = [ lvtk_host_dep ]
 

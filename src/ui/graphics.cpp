@@ -11,6 +11,8 @@ namespace lvtk {
 Graphics::Graphics (DrawingContext& d)
     : _context (d) {}
 
+DrawingContext& Graphics::context() { return _context; }
+
 void Graphics::translate (const Point<int>& delta) { _context.translate (delta); }
 void Graphics::clip (Bounds c) { _context.clip (c); }
 void Graphics::exclude_clip (Bounds c) { _context.exclude_clip (c); }
@@ -128,7 +130,16 @@ void Graphics::draw_text (const std::string& text, Rectangle<float> area, Alignm
     _context.show_text (text);
 };
 
-/** Returns the context used by this Graphics instance. */
-DrawingContext& Graphics::context() { return _context; }
+void Graphics::draw_image (Image image, Rectangle<float> target, Fitment align) {
+    if (! image.valid())
+        return;
+    draw_image (image, align.transform (image.bounds().as<float>(), target));
+}
+
+void Graphics::draw_image (Image image, Transform transform) {
+    _context.save();
+    _context.draw_image (image, transform);
+    _context.restore();
+}
 
 } // namespace lvtk

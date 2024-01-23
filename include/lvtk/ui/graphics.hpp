@@ -7,9 +7,11 @@
 #include <lvtk/ui/align.hpp>
 #include <lvtk/ui/color.hpp>
 #include <lvtk/ui/fill.hpp>
+#include <lvtk/ui/fitment.hpp>
 #include <lvtk/ui/font.hpp>
 #include <lvtk/ui/image.hpp>
 #include <lvtk/ui/rectangle.hpp>
+#include <lvtk/ui/transform.hpp>
 
 namespace lvtk {
 
@@ -21,31 +23,6 @@ class Path;
     @headerfile lvtk/ui/graphics.hpp
 */
 using Bounds = Rectangle<int>;
-
-/** A 2d transformation matrix.
-    @ingroup graphics
-    @headerfile lvtk/ui/graphics.hpp
-*/
-class LVTK_API Transform final {
-public:
-    Transform() = default;
-
-    bool operator== (const Transform& o) const noexcept {
-        return m00 == o.m00
-               && m01 == o.m01
-               && m02 == o.m02
-               && m10 == o.m10
-               && m11 == o.m11
-               && m12 == o.m12;
-    }
-
-    bool operator!= (const Transform& o) const noexcept {
-        return ! operator== (o);
-    }
-
-    float m00 { 1.f }, m01 { 0.f }, m02 { 0.f },
-        m10 { 0.f }, m11 { 1.f }, m12 { 0.f };
-};
 
 struct FontMetrics {
     double ascent { 0.0 };
@@ -148,6 +125,10 @@ public:
         ignore (text);
         return false;
     }
+
+    virtual void draw_image (Image image, Transform transform) {
+        lvtk::ignore (image, transform);
+    }
 };
 
 /** Higher level graphics context.
@@ -162,6 +143,9 @@ public:
     Graphics (DrawingContext& d);
     Graphics()  = delete;
     ~Graphics() = default;
+
+    /** Returns the context used by this Graphics instance. */
+    DrawingContext& context();
 
     /** Save the graphics state */
     void save();
@@ -233,12 +217,13 @@ public:
     /** Draw some text */
     void draw_text (const std::string& text, Rectangle<float> area, Alignment align);
 
-    /** Returns the context used by this Graphics instance. */
-    DrawingContext& context();
+    /** Draw an image. */
+    void draw_image (Image image, Rectangle<float> target, Fitment align);
+    void draw_image (Image image, Transform transform);
 
 private:
     DrawingContext& _context;
-    LVTK_DISABLE_COPY (Graphics);
+    LVTK_DISABLE_COPY (Graphics)
 };
 
 } // namespace lvtk

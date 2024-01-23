@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <iostream>
-
 #include <lvtk/ui/embed.hpp>
 #include <lvtk/ui/widget.hpp>
 

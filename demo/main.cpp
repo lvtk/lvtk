@@ -32,7 +32,7 @@ static int run (lvtk::Main& context) {
                 break;
         }
     } catch (...) {
-        std::clog << "[demo] fatal error in main loop\n";
+        std::cerr << "[demo] fatal error in main loop\n";
         context.set_exit_code (-1);
     }
 

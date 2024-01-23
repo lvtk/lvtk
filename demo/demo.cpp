@@ -1,18 +1,16 @@
 // Copyright 2019 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
-#include <iostream>
-
-#include "buttons.hpp"
 #include "demo.hpp"
+#include "buttons.hpp"
 #include "embedding.hpp"
-#include "four_squares.hpp"
 
 namespace lvtk {
 namespace demo {
 
 extern std::unique_ptr<Widget> create_entry_demo();
 extern std::unique_ptr<Widget> create_sliders_demo();
+extern std::unique_ptr<Widget> create_images_demo();
 
 Content::Content()
     : sidebar (*this) {
@@ -59,11 +57,11 @@ void Content::run_demo (int index) {
     }
 
     switch (index) {
-        case FOUR_SQUARES:
-            demo.reset (new FourSquares());
-            break;
         case BUTTONS:
             demo.reset (new Buttons());
+            break;
+        case IMAGES:
+            demo = create_images_demo();
             break;
         case ENTRY:
             demo = create_entry_demo();

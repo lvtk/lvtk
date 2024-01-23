@@ -10,6 +10,7 @@ lvtk_widgets_sources = files('''
     ui/graphics.cpp
     ui/image.cpp
     ui/main.cpp
+    ui/fitment.cpp
     ui/slider.cpp
     ui/style.cpp
     ui/view.cpp
