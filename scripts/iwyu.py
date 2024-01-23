@@ -10,7 +10,7 @@ import sys
 def include_what_you_use (file):
     iwyu = ['include-what-you-use', 
             '-Xiwyu', '--mapping_file=scripts/iwyu.imp',
-            '-Xiwyu', '--transitive_includes_only',
+            # '-Xiwyu', '--transitive_includes_only',
             '-Iinclude', '-Isrc',
             '-Isubprojects/lv2/include',
             '-std=c++17' ]
@@ -24,10 +24,11 @@ def include_what_you_use (file):
     process.wait()
     return process.returncode
 
+files = []
 if len(sys.argv) > 1:
     files = [sys.argv[1]]
 else:
-    files  = ['include/lvtk/lvtk.h']
+    # files  = ['include/lvtk/lvtk.h']
     files += glob.glob ('include/lvtk/*.hpp')
     files += glob.glob ('include/lvtk/ext/*.hpp')
     files += glob.glob ('include/lvtk/host/*.hpp')

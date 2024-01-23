@@ -5,7 +5,7 @@
 
 #include <atomic>
 
-#include <lvtk/lvtk.hpp>
+#include <lvtk/lvtk.h>
 
 namespace lvtk {
 
