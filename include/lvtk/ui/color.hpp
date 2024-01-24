@@ -34,11 +34,11 @@ public:
         @param b Blue
         @param a Alpha
     */
-    Color (uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-        pixel.component.r = r;
-        pixel.component.g = g;
-        pixel.component.b = b;
-        pixel.component.a = a;
+    Color (int r, int g, int b, int a) {
+        pixel.component.r = static_cast<uint8_t> (r);
+        pixel.component.g = static_cast<uint8_t> (g);
+        pixel.component.b = static_cast<uint8_t> (b);
+        pixel.component.a = static_cast<uint8_t> (a);
     }
 
     /** Creates a color from RGB values (0 - 255) 100% opaque
@@ -46,11 +46,11 @@ public:
         @param g Green
         @param b Blue
     */
-    Color (uint8_t r, uint8_t g, uint8_t b) {
-        pixel.component.r = r;
-        pixel.component.g = g;
-        pixel.component.b = b;
-        pixel.component.a = 0xff;
+    Color (int r, int g, int b) {
+        pixel.component.r = static_cast<uint8_t> (r);
+        pixel.component.g = static_cast<uint8_t> (g);
+        pixel.component.b = static_cast<uint8_t> (b);
+        pixel.component.a = 255;
     }
 
     /** Creates a color from RGBA floats (0.0 - 1.0)
@@ -144,15 +144,15 @@ public:
     }
 
     Color with_alpha (float a) const noexcept {
-        return Color (fred(), fblue(), fgreen(), a);
+        return Color (fred(), fgreen(), fblue(), a);
     }
 
-    Color with_alpha (uint8_t a) const noexcept {
-        return Color (red(), blue(), green(), a);
+    Color with_alpha (int a) const noexcept {
+        return Color (red(), green(), blue(), a);
     }
 
 private:
-#if 1 //LVTK_AGBA_COLORS
+#if 1
     union {
         struct {
             uint8_t b, g, r, a;
