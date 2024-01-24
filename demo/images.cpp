@@ -82,7 +82,7 @@ protected:
 
         if (_image < _images.size()) {
             auto i = _images[_image];
-            g.draw_image (i, r2.as<float>(), Fitment::CENTERED | Fitment::NO_GROW);
+            g.draw_image (i, r2.as<double>(), Fitment::CENTERED | Fitment::NO_GROW);
         }
     }
 

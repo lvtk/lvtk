@@ -36,12 +36,18 @@ public:
                 bc = bc.brighter (-0.035f);
         }
 
-        auto r = w.bounds().at (0);
+        auto line_width = 1.2;
+        auto r          = w.bounds().at (0).reduced (1);
         g.set_color (bc.brighter (-0.02f));
-        auto cs = 6.f;
-        g.draw_rounded_rect (r, cs);
-        g.set_color (bc);
+
+        auto cs = 4.f;
+
         g.fill_rounded_rect (r, cs);
+        g.set_color (w.toggled()
+                         ? Color (0xFF, 0xA4, 0x00, 255).with_alpha (.80f)
+                         : bc.darker (0.07f));
+        g.context().set_line_width (line_width);
+        g.draw_rounded_rect (r, cs);
     }
 
     void draw_button_text (Graphics& g, lvtk::TextButton& w, bool highlight, bool down) override {

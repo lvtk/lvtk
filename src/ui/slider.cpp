@@ -66,6 +66,7 @@ inline static void draw_dial_proto (Graphics& g, lvtk::Dial& dial, Rectangle<dou
             g.context().transform (Transform::rotation (angle).translated (center_x, center_y));
             g.context().move_to (0.f, line_offset);
             g.context().line_to (0.f, -radius + csf + std::abs (line_trim));
+            g.context().set_line_width (4);
             g.context().set_fill (Color (0xff000000));
             g.context().stroke();
             g.context().restore();

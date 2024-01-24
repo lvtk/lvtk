@@ -161,15 +161,30 @@ float Context::scale_factor() const noexcept {
     return ctx->internal_scale;
 }
 
-void Context::translate (const Point<int>& pt) {
-    nvgTranslate (ctx->ctx, (float) pt.x, (float) pt.y);
+void Context::translate (double x, double y) {
+    nvgTranslate (ctx->ctx,
+                  static_cast<float> (x),
+                  static_cast<float> (y));
 }
 
+// [a c e]
+// [b d f]
+// [0 0 1]
 void Context::transform (const Transform& mat) {
-    nvgTransform (ctx->ctx, mat.m00, mat.m01, mat.m02, mat.m10, mat.m11, mat.m12);
+    // nvgTransform (ctx->ctx, mat.m00, mat.m01, mat.m02,
+    //                         mat.m10, mat.m11, mat.m12);
+    nvgTransform (ctx->ctx, mat.m00, mat.m10, mat.m01, mat.m11, mat.m02, mat.m12);
 }
 
-void Context::begin_path() { nvgBeginPath (ctx->ctx); }
+void Context::set_line_width (double width) {
+    nvgStrokeWidth (ctx->ctx, static_cast<float> (width));
+}
+
+void Context::begin_path() {
+    ctx->last_pos = {};
+    nvgBeginPath (ctx->ctx);
+}
+
 void Context::move_to (float x1, float y1) {
     ctx->last_pos.x = x1;
     ctx->last_pos.y = y1;
@@ -196,20 +211,24 @@ void Context::cubic_to (float x1, float y1, float x2, float y2, float x3, float 
 void Context::close_path() { nvgClosePath (ctx->ctx); }
 
 void Context::fill() {
+    // nvgPathWinding (ctx->ctx, NVG_SOLID);
     nvgFillColor (ctx->ctx, ctx->state.color);
     nvgFill (ctx->ctx);
 }
 
-void Context::stroke() { nvgStroke (ctx->ctx); }
+void Context::stroke() {
+    nvgStrokeWidth (ctx->ctx, 4.0);
+    nvgStroke (ctx->ctx);
+}
 
 void Context::clip (const Rectangle<int>& r) {
 #if 1
     ctx->state.clip = r.as<float>();
-    nvgIntersectScissor (ctx->ctx,
-                         ctx->state.clip.x,
-                         ctx->state.clip.y,
-                         ctx->state.clip.width,
-                         ctx->state.clip.height);
+    nvgScissor (ctx->ctx,
+                ctx->state.clip.x,
+                ctx->state.clip.y,
+                ctx->state.clip.width,
+                ctx->state.clip.height);
 #else
     auto c = ctx->state.clip.empty() ? r.as<float>()
                                      : ctx->state.clip.intersection (r.as<float>());

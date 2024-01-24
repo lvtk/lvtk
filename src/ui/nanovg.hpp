@@ -21,6 +21,8 @@ public:
     void save() override;
     void restore() override;
 
+    void set_line_width (double width) override;
+
     void begin_path() override;
     void move_to (float x1, float y1) override;
     void line_to (float x1, float y1) override;
@@ -31,7 +33,7 @@ public:
     void fill() override;
     void stroke() override;
 
-    void translate (const Point<int>& pt) override;
+    void translate (double, double) override;
     void transform (const Transform& mat) override;
     void clip (const Rectangle<int>& r) override;
     void exclude_clip (const Rectangle<int>& r) override;

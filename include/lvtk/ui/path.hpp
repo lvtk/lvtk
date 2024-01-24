@@ -187,7 +187,6 @@ public:
         auto cx   = x + hw;
         auto cy   = x + hh;
 
-        begin_path();
         move_to (cx, cy - hh);
         cubic_to (cx + hw55, cy - hh, cx + hw, cy - hh55, cx + hw, cy);
         cubic_to (cx + hw, cy + hh55, cx + hw55, cy + hh, cx, cy + hh);

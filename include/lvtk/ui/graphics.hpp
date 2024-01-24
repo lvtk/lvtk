@@ -17,13 +17,6 @@ namespace lvtk {
 
 class Path;
 
-/** Bounds alias Rectangle<int>
-    @see Rectangle
-    @ingroup graphics
-    @headerfile lvtk/ui/graphics.hpp
-*/
-using Bounds = Rectangle<int>;
-
 struct FontMetrics {
     double ascent { 0.0 };
     double descent { 0.0 };
@@ -59,8 +52,11 @@ public:
     /** Restore last state. */
     virtual void restore() =0;
 
+    virtual void set_line_width (double width) =0;
+
     /** Begin a new path */
     virtual void begin_path() =0;
+
     /** Start a new subpath at x1 and y1 */
     virtual void move_to (float x1, float y1) =0;
     /** Draw a line */
@@ -74,11 +70,13 @@ public:
 
     /** Fill the current path with the currrent settings */
     virtual void fill() =0;
+    
     /** Stroke the current path with current settings */
     virtual void stroke() =0;
 
     /** Translate the origin */
-    virtual void translate (const Point<int>& pt) =0;
+    virtual void translate (double dx, double dy) =0;
+
     /** Apply transformation matrix */
     virtual void transform (const Transform& mat) =0;
     
@@ -155,7 +153,7 @@ public:
     /** Translate origin by delta pixels from current origin.
         @param delta delta xy to move by
      */
-    void translate (const Point<int>& delta);
+    void translate (Point<int> delta);
 
     /** Set the clip bounds
         @param c Bounds to set
@@ -220,7 +218,7 @@ public:
     void draw_text (const std::string& text, Rectangle<float> area, Justify align);
 
     /** Draw an image. */
-    void draw_image (Image image, Rectangle<float> target, Fitment align);
+    void draw_image (Image image, Rectangle<double> target, Fitment align);
     void draw_image (Image image, Transform transform);
 
 private:

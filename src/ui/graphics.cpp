@@ -13,7 +13,10 @@ Graphics::Graphics (DrawingContext& d)
 
 DrawingContext& Graphics::context() { return _context; }
 
-void Graphics::translate (const Point<int>& delta) { _context.translate (delta); }
+void Graphics::translate (Point<int> delta) {
+    _context.translate (delta.x, delta.y);
+}
+
 void Graphics::clip (Bounds c) { _context.clip (c); }
 void Graphics::exclude_clip (Bounds c) { _context.exclude_clip (c); }
 Bounds Graphics::last_clip() const noexcept { return _context.last_clip(); }
@@ -28,6 +31,8 @@ void Graphics::set_font (double height) { set_font (Font (static_cast<float> (he
 void Graphics::set_color (Color color) { _context.set_fill (color); }
 
 void Graphics::fill_path (const Path& path) {
+    _context.begin_path();
+
     for (const auto& i : path) {
         switch (i.type) {
             case PathOp::MOVE:
@@ -65,6 +70,7 @@ void Graphics::fill_rect (const Rectangle<int>& r) {
 }
 
 void Graphics::draw_rounded_rect (float x, float y, float width, float height, float corner_size) {
+    _context.begin_path();
     graphics::rounded_rect (_context, x, y, width, height, corner_size)
         .stroke();
 }
@@ -109,6 +115,8 @@ void Graphics::fill_rounded_rect (const Rectangle<float>& r, float corner_size) 
 }
 
 void Graphics::stroke_path (const Path& path) {
+    _context.begin_path();
+
     for (const auto& i : path) {
         switch (i.type) {
             case PathOp::MOVE:
@@ -155,10 +163,10 @@ void Graphics::draw_text (const std::string& text, Rectangle<float> area, Justif
     _context.show_text (text);
 };
 
-void Graphics::draw_image (Image image, Rectangle<float> target, Fitment align) {
+void Graphics::draw_image (Image image, Rectangle<double> target, Fitment align) {
     if (! image.valid())
         return;
-    draw_image (image, align.transform (image.bounds().as<float>(), target));
+    draw_image (image, align.transform (image.bounds().as<double>(), target.as<double>()));
 }
 
 void Graphics::draw_image (Image image, Transform transform) {

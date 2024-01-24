@@ -302,4 +302,11 @@ struct Rectangle {
     }
 };
 
+/** Bounds alias Rectangle<int>
+    @see Rectangle
+    @ingroup graphics
+    @headerfile lvtk/ui/graphics.hpp
+*/
+using Bounds = Rectangle<int>;
+
 } // namespace lvtk

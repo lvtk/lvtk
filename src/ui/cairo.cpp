@@ -53,9 +53,13 @@ public:
         stack.pop_back();
     }
 
+    void set_line_width (double width) {
+        cairo_set_line_width (cr, width);
+    }
+
     /** Begin a new path */
     void begin_path() override {
-        cairo_new_sub_path (cr);
+        cairo_new_path (cr);
     }
 
     /** Start a new subpath at x1 and y1 */
@@ -96,19 +100,21 @@ public:
     /** Stroke the current path with current settings */
     void stroke() override {
         apply_pending_state();
-        cairo_set_line_width (cr, 4);
         cairo_stroke (cr);
     }
 
     /** Translate the origin */
-    void translate (const Point<int>& pt) override {
-        cairo_translate (cr, pt.x, pt.y);
+    void translate (double x, double y) override {
+        cairo_translate (cr, x, y);
     }
 
     /** Apply transformation matrix */
     void transform (const Transform& mat) override {
-        cairo_matrix_t m;
-        cairo_matrix_init (&m, mat.m00, mat.m10, mat.m01, mat.m11, mat.m02, mat.m12);
+        // clang-format off
+        cairo_matrix_t m = { mat.m00, mat.m10, 
+                             mat.m01, mat.m11, 
+                             mat.m02, mat.m12 };
+        // clang-format on
         cairo_transform (cr, &m);
     }
 
