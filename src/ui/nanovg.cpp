@@ -157,7 +157,7 @@ Context::~Context() {
     ctx.reset();
 }
 
-float Context::scale_factor() const noexcept {
+double Context::scale_factor() const noexcept {
     return ctx->internal_scale;
 }
 
@@ -180,30 +180,30 @@ void Context::set_line_width (double width) {
     nvgStrokeWidth (ctx->ctx, static_cast<float> (width));
 }
 
-void Context::begin_path() {
+void Context::clear_path() {
     ctx->last_pos = {};
     nvgBeginPath (ctx->ctx);
 }
 
-void Context::move_to (float x1, float y1) {
+void Context::move_to (double x1, double y1) {
     ctx->last_pos.x = x1;
     ctx->last_pos.y = y1;
     nvgMoveTo (ctx->ctx, x1, y1);
 }
 
-void Context::line_to (float x1, float y1) {
+void Context::line_to (double x1, double y1) {
     ctx->last_pos.x = x1;
     ctx->last_pos.y = y1;
     nvgLineTo (ctx->ctx, x1, y1);
 }
 
-void Context::quad_to (float x1, float y1, float x2, float y2) {
+void Context::quad_to (double x1, double y1, double x2, double y2) {
     ctx->last_pos.x = x2;
     ctx->last_pos.y = y2;
     nvgQuadTo (ctx->ctx, x1, y1, x2, y2);
 }
 
-void Context::cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) {
+void Context::cubic_to (double x1, double y1, double x2, double y2, double x3, double y3) {
     ctx->last_pos.x = x3;
     ctx->last_pos.y = y3;
     nvgBezierTo (ctx->ctx, x1, y1, x2, y2, x3, y3);
@@ -211,13 +211,10 @@ void Context::cubic_to (float x1, float y1, float x2, float y2, float x3, float 
 void Context::close_path() { nvgClosePath (ctx->ctx); }
 
 void Context::fill() {
-    // nvgPathWinding (ctx->ctx, NVG_SOLID);
-    nvgFillColor (ctx->ctx, ctx->state.color);
     nvgFill (ctx->ctx);
 }
 
 void Context::stroke() {
-    nvgStrokeWidth (ctx->ctx, 4.0);
     nvgStroke (ctx->ctx);
 }
 
@@ -261,12 +258,14 @@ void Context::set_fill (const Fill& fill) {
     color.g     = c.fgreen();
     color.b     = c.fblue();
     color.a     = c.falpha();
+    nvgFillColor (ctx->ctx, color);
+    nvgStrokeColor (ctx->ctx, color);
 }
 
 void Context::save() { ctx->save(); }
 void Context::restore() { ctx->restore(); }
 
-void Context::begin_frame (int width, int height, float scale) {
+void Context::begin_frame (int width, int height, double scale) {
     ctx->internal_scale = scale;
     ctx->stack.clear();
     ctx->state = {};
@@ -281,7 +280,7 @@ void Context::end_frame() {
     nvgEndFrame (ctx->ctx);
 }
 
-void Context::fill_rect (const Rectangle<float>& r) {
+void Context::fill_rect (const Rectangle<double>& r) {
     nvgBeginPath (ctx->ctx);
 
     nvgRect (ctx->ctx,
@@ -319,7 +318,6 @@ TextMetrics Context::text_metrics (std::string_view text) const noexcept {
 bool Context::show_text (std::string_view text) {
     nvgSave (ctx->ctx);
     nvgTextAlign (ctx->ctx, NVG_ALIGN_BASELINE | NVG_ALIGN_LEFT);
-    nvgFillColor (ctx->ctx, ctx->state.color);
     nvgText (ctx->ctx, ctx->last_pos.x, ctx->last_pos.y, text.data(), nullptr);
     nvgRestore (ctx->ctx);
     return true;

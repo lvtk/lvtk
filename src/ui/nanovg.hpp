@@ -14,20 +14,20 @@ public:
     Context();
     ~Context();
 
-    void begin_frame (int width, int height, float pixel_ratio);
+    void begin_frame (int width, int height, double pixel_ratio);
     void end_frame();
 
-    float scale_factor() const noexcept override;
+    double scale_factor() const noexcept override;
     void save() override;
     void restore() override;
 
     void set_line_width (double width) override;
 
-    void begin_path() override;
-    void move_to (float x1, float y1) override;
-    void line_to (float x1, float y1) override;
-    void quad_to (float x1, float y1, float x2, float y2) override;
-    void cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) override;
+    void clear_path() override;
+    void move_to (double x1, double y1) override;
+    void line_to (double x1, double y1) override;
+    void quad_to (double x1, double y1, double x2, double y2) override;
+    void cubic_to (double x1, double y1, double x2, double y2, double x3, double y3) override;
     void close_path() override;
 
     void fill() override;
@@ -40,7 +40,7 @@ public:
     Rectangle<int> last_clip() const override;
     void set_fill (const Fill& fill) override;
 
-    void fill_rect (const Rectangle<float>& r) override;
+    void fill_rect (const Rectangle<double>& r) override;
 
     FontMetrics font_metrics() const noexcept override;
     TextMetrics text_metrics (std::string_view text) const noexcept override;

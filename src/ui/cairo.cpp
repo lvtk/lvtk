@@ -33,11 +33,11 @@ public:
         cr = nullptr;
     }
 
-    float scale_factor() const noexcept {
+    double scale_factor() const noexcept {
         double x_scale = 1.0, y_scale = 1.0;
         if (auto s = cairo_get_target (cr))
             cairo_surface_get_device_scale (s, &x_scale, &y_scale);
-        return static_cast<float> (y_scale);
+        return static_cast<double> (y_scale);
     }
 
     void save() override {
@@ -57,21 +57,19 @@ public:
         cairo_set_line_width (cr, width);
     }
 
-    /** Begin a new path */
-    void begin_path() override {
+    void clear_path() override {
         cairo_new_path (cr);
     }
 
-    /** Start a new subpath at x1 and y1 */
-    void move_to (float x1, float y1) override {
+    void move_to (double x1, double y1) override {
         cairo_move_to (cr, x1, y1);
     }
 
-    void line_to (float x1, float y1) override {
+    void line_to (double x1, double y1) override {
         cairo_line_to (cr, x1, y1);
     }
 
-    void quad_to (float x1, float y1, float x2, float y2) override {
+    void quad_to (double x1, double y1, double x2, double y2) override {
         double x0, y0;
         cairo_get_current_point (cr, &x0, &y0);
         cairo_curve_to (cr,
@@ -83,7 +81,7 @@ public:
                         y2);
     }
 
-    void cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) override {
+    void cubic_to (double x1, double y1, double x2, double y2, double x3, double y3) override {
         cairo_curve_to (cr, x1, y1, x2, y2, x3, y3);
     }
 
@@ -164,11 +162,12 @@ public:
     }
 
     void set_fill (const Fill& fill) override {
-        state.color = fill.color();
-        _fill_dirty = true;
+        auto c = state.color = fill.color();
+        _fill_dirty          = false;
+        cairo_set_source_rgba (cr, c.fred(), c.fgreen(), c.fblue(), c.alpha());
     }
 
-    void fill_rect (const Rectangle<float>& r) override {
+    void fill_rect (const Rectangle<double>& r) override {
         apply_pending_state();
         cairo_rectangle (cr, r.x, r.y, r.width, r.height);
         cairo_fill (cr);

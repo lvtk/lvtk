@@ -31,7 +31,7 @@ void Graphics::set_font (double height) { set_font (Font (static_cast<float> (he
 void Graphics::set_color (Color color) { _context.set_fill (color); }
 
 void Graphics::fill_path (const Path& path) {
-    _context.begin_path();
+    _context.clear_path();
 
     for (const auto& i : path) {
         switch (i.type) {
@@ -63,14 +63,14 @@ void Graphics::fill_rect (int x, int y, int width, int height) {
     fill_rect (Rectangle<int> (x, y, width, height).as<float>());
 }
 void Graphics::fill_rect (const Rectangle<float>& r) {
-    _context.fill_rect (r);
+    _context.fill_rect (r.as<double>());
 }
 void Graphics::fill_rect (const Rectangle<int>& r) {
-    _context.fill_rect (r.as<float>());
+    _context.fill_rect (r.as<double>());
 }
 
 void Graphics::draw_rounded_rect (float x, float y, float width, float height, float corner_size) {
-    _context.begin_path();
+    _context.clear_path();
     graphics::rounded_rect (_context, x, y, width, height, corner_size)
         .stroke();
 }
@@ -92,7 +92,7 @@ void Graphics::draw_rounded_rect (const Rectangle<float>& r, float corner_size) 
 }
 
 void Graphics::fill_rounded_rect (float x, float y, float width, float height, float corner_size) {
-    _context.begin_path();
+    _context.clear_path();
     graphics::rounded_rect (_context, x, y, width, height, corner_size)
         .fill();
 }
@@ -115,7 +115,7 @@ void Graphics::fill_rounded_rect (const Rectangle<float>& r, float corner_size) 
 }
 
 void Graphics::stroke_path (const Path& path) {
-    _context.begin_path();
+    _context.clear_path();
 
     for (const auto& i : path) {
         switch (i.type) {

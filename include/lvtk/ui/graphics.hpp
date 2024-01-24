@@ -44,7 +44,7 @@ public:
     virtual ~DrawingContext() = default;
 
     // clang-format off
-    virtual float scale_factor() const noexcept =0;
+    virtual double scale_factor() const noexcept =0;
     
     /** Save the current state. */
     virtual void save() =0;
@@ -52,19 +52,33 @@ public:
     /** Restore last state. */
     virtual void restore() =0;
 
+    /** Set the line width. */
     virtual void set_line_width (double width) =0;
 
-    /** Begin a new path */
-    virtual void begin_path() =0;
+    /** Clears the current path. After calling there will be no path and no 
+        current position.
+     */
+    virtual void clear_path() =0;
 
-    /** Start a new subpath at x1 and y1 */
-    virtual void move_to (float x1, float y1) =0;
+    /** Begin a new sub-path. After calling the current point will be (x, y). */
+    virtual void move_to (double x, double y) =0;
+    
     /** Draw a line */
-    virtual void line_to (float x1, float y1) =0;
+    virtual void line_to (double x1, double y1) =0;
+    
     /** Draw a quadratic curve */
-    virtual void quad_to (float x1, float y1, float x2, float y2) =0;
-    /** Draw a cubic curve */
-    virtual void cubic_to (float x1, float y1, float x2, float y2, float x3, float y3) =0;
+    virtual void quad_to (double x1, double y1, double x2, double y2) =0;
+    
+    /** Adds a cubic Bézier curve to the path from the current point to 
+        position (x3 , y3) in user-space coordinates. The (x1, y1) and 
+        (x2, y2) are used as the control points. After returning current point 
+        will be (x3, y3).
+
+        If there is no current point before the call to cubic_to() this 
+        function will behave as if preceded by calling move_to (x1, y1).
+    */
+    virtual void cubic_to (double x1, double y1, double x2, double y2, double x3, double y3) =0;
+    
     /** Close the current path */
     virtual void close_path() =0;
 
@@ -101,7 +115,7 @@ public:
     */
     virtual void set_fill (const Fill& fill) =0;
     
-    virtual void fill_rect (const Rectangle<float>& r) =0;
+    virtual void fill_rect (const Rectangle<double>& r) =0;
     // clang-format on
 
     /** Returns the font metrics for the currently selected font. */
