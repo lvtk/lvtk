@@ -17,33 +17,33 @@ namespace lvtk {
 class Justify final {
 public:
     enum Flags : uint8_t {
-        LEFT   = (1u << 0u), ///< Align left.
-        CENTER = (1u << 2u), ///< Align horizontally centered.
-        RIGHT  = (1u << 1u), ///< Align right.
+        LEFT  = (1u << 0u),
+        RIGHT = (1u << 1u),
+        MID_X = (1u << 2u),
 
-        TOP    = (1u << 3u), ///< Align to top.
-        MIDDLE = (1u << 5u), ///< Align vertically centered.
-        BOTTOM = (1u << 4u), ///< Align to bottom.
+        TOP    = (1u << 3u),
+        BOTTOM = (1u << 4u),
+        MID_Y  = (1u << 5u),
 
-        /// @brief Align to top-left corner
+        /// @brief Shortcut to align to top-left corner
         TOP_LEFT = TOP | LEFT,
-        /// @brief Align center at the top
-        TOP_CENTER = TOP | CENTER,
-        /// @brief Align to top-right corner
+        /// @brief Shortcut to align center at the top
+        TOP_CENTER = TOP | MID_X,
+        /// @brief Shortcut to align to top-right corner
         TOP_RIGHT = TOP | RIGHT,
 
         /// @brief Aligned left in the middle
-        LEFT_MIDDLE = LEFT | MIDDLE,
+        MID_LEFT = LEFT | MID_Y,
         /// @brief Align centered vertically and horizontally
-        CENTERED = CENTER | MIDDLE,
+        CENTERED = MID_X | MID_Y,
         /// @brief Aligned right in the middle
-        RIGHT_MIDDLE = RIGHT | MIDDLE,
+        MID_RIGHT = RIGHT | MID_Y,
 
-        /// @brief Align to bottom-left corner
+        /// @brief Shortcut to align to bottom-left corner
         BOTTOM_LEFT = BOTTOM | LEFT,
-        /// @brief Align center at the bottom
-        BOTTOM_CENTER = BOTTOM | CENTER,
-        /// @brief Align to bottom-right corner
+        /// @brief Shortcut to align center at the bottom
+        BOTTOM_CENTER = BOTTOM | MID_Y,
+        /// @brief Shortcut to align to bottom-right corner
         BOTTOM_RIGHT = BOTTOM | RIGHT
     };
 

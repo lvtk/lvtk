@@ -11,6 +11,7 @@ namespace demo {
 extern std::unique_ptr<Widget> create_entry_demo();
 extern std::unique_ptr<Widget> create_sliders_demo();
 extern std::unique_ptr<Widget> create_images_demo();
+extern std::unique_ptr<Widget> create_dials_demo();
 
 Content::Content()
     : sidebar (*this) {
@@ -19,7 +20,7 @@ Content::Content()
 
     add (sidebar);
     sidebar.set_visible (true);
-    set_size (540 + SIDEBAR_WIDTH, 360);
+    set_size (550 + SIDEBAR_WIDTH, 400);
 
     add (menu);
     menu.set_visible (true);
@@ -34,7 +35,8 @@ Content::~Content() {
 void Content::resized() {
     auto r = bounds().at (0, 0);
     menu.set_bounds (r.slice_top (menu.height()));
-    r.slice_top (1);
+    r.slice_top (4);
+    r.slice_left (4);
     sidebar.set_bounds (r.slice_left (SIDEBAR_WIDTH));
     if (demo) {
         demo->set_bounds (r.smaller (4));
@@ -66,6 +68,9 @@ void Content::run_demo (int index) {
         case ENTRY:
             demo = create_entry_demo();
             break;
+        case DIALS:
+            demo = create_dials_demo();
+            break;
         case SLIDERS:
             demo = create_sliders_demo();
             break;
@@ -79,7 +84,7 @@ void Content::run_demo (int index) {
     if (demo) {
         add (*demo);
         if (demo->name().empty())
-            demo->set_name (lvtk::demo::name (index));
+            demo->set_name (demo::name (index));
         demo->set_visible (true);
     }
 

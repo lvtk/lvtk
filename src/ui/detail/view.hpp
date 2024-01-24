@@ -97,6 +97,22 @@ static Event event (lvtk::Main& m,
     return event (m, src, tgt, Modifier(), pos, 0);
 }
 
+static Event event (lvtk::Main& m,
+                    lvtk::Widget& src,
+                    lvtk::Widget& tgt,
+                    Modifier mods,
+                    Point<float> pos,
+                    Point<float> last_pos,
+                    int num_clicks) {
+    return { m,
+             tgt.convert (&src, pos),
+             tgt.convert (&src, last_pos),
+             mods,
+             &src,
+             &tgt,
+             num_clicks };
+}
+
 } // namespace input
 
 /** A key event */
@@ -351,9 +367,13 @@ public:
 
     void drag_pressed_widgets (Point<float> pos) {
         for (int i = 0; i < LVTK_MAX_BUTTONS; ++i) {
-            if (buttons.is_down (i))
-                if (auto w = buttons.target (i))
-                    w->drag (input::event (main, widget, *w, pos));
+            if (! buttons.is_down (i))
+                continue;
+            if (auto w = buttons.target (i)) {
+                auto ldp = last_down_pos;
+                auto ev  = input::event (main, widget, *w, Modifier(), pos, ldp, 0);
+                w->drag (ev);
+            }
         }
     }
 
@@ -391,6 +411,8 @@ private:
     WeakRef<lvtk::Widget> focused;
     Buttons buttons;
     Keyboard keyboard;
+
+    Point<float> last_down_pos;
 
     template <typename T>
     struct ScopedInc {
@@ -610,7 +632,8 @@ private:
 
     static PuglStatus button_press (View& view, const PuglButtonEvent& ev) {
         view.buttons.pressed (ev, view.owner);
-        auto pos = detail::point<float> (ev) / view.scale_factor();
+        auto pos           = detail::point<float> (ev) / view.scale_factor();
+        view.last_down_pos = pos;
 
         if (auto w = view.hovered.lock()) {
             auto event = input::event (

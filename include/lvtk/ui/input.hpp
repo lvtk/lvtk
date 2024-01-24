@@ -69,7 +69,6 @@ public:
 
         /** All buttons left, right, and middle */
         ALL_BUTTON = LEFT_BUTTON | RIGHT_BUTTON | MIDDLE_BUTTON,
-
     };
 
     Modifier() {}
@@ -209,7 +208,38 @@ struct LVTK_API Event final {
 
     Event() = delete;
 
-    /** Construct a new event. You shouldn't need to use this directly.
+    /** Construct a new event. You shouldn't need to use this directly. This
+        version can specify the last down position.
+     
+        @param ctx The context driving the event loop
+        @param position Position of the event.
+        @param down_position Position of the event.
+        @param modifiers Current Modifier keys
+        @param source_widget The originating widget when the event was created.
+        @param target_widget The target widget event is applied to
+        @param num_clicks How many clicks have been tracked at the time of creation
+
+        @see Widget
+    */
+    Event (Main& ctx,
+           Point<float> position,
+           Point<float> down_position,
+           Modifier modifiers,
+           Widget* source_widget,
+           Widget* target_widget,
+           int num_clicks)
+        : pos (position),
+          x (static_cast<int> (pos.x)),
+          y (static_cast<int> (pos.y)),
+          mods (modifiers),
+          down_pos (down_position),
+          clicks (num_clicks),
+          context (ctx),
+          source (source_widget),
+          target (target_widget) {}
+
+    /** Construct a new event. You shouldn't need to use this directly. This
+        version uses the position as the down position.
      
         @param ctx The context driving the event loop
         @param position Position of the event.
@@ -223,15 +253,8 @@ struct LVTK_API Event final {
     Event (Main& ctx, Point<float> position, Modifier modifiers,
            Widget* source_widget, Widget* target_widget,
            int num_clicks)
-        : pos (position),
-          x (static_cast<int> (pos.x)),
-          y (static_cast<int> (pos.y)),
-          mods (modifiers),
-          down_pos (position),
-          clicks (num_clicks),
-          context (ctx),
-          source (source_widget),
-          target (target_widget) {}
+        : Event (ctx, position, position, modifiers,
+                 source_widget, target_widget, num_clicks) {}
 
 private:
     Event& operator= (const Event& o);

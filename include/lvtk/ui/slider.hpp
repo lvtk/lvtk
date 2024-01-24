@@ -152,16 +152,23 @@ private:
     @ingroup widgets
     @headerfile lvtk/ui/slider.hpp
 */
-class Dial : public Ranged {
+class LVTK_API Dial : public Ranged {
 public:
     Dial();
     virtual ~Dial();
 
-protected:
+private:
+    class Impl;
+    std::unique_ptr<Impl> impl;
+
+    /** @private */
+    bool obstructed (int x, int y) override { return true; }
     /** @private */
     void paint (Graphics& g) override;
     /** @private */
     void resized() override;
+    /** @private */
+    void pressed (const Event&) override;
     /** @private */
     void drag (const Event&) override;
 };

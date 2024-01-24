@@ -18,13 +18,14 @@ namespace demo {
 #define SIDEBAR_WIDTH 200
 
 enum ID {
-    BUTTONS = 0,
-    SLIDERS,
+    SLIDERS = 0,
+    DIALS,
+    BUTTONS,
     IMAGES,
-
+    NUM_DEMOS,
+    // disabled: move these above NUM_DEMOS and rebuild to enable.
     ENTRY,
-    EMBED,
-    NUM_DEMOS = 3
+    EMBED
 };
 
 static std::string name (int did) {
@@ -37,6 +38,9 @@ static std::string name (int did) {
             break;
         case ENTRY:
             return "Entry";
+            break;
+        case DIALS:
+            return "Dials";
             break;
         case SLIDERS:
             return "Sliders";

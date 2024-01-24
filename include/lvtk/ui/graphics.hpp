@@ -214,6 +214,8 @@ public:
     void fill_rounded_rect (const Rectangle<float>&, float corner_size);
     void fill_rounded_rect (const Rectangle<int>& r, float corner_size);
 
+    void stroke_path (const Path& path);
+
     /** Draw some text */
     void draw_text (const std::string& text, Rectangle<float> area, Justify align);
 

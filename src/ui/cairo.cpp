@@ -55,7 +55,7 @@ public:
 
     /** Begin a new path */
     void begin_path() override {
-        cairo_new_path (cr);
+        cairo_new_sub_path (cr);
     }
 
     /** Start a new subpath at x1 and y1 */
@@ -96,6 +96,7 @@ public:
     /** Stroke the current path with current settings */
     void stroke() override {
         apply_pending_state();
+        cairo_set_line_width (cr, 4);
         cairo_stroke (cr);
     }
 

@@ -47,6 +47,8 @@ void Graphics::fill_path (const Path& path) {
                 break;
         }
     }
+
+    _context.fill();
 }
 
 void Graphics::fill_rect (float x, float y, float width, float height) {
@@ -106,6 +108,29 @@ void Graphics::fill_rounded_rect (const Rectangle<float>& r, float corner_size) 
     fill_rounded_rect (r.x, r.y, r.width, r.height, corner_size);
 }
 
+void Graphics::stroke_path (const Path& path) {
+    for (const auto& i : path) {
+        switch (i.type) {
+            case PathOp::MOVE:
+                _context.move_to (i.x1, i.y1);
+                break;
+            case PathOp::LINE:
+                _context.line_to (i.x1, i.y1);
+                break;
+            case PathOp::QUADRATIC:
+                _context.quad_to (i.x1, i.y1, i.x2, i.y2);
+                break;
+            case PathOp::CUBIC:
+                _context.cubic_to (i.x1, i.y1, i.x2, i.y2, i.x3, i.y3);
+                break;
+            case PathOp::CLOSE:
+                _context.close_path();
+                break;
+        }
+    }
+    _context.stroke();
+}
+
 void Graphics::draw_text (const std::string& text, Rectangle<float> area, Justify align) {
     if (text.empty() || area.empty())
         return;
@@ -115,13 +140,13 @@ void Graphics::draw_text (const std::string& text, Rectangle<float> area, Justif
     float x       = area.x;
     float y       = area.y;
 
-    if (align.flags() & Justify::CENTER)
+    if (align.flags() & Justify::MID_X)
         x = (area.x + te.x_offset) + (area.width * 0.5f) - (te.width * 0.5f);
     else if (align.flags() & Justify::RIGHT)
         x = area.x + area.width - te.width;
     if (align.flags() & Justify::TOP)
         y += fe.ascent;
-    else if (align.flags() & Justify::MIDDLE)
+    else if (align.flags() & Justify::MID_Y)
         y = (area.height * 0.5f) - (fe.height * 0.5) + fe.ascent;
     else if (align.flags() & Justify::BOTTOM)
         y = area.y + area.height - fe.descent;

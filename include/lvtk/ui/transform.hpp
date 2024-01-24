@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include <lvtk/lvtk.h>
 
 namespace lvtk {
@@ -37,6 +39,13 @@ public:
         m12 { 0.f };   ///> The y0
 
     // clang-format off
+    static Transform rotation (float angle) noexcept {
+        auto angle_cos = std::cos (angle);
+        auto angle_sin = std::sin (angle);
+        return { angle_cos, -angle_sin, 0,
+                 angle_sin,  angle_cos, 0 };
+    }
+
     static Transform translation (float dx, float dy) noexcept {
         return { 1.0f, 0.0f, dx, 
                  0.0f, 1.0f, dy };

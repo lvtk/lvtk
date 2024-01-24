@@ -1,5 +1,6 @@
 lvtk_demo_sources = '''
     demo.cpp
+    dials.cpp
     entry.cpp
     images.cpp
     sliders.cpp

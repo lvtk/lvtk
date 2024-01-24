@@ -38,10 +38,10 @@ public:
 
         auto r = w.bounds().at (0);
         g.set_color (bc.brighter (-0.02f));
-        auto cs = 5.f;
+        auto cs = 6.f;
         g.draw_rounded_rect (r, cs);
         g.set_color (bc);
-        g.fill_rounded_rect (w.bounds().at (0), cs);
+        g.fill_rounded_rect (r, cs);
     }
 
     void draw_button_text (Graphics& g, lvtk::TextButton& w, bool highlight, bool down) override {

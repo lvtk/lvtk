@@ -28,25 +28,25 @@ void Fitment::apply_to (double& x, double& y, double& w, double& h,
         double scale = (_flags & FILL) != 0 ? std::max (dw / w, dh / h)
                                             : std::min (dw / w, dh / h);
 
-        if ((_flags & ONLY_SHRINK) != 0)
+        if ((_flags & NO_GROW) != 0)
             scale = std::min (scale, 1.0);
 
-        if ((_flags & ONLY_GROW) != 0)
+        if ((_flags & NO_SHRINK) != 0)
             scale = std::max (scale, 1.0);
 
         w *= scale;
         h *= scale;
 
-        if ((_flags & X_LEFT) != 0)
+        if ((_flags & LEFT) != 0)
             x = dx;
-        else if ((_flags & X_RIGHT) != 0)
+        else if ((_flags & RIGHT) != 0)
             x = dx + dw - w;
         else
             x = dx + (dw - w) * 0.5;
 
-        if ((_flags & Y_TOP) != 0)
+        if ((_flags & TOP) != 0)
             y = dy;
-        else if ((_flags & Y_BOTTOM) != 0)
+        else if ((_flags & BOTTOM) != 0)
             y = dy + dh - h;
         else
             y = dy + (dh - h) * 0.5;
@@ -67,22 +67,22 @@ Transform Fitment::transform (const Rectangle<float>& src, const Rectangle<float
         scale_x = (_flags & FILL) != 0 ? std::max (scale_x, scale_y)
                                        : std::min (scale_x, scale_y);
 
-        if ((_flags & ONLY_SHRINK) != 0)
+        if ((_flags & NO_GROW) != 0)
             scale_x = std::min (scale_x, 1.0f);
 
-        if ((_flags & ONLY_GROW) != 0)
+        if ((_flags & NO_SHRINK) != 0)
             scale_x = std::max (scale_x, 1.0f);
 
         scale_y = scale_x;
 
-        if ((_flags & X_RIGHT) != 0)
+        if ((_flags & RIGHT) != 0)
             new_x += dst.width - src.width * scale_x; // right
-        else if ((_flags & X_LEFT) == 0)
+        else if ((_flags & LEFT) == 0)
             new_x += (dst.width - src.width * scale_x) / 2.0f; // centerd
 
-        if ((_flags & Y_BOTTOM) != 0)
+        if ((_flags & BOTTOM) != 0)
             new_y += dst.height - src.height * scale_x; // bottom
-        else if ((_flags & Y_TOP) == 0)
+        else if ((_flags & TOP) == 0)
             new_y += (dst.height - src.height * scale_x) / 2.0f; // centerd
     }
 

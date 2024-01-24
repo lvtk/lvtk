@@ -34,6 +34,8 @@ struct ColorID {
         SLIDER_THUMB, ///< Color to draw the slider handle with
         SLIDER_TRACK, ///< Color to use for the groove the thumb slides in
 
+        DIAL_BASE,
+
         VIEW_BACKGROUND
     };
 };
