@@ -29,7 +29,7 @@ lvtk_abi_version = '3.0'
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
     include/lvtk/string.hpp
-    include/lvtk/ui/align.hpp
+    include/lvtk/ui/justify.hpp
     include/lvtk/ui/widget.hpp
 '''.split())
 
