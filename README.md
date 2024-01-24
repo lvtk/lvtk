@@ -4,17 +4,15 @@
 
 # LVTK3
 
-Minimal C++ library with Lua bindings and console. Write your LV2 plugins and gui's in C++.
+Minimal C++ library with Lua bindings and console. Write your LV2 plugins and gui's in C++.  The Widgets library can be used in any project, it is not directly tied to LV2 UI.
 
-## Heavy Development
-
-API's will break from time to time until the core system is ready. Plugin/UI templates are largely unchanged, but could radically change in terms of API.  
+**Heavy Development:** API's will break from time to time until the core system is ready. Plugin/UI templates are largely unchanged, but could radically change in terms of API.  
 
 ## Minimal by Design
 
 LVTK is intended to be used as a subproject by LV2 plugin and UI developers. Docs, Lua Bindings, the Widgets Demo, Lilv wrapper tests, and the `lvtk.lv2` plugins are disabled by default so plugin developers don't have to worry about it.  If packaging, these items will need enabled manually via a meson native/cross file or the command line. see [meson_options.txt](meson_options.txt)
 
-## Built-In Widgets
+## Widgets
 
 | Widget            | Status  | Purpose              |
 |-------------------|---------|----------------------|
@@ -28,7 +26,7 @@ LVTK is intended to be used as a subproject by LV2 plugin and UI developers. Doc
 | `lvtk.Dial`       | Started | A basic single-value Dial (or Knob) control |
 | `lvtk.Embed`      | Started | Embed OS Native Windows/Views |
 
-**Status Key**
+**Status Legend**
 
 * **Finished** And ready to go.
 * **Working** but not finished in terms of fine details and final type names and signatures.
