@@ -57,13 +57,13 @@ inline static void draw_dial_proto (Graphics& g, lvtk::Dial& dial, Rectangle<dou
             g.stroke_path (filled);
         }
 
-        if (true) //(dial.enabled())
+        if (true) // TODO: enabled?
             g.set_color (Color (0xffcc0000).with_alpha (is_mouse_over ? 1.0f : 0.88f));
         else
             g.set_color (Color (0x80808080));
 
         {
-            g.context().save();
+            ScopedSave save (g.context());
             g.context().clear_path();
             g.context().transform (Transform::rotation (angle).translated (center_x, center_y));
             g.context().move_to (0.f, line_offset);
@@ -71,7 +71,6 @@ inline static void draw_dial_proto (Graphics& g, lvtk::Dial& dial, Rectangle<dou
             g.context().set_line_width (4);
             g.context().set_fill (Color (0xff000000));
             g.context().stroke();
-            g.context().restore();
         }
     } else {
     }

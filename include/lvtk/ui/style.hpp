@@ -23,9 +23,14 @@ class Widget;
     @ingroup widgets
     @headerfile lvtk/ui/style.hpp
 */
-struct ColorID {
-    enum Key : int {
-        BUTTON_BASE = 1, ///< Base background color of standard buttons
+struct ColorID final {
+    ColorID()  = delete;
+    ~ColorID() = delete;
+    enum : int {
+        BACKGROUND = 1,
+        FOREGROUND,
+
+        BUTTON_BASE,     ///< Base background color of standard buttons
         BUTTON_ON,       ///< Base on color when button is "toggled"
         BUTTON_TEXT_OFF, ///< Base off color when button is not "toggled"
         BUTTON_TEXT_ON,  ///< Button text color when ON

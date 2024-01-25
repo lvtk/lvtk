@@ -17,6 +17,19 @@ namespace lvtk {
 
 class Path;
 
+template <class Save>
+struct ScopedSave {
+    using save_type = Save;
+    ScopedSave()    = delete;
+    ScopedSave (Save& s) noexcept : _ref (s) { _ref.save(); }
+    ~ScopedSave() noexcept { _ref.restore(); }
+
+private:
+    Save& _ref;
+    LVTK_DISABLE_COPY (ScopedSave)
+    LVTK_DISABLE_MOVE (ScopedSave)
+};
+
 struct FontMetrics {
     double ascent { 0.0 };
     double descent { 0.0 };

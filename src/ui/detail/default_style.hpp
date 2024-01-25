@@ -13,14 +13,18 @@ namespace detail {
 class DefaultStyle : public Style {
 public:
     DefaultStyle() {
+        // orange
+        set_color (ColorID::FOREGROUND, Color (0xFF, 0xA4, 0x00, 255));
+        const auto fg = find_color (ColorID::FOREGROUND);
+
         set_color (ColorID::BUTTON_BASE, Color (0xff464646));
-        set_color (ColorID::BUTTON_ON, Color (0xff252525));
+        set_color (ColorID::BUTTON_ON, fg.with_alpha (0.5f).darker (0.1f));
         set_color (ColorID::BUTTON_TEXT_OFF, Color (0xffeeeeee));
         set_color (ColorID::BUTTON_TEXT_ON, Color (0xffdddddd));
 
         set_color (ColorID::SLIDER_BASE, Color (0xff141414));
-        set_color (ColorID::SLIDER_TRACK, Color (0xff000000));
-        set_color (ColorID::SLIDER_THUMB, Color (0xff451414));
+        set_color (ColorID::SLIDER_TRACK, Color (0xff090909));
+        set_color (ColorID::SLIDER_THUMB, fg.darker (0.52f));
 
         set_color (ColorID::VIEW_BACKGROUND, Color (0xff000000));
     }
@@ -29,7 +33,7 @@ public:
 
     void draw_button_shape (Graphics& g, lvtk::Button& w, bool highlight, bool down) override {
         auto bc = w.toggled() ? find_color (ColorID::BUTTON_ON) : find_color (ColorID::BUTTON_BASE);
-        if (highlight || down) {
+        if (! w.toggled() && (highlight || down)) {
             if (! down)
                 bc = bc.brighter (-0.015f);
             else
@@ -38,13 +42,13 @@ public:
 
         auto line_width = 1.2;
         auto r          = w.bounds().at (0).reduced (1);
-        g.set_color (bc.brighter (-0.02f));
+        auto cs         = 4.f;
 
-        auto cs = 4.f;
-
+        g.set_color (bc);
         g.fill_rounded_rect (r, cs);
+
         g.set_color (w.toggled()
-                         ? Color (0xFF, 0xA4, 0x00, 255).with_alpha (.80f)
+                         ? Color (0xFF, 0xA4, 0x00, 255).with_alpha (.70f)
                          : bc.darker (0.07f));
         g.context().set_line_width (line_width);
         g.draw_rounded_rect (r, cs);
@@ -52,8 +56,12 @@ public:
 
     void draw_button_text (Graphics& g, lvtk::TextButton& w, bool highlight, bool down) override {
         auto c = find_color (w.toggled() ? ColorID::BUTTON_TEXT_ON : ColorID::BUTTON_TEXT_OFF);
-        if (highlight || down)
+        if (! w.toggled() && (highlight || down))
             c = c.brighter (0.05f);
+        else if (w.toggled()) {
+            c = Color (0xff090909);
+        }
+
         g.set_color (c);
         g.set_font (std::min (13.f, w.height() * 0.55f));
         auto r = w.bounds().at (0).as<float>();
