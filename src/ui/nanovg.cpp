@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 #include <lvtk/ui/font.hpp>
@@ -30,6 +31,18 @@ static constexpr auto destroy = nvgDeleteGL3;
 #else
 #    error "No GL version specified for NanoVG"
 #endif
+
+static uint64_t hash (uint8_t* data, size_t size) {
+    unsigned long hash = 5381;
+    int c;
+
+    for (size_t i = 0; i < size; ++i) {
+        c    = data[i];
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+
+    return hash;
+}
 
 } // namespace detail
 
@@ -122,9 +135,18 @@ public:
         last_pos.x = last_pos.y = 0;
     }
 
+    auto image_hash (Image i) {
+        return detail::hash (i.data(), i.width() * i.height() * 4);
+    }
+
+    void add_image (uint64_t key, int handle) { images[key] = handle; }
+    int find_image (uint64_t key) { return images[key]; }
+
 private:
     friend class nvg::Context;
     NVGcontext* ctx { nullptr };
+
+    std::unordered_map<uint64_t, int> images;
 
     Point<float> last_pos;
 
@@ -154,7 +176,27 @@ Context::Context()
 }
 
 Context::~Context() {
+    for (const auto image : ctx->images)
+        nvgDeleteImage (ctx->ctx, image.second);
+    ctx->images.clear();
     ctx.reset();
+}
+
+void Context::begin_frame (int width, int height, double scale) {
+    ctx->internal_scale = scale;
+    ctx->stack.clear();
+    ctx->state = {};
+    nvgBeginFrame (ctx->ctx,
+                   (float) width,
+                   (float) height,
+                   ctx->internal_scale);
+    nvgStrokeWidth (ctx->ctx, 2);
+    clip ({ 0, 0, width, height });
+}
+
+void Context::end_frame() {
+    nvgEndFrame (ctx->ctx);
+    nvgReset (ctx->ctx);
 }
 
 double Context::scale_factor() const noexcept {
@@ -208,14 +250,19 @@ void Context::cubic_to (double x1, double y1, double x2, double y2, double x3, d
     ctx->last_pos.y = y3;
     nvgBezierTo (ctx->ctx, x1, y1, x2, y2, x3, y3);
 }
-void Context::close_path() { nvgClosePath (ctx->ctx); }
+
+void Context::close_path() {
+    nvgClosePath (ctx->ctx);
+}
 
 void Context::fill() {
     nvgFill (ctx->ctx);
+    clear_path();
 }
 
 void Context::stroke() {
     nvgStroke (ctx->ctx);
+    clear_path();
 }
 
 void Context::clip (const Rectangle<int>& r) {
@@ -265,21 +312,6 @@ void Context::set_fill (const Fill& fill) {
 void Context::save() { ctx->save(); }
 void Context::restore() { ctx->restore(); }
 
-void Context::begin_frame (int width, int height, double scale) {
-    ctx->internal_scale = scale;
-    ctx->stack.clear();
-    ctx->state = {};
-    nvgBeginFrame (ctx->ctx,
-                   (float) width,
-                   (float) height,
-                   ctx->internal_scale);
-    clip ({ 0, 0, width, height });
-}
-
-void Context::end_frame() {
-    nvgEndFrame (ctx->ctx);
-}
-
 void Context::fill_rect (const Rectangle<double>& r) {
     nvgBeginPath (ctx->ctx);
 
@@ -324,24 +356,49 @@ bool Context::show_text (std::string_view text) {
 }
 
 void Context::draw_image (Image i, Transform matrix) {
-    if (i.format() != PixelFormat::ARGB32)
+    if (i.format() != PixelFormat::ARGB32) {
         return;
+    }
 
-    auto handle = nvgCreateImageRGBA (ctx->ctx,
-                                      i.width(),
-                                      i.height(),
-                                      NVG_IMAGE_PREMULTIPLIED,
-                                      i.data());
+    auto image_hash = ctx->image_hash (i);
+    auto handle     = ctx->find_image (image_hash);
 
-    // nvgBeginPath(ctx->ctx);
-    // nvgRect(ctx->ctx, 0, 0, i.width(), i.height());
+    if (handle <= 0) {
+        size_t length  = i.width() * i.height() * 4;
+        auto swap_data = [&]() {
+            if (auto d = i.data())
+                for (size_t j = 0; j < length; j += 4)
+                    std::swap (d[j], d[j + 2]);
+        };
+
+        swap_data();
+
+        handle = nvgCreateImageRGBA (ctx->ctx,
+                                     i.width(),
+                                     i.height(),
+                                     NVG_IMAGE_PREMULTIPLIED | NVG_IMAGE_NODELETE,
+                                     i.data());
+
+        if (handle <= 0) {
+            swap_data();
+            return;
+        }
+
+        swap_data();
+        ctx->add_image (image_hash, handle);
+    }
+
+    save();
+    int width, height;
+    nvgImageSize (ctx->ctx, handle, &width, &height);
+
     transform (matrix);
-
-    auto paint = nvgImagePattern (ctx->ctx, 0, 0, 0, 0, 0.f, handle, 1.f);
-    nvgFillPaint (ctx->ctx, paint);
-
-    nvgFill (ctx->ctx);
-    nvgDeleteImage (ctx->ctx, handle);
+    NVGpaint imgPaint = nvgImagePattern (ctx->ctx, 0, 0, width, height, 0, handle, 1.f);
+    nvgBeginPath (ctx->ctx);
+    nvgRect (ctx->ctx, 0, 0, width, height);
+    nvgFillPaint (ctx->ctx, imgPaint);
+    fill();
+    restore();
 }
 
 } // namespace nvg

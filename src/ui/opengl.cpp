@@ -33,6 +33,8 @@ public:
         set_view_hint (PUGL_CONTEXT_VERSION_MINOR, 6);
 #endif
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_FALSE);
+        // TODO: make user accesible
+        puglSetViewString ((PuglView*) c_obj(), PUGL_WINDOW_TITLE, "LVTK - NanoVG Demo");
     }
 
     ~OpenGLView() {

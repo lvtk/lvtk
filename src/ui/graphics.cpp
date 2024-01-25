@@ -31,8 +31,6 @@ void Graphics::set_font (double height) { set_font (Font (static_cast<float> (he
 void Graphics::set_color (Color color) { _context.set_fill (color); }
 
 void Graphics::fill_path (const Path& path) {
-    _context.clear_path();
-
     for (const auto& i : path) {
         switch (i.type) {
             case PathOp::MOVE:
@@ -115,8 +113,6 @@ void Graphics::fill_rounded_rect (const Rectangle<float>& r, float corner_size) 
 }
 
 void Graphics::stroke_path (const Path& path) {
-    _context.clear_path();
-
     for (const auto& i : path) {
         switch (i.type) {
             case PathOp::MOVE:
