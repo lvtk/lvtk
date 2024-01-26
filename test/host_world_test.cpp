@@ -10,7 +10,6 @@
 #include <lvtk/host/port.hpp>
 #include <lvtk/host/world.hpp>
 #include <lvtk/ui/main.hpp>
-#include <lvtk/ui/opengl.hpp>
 
 BOOST_AUTO_TEST_SUITE (World)
 

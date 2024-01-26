@@ -53,13 +53,10 @@ meson test -C build
 ## Widgets Demo
 
 ### Linux & Windows
-Depending on build options there are Demos for each backend. From the build directory run:
+Go to the build directory and run it:
 ```
-./lvtk-cairo-demo # run the Cairo demo
-```
-... or ...
-```
-./lvtk-opengl-demo  # run the OpenGL demo
+cd build
+./lvtk-demo
 ```
 
 ### macOS
@@ -68,6 +65,11 @@ Double-clickable Mac apps can be found somewhere in the build directory. The fol
 # From the source top dir.
 find build -name "LVTK*.app"
 ```
+
+### Screenshots
+![](doc/html/_static/images/demo-00.png)
+![](doc/html/_static/images/demo-01.png)
+![](doc/html/_static/images/demo-02.png)
 
 ## ISC License
 
@@ -89,17 +91,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 Graphics/UI/Hosting classes utilize these libraries internally:
 
-| Library      | For?            | License |
-|--------------|-----------------|---------|
-| STB Image    | Images          | MIT     |
-| STB Truetype | Font Loading    | MIT     |
-| NanoVG       | OpenGL Graphics | Zlib    |
-| Lua          | Lua Bindings    | MIT     |
-| Sol2         | Lua Bindings    | MIT     |
-| Boost        | Tests/Signals   | Boost   |
-| Lilv         | LV2 Hosting     | ISC     |
-| Suil         | LV2UI Hosting   | ISC     |
-| Cairo        | Graphics backend| MPL     |
+| What         | For?              | License |
+|--------------|-------------------|---------|
+| Cairo        | Graphics backend  | [MPL-1.1](https://www.mozilla.org/en-US/MPL/1.1/annotated/) |
+| STB Image    | Images            | [MIT](LICENSES/MIT.txt) |
+| STB Truetype | Font Loading      | [MIT](LICENSES/MIT.txt) |
+| Roboto       | Built-in font     | [Apache-2.0](LICENSES/Apache-2.0.txt) |
+| Lua          | Lua Bindings      | [MIT](LICENSES/MIT.txt) |
+| Sol2         | Lua Bindings      | [MIT](LICENSES/MIT.txt) |
+| Boost        | Tests/Signals     | [BSL-1.0](https://www.boost.org/LICENSE_1_0.txt) |
+| Lilv         | Test host headers | [ISC](LICENSES/ISC.txt) |
+| Suil         | Test host headers | [ISC](LICENSES/ISC.txt) |
 
 ## Issue Tracking
 

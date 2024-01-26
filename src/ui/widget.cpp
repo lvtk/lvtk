@@ -98,7 +98,6 @@ bool Widget::clip_widgets_blocking (const lvtk::Widget& w,
                                     Point<int> delta) {
     int nclips = 0;
 
-#if 1
     for (int i = w.impl->widgets.size(); --i >= 0;) {
         auto& cw = *w.impl->widgets[i];
 
@@ -118,7 +117,6 @@ bool Widget::clip_widgets_blocking (const lvtk::Widget& w,
                 ++nclips;
         }
     }
-#endif
 
     return nclips > 0;
 }
@@ -135,11 +133,10 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
     if (impl.dont_clip && impl.widgets.empty()) {
         widget.paint (g);
     } else {
-        g.save();
+        ScopedSave save (g);
         if (! (clip_widgets_blocking (widget, g, cb, {}) && g.clip_empty())) {
             widget.paint (g);
         }
-        g.restore();
     }
 
     for (size_t i = 0; i < impl.widgets.size(); ++i) {
@@ -148,10 +145,10 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
             continue;
 
         const auto tb = cw->bounds();
-        // FIXME: this itersection check is a workaround.
+        // FIXME: this itersection check is a workaround for the moment.
         if (widget.bounds().at (0).intersects (tb)) {
             // if (cb.intersects (tb)) {
-            g.save();
+            ScopedSave save (g);
 
             if (cw->impl->dont_clip) {
                 render_child (*cw, g);
@@ -173,8 +170,6 @@ void Widget::render_all (lvtk::Widget& widget, Graphics& g) {
                     }
                 }
             }
-
-            g.restore();
         }
     }
 }

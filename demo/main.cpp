@@ -10,7 +10,7 @@
 #    include <lvtk/ui/cairo.hpp>
 #elif LVTK_DEMO_VULKAN
 #    include <lvtk/ui/vulkan.hpp>
-#else
+#elif LVTK_DEMO_OPENGL
 #    include <lvtk/ui/opengl.hpp>
 #endif
 

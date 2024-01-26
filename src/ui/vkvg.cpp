@@ -79,7 +79,7 @@ public:
     void end_frame() {
     }
 
-    double scale_factor() const noexcept {
+    double device_scale() const noexcept override {
         double x_scale = 1.0, y_scale = 1.0;
         lvtk::ignore (x_scale, y_scale);
         // TODO:

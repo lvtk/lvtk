@@ -36,7 +36,7 @@ endif
 
 unit = executable ('unit',
     lvtk_unit_test_sources,
-    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_opengl_dep, lilv_dep ],
+    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_widgets_dep, lilv_dep ],
     gnu_symbol_visibility : 'hidden',
     cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 

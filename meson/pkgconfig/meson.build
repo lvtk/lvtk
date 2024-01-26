@@ -16,19 +16,3 @@ pkg.generate (liblvtk_widgets,
     subdirs     : 'lvtk-@0@'.format (lvtk_abi_version),
     install_dir : get_option ('libdir') / 'pkgconfig',
     requires    : [])
-pkg.generate (liblvtk_opengl,
-    name        : 'LVTK OpenGL',
-    filebase    : 'lvtk-opengl-@0@'.format (lvtk_abi_version),
-    version     : meson.project_version(),
-    description : 'LVTK OpenGL backend for Widgets library',
-    subdirs     : 'lvtk-@0@'.format (lvtk_abi_version),
-    install_dir : get_option ('libdir') / 'pkgconfig',
-    requires    : [])
-pkg.generate (
-    name        : 'LVTK Hosting Library',
-    filebase    : 'lvtk-host-@0@'.format (lvtk_abi_version),
-    version     : meson.project_version(),
-    description : 'LV2 hosting library',
-    subdirs     : 'lvtk-@0@'.format (lvtk_abi_version),
-    install_dir : get_option ('libdir') / 'pkgconfig',
-    requires    : [ 'lv2', 'lilv-0', 'suil-0' ])

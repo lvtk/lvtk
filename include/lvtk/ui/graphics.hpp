@@ -17,11 +17,21 @@ namespace lvtk {
 
 class Path;
 
+/** A scoped save & restore helper. The constructor calls `save()`, the 
+    destructor calls `restore()`
+*/
 template <class Save>
 struct ScopedSave {
     using save_type = Save;
     ScopedSave()    = delete;
+
+    /** Save without arguments */
     ScopedSave (Save& s) noexcept : _ref (s) { _ref.save(); }
+
+    /** Save with arguments */
+    template<typename ...Args>
+    ScopedSave (Save& s, Args&& ...args) 
+        : _ref(s) { _ref.save (std::forward<Args>(args)...); }
     ~ScopedSave() noexcept { _ref.restore(); }
 
 private:
@@ -57,7 +67,7 @@ public:
     virtual ~DrawingContext() = default;
 
     // clang-format off
-    virtual double scale_factor() const noexcept =0;
+    virtual double device_scale() const noexcept =0;
     
     /** Save the current state. */
     virtual void save() =0;
@@ -174,6 +184,7 @@ public:
 
     /** Save the graphics state */
     void save();
+
     /** Restore the graphics state */
     void restore();
 

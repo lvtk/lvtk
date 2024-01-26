@@ -9,17 +9,16 @@
 #include <lvtk/ui/cairo.hpp>
 
 namespace lvtk {
+namespace cairo {
 
-class CairoDrawingContext : public DrawingContext {
-    lvtk::Color _color;
-
+class Context : public DrawingContext {
 public:
-    explicit CairoDrawingContext (cairo_t* context = nullptr)
+    explicit Context (cairo_t* context = nullptr)
         : cr (context) {
         stack.reserve (64);
     }
 
-    ~CairoDrawingContext() {
+    ~Context() {
         cr = nullptr;
     }
 
@@ -35,7 +34,8 @@ public:
         cr = nullptr;
     }
 
-    double scale_factor() const noexcept {
+    double device_scale() const noexcept {
+        assert (cr != nullptr);
         double x_scale = 1.0, y_scale = 1.0;
         if (auto s = cairo_get_target (cr))
             cairo_surface_get_device_scale (s, &x_scale, &y_scale);
@@ -119,32 +119,10 @@ public:
     }
 
     void clip (const Rectangle<int>& r) override {
-#if 1
         state.clip = r.as<double>();
         cairo_new_path (cr);
         cairo_rectangle (cr, r.x, r.y, r.width, r.height);
         cairo_clip (cr);
-
-#    if 0
-        double x2, y2;
-        Rectangle<double> nr;
-        cairo_clip_extents (cr, &nr.x, &nr.y, &x2, &y2);
-        nr.width  = x2 - nr.x;
-        nr.height = y2 - nr.y;
-
-        if (nr != state.clip) {
-            std::clog << "RA: " << state.clip.str() << std::endl
-                << "RB: " << nr.str() << std::endl;
-            state.clip = nr;
-        }
-#    endif
-#else
-        auto c = state.clip.empty() ? r.as<double>()
-                                    : state.clip.intersection (r.as<double>());
-        cairo_rectangle (cr, c.x, c.y, c.width, c.height);
-        cairo_clip (cr);
-        state.clip = c;
-#endif
     }
 
     void exclude_clip (const Rectangle<int>& r) override {
@@ -157,6 +135,7 @@ public:
 
     Font font() const noexcept override { return state.font; }
     void set_font (const Font& f) override {
+        // TODO: equals operator is not yet reliable in lvtk::Font
         // if (state.font == f)
         //     return;
         state.font = f;
@@ -269,10 +248,10 @@ private:
     }
 };
 
-class CairoView : public View {
+class View : public lvtk::View {
 public:
-    CairoView (Main& m, Widget& w)
-        : View (m, w) {
+    View (Main& m, Widget& w)
+        : lvtk::View (m, w) {
         set_backend ((uintptr_t) puglCairoBackend());
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_FALSE);
         set_view_hint (PUGL_RESIZABLE, PUGL_TRUE);
@@ -281,7 +260,7 @@ public:
         puglSetViewString (pv, PUGL_WINDOW_TITLE, "LVTK Cairo Demo");
     }
 
-    ~CairoView() {}
+    ~View() {}
 
     void expose (Bounds frame) override {
         auto cr = (cairo_t*) puglGetContext (_view);
@@ -293,7 +272,7 @@ public:
     }
 
     void created() override {
-        _context = std::make_unique<CairoDrawingContext>();
+        _context = std::make_unique<Context>();
         _view    = (PuglView*) c_obj();
         assert (_view != nullptr && _context != nullptr);
     }
@@ -304,12 +283,14 @@ public:
     }
 
 private:
+    using Parent = lvtk::View;
     PuglView* _view;
-    std::unique_ptr<CairoDrawingContext> _context;
+    std::unique_ptr<Context> _context;
 };
+} // namespace cairo
 
-std::unique_ptr<View> Cairo::create_view (Main& c, Widget& w) {
-    return std::make_unique<CairoView> (c, w);
+std::unique_ptr<lvtk::View> Cairo::create_view (Main& c, Widget& w) {
+    return std::make_unique<cairo::View> (c, w);
 }
 
 } // namespace lvtk
