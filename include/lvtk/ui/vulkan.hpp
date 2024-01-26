@@ -12,14 +12,14 @@ class Main;
 class Widget;
 
 /** The Vulkan graphics backend.
-    Using this backend requires linking with lvtk-cairo-3.0
+    Using this backend requires linking with lvtk-vulkan-3.0
 
     @ingroup widgets
     @ingroup graphics
-    @headerfile lvtk/ui/cairo.hpp 
+    @headerfile lvtk/ui/vulkan.hpp 
 */
-struct LVTK_API Cairo : public Backend {
-    Cairo() : Backend ("Cairo") {}
+struct LVTK_API Vulkan : public Backend {
+    Vulkan() : Backend ("Vulkan") {}
     std::unique_ptr<View> create_view (Main& c, Widget& w) override;
 };
 

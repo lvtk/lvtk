@@ -64,6 +64,27 @@ else
     lvtk_cairo_dep = dependency('', required : false)
 endif
 
+### LVTK Vulkan
+if pugl_vulkan_dep.found()
+    lvtk_vulkan_deps = [ lvtk_widgets_dep, vkvg_dep, pugl_vulkan_dep ]
+    liblvtk_vulkan = library ('lvtk-vulkan-@0@'.format (lvtk_abi_version),
+        [ 'ui/vkvg.cpp' ],
+        gnu_symbol_visibility : 'hidden',
+        link_with : [],
+        include_directories : [],
+        c_args : [ '-DLVTK_BUILD' ],
+        cpp_args : [ '-DLVTK_BUILD' ],
+        dependencies : lvtk_vulkan_deps,
+        install : true,
+        install_dir : lvtk_libdir)
+    lvtk_vulkan_dep = declare_dependency (
+        link_with : [ liblvtk_vulkan],
+        include_directories : [],
+        dependencies : lvtk_vulkan_deps)
+else
+    lvtk_vulkan_dep = dependency('', required : false)
+endif
+
 ### LVTK OpenGL
 lvtk_gl_sources = ['ui/nanovg.cpp', 'ui/opengl.cpp', lvtk_res_sources ]
 lvtk_gl_c_args = ['-DLVTK_BUILD']
@@ -71,7 +92,6 @@ lvtk_gl_cpp_args = lvtk_gl_c_args
 subdir ('nanovg')
 
 lvtk_opengl_deps = [ lvtk_widgets_dep, pugl_gl_dep, dl_dep, opengl_dep ]
-
 liblvtk_opengl = library ('lvtk-opengl-@0@'.format (lvtk_abi_version),
     lvtk_gl_sources,
     gnu_symbol_visibility : 'hidden',

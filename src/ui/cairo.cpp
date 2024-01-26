@@ -4,8 +4,9 @@
 #include <iostream>
 
 #include <cairo/cairo.h>
-#include <lvtk/ui/cairo.hpp>
 #include <pugl/cairo.h>
+
+#include <lvtk/ui/cairo.hpp>
 
 namespace lvtk {
 

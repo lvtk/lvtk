@@ -172,7 +172,6 @@ private:
 
 Context::Context()
     : ctx (std::make_unique<Ctx>()) {
-    set_fill (Color (0.f, 0.f, 0.f, 1.f));
 }
 
 Context::~Context() {
@@ -190,13 +189,14 @@ void Context::begin_frame (int width, int height, double scale) {
                    (float) width,
                    (float) height,
                    ctx->internal_scale);
-    nvgStrokeWidth (ctx->ctx, 2);
+
     clip ({ 0, 0, width, height });
+    nvgStrokeWidth (ctx->ctx, 2);
+    nvgPathWinding (ctx->ctx, NVG_CCW);
 }
 
 void Context::end_frame() {
     nvgEndFrame (ctx->ctx);
-    nvgReset (ctx->ctx);
 }
 
 double Context::scale_factor() const noexcept {
@@ -305,8 +305,10 @@ void Context::set_fill (const Fill& fill) {
     color.g     = c.fgreen();
     color.b     = c.fblue();
     color.a     = c.falpha();
-    nvgFillColor (ctx->ctx, color);
+
     nvgStrokeColor (ctx->ctx, color);
+    nvgFillColor (ctx->ctx, color);
+    // nvgFillPaint (ctx->ctx, 0);
 }
 
 void Context::save() { ctx->save(); }
@@ -388,7 +390,7 @@ void Context::draw_image (Image i, Transform matrix) {
         ctx->add_image (image_hash, handle);
     }
 
-    save();
+    ScopedSave save (*this);
     int width, height;
     nvgImageSize (ctx->ctx, handle, &width, &height);
 
@@ -398,7 +400,6 @@ void Context::draw_image (Image i, Transform matrix) {
     nvgRect (ctx->ctx, 0, 0, width, height);
     nvgFillPaint (ctx->ctx, imgPaint);
     fill();
-    restore();
 }
 
 } // namespace nvg

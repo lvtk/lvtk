@@ -46,12 +46,16 @@ endif
 ### Cairo
 cairo_dep = dependency ('cairo', required : false)
 
+### VKVG / Vulkan
+vkvg_dep = dependency ('vkvg', required : false)
+vulkan_dep = dependency ('vulkan', include_type: 'system', required: false)
+
 ### Pugl
 pugl_opts = [
     'tests=disabled',
     'examples=enabled',
     'cairo=@0@'.format (cairo_dep.found() ? 'enabled' : 'disabled'),
-    'vulkan=disabled',
+    'vulkan=@0@'.format (vkvg_dep.found() ? 'enabled' : 'disabled'),
     'stub=true',
     'docs=disabled'
 ]
@@ -74,6 +78,16 @@ pugl_cairo_dep = dependency ('', required : false)
 if cairo_dep.found()
     pugl_cairo_dep = dependency ('pugl-cairo-0', 
         fallback : [ 'pugl' ],
+        version : '>= 0.4.0',
+        default_options : pugl_opts,
+        required : true
+    )
+endif
+
+pugl_vulkan_dep = dependency ('', required : false)
+if vkvg_dep.found()
+    pugl_vulkan_dep = dependency ('pugl-vulkan-0', 
+        fallback : [ 'pugl', 'pugl_vulkan_dep' ],
         version : '>= 0.4.0',
         default_options : pugl_opts,
         required : true

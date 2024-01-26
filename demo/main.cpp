@@ -8,6 +8,8 @@
 
 #if LVTK_DEMO_CAIRO
 #    include <lvtk/ui/cairo.hpp>
+#elif LVTK_DEMO_VULKAN
+#    include <lvtk/ui/vulkan.hpp>
 #else
 #    include <lvtk/ui/opengl.hpp>
 #endif
@@ -64,6 +66,8 @@ int WinMain (HINSTANCE hInstance,
 
 #    if LVTK_DEMO_CAIRO
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::Cairo>());
+#    elif LVTK_DEMO_VULKAN
+    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::Vulkan>());
 #    else
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
 #    endif
@@ -77,6 +81,8 @@ int WinMain (HINSTANCE hInstance,
 int main (int argc, char** argv) {
 #    if LVTK_DEMO_CAIRO
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::Cairo>());
+#    elif LVTK_DEMO_VULKAN
+    lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::Vulkan>());
 #    else
     lvtk::Main context (lvtk::Mode::PROGRAM, std::make_unique<lvtk::OpenGL>());
 #    endif

@@ -81,6 +81,7 @@ if not get_option('demo').disabled()
         install : true
     )
     
+    #### cairo
     if pugl_cairo_dep.found()
         lvtk_cairo_demo_exe = executable (
             'lvtk-cairo-demo', 
@@ -122,6 +123,20 @@ if not get_option('demo').disabled()
                 install: false
             )
         endif
+    endif
+
+    #### vulkan
+    if pugl_cairo_dep.found()
+        lvtk_vulkan_demo_exe = executable (
+            'lvtk-vulkan-demo', 
+            'demo/main.cpp',
+            cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT', '-DLVTK_DEMO_VULKAN=1' ],
+            include_directories : [],
+            link_with : [ liblvtk_demo ],
+            dependencies : [ lvtk_demo_deps, lvtk_vulkan_dep, threads_dep ],
+            win_subsystem : 'windows',
+            install : true
+        )
     endif
 endif
 

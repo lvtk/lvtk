@@ -33,10 +33,32 @@
             "MIMode": "gdb"
         },
         {
-            "name": "Demo",
+            "name": "Demo - Cairo",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/lvtk-demo",
+            "program": "${workspaceRoot}/build/lvtk-cairo-demo",
+            "cwd": "${workspaceRoot}/build",
+            "args": [],
+            "stopAtEntry": false,
+            "environment": [ {
+                "name": "LV2_PATH", "value": "${workspaceRoot}/build"
+            }],
+            "externalConsole": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "linux": {
+                "MIMode": "gdb",
+            },
+            "osx":{
+                "MIMode": "lldb"
+            }
+        },
+        {
+            "name": "Demo - Vulkan",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/lvtk-vulkan-demo",
             "cwd": "${workspaceRoot}/build",
             "args": [],
             "stopAtEntry": false,

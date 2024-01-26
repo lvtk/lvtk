@@ -51,9 +51,10 @@ inline static void draw_dial_proto (Graphics& g, lvtk::Dial& dial, Rectangle<dou
             Path filled;
             filled.add_ellipse (Rectangle<float> (rx, ry, rw, rw).reduced (csf));
             g.set_color (Color (0xffffffff).darker (1.f));
-            g.fill_path (filled);
-            g.set_color (Color (0xff000000).brighter (0.17f));
             g.context().set_line_width (2.5);
+            g.fill_path (filled);
+
+            g.set_color (Color (0xff000000).brighter (0.17f));
             g.stroke_path (filled);
         }
 
