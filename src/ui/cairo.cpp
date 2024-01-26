@@ -23,11 +23,12 @@ public:
         cr = nullptr;
     }
 
-    void begin_frame (cairo_t* _cr, lvtk::Bounds bounds) {
+    bool begin_frame (cairo_t* _cr, lvtk::Bounds bounds) {
         cr    = _cr;
         state = {};
         stack.clear();
         this->clip (bounds);
+        return true;
     }
 
     void end_frame() {
@@ -285,9 +286,10 @@ public:
     void expose (Bounds frame) override {
         auto cr = (cairo_t*) puglGetContext (_view);
         assert (cr != nullptr);
-        _context->begin_frame (cr, frame);
-        render (*_context);
-        _context->end_frame();
+        if (_context->begin_frame (cr, frame)) {
+            render (*_context);
+            _context->end_frame();
+        }
     }
 
     void created() override {

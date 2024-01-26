@@ -94,6 +94,7 @@ public:
     /** Repaint a region of the view */
     void repaint (Bounds bounds);
 
+    /** This is for testing. */
     using IdleSlot = boost::signals2::signal<void()>::slot_type;
     boost::signals2::connection connect_idle (const IdleSlot& slot);
 
