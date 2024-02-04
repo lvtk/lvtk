@@ -21,7 +21,7 @@ plugin = shared_module ('volume', 'volume.cpp',
 
 ui = shared_module ('volume-ui', 'volume-ui.cpp',
     name_prefix : '',
-    dependencies : [ lvtk_opengl_dep ],
+    dependencies : [ lvtk_cairo_dep ],
     install : true,
     install_dir : plugin_install_dir,
     gnu_symbol_visibility : 'hidden'
