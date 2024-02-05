@@ -9,7 +9,7 @@ lvtk_demo_sources = '''
 subdir('res')
 lvtk_demo_sources += lvtk_demo_res_sources
 
-lvtk_demo_deps = [ lvtk_host_dep ]
+lvtk_demo_deps = [ lvtk_host_dep, lvtk_widgets_dep, lvtk_cairo_dep, threads_dep ]
 
 lvtk_demo_includes = include_directories ('.')
 

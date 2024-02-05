@@ -76,7 +76,7 @@ if not get_option('demo').disabled()
             cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT', '-DLVTK_DEMO_CAIRO=1' ],
             include_directories : [],
             link_with : [ liblvtk_demo ],
-            dependencies : [ lvtk_demo_deps, lvtk_cairo_dep, threads_dep ],
+            dependencies : [ lvtk_demo_deps ],
             win_subsystem : 'windows',
             install : true
         )
@@ -132,7 +132,7 @@ if lua_dep.found()
     summary('Version', lua_version, section : 'Lua')
 endif
 
-summary ('Graphics', 'OpenGL', section : 'Widgets')
+summary ('Graphics', 'Cairo', section : 'Widgets')
 summary ('Demo', not get_option('demo').disabled(), bool_yn: true, section: 'Widgets')
 
 summary ('Prefix', get_option('prefix'), section: 'Paths')
