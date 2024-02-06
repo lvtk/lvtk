@@ -73,7 +73,7 @@ foreach t : lvtk_unit_tests
 endforeach
 
 if not get_option('bindings').disabled()
-    subdir ('lua')
+    # subdir ('lua')
 endif
 
 endif

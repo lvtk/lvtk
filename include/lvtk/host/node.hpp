@@ -111,7 +111,7 @@ public:
     }
 
     inline Node& operator= (Node&& node) {
-        _owned                       = std::move(node._owned);
+        _owned                       = std::move (node._owned);
         static_cast<unique&> (*this) = std::move (node);
         return *this;
     }

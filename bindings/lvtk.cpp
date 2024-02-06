@@ -1,10 +1,10 @@
-// Copyright 2022 Michael Fisher <mfisher@lvtk.org>
+// Copyright 2024 Michael Fisher <mfisher@lvtk.org>
 // SPDX-License-Identifier: ISC
 
 #include "proxy.hpp"
 #include <lvtk/lvtk.hpp>
 #include <lvtk/string.hpp>
-#include <lvtk/ui/opengl.hpp>
+#include <lvtk/ui/cairo.hpp>
 
 #include "./lvtk/bindings.h"
 
@@ -358,7 +358,7 @@ int luaopen_lvtk_Main (lua_State* L) {
         "new", factories ([]() {
             auto obj = std::make_unique<lvtk::Main>(
                 lvtk::Mode::PROGRAM,
-                std::make_unique<lvtk::OpenGL>()
+                std::make_unique<lvtk::Cairo>()
             );
 
             return obj;

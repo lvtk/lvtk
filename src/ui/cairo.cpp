@@ -4,13 +4,13 @@
 #include <iostream>
 
 #if _MSC_VER
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <cairo-win32.h>
-#undef NOMINMAX
+#    ifndef NOMINMAX
+#        define NOMINMAX
+#    endif
+#    include <cairo-win32.h>
+#    undef NOMINMAX
 #else
-#include <cairo/cairo.h>
+#    include <cairo/cairo.h>
 #endif
 
 #include <pugl/cairo.h>

@@ -36,7 +36,7 @@
             "name": "Demo - Cairo",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/lvtk-cairo-demo",
+            "program": "${workspaceRoot}/build/lvtk-demo",
             "cwd": "${workspaceRoot}/build",
             "args": [],
             "stopAtEntry": false,

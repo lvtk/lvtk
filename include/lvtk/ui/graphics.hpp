@@ -29,9 +29,9 @@ struct ScopedSave {
     ScopedSave (Save& s) noexcept : _ref (s) { _ref.save(); }
 
     /** Save with arguments */
-    template<typename ...Args>
-    ScopedSave (Save& s, Args&& ...args) 
-        : _ref(s) { _ref.save (std::forward<Args>(args)...); }
+    template <typename... Args>
+    ScopedSave (Save& s, Args&&... args)
+        : _ref (s) { _ref.save (std::forward<Args> (args)...); }
     ~ScopedSave() noexcept { _ref.restore(); }
 
 private:
