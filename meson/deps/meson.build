@@ -51,8 +51,9 @@ pugl_opts = [
     'tests=disabled',
     'examples=disabled',
     'cairo=@0@'.format (cairo_dep.found() ? 'enabled' : 'disabled'),
+    'opengl=disabled',
     'vulkan=disabled',
-    'stub=true',
+    'stub=false',
     'docs=disabled'
 ]
 
