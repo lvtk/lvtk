@@ -67,7 +67,7 @@ pugl_dep = dependency ('pugl-0',
 pugl_cairo_dep = dependency ('', required : false)
 if cairo_dep.found()
     pugl_cairo_dep = dependency ('pugl-cairo-0', 
-        fallback : [ 'pugl' ],
+        fallback : [ 'pugl', 'pugl_cairo_dep' ],
         version : '>= 0.4.0',
         default_options : pugl_opts,
         required : true
