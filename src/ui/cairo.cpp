@@ -211,11 +211,18 @@ public:
                 break;
         }
 
+        if (format == CAIRO_FORMAT_INVALID) {
+            return;
+        }
+
         image = cairo_image_surface_create_for_data (
             i.data(), format, i.width(), i.height(), i.stride());
 
-        if (image == nullptr)
+        if (image == nullptr || 0 != cairo_surface_status (image)) {
+            if (image != nullptr)
+                cairo_surface_destroy (image);
             return;
+        }
 
         transform (matrix);
         cairo_set_source_surface (cr, image, 0, 0);
