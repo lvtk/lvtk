@@ -33,6 +33,8 @@ enum class PixelFormat {
 */
 class LVTK_API Pixels {
 public:
+    virtual ~Pixels() = default;
+
     virtual uint8_t* data() noexcept = 0;
 
     virtual PixelFormat format() const noexcept = 0;

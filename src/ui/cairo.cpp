@@ -9,6 +9,8 @@
 #    endif
 #    include <cairo-win32.h>
 #    undef NOMINMAX
+#elif __APPLE__
+#    include <cairo-quartz.h>
 #else
 #    include <cairo/cairo.h>
 #endif
@@ -43,7 +45,7 @@ public:
         cr = nullptr;
     }
 
-    double device_scale() const noexcept {
+    double device_scale() const noexcept override {
         assert (cr != nullptr);
         double x_scale = 1.0, y_scale = 1.0;
         if (auto s = cairo_get_target (cr))
@@ -64,7 +66,7 @@ public:
         stack.pop_back();
     }
 
-    void set_line_width (double width) {
+    void set_line_width (double width) override {
         cairo_set_line_width (cr, width);
     }
 
