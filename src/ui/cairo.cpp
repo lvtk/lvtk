@@ -37,6 +37,7 @@ public:
         cr    = _cr;
         state = {};
         stack.clear();
+        cairo_scale (cr);
         this->clip (bounds);
         return true;
     }
@@ -283,6 +284,7 @@ public:
     void expose (Bounds frame) override {
         auto cr = (cairo_t*) puglGetContext (_view);
         assert (cr != nullptr);
+        cairo_scale (cr, scale_factor(), scale_factor());
         if (_context->begin_frame (cr, frame)) {
             render (*_context);
             _context->end_frame();
