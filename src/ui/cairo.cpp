@@ -37,7 +37,6 @@ public:
         cr    = _cr;
         state = {};
         stack.clear();
-        cairo_scale (cr);
         this->clip (bounds);
         return true;
     }
