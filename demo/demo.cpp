@@ -23,7 +23,7 @@ Content::Content()
     set_size (550 + SIDEBAR_WIDTH, 400);
 
     add (menu);
-    menu.set_visible (true);
+    menu.set_visible (false);
 
     set_visible (true);
     sidebar.run_demo (0);
@@ -34,7 +34,10 @@ Content::~Content() {
 
 void Content::resized() {
     auto r = bounds().at (0, 0);
-    menu.set_bounds (r.slice_top (menu.height()));
+    
+    if (menu.visible())
+        menu.set_bounds (r.slice_top (menu.height()));
+    
     r.slice_top (4);
     r.slice_left (4);
     sidebar.set_bounds (r.slice_left (SIDEBAR_WIDTH));
