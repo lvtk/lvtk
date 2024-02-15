@@ -273,21 +273,41 @@ public:
         set_backend ((uintptr_t) puglCairoBackend());
         set_view_hint (PUGL_DOUBLE_BUFFER, PUGL_FALSE);
         set_view_hint (PUGL_RESIZABLE, PUGL_TRUE);
-        auto pv = (PuglView*) c_obj();
+        // auto pv = (PuglView*) c_obj();
         // TODO: make user accesible
-        puglSetViewString (pv, PUGL_WINDOW_TITLE, "LVTK Cairo Demo");
+        // puglSetViewString (pv, PUGL_WINDOW_TITLE, "LVTK Cairo Demo");
     }
 
     ~View() {}
 
     void expose (Bounds frame) override {
-        auto cr = (cairo_t*) puglGetContext (_view);
+        const auto scale_x = scale_factor();
+        const auto scale_y = scale_x;
+        auto cr            = (cairo_t*) puglGetContext (_view);
         assert (cr != nullptr);
-        cairo_scale (cr, scale_factor(), scale_factor());
+        cairo_save (cr);
+        cairo_scale (cr, scale_x, scale_y);
+
+#if 0
+        // cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+        // cairo_rectangle (cr, 0, 0, bounds().width, bounds().height);
+        // cairo_fill(cr);
+        // cairo_restore (cr);
+        // return;
+#endif
+
+#if __APPLE__
+        // FIXME: needed on macOS until lvtk.Widget clipping problems
+        // can be resolved.
+        frame = bounds().at (0);
+#endif
+
         if (_context->begin_frame (cr, frame)) {
             render (*_context);
             _context->end_frame();
         }
+
+        cairo_restore (cr);
     }
 
     void created() override {
