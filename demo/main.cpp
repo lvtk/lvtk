@@ -29,7 +29,7 @@ static int run (lvtk::Main& context) {
         }
 
         while (true) {
-            context.loop (-1.0);
+            context.loop (1.0 / 60.0);
             if (! context.running())
                 break;
         }
