@@ -218,7 +218,6 @@ public:
     ~Impl() = default;
     Point<float> down_pos {};
     double down_value  = 0.0;
-    double sensitivity = 50;
 };
 
 Dial::Dial() : impl (new Impl()) {}
@@ -248,7 +247,7 @@ void Dial::drag (const Event& ev) {
                                  : ev.pos.y - down_pos.y;
     double new_pos  = 0;
     new_pos         = delta / double (horizontal ? width() : height());
-    new_pos *= std::max (1.0, impl->sensitivity);
+    new_pos *= std::max (1.0, range().diff() / 2.0);
     new_pos += down_value;
     new_pos = detail::limit (new_pos, range().min, range().max);
 
