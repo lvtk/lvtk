@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE (array) {
 
 BOOST_AUTO_TEST_CASE (nullref) {
     lvtk::OptionArray array ((const lvtk::Option*) nullptr);
-    BOOST_REQUIRE_EQUAL (array.size(), 0);
+    BOOST_REQUIRE_EQUAL (array.size(), 0U);
     BOOST_REQUIRE_EQUAL (array.empty(), true);
 }
 
