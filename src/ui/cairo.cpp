@@ -12,7 +12,7 @@
 #elif __APPLE__
 #    include <cairo-quartz.h>
 #else
-#    include <cairo/cairo.h>
+#    include <cairo.h>
 #endif
 
 #include <pugl/cairo.h>
