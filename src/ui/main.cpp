@@ -83,7 +83,7 @@ View* Main::elevate (Widget& widget, ViewFlags flags, uintptr_t parent) {
         return nullptr;
 
     auto& view = *widget.impl->view;
-    
+
     view.impl->realize();
     view.set_bounds (widget.bounds());
     view.set_visible (widget.visible());

@@ -34,10 +34,10 @@ Content::~Content() {
 
 void Content::resized() {
     auto r = bounds().at (0, 0);
-    
+
     if (menu.visible())
         menu.set_bounds (r.slice_top (menu.height()));
-    
+
     r.slice_top (4);
     r.slice_left (4);
     sidebar.set_bounds (r.slice_left (SIDEBAR_WIDTH));

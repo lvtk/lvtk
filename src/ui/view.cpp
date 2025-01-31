@@ -102,7 +102,7 @@ void View::elevate (Widget& widget, ViewFlags flags) {
 }
 
 void View::repaint (Bounds area) {
-    if (area.empty()) {
+    if (true || area.empty()) {
         puglPostRedisplay (impl->view);
     } else {
         area *= scale_factor();

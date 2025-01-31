@@ -129,6 +129,10 @@ public:
         cairo_transform (cr, &m);
     }
 
+    void reset_clip() noexcept {
+        cairo_reset_clip (cr);
+    }
+
     void clip (const Rectangle<int>& r) override {
         state.clip = r.as<double>();
         cairo_new_path (cr);
@@ -281,12 +285,20 @@ public:
     ~View() {}
 
     void expose (Bounds frame) override {
-        const auto scale_x = scale_factor();
-        const auto scale_y = scale_x;
-        auto cr            = (cairo_t*) puglGetContext (_view);
+        auto cr = (cairo_t*) puglGetContext (_view);
         assert (cr != nullptr);
+
+        if (true || ! _scale_set || _last_scale != scale_factor()) {
+            _scale_set         = true;
+            const auto scale_x = scale_factor();
+            const auto scale_y = scale_x;
+            _last_scale        = scale_x;
+            if (auto s = cairo_get_target (cr))
+                cairo_surface_set_device_scale (s, 1.0, 1.0);
+            cairo_scale (cr, scale_x, scale_y);
+        }
+
         cairo_save (cr);
-        cairo_scale (cr, scale_x, scale_y);
 
 #if 0
         // cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
@@ -296,7 +308,7 @@ public:
         // return;
 #endif
 
-#if __APPLE__
+#if __APPLE__ || 0
         // FIXME: needed on macOS until lvtk.Widget clipping problems
         // can be resolved.
         frame = bounds().at (0);
@@ -325,6 +337,8 @@ private:
     using Parent = lvtk::View;
     PuglView* _view;
     std::unique_ptr<Context> _context;
+    bool _scale_set { false };
+    double _last_scale { 1.0 };
 };
 } // namespace cairo
 

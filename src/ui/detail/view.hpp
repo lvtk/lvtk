@@ -438,7 +438,7 @@ private:
             return PUGL_SUCCESS;
         }
 
-        VIEW_DBG3 ("pugl: " << (int) nconfigs << ": configure: " << detail::rect<int> (ev).str());
+        VIEW_DBG3 ("pugl: " << (int) nconfigs << ": configure: " << detail::rect<int> (ev).str() << ": scale: " << view.scale_factor());
 
         auto& widget = view.widget;
 #if LVTK_SCALE_IN_CONFIGURE
@@ -471,10 +471,10 @@ private:
             VIEW_DBG ("handled pending configure");
         }
 
-        widget.set_bounds (widget.x(),
-                           widget.y(),
+        widget.set_bounds (int ((float) ev.x / view.scale_factor()),
+                           int ((float) ev.y / view.scale_factor()),
                            int (static_cast<float> (ev.width) / view.scale_factor()),
-                           int (static_cast<float> (ev.height) / view.scale_factor()));
+                           int (static_cast<float> (ev.height)) / view.scale_factor());
 
         return PUGL_SUCCESS;
     }
@@ -485,6 +485,9 @@ private:
             return PUGL_SUCCESS;
         }
 
+        // std::cout << "scale1=" << view.scale_factor() << std::endl;
+        // std::cout << "scale2=" << puglGetScaleFactor (view.view) << std::endl;
+
         VIEW_DBG4 ("pugl: expose: " << detail::rect<int> (ev).str());
 
         auto x = (float) ev.x / view.scale_factor();
@@ -493,8 +496,8 @@ private:
         auto h = (float) ev.height / view.scale_factor();
         auto r = Rectangle<float> { x, y, w, h }.as<int>();
 
-        view.owner.expose (r);
-        // view.owner.expose (r.intersection (view.owner.bounds().at (0)));
+        // view.owner.expose (r * view.scale_factor());
+        view.owner.expose (r.intersection (view.owner.bounds().at (0)));
         return PUGL_SUCCESS;
     }
 

@@ -217,7 +217,7 @@ public:
     Impl()  = default;
     ~Impl() = default;
     Point<float> down_pos {};
-    double down_value  = 0.0;
+    double down_value = 0.0;
 };
 
 Dial::Dial() : impl (new Impl()) {}
