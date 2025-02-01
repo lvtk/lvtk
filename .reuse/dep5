@@ -9,37 +9,13 @@ Files: *.clang* *.clang* *meson.build *.gitignore *.gitlab-ci.yml meson/*ini AUT
 Copyright: 2022 Michael Fisher <mfisher@lvtk.org>
 License: CC0-1.0 OR ISC
 
-Files: lvtk.lv2/* resources/*
+Files: resources/*
 Copyright: 2022 Michael Fisher <mfisher@lvtk.org>
 License: ISC
-
-Files: bindings/lua/5.*/lua*.h bindings/lua/**/lua*.hpp bindings/lua/**/laux*.h
-Copyright: Copyright (C) 1994-2022 Lua.org, PUC-Rio.
-License: MIT
-
-Files: bindings/lua/sol/*.hpp
-Copyright: Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
-License: MIT
 
 Files: include/lvtk/detail/dynmanifest.h
 Copyright: Copyright 2008-2011 Stefano D'Angelo <zanga.mail@gmail.com>
 License: ISC
-
-Files: src/nanovg/KHR/khrplatform.h
-Copyright: 2008-2018 The Khronos Group Inc.
-License: MIT
-
-Files: *Roboto*.ttf
-Copyright: 2022 Christian Robertson
-License: Apache-2.0
-
-Files: src/stb/stb_*.h
-Copyright: 2022 Sean T. Barrett.
-License: CC0-1.0 or MIT
-
-Files: src/nanovg/*
-Copyright: 2013 Mikko Mononen <memon@inside.org>
-License: Zlib
 
 Files: scripts/bin2c.py
 Copyright: 2016 by Dmitry Alimov

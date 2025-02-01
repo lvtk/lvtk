@@ -24,19 +24,13 @@ lvtk_unit_test_sources = '''
 
     observer_test.cpp
     string_test.cpp
-    ui_font_test.cpp
-    ui_path_test.cpp
     weak_ref_test.cpp
     main_unit.cpp
 '''.split()
 
-if lilv_dep.found()
-    lvtk_unit_test_sources += 'host_world_test.cpp'
-endif
-
 unit = executable ('unit',
     lvtk_unit_test_sources,
-    dependencies : [ boost_dep, lvtk_internal_dep, lvtk_widgets_dep, lilv_dep ],
+    dependencies : [ boost_dep, lvtk_internal_dep ],
     gnu_symbol_visibility : 'hidden',
     cpp_args : ['-DLVTK_NO_SYMBOL_EXPORT'])
 
@@ -53,16 +47,10 @@ lvtk_unit_tests = '''
     URID
     Worker
     
-    Font
     Observer
     String
-    Path
     WeakRef
 '''.split()
-
-if lilv_dep.found()
-    lvtk_unit_tests += 'World'
-endif
 
 foreach t : lvtk_unit_tests
     test (t, unit, args : [ '-t', t ],
@@ -71,9 +59,5 @@ foreach t : lvtk_unit_tests
         ]
     )
 endforeach
-
-if not get_option('bindings').disabled()
-    # subdir ('lua')
-endif
 
 endif

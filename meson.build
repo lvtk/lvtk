@@ -29,11 +29,7 @@ lvtk_abi_version = '3.0'
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
     include/lvtk/string.hpp
-    include/lvtk/ui/justify.hpp
-    include/lvtk/ui/widget.hpp
 '''.split())
-
-if not get_option ('onlydocs')
 
 subdir ('meson/deps')
 subdir ('meson/supress')
@@ -57,53 +53,7 @@ lvtk_internal_dep = declare_dependency (
 ### shared libs
 subdir ('src')
 
-if not get_option('bindings').disabled()
-    # subdir ('bindings')
-endif
-
-### Plugins
-if get_option('plugins').disabled()
-    subdir ('lvtk.lv2')
-endif
-
-### Demo
-if not get_option('demo').disabled()
-    if pugl_cairo_dep.found()
-        subdir ('demo')
-        lvtk_demo_exe = executable (
-            'lvtk-demo', 
-            'demo/main.cpp',
-            cpp_args : [ '-DLVTK_NO_SYMBOL_EXPORT', '-DLVTK_DEMO_CAIRO=1' ],
-            include_directories : [],
-            link_with : [ liblvtk_demo ],
-            dependencies : [ lvtk_demo_deps ],
-            win_subsystem : 'windows',
-            install : true
-        )
-
-        if host_machine.system() == 'darwin'
-            bundle_cmd = [ python3_exe, bundle_py, '--binary', '@INPUT@',
-                            '--output', '@OUTPUT@',
-                            '--plist', files ('demo/Info.plist') ]
-
-            if get_option ('buildtype').contains('debug')
-                bundle_cmd = [ bundle_cmd, '--no-strip' ]
-            endif
-
-            custom_target (
-                'LVTK.app',
-                build_by_default: true,
-                command: bundle_cmd ,
-                input: lvtk_demo_exe,
-                output: 'LVTK.app',
-                install: false
-            )
-        endif
-    endif
-endif
-
 ### Install Headers and PC
-
 install_subdir ('include' / 'lvtk', install_dir : get_option('includedir') / 'lvtk-@0@'.format(lvtk_abi_version))
 subdir ('meson/pkgconfig')
 
@@ -111,8 +61,6 @@ subdir ('meson/pkgconfig')
 if not get_option('test').disabled()
     subdir('test')
 endif
-
-endif # only docs
 
 ### Docs
 if not get_option('doc').disabled()
@@ -122,23 +70,9 @@ endif
 ### Summary
 summary('Docs', not get_option('doc').disabled(), bool_yn: true)
 
-if not get_option ('onlydocs')
 summary('Tests', not get_option('test').disabled(), bool_yn: true)
-
-summary ('Modules', lua_dep.found(), section : 'Lua', bool_yn: true)
-if lua_dep.found()
-    summary('Tests', lua_program.found() and not get_option('test').disabled(), 
-        section : 'Lua', bool_yn: true)
-    summary('Version', lua_version, section : 'Lua')
-endif
-
-summary ('Graphics', 'Cairo', section : 'Widgets')
-summary ('Demo', not get_option('demo').disabled(), bool_yn: true, section: 'Widgets')
-
 summary ('Prefix', get_option('prefix'), section: 'Paths')
 summary ('Headers', get_option('prefix') / get_option('includedir'), section: 'Paths')
 summary ('Libraries', get_option('prefix') / get_option('libdir'), section: 'Paths')
 summary ('Programs', get_option('prefix') / get_option('bindir'), section: 'Paths')
 summary ('LV2', get_option('prefix') / lvtk_lv2dir, section: 'Paths')
-
-endif
