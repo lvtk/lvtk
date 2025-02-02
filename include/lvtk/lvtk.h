@@ -14,17 +14,17 @@
 extern "C" {
 #endif
 
-#ifdef _WIN32
-#    if ! defined(LVTK_STATIC) && defined(LVTK_BUILD)
-#        define LVTK_API __declspec(dllexport)
-#    elif ! defined(LVTK_STATIC)
-#        define LVTK_API __declspec(dllimport)
-#    endif
-#else
-#    if ! defined(LVTK_STATIC)
-#        define LVTK_API __attribute__ ((visibility ("default")))
-#    endif
-#endif
+// #ifdef _WIN32
+// #    if ! defined(LVTK_STATIC) && defined(LVTK_BUILD)
+// #        define LVTK_API __declspec(dllexport)
+// #    elif ! defined(LVTK_STATIC)
+// #        define LVTK_API __declspec(dllimport)
+// #    endif
+// #else
+// #    if ! defined(LVTK_STATIC)
+// #        define LVTK_API __attribute__ ((visibility ("default")))
+// #    endif
+// #endif
 
 #define LVTK_EXPORT LVTK_EXTERN LVTK_API
 

@@ -39,7 +39,7 @@ if get_option('default_library') == 'both'
     error('default_library=both is not supported on Windows')
   endif
 elif get_option('default_library') == 'static'
-    add_project_arguments(['-DLVTK_STATIC'],language: ['c', 'cpp'])
+    # add_project_arguments(['-DLVTK_STATIC'],language: ['c', 'cpp'])
 endif
 
 ### Header only deps
