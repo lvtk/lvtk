@@ -1,7 +1,9 @@
+dot = find_program ('dot', required : get_option('doc'))
 doxygen = find_program ('doxygen', required : get_option('doc'))
 sphinx_build = find_program ('sphinx-build', required : get_option('doc'))
+build_docs = doxygen.found() and sphinx_build.found() and dot.found()
 
-if doxygen.found() and sphinx_build.found()
+if build_docs
 
 conf_py = configure_file (configuration: {
         'LVTK_VERSION' : meson.project_version() 
@@ -21,23 +23,19 @@ lvtk_rst_sources = files ('''
     dynmanifest.rst
     extensions.rst
     highlevel.rst
-    hosting.rst
-    graphics.rst
     index.rst
     styleguide.rst
     summary.rst
-    widgets.rst
     plugins.rst
     projects.rst
     uis.rst
 '''.split())
 
 foreach f : lvtk_rst_sources
-  configure_file(copy: true, input: f, output: '@PLAINNAME@')
+  fs.copyfile (f)
 endforeach
 
 subdir ('api')
-subdir ('ui')
 
 docs = custom_target(
   'html',

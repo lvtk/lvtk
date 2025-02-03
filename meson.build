@@ -1,6 +1,6 @@
 project ('lvtk', ['cpp', 'c'], 
     version : '3.0.0',
-    meson_version : '>= 0.56.0',
+    meson_version : '>= 0.64.0',
     license : 'ISC',
     default_options: [
         'b_ndebug=if-release',
@@ -9,12 +9,11 @@ project ('lvtk', ['cpp', 'c'],
         'cpp_std=c++17',
     ])
 
-if host_machine.system() == 'darwin'
-    add_languages (['objcpp', 'objc' ])
-endif
+fs = import ('fs')
 
 lvtk_abi_version = '3.0'
 
+# $ find include -name "*.hpp"
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
     include/lvtk/weak_ref.hpp
@@ -48,16 +47,12 @@ lvtk_headers = files ('''
     include/lvtk/dynmanifest.hpp
 '''.split())
 
+if host_machine.system() == 'darwin'
+    add_languages (['objcpp', 'objc' ])
+endif
+
 subdir ('meson/deps')
 subdir ('meson/supress')
-
-if get_option('default_library') == 'both'
-  if host_machine.system() == 'windows'
-    error('default_library=both is not supported on Windows')
-  endif
-elif get_option('default_library') == 'static'
-    # add_project_arguments(['-DLVTK_STATIC'],language: ['c', 'cpp'])
-endif
 
 ### Header only deps
 lvtk_dep = declare_dependency (
@@ -67,7 +62,6 @@ lvtk_internal_dep = declare_dependency (
     include_directories : [ 'src' ],
     dependencies : lvtk_dep)
 
-### shared libs
 subdir ('src')
 
 ### Install Headers and PC
@@ -85,9 +79,8 @@ if not get_option('doc').disabled()
 endif
 
 ### Summary
-summary('Docs', not get_option('doc').disabled(), bool_yn: true)
-
-summary('Tests', not get_option('test').disabled(), bool_yn: true)
+summary ('Docs', get_option('doc'), bool_yn: true)
+summary ('Tests', get_option('test'), bool_yn: true)
 summary ('Prefix', get_option('prefix'), section: 'Paths')
 summary ('Headers', get_option('prefix') / get_option('includedir'), section: 'Paths')
 summary ('Libraries', get_option('prefix') / get_option('libdir'), section: 'Paths')

@@ -34,6 +34,6 @@ PREDEFINED             = LVTK_API \
 RECURSIVE              = YES
 STRIP_FROM_PATH        = @LVTK_SRCDIR@
 INPUT                  = @LVTK_SRCDIR@/include
-EXAMPLE_PATH           = @LVTK_SRCDIR@/lvtk.lv2 
+EXAMPLE_PATH           = @LVTK_SRCDIR@/doc/examples
 
 OUTPUT_DIRECTORY       = @DOX_OUTPUT@

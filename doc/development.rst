@@ -35,6 +35,5 @@ API Reference
 Looking for the API docs?
 
 - `C++ API documentation <api/index.html>`_.
-- `Lua API documentation <#>`_.
 
 .. _pkg-config: https://www.freedesktop.org/wiki/Software/pkg-config/

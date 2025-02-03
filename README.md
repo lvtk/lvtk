@@ -50,26 +50,11 @@ meson compile -C build
 meson test -C build
 ```
 
-## Widgets Demo
-
-### Linux & Windows
-Go to the build directory and run it:
-```
-cd build
-./lvtk-demo
-```
-
-### macOS
-Double-clickable Mac apps can be found somewhere in the build directory. The following command will list them all out.
+## The Docs
+In order to build the documentation you will need:
 ```bash
-# From the source top dir.
-find build -name "LVTK*.app"
+sudo apt install graphviz doxygen python3-sphinx python3-sphinx-rtd-theme
 ```
-
-### Screenshots
-![](doc/html/_static/images/demo-00.png)
-![](doc/html/_static/images/demo-01.png)
-![](doc/html/_static/images/demo-02.png)
 
 ## ISC License
 
@@ -87,22 +72,6 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ```
 
-## 3rd Party Code
-
-Graphics/UI/Hosting classes utilize these libraries internally:
-
-| What         | For?              | License |
-|--------------|-------------------|---------|
-| Cairo        | Graphics backend  | [MPL-1.1](https://www.mozilla.org/en-US/MPL/1.1/annotated/) |
-| STB Image    | Images            | [MIT](LICENSES/MIT.txt) |
-| STB Truetype | Font Loading      | [MIT](LICENSES/MIT.txt) |
-| Roboto       | Built-in font     | [Apache-2.0](LICENSES/Apache-2.0.txt) |
-| Lua          | Lua Bindings      | [MIT](LICENSES/MIT.txt) |
-| Sol2         | Lua Bindings      | [MIT](LICENSES/MIT.txt) |
-| Boost        | Tests/Signals     | [BSL-1.0](https://www.boost.org/LICENSE_1_0.txt) |
-| Lilv         | Test host headers | [ISC](LICENSES/ISC.txt) |
-| Suil         | Test host headers | [ISC](LICENSES/ISC.txt) |
-
 ## Issue Tracking
 
-Please report bugs and feature requests on [GitHub](https://github.com/lvtk/lvtk/issues) or [GitLab](https://gitlab.com/lvtk/lvtk/-/issues). 
+Please report bugs and feature requests on [GitHub](https://github.com/lvtk/lvtk/issues) or [GitLab](https://gitlab.com/lvtk/lvtk/-/issues).

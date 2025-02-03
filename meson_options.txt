@@ -1,7 +1,7 @@
 
 option ('lv2dir', type: 'string', value: '', yield : true,
     description: 'LV2 bundle installation directory')
-option ('doc', type : 'feature', value : 'disabled',
+option ('doc', type : 'feature', value : 'auto',
     description : 'Build documentation [default: auto]')
 option ('test', type: 'feature', value: 'auto',
     description: 'Build tests [default: auto]')

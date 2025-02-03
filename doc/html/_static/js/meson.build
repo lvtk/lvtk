@@ -3,5 +3,5 @@ lvtk_docs_js_sources = files ('''
 '''.split())
 
 foreach f : lvtk_docs_js_sources
-  configure_file (copy: true, input: f, output: '@PLAINNAME@')
+    fs.copyfile(f)
 endforeach
