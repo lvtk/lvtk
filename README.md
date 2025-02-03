@@ -23,6 +23,21 @@ meson compile -C build
 meson test -C build
 ```
 
+## Testing
+The tests depend on boost
+```
+sudo apt install libboost-test
+```
+... or ...
+```
+BOOST_ROOT="/path/to/somewhere" meson setup build
+```
+
+Then simply run meson test
+```
+meson test -C build
+```
+
 ## Meson Subproject
 See the guide on [using a subproject](https://mesonbuild.com/Subprojects.html#using-a-subproject) on [mesonbuild.com](https://mesonbuild.com)
 
