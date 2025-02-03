@@ -1,0 +1,21 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: System Packages
+      run: sudo apt-get update && sudo apt install python3 graphviz doxygen python3-sphinx python3-sphinx-rtd-theme meson python3-pip libboost-test-dev
+    - name: Setup
+      run: meson setup -Ddoc=enabled -Dtest=enabled build
+    - name: Compile
+      run: meson compile -C build
+    - name: Test
+      run: meson test -C build
