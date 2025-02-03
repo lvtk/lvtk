@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: System Packages
-      run: sudo apt-get update && sudo apt install python3 graphviz doxygen python3-sphinx python3-sphinx-rtd-theme meson
+      run: sudo apt-get update && sudo apt install python3 graphviz doxygen python3-sphinx python3-sphinx-rtd-theme meson python3-pip libboost-test-dev
     - name: Setup
       run: meson setup -Ddoc=enabled -Dtest=enabled build
     - name: Compile
