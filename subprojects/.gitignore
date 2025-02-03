@@ -1,5 +1,6 @@
 *
 !*.wrap
 !.gitignore
+!.ignore
 /sphinxygen.wrap
 /sphinxygen-1.0.0/

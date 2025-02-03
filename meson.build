@@ -13,22 +13,39 @@ if host_machine.system() == 'darwin'
     add_languages (['objcpp', 'objc' ])
 endif
 
-pymod = import('python')
-python3_exe = pymod.find_installation ('python3')
-bundle_py   = files ('scripts/bundle.py').get(0)
-date_py = files ('scripts/date.py')
-lvtk_release_date = run_command (python3_exe, date_py, check: false).stdout().strip()
-version_py = files ('scripts/version.py')
-lvtk_version_with_build = run_command (python3_exe, 
-    [version_py, '--build --ignore-dirty --cwd=.'.split()], check: false).stdout().strip()
-lvtk_build_number = run_command (python3_exe, 
-    [version_py, '--no-version --build --ignore-dirty --cwd=.'.split()], check: false).stdout().strip()
-
 lvtk_abi_version = '3.0'
 
 lvtk_headers = files ('''
     include/lvtk/lvtk.hpp
+    include/lvtk/weak_ref.hpp
+    include/lvtk/ui.hpp
+    include/lvtk/context.hpp
+    include/lvtk/ext/extension.hpp
+    include/lvtk/ext/touch.hpp
+    include/lvtk/ext/state.hpp
+    include/lvtk/ext/resize_port.hpp
+    include/lvtk/ext/idle.hpp
+    include/lvtk/ext/port_subscribe.hpp
+    include/lvtk/ext/port_map.hpp
+    include/lvtk/ext/instance_access.hpp
+    include/lvtk/ext/options.hpp
+    include/lvtk/ext/log.hpp
+    include/lvtk/ext/parent.hpp
+    include/lvtk/ext/resize.hpp
+    include/lvtk/ext/urid.hpp
+    include/lvtk/ext/bufsize.hpp
+    include/lvtk/ext/data_access.hpp
+    include/lvtk/ext/atom.hpp
+    include/lvtk/ext/worker.hpp
+    include/lvtk/ext/show.hpp
+    include/lvtk/options.hpp
+    include/lvtk/plugin.hpp
+    include/lvtk/symbols.hpp
+    include/lvtk/optional.hpp
+    include/lvtk/memory.hpp
+    include/lvtk/spin_lock.hpp
     include/lvtk/string.hpp
+    include/lvtk/dynmanifest.hpp
 '''.split())
 
 subdir ('meson/deps')

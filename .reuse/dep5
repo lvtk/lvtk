@@ -3,7 +3,7 @@ Upstream-Name: lvtk
 Upstream-Contact: Michael Fisher <mfisher@lvtk.org>
 Source: https://lvtk.org
 
-Files: *.clang* *.clang* *meson.build *.gitignore *.gitlab-ci.yml meson/*ini AUTHORS *.wrap 
+Files: *.clang* *.clang* *meson.build *.ignore *.gitignore *.gitlab-ci.yml meson/*ini AUTHORS *.wrap 
   .vscode/*.json *README.md ChangeLog doc/* meson_options.txt scripts/*.imp 
   deploy/*.* demo/Info.plist
 Copyright: 2022 Michael Fisher <mfisher@lvtk.org>

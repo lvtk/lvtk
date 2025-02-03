@@ -14,6 +14,7 @@
     { "include": ["<iosfwd>", "public", "<string>", "public"]},
    
     { "include": ["<stdlib.h>", "public", "<cstdlib>", "public"]},
+    { "include": ["<stddef.h>", "public", "<cstddef>", "public"]},
    
     { "include": ["<lvtk/optional.hpp>", "private", "<optional>", "public"]},
     { "include": ["<lvtk/options.hpp>", "private", "<optional>", "public"]},
