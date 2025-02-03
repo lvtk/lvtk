@@ -2,36 +2,9 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/lvtk/lvtk/badge)](https://www.codefactor.io/repository/github/lvtk/lvtk)
 [![REUSE status](https://api.reuse.software/badge/gitlab.com/lvtk/lvtk)](https://api.reuse.software/info/gitlab.com/lvtk/lvtk)
 
-# LVTK3
+# LVTK
 
-Minimal C++ library with Lua bindings and console. Write your LV2 plugins and gui's in C++.  The Widgets library can be used in any project, it is not directly tied to LV2 UI.
-
-**Heavy Development:** API's will break from time to time until the core system is ready. Plugin/UI templates are largely unchanged, but could radically change in terms of API.  
-
-## Minimal by Design
-
-LVTK is intended to be used as a subproject by LV2 plugin and UI developers. Docs, Lua Bindings, the Widgets Demo, Lilv wrapper tests, and the `lvtk.lv2` plugins are disabled by default so plugin developers don't have to worry about it.  If packaging, these items will need enabled manually via a meson native/cross file or the command line. see [meson_options.txt](meson_options.txt)
-
-## Widgets
-
-| Widget            | Status  | Purpose              |
-|-------------------|---------|----------------------|
-| `lvtk.Widget`     | Working | Base for all widgets |
-| `lvtk.Button`     | Close   | Base for most button types |
-| `lvtk.TextButton` | Close   | A regular button that shows text |
-| `lvtk.Label`      | -       | A text display Widget |
-| `lvtk.Entry`      | Started | A basic single-line text entry |
-| `lvtk.Ranged`     | Working | Base for Widgets with a ralue range.
-| `lvtk.Slider`     | Close   | A basic single-value slider control |
-| `lvtk.Dial`       | Started | A basic single-value Dial (or Knob) control |
-| `lvtk.Embed`      | Started | Embed OS Native Windows/Views |
-
-**Status Legend**
-
-* **Finished** And ready to go.
-* **Working** but not finished in terms of fine details and final type names and signatures.
-* **Close** to working, functionality partially implemented.
-* **Started** some RND, highly experimental.
+LVTK is a minimal C++ library with Lua bindings and console. Write your LV2 plugins and gui's in C++. It is a header-only library and intended to be used as a subproject by LV2 plugin and UI developers.  This being the case, pkg-config files and typical installation is available.
 
 ## Building
 
@@ -49,6 +22,9 @@ meson setup build
 meson compile -C build
 meson test -C build
 ```
+
+## Meson Subproject
+See the guide on [using a subproject](https://mesonbuild.com/Subprojects.html#using-a-subproject) on [mesonbuild.com](https://mesonbuild.com)
 
 ## The Docs
 In order to build the documentation you will need:
