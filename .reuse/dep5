@@ -5,7 +5,7 @@ Source: https://lvtk.org
 
 Files: *.clang* *.clang* *meson.build *.ignore *.gitignore *.gitlab-ci.yml meson/*ini AUTHORS *.wrap 
   .vscode/*.json *README.md ChangeLog doc/* meson_options.txt scripts/*.imp 
-  deploy/*.* demo/Info.plist
+  deploy/*.* demo/Info.plist .github/workflows/*
 Copyright: 2022 Michael Fisher <mfisher@lvtk.org>
 License: CC0-1.0 OR ISC
 
